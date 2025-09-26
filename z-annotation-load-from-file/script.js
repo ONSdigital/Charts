@@ -9,10 +9,10 @@ function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
   size = initialise(size);
 
-  let margin = config.optional.margin[size]
+  let margin = config.margin[size]
   let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
   //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
-  let height = (config.optional.seriesHeight[size] * graphic_data.length) + (10 * (graphic_data.length - 1)) + 12
+  let height = (config.seriesHeight[size] * graphic_data.length) + (10 * (graphic_data.length - 1)) + 12
   let isMobile = size == "sm";
 
   //set up scales
@@ -38,7 +38,7 @@ function drawGraphic() {
   let xAxis = d3.axisBottom(x)
     .tickSize(-height)
     .tickFormat(d3.format(".0%"))
-    .ticks(config.optional.xAxisTicks[size]);
+    .ticks(config.xAxisTicks[size]);
 
   //create svg for chart
   svg = addSvg({
@@ -49,10 +49,10 @@ function drawGraphic() {
   })
 
 
-  if (config.essential.xDomain == "auto") {
+  if (config.xDomain == "auto") {
     x.domain([0, d3.max(graphic_data, function (d) { return d.value })]);
   } else {
-    x.domain(config.essential.xDomain)
+    x.domain(config.xDomain)
   }
 
   svg
@@ -81,10 +81,10 @@ function drawGraphic() {
     .attr('y', (d) => y(d.name))
     .attr('width', (d) => x(d.value) - x(0))
     .attr('height', y.bandwidth())
-    .attr('fill', config.essential.colour_palette);
+    .attr('fill', config.colour_palette);
 
 
-  if (config.essential.dataLabels.show == true) {
+  if (config.dataLabels.show == true) {
 
     addDataLabels({
       svgContainer: svg,
@@ -101,7 +101,7 @@ function drawGraphic() {
     svgContainer: svg,
     xPosition: chart_width,
     yPosition: height + 35,
-    text: config.essential.xAxisLabel,
+    text: config.xAxisLabel,
     textAnchor: "end",
     wrapWidth: chart_width
   });
@@ -110,10 +110,10 @@ function drawGraphic() {
   setupArrowhead(d3.select("svg"));
   setupMobileAnnotations();
 
-  loadAnnotationsFromJson("annotations-1757686345555.json",svg, isMobile)
+  loadAnnotationsFromJson("annotations-1757686345555.json",svg, {xScale:x,yScale:y},isMobile)
 
   //create link to source
-  addSource('source', config.essential.sourceText)
+  addSource('source', config.sourceText)
 
   //use pym to calculate chart dimensions
   if (pymChild) {
@@ -121,7 +121,7 @@ function drawGraphic() {
   }
 }
 
-d3.csv(config.essential.graphic_data_url)
+d3.csv(config.graphic_data_url)
   .then(data => {
     //load chart data
     graphic_data = data

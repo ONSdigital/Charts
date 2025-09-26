@@ -9,8 +9,8 @@ config = {
   },
   "xDomain": [0, 1],
   // either "auto" or an array for the x domain e.g. [0,100]
-  "xAxisLabel": "x axis label"
-    "margin": {
+  "xAxisLabel": "x axis label",
+  "margin": {
     "sm": {
       "top": 15,
       "right": 20,
