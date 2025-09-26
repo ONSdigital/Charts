@@ -105,71 +105,8 @@ function drawGraphic() {
     wrapWidth: chart_width
   });
 
-  // addAnnotation({
-  //   svg: svg,
-  //   type: 'line-vertical',
-  //   x: x(0.2),
-  //   label: 'A vertical line annotation',
-  //   line: { height: height },
-  //   editable:true
-  // })
-
   //setup the arrowhead marker
   setupArrowhead(d3.select("svg"));
-
-  // addAnnotation({
-  //   svg:svg,
-  //   type:'arrow',
-  //   x:x(0.48),
-  //   y:y("Arts") + y.bandwidth()/2,
-  //   label:"An arrow annotation, also known as a point annotation",
-  //   arrow:{lengthX:50,lengthY:50,offsetX:10,offsetY:10,curve:'left'},
-  //   position:{
-  //     text:'below',
-  //   },
-  //   editable:true
-  // })
-
-  // addAnnotation({
-  //   svg:svg,
-  //   type:'text',
-  //   x:x(0.38),
-  //   y:y("A few more")-5,
-  //   label:"A free text annotation",
-  //   editable:true
-  // })
-
-  // addAnnotation({
-  //   svg:svg,
-  //   type:'direction-arrow',
-  //   x:x(1),
-  //   y:15,
-  //   label:"A direction arrow, with end anchor",
-  //   arrow:{direction:'right'},
-  //   editable:true
-  // })
-
-  // addAnnotation({
-  //   svg:svg,
-  //   type:'direction-arrow',
-  //   x:x(0.22),
-  //   y:height-20,
-  //   label:"A direction arrow, with start anchor",
-  //   arrow:{direction:'right'},
-  //   position:{anchor:'start'},
-  //   editable:true
-  // })
-
-  // addAnnotation({
-  //   svg:svg,
-  //   type:'range-vertical',
-  //   x:x(0.6),
-  //   y:y('Small bars'),
-  //   label:"A vertical range annotation",
-  //   line:{endX:x(0.9),height:height},
-  //   position:{text:"left",inside:"inside"},
-  //   editable:true
-  // })
 
   createAnnotationToolbar('#toolbar', d3.select('svg'),svg,{xScale:x,yScale:y},margin, chart_width,height)
 
