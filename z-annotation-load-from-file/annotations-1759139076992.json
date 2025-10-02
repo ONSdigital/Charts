@@ -1,0 +1,74 @@
+[
+  {
+    "timestamp": "2025-09-29T09:43:32.670Z",
+    "pixel": {
+      "x": 281.5,
+      "y": 65.39999389648438
+    },
+    "data": {
+      "x": 0.5026785714285714,
+      "y": "Quite small bar",
+      "endX": 0.7
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "range-vertical",
+    "editable": true,
+    "x": 281.5,
+    "y": 65.39999389648438,
+    "label": "Vertical range",
+    "line": {
+      "height": 442,
+      "endX": 392
+    },
+    "position": {
+      "text": "left",
+      "enclosure": "inside"
+    },
+    "id": "annotation-1759139012670-9am6va8"
+  },
+  {
+    "timestamp": "2025-09-29T09:43:45.956Z",
+    "pixel": {
+      "x": 146.5,
+      "y": "Wholesale trade"
+    },
+    "data": {
+      "x": 0.26160714285714287,
+      "y": "Wholesale trade",
+      "endY": "A few more"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "range-horizontal",
+    "editable": true,
+    "x": 146.5,
+    "y": 285,
+    "label": "Horizontal range",
+    "line": {
+      "width": 560,
+      "endY": 363
+    },
+    "position": {
+      "alignment": "above",
+      "enclosure": "inside"
+    },
+    "id": "annotation-1759139025956-rdd5vcu"
+  }
+]
