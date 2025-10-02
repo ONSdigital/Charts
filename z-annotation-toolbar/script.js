@@ -108,7 +108,7 @@ function drawGraphic() {
   //setup the arrowhead marker
   setupArrowhead(d3.select("svg"));
 
-  createAnnotationToolbar('#toolbar', d3.select('svg'),svg,{xScale:x,yScale:y},margin, chart_width,height)
+  createAnnotationToolbar(d3.select('svg'),svg,{xScale:x,yScale:y},margin, chart_width,height)
 
   //create link to source
   addSource('source', config.sourceText)

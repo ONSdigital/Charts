@@ -110,7 +110,7 @@ function drawGraphic() {
   setupArrowhead(d3.select("svg"));
   setupMobileAnnotations();
 
-  loadAnnotationsFromJson("annotations-1757686345555.json",svg, {xScale:x,yScale:y},isMobile)
+  loadAnnotationsFromJson("annotations-1759314061962.json",svg, {xScale:x,yScale:y},isMobile)
 
   //create link to source
   addSource('source', config.sourceText)
