@@ -21,7 +21,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: ONSdigital/charts-lib
-        token: ${{ secrets.SYNC_LIB }}
         fetch-depth: 0
         path: charts-lib
 
@@ -29,7 +28,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: ONSdigital/otherCharts
-        token: ${{ secrets.SYNC_LIB }}
         fetch-depth: 0
         path: otherCharts
     
