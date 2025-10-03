@@ -20,7 +20,7 @@ jobs:
     - name: Checkout target repository for charts-lib
       uses: actions/checkout@v4
       with:
-        repository: ONSvisual/charts-lib
+        repository: ONSdigital/charts-lib
         token: ${{ secrets.SYNC_LIB }}
         fetch-depth: 0
         path: charts-lib
@@ -28,7 +28,7 @@ jobs:
     - name: Checkout target repository for otherCharts
       uses: actions/checkout@v4
       with:
-        repository: ONSvisual/otherCharts
+        repository: ONSdigital/otherCharts
         token: ${{ secrets.SYNC_LIB }}
         fetch-depth: 0
         path: otherCharts
