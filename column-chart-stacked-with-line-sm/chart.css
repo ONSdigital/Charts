@@ -3,13 +3,6 @@
   font-size: 14px;
 }
 
-
-.chart-container:last-child {
-  margin-right: 0;
-}
-
-
-
 #legend{
   display: grid;
   align-items: center;

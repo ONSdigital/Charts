@@ -5,12 +5,4 @@
     stroke: none; /* Changes the color of the axis lines */
   }
   
-  .grid .tick {
-    stroke: lightgrey; /* Changes the color of the gridlines */
-    stroke-opacity: 0.7;
-    shape-rendering: crispEdges; /* Makes the gridlines appear more crisp */
-  }
-  .grid path {
-    stroke-width: 0; /* Removes the line along the y-axis */
-  }
   

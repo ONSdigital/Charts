@@ -12,8 +12,8 @@ config = {
   "xAxisLabel": "x axis label",
   "yAxisLabel": "y axis label",
   "xAxisFormat": ".0%",
-  "yAxisFormat": ".0%"
-    "chartEvery": {
+  "yAxisFormat": ".0%",
+  "chartEvery": {
     "sm": 1,
     "md": 1,
     "lg": 2
