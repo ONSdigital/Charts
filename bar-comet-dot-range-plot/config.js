@@ -16,11 +16,11 @@ config = {
 	//set the first two colours of the palette according to the legendLabels below for the bar and range plot. For bar ref line, it is hardcoded in the css as line.refline to #222
 	//input legend colours as they appear from left to right (increase, decrease, no change for comet charge)
 	//suggested colour palette for:
-	//bar: ["#27A0CC"]
-	//comet: ["#206095","#F66068","#A09FA0"]
-	//dot: ["#206095","#A09FA0"]
-	//range: ["#A09FA0","#206095"]
-	"colour_palette": ["#27A0CC"],
+	//bar: [ONScolours.oceanBlue]
+	//comet: [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50]
+	//dot: [ONScolours.oceanBlue, ONScolours.grey50]
+	//range: [ONScolours.grey50, ONScolours.oceanBlue]
+	"colour_palette": [ONScolours.oceanBlue, ONScolours.skyBlue],
 	//applies to comet, dot and range
 	"dotsize": 6,
 	//adjustable for comet legend only showing the increase/decrease/nochange

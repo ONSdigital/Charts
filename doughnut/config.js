@@ -1,6 +1,6 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette": ["#206095", "#27A0CC", "#871A5B", "#A8BD3A", "#F66068", "#003C57"],
+	"colour_palette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "",
 	"dataLabels": {

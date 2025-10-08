@@ -1,14 +1,6 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette": [
-		"#206095",
-		"#871A5B",
-		"#8D8C8E",
-		"#27A0CC",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
+	"colour_palette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary":
 		"A range plot with confidence intervals. This chart is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
