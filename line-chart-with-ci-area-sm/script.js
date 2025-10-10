@@ -101,8 +101,8 @@ function drawGraphic() {
 				.attr('fill', 'none')
 				.attr(
 					'stroke', /*() => (categories.indexOf(category) == chartIndex) ? "#206095" : "#dadada"*/
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+					config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
 				.attr('stroke-width', 2.5)
@@ -120,8 +120,8 @@ function drawGraphic() {
 			svg.append('path')
 				.attr('class', 'shaded')
 				.attr('d', areaGenerator(data))
-				.attr('fill', config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+				.attr('fill', config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 				])
 				.attr('opacity', 0.15)
 
@@ -221,7 +221,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(categories, config.colour_palette)
+			d3.zip(categories, config.colourPalette)
 		)
 		.enter()
 		.append('div')

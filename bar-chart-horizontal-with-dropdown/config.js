@@ -1,7 +1,7 @@
 config = {
 
 	"graphic_data_url": "data.csv",
-	"colour_palette": ONScolours.oceanBlue,
+	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"dataLabels": {

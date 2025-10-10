@@ -1,6 +1,6 @@
 config={
   "graphic_data_url": "bubbleplotdata.csv",
-  "colour_palette": [ONScolours.oceanBlue,ONScolours.springGreen,ONScolours.coralPink,ONScolours.skyBlue],
+  "colourPalette": [ONScolours.oceanBlue,ONScolours.springGreen,ONScolours.coralPink,ONScolours.skyBlue],
   "sourceText": "Office for National Statistics",
   "accessibleSummary":"Here is the screenreader text describing the chart.",
   "xDomain":[0,1],

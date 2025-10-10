@@ -1,6 +1,6 @@
 config = {
   "graphic_data_url": "data.csv",
-  "colour_palette": ONSpalette,
+  "colourPalette": ONSpalette,
   "fillOpacity": 1,
   "strokeOpacity": 1,
   "dateFormat": "%d/%m/%Y",

@@ -25,7 +25,7 @@ function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
   size = initialise(size);
 
-  let colour = d3.scaleOrdinal(config.colour_palette);
+  let colour = d3.scaleOrdinal(config.colourPalette);
 
   let margin = config.margin[size];
   let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
@@ -87,7 +87,7 @@ function drawGraphic() {
       .attr('cx', 15)
       .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)))
       .attr('r', d => Math.sqrt(sizeScale(d) / Math.PI))
-      .attr('fill', config.colour_palette[0])
+      .attr('fill', config.colourPalette[0])
       .attr('stroke', 'white')
       .attr('stroke-width', 1);
 

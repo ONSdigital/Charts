@@ -76,10 +76,10 @@ function drawGraphic() {
 		.scaleThreshold()
 		.domain(breaks.slice(1, 6))
 		.range(
-			Array.isArray(config.colour_palette)
-				? config.colour_palette
+			Array.isArray(config.colourPalette)
+				? config.colourPalette
 				: chroma
-					.scale(chroma.brewer[config.colour_palette])
+					.scale(chroma.brewer[config.colourPalette])
 					.colors(config.numberOfBreaks)
 		);
 

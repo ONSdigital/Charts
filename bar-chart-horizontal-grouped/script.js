@@ -32,7 +32,7 @@ function drawGraphic() {
     .domain(xDomain);
 
   const colour = d3.scaleOrdinal()
-    .range(config.colour_palette)
+    .range(config.colourPalette)
     .domain(Object.keys(config.legendLabels))
 
   // create the y scale in groups
@@ -107,7 +107,7 @@ function drawGraphic() {
     .attr('y', d => groups.filter(f => f[0] == d.group)[0][3](d.name))
     .attr('width', (d) => Math.abs(x(d.value) - x(0)))
     .attr('height', (d) => groups.filter(f => f[0] == d.group)[0][3].bandwidth())
-    .attr('fill', config.colour_palette);
+    .attr('fill', config.colourPalette);
 
   let labelPositionFactor = 7;
 

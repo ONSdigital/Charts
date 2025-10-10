@@ -32,7 +32,7 @@ function drawGraphic() {
 	const colour = d3
 		.scaleOrdinal()
 		.domain(graphic_data.columns.slice(1))
-		.range(config.colour_palette);
+		.range(config.colourPalette);
 
 	//use the data to find unique entries in the name column
 	y.domain([...new Set(graphic_data.map((d) => d.name))]);
@@ -74,7 +74,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(1), config.colour_palette)
+			d3.zip(graphic_data.columns.slice(1), config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -119,7 +119,7 @@ function drawGraphic() {
 		.selectAll('g')
 		.data(series)
 		.join('g')
-		.attr('fill', (d, i) => config.colour_palette[i])
+		.attr('fill', (d, i) => config.colourPalette[i])
 		.selectAll('rect')
 		.data((d) => d)
 		.join('rect')

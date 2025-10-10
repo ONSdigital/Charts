@@ -106,7 +106,7 @@ function drawGraphic() {
 		.selectAll('g')
 		.data(seriesAll)
 		.join('g')
-		.attr('fill', (d, i) => config.colour_palette[i])
+		.attr('fill', (d, i) => config.colourPalette[i])
 		.selectAll('rect')
 		.data((d) => d)
 		.join('rect')
@@ -175,7 +175,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(2), config.colour_palette)
+			d3.zip(graphic_data.columns.slice(2), config.colourPalette)
 		)
 		.enter()
 		.append('div')

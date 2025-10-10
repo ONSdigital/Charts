@@ -1,6 +1,6 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette": [
+	"colourPalette": [
 		ONScolours.oceanBlue,
 		ONScolours.skyBlue,
 		ONScolours.grey20

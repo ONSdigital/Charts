@@ -49,10 +49,10 @@ function drawGraphic() {
 		const colorScale = d3
 			.scaleOrdinal()
 			.domain(categories)
-			.range(config.colour_palette);
+			.range(config.colourPalette);
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colour_palette].slice(0, categories.length)
+		let colours = [...config.colourPalette].slice(0, categories.length)
 
 		// Set up the legend
 		const legenditem = legend

@@ -20,7 +20,7 @@ config = {
 	//comet: [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50]
 	//dot: [ONScolours.oceanBlue, ONScolours.grey50]
 	//range: [ONScolours.grey50, ONScolours.oceanBlue]
-	"colour_palette": [ONScolours.oceanBlue, ONScolours.skyBlue],
+	"colourPalette": [ONScolours.oceanBlue, ONScolours.skyBlue],
 	//applies to comet, dot and range
 	"dotsize": 6,
 	//adjustable for comet legend only showing the increase/decrease/nochange

@@ -276,7 +276,7 @@ function drawGraphic() {
 
 	//remove the highlight stroke on mobile
 	if (size == 'sm') {
-		d3.selectAll('.dots').attr('stroke', config.colour_palette);
+		d3.selectAll('.dots').attr('stroke', config.colourPalette);
 	}
 
 	// This does the y-axis label
@@ -389,13 +389,13 @@ function drawGraphic() {
 				d3.select(this)
 					.style('opacity', 0.75)
 					.style('stroke', (d) =>
-						d.highlight == 0 ? config.colour_palette : '#222222'
+						d.highlight == 0 ? config.colourPalette : '#222222'
 					);
 			} else {
 				tooltip.style('opacity', 0);
 				d3.select(this)
 					.style('opacity', 0.75)
-					.style('stroke', config.colour_palette);
+					.style('stroke', config.colourPalette);
 			}
 		};
 
@@ -413,11 +413,11 @@ function drawGraphic() {
 			.attr('cx', (d) => x(d.x))
 			.attr('cy', (d) => y(d.y))
 			.attr('r', (d) => r(d.size))
-			.attr('fill', config.colour_palette)
+			.attr('fill', config.colourPalette)
 			.attr('opacity', 0.75)
 			.attr('stroke-width', (d) => (d.highlight == 0 ? '1px' : '1.5px'))
 			.attr('stroke', (d) =>
-				d.highlight == 0 ? config.colour_palette : '#222222'
+				d.highlight == 0 ? config.colourPalette : '#222222'
 			);
 
 		d3.selectAll('.dots')
@@ -454,10 +454,10 @@ function drawGraphic() {
 					.attr('cx', (d, i) => legendData[i][2])
 					.attr('cy', -(margin.top * 0.66))
 					.attr('r', (d, i) => r(legendData[i][1]))
-					.attr('fill', config.colour_palette)
+					.attr('fill', config.colourPalette)
 					.attr('opacity', 0.75)
 					.attr('stroke-width', '1px')
-					.attr('stroke', config.colour_palette);
+					.attr('stroke', config.colourPalette);
 
 				//append text
 
@@ -484,10 +484,10 @@ function drawGraphic() {
 					.attr('cx', -10)
 					.attr('cy', (d, i) => -margin.top + 20 + r(legendData[i][1] * 5)) //may need to tweak these values to get the legend to sit correctly
 					.attr('r', (d, i) => r(legendData[i][1]))
-					.attr('fill', config.colour_palette)
+					.attr('fill', config.colourPalette)
 					.attr('opacity', 0.75)
 					.attr('stroke-width', '1px')
-					.attr('stroke', config.colour_palette);
+					.attr('stroke', config.colourPalette);
 
 				//append text
 

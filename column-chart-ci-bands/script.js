@@ -137,7 +137,7 @@ function drawGraphic() {
         .attr('x', (d) => x(d.xvalue))
         .attr('height', (d) => Math.abs(y(d.upperCI) - y(d.lowerCI)))
         .attr('width', x.bandwidth())
-        .attr('fill', config.colour_palette)
+        .attr('fill', config.colourPalette)
         .attr("opacity", 0.65);
 
     svg
@@ -186,7 +186,7 @@ function drawGraphic() {
 
     legenditemCI.append('div')
         .attr('class', 'legend--icon--rect')
-        .style('background-color', config.colour_palette);
+        .style('background-color', config.colourPalette);
 
 
     legenditemCI.append('div')

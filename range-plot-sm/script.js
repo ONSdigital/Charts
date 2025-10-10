@@ -47,7 +47,7 @@ function drawGraphic() {
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(Object.keys(config.legendLabels));
 
 	// create the y scale in groups
@@ -373,7 +373,7 @@ function drawGraphic() {
 		.data(
 			d3.zip(
 				Object.values(config.legendLabels),
-				config.colour_palette
+				config.colourPalette
 			)
 		)
 		.enter()

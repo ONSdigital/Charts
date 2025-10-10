@@ -15,7 +15,7 @@ function drawGraphic() {
 		.append('div')
 		.attr('class', 'legend--item--here')
 		.append('div').attr('class', 'legend--icon--circle')
-		.style('background-color', config.colour_palette)
+		.style('background-color', config.colourPalette)
 
 	d3.select(".legend--item--here")
 		.append('div')
@@ -162,7 +162,7 @@ function drawGraphic() {
 			.attr('y', (d) => y(d.name))
 			.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette);
+			.attr('fill', config.colourPalette);
 
 
 		svg

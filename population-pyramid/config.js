@@ -22,8 +22,8 @@ const config = {
     yAxisTicksEvery: 10,
     displayType: "counts", // "counts" or "percentages"
     // Colors
-    colour_palette: [ONScolours.femaleLight, ONScolours.male],
-    comparison_colour_palette: [ONScolours.grey100, ONScolours.grey100], // Comparison Female, Male
+    colourPalette: [ONScolours.femaleLight, ONScolours.male],
+    comparison_colourPalette: [ONScolours.grey100, ONScolours.grey100], // Comparison Female, Male
 
     // Legend
     legend: ["Current population", "Comparison population"],

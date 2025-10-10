@@ -45,7 +45,7 @@ function drawGraphic() {
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(Object.values(config.seriesLabels));
 
 
@@ -197,7 +197,7 @@ function drawGraphic() {
 	// Set up the legend
 	var legenditemTop = d3.select('#legendTop')
 		.selectAll('div.legend--item')
-		.data(d3.zip(Object.values(config.seriesLabels), config.colour_palette))
+		.data(d3.zip(Object.values(config.seriesLabels), config.colourPalette))
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item')
@@ -406,7 +406,7 @@ function drawGraphic() {
 		// 	var_group3
 		// 		.append('circle')
 		// 		.attr('r', config.dotsize)
-		// 		.attr('fill', config.colour_palette[2])
+		// 		.attr('fill', config.colourPalette[2])
 		// 		.attr('cx', 10)
 		// 		.attr('cy', 26);
 
@@ -416,7 +416,7 @@ function drawGraphic() {
 		// 		.attr('x', config.dotsize + 15)
 		// 		.attr('text-anchor', 'start')
 		// 		.attr('class', 'legendLabel')
-		// 		.attr('fill', config.colour_palette[2])
+		// 		.attr('fill', config.colourPalette[2])
 		// 		.text('No change');
 	} //End drawLegend
 

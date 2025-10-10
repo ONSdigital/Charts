@@ -117,8 +117,8 @@ function drawGraphic() {
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -139,8 +139,8 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.colour_palette_text[
-				categories.indexOf(category) % config.colour_palette_text.length
+				config.textColourPalette[
+				categories.indexOf(category) % config.textColourPalette.length
 				]
 			)
 			.text(d3.format(config.yAxisNumberFormat)((lastDatum[category]))) /* (Math.round((lastDatum[category]) / 100) * 100) */
@@ -153,8 +153,8 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.colour_palette_text[
-				categories.indexOf(category) % config.colour_palette_text.length
+				config.textColourPalette[
+				categories.indexOf(category) % config.textColourPalette.length
 				]
 			)
 			.text(category)
@@ -173,8 +173,8 @@ function drawGraphic() {
 			.attr('text-anchor', 'end')
 			.attr(
 				'fill',
-				config.colour_palette_text[
-				categories.indexOf(category) % config.colour_palette_text.length
+				config.textColourPalette[
+				categories.indexOf(category) % config.textColourPalette.length
 				]
 			)
 			.text(d3.format(config.yAxisNumberFormat)(firstDatum[category]))
@@ -188,8 +188,8 @@ function drawGraphic() {
 			.attr('r', 4)
 			.attr(
 				'fill',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			);
 		svg
@@ -199,8 +199,8 @@ function drawGraphic() {
 			.attr('r', 4)
 			.attr(
 				'fill',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			);
 		// console.log(`Circle appended for category: ${category}`);

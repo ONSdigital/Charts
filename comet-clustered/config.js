@@ -3,7 +3,7 @@ config = {
 	"seriesLabels": { "series0": "Series 1", "series1": "Series 2" },
 	"legendLabels": { "min": "FYE 2022", "max": "FYE 2023" },
 	//the keys match the column names
-	"colour_palette": ONSpalette,
+	"colourPalette": ONSpalette,
 	"colour_min_text": ONScolours.grey75,
 	"legend_colour": ONScolours.grey75,
 	"sourceText": "Country and Regional Public Sector Finances from the Office for National Statistics",

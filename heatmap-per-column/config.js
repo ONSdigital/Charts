@@ -1,6 +1,6 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette": "YlGnBu",
+	"colourPalette": "YlGnBu",
 	// must be a colour brewer palette
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",

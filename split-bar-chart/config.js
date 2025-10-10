@@ -1,8 +1,8 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette_type": "categorical",
+	"colourPalette_type": "categorical",
 	// type can be mono, divergent, categorical
-	"colour_palette_colours": ONSpalette,
+	"colourPalette_colours": ONSpalette,
 	"numberFormat": ".0f",
 	"rowWidth": {
 		"sm": 100,

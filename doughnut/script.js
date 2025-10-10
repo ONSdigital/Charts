@@ -54,7 +54,7 @@ function drawGraphic() {
         .data(pie(graphic_data))
         .join('path')
         .attr('class', (d, i) => 'path' + i)
-        .attr('fill', (d, i) => config.colour_palette[i])
+        .attr('fill', (d, i) => config.colourPalette[i])
         .attr('d', arc)
 
     if (config.dataLabels.show && size !== "sm") {
@@ -154,7 +154,7 @@ function drawGraphic() {
             .selectAll('div.legend--item')
             .data(d3.zip(graphic_data.map(item => (item.category)),
                 graphic_data.map(item => d3.format(config.dataLabels.numberFormat)(item.value)),
-                config.colour_palette))
+                config.colourPalette))
             .enter()
             .append('div')
             .attr('class', 'container'); // Add float-right class here

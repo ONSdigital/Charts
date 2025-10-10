@@ -26,7 +26,7 @@ function drawGraphic() {
 
 	const colour = d3.scaleOrdinal()
 		.domain(keys)
-		.range(config.colour_palette);
+		.range(config.colourPalette);
 
 	if (config.xDomain == 'auto') {
 		let max = d3.max(graphic_data, d => d3.max(keys, col => parseFloat(d[col])));
@@ -56,7 +56,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(config.legendLabels, config.colour_palette)
+			d3.zip(config.legendLabels, config.colourPalette)
 		)
 		.enter()
 		.append('div')

@@ -150,10 +150,10 @@ function drawGraphic() {
 				.datum(Object.entries(lines))
 				.attr('fill', 'none')
 				.attr(
-					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colour_palette[0] :
-						category == reference ? config.colour_palette[1] : config.colour_palette[2]
-					// config.colour_palette[
-					// categories.indexOf(category) % config.colour_palette.length
+					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colourPalette[0] :
+						category == reference ? config.colourPalette[1] : config.colourPalette[2]
+					// config.colourPalette[
+					// categories.indexOf(category) % config.colourPalette.length
 					// ]
 				)
 				.attr('stroke-width', 2)
@@ -183,9 +183,9 @@ function drawGraphic() {
 						.attr('y', 4)
 						.attr('text-anchor', 'start')
 						.attr(
-							'fill', config.colour_palette[0]
-							// config.colour_palette[
-							// categories.indexOf(category) % config.colour_palette.length
+							'fill', config.colourPalette[0]
+							// config.colourPalette[
+							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						)
 						.text(d3.format(",.0f")(lastDatum[category]))
@@ -199,9 +199,9 @@ function drawGraphic() {
 						.attr('cy', y(lastDatum[category]))
 						.attr('r', 3)
 						.attr(
-							'fill', config.colour_palette[0]
-							// config.colour_palette[
-							// categories.indexOf(category) % config.colour_palette.length
+							'fill', config.colourPalette[0]
+							// config.colourPalette[
+							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						);
 
@@ -321,7 +321,7 @@ function drawGraphic() {
 	// Set up the legend
 	let legenditem = legend
 		.selectAll('div.legend--item')
-		.data([[config.legendLabel, config.colour_palette[0]], [reference, config.colour_palette[1]], [config.allLabel, config.colour_palette[2]]])
+		.data([[config.legendLabel, config.colourPalette[0]], [reference, config.colourPalette[1]], [config.allLabel, config.colourPalette[2]]])
 		.enter()
 		.append('div')
 		.attr('class','legend--item');

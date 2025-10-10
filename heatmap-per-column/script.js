@@ -92,7 +92,7 @@ function drawGraphic() {
 				.domain(breaks.get(item).slice(0, -1))
 				.range(
 					chroma
-						.scale(chroma.brewer[config.colour_palette])
+						.scale(chroma.brewer[config.colourPalette])
 						.colors(config.numberOfBreaks)
 				)
 		);

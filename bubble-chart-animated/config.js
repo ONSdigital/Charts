@@ -1,7 +1,7 @@
 config = {
 
 	"graphic_data_url": "data.csv",
-	"colour_palette": ONScolours.oceanBlue,
+	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is your accessibility summary, dvcXXXX",
 	"xDomain": "auto", //auto for auto domain or array [0,50] to define your own

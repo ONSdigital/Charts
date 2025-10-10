@@ -88,7 +88,7 @@ function drawGraphic() {
     .attr("y", (d) => y(d.name))
     .attr("width", (d) => Math.abs(x(d.value) - x(0)))
     .attr("height", y.bandwidth())
-    .attr("fill", config.colour_palette);
+    .attr("fill", config.colourPalette);
 
   // let labelPositionFactor = 7;
 

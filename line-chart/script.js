@@ -169,8 +169,8 @@ function drawGraphic() {
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -186,7 +186,7 @@ function drawGraphic() {
 			.attr('y', y(lastDatum[category]))
 			.attr('dy', '.35em')
 			.attr('text-anchor', 'start')
-			.attr('fill', config.text_colour_palette[index % config.text_colour_palette.length])
+			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
 			.text(category)
 			.call(wrap, margin.right - 10);
 		const bbox = label.node().getBBox();
@@ -207,7 +207,7 @@ function drawGraphic() {
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+				.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -352,7 +352,7 @@ function createDirectLabels(categories, graphic_data, svg, x, y, margin, size, c
             .attr('y', y(lastDatum[category]))
             .attr('dy', '.35em')
             .attr('text-anchor', 'start')
-            .attr('fill', config.text_colour_palette[index % config.text_colour_palette.length])
+            .attr('fill', config.textColourPalette[index % config.textColourPalette.length])
             .text(category)
             .call(wrap, margin.right - 10);
         const bbox = label.node().getBBox();

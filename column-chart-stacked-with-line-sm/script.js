@@ -73,7 +73,7 @@ function drawGraphic() {
 		const colour = d3
 			.scaleOrdinal()
 			.domain(graphic_data.columns.slice(2))
-			.range(config.colour_palette);
+			.range(config.colourPalette);
 
 		//use the data to find unique entries in the date column
 		x.domain([...new Set(graphic_data.map((d) => d.date))]);
@@ -144,7 +144,7 @@ function drawGraphic() {
 		}
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colour_palette].slice(0, graphic_data.columns.slice(2).length - 1)
+		let colours = [...config.colourPalette].slice(0, graphic_data.columns.slice(2).length - 1)
 
 		//gets array of arrays for individual lines
 		let lines = [];
@@ -237,7 +237,7 @@ function drawGraphic() {
 			.selectAll('g')
 			.data(series)
 			.join('g')
-			.attr('fill', (d, i) => config.colour_palette[i])
+			.attr('fill', (d, i) => config.colourPalette[i])
 			.selectAll('rect')
 			.data((d) => d)
 			.join('rect')

@@ -22,7 +22,7 @@ function drawGraphic() {
 	legendItem
 		.append('div')
 		.attr('class', 'legend--icon--circle')
-		.style('background-color', (d, i) => config.colour_palette[i])
+		.style('background-color', (d, i) => config.colourPalette[i])
 
 	legendItem
 		.append('div')
@@ -169,7 +169,7 @@ function drawGraphic() {
 			.attr('y', (d) => y(d.name) + y2(d.category))
 			.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 			.attr('height', y2.bandwidth())
-			.attr('fill', (d) => config.colour_palette[legendCategories.indexOf(d.category)]);
+			.attr('fill', (d) => config.colourPalette[legendCategories.indexOf(d.category)]);
 
 		if (config.dataLabels.show == true && legendCategories.length <= 2) {
 			addDataLabels({

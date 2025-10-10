@@ -77,7 +77,7 @@ function drawGraphic() {
             .selectAll('g')
             .data(series)
             .join('g')
-            .attr('fill', (d, i) => config.colour_palette[i])
+            .attr('fill', (d, i) => config.colourPalette[i])
             .selectAll('rect')
             .data((d) => d)
             .join('rect')
@@ -196,7 +196,7 @@ function drawGraphic() {
     // Set up the legend
     let legenditem = legend
         .selectAll('div.legend--item')
-        .data(categories.map((cat, i) => [cat, config.colour_palette[i]]))
+        .data(categories.map((cat, i) => [cat, config.colourPalette[i]]))
         .enter()
         .append('div')
         .attr('class', 'legend--item');

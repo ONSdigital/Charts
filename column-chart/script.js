@@ -120,7 +120,7 @@ function drawGraphic() {
 		.attr('x', (d) => x(d.date))
 		.attr('height', (d) => Math.abs(y(d.value) - y(0)))
 		.attr('width', x.bandwidth())
-		.attr('fill', config.colour_palette);
+		.attr('fill', config.colourPalette);
 
 
 	// This does the y-axis label

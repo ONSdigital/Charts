@@ -2,7 +2,7 @@ config = {
 	"graphic_data_url": "data.csv",
 	"legendLabels": { "min": "2015-2019", "max": "2020" },
 	//the keys match the column names
-	"colour_palette": [ONScolours.grey60, ONScolours.oceanBlue],
+	"colourPalette": [ONScolours.grey60, ONScolours.oceanBlue],
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary":
 		"Here is the screenreader text describing the chart.",

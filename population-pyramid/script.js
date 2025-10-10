@@ -468,8 +468,8 @@ function addBars() {
         .join('rect')
         .attr('fill', d =>
             d.sex === 'female' ?
-                config.colour_palette[0] :
-                config.colour_palette[1]
+                config.colourPalette[0] :
+                config.colourPalette[1]
         )
         .attr('y', d => y(d.age))
         .attr('height', y.bandwidth());
@@ -496,27 +496,27 @@ function addComparisonLines() {
             .attr('class', 'line')
             .attr('id', 'comparisonLineLeft')
             .attr('d', lineLeft(comparison_data_new) + 'l 0 ' + -y.bandwidth())
-            .attr('stroke', config.comparison_colour_palette[0])
+            .attr('stroke', config.comparison_colourPalette[0])
             .attr('stroke-width', '2px');
 
         comparisons.append('path')
             .attr('class', 'line')
             .attr('id', 'comparisonLineRight')
             .attr('d', lineRight(comparison_data_new) + 'l 0 ' + -y.bandwidth())
-            .attr('stroke', config.comparison_colour_palette[1])
+            .attr('stroke', config.comparison_colourPalette[1])
             .attr('stroke-width', '2px');
     } else if (config.interactionType === 'dropdown') {
         comparisons.append('path')
             .attr('class', 'line')
             .attr('id', 'comparisonLineLeft')
-            .attr('stroke', config.comparison_colour_palette[0])
+            .attr('stroke', config.comparison_colourPalette[0])
             .attr('stroke-width', '2px')
             .attr('opacity', config.hasInteractiveComparison ? 0 : 1);
 
         comparisons.append('path')
             .attr('class', 'line')
             .attr('id', 'comparisonLineRight')
-            .attr('stroke', config.comparison_colour_palette[1])
+            .attr('stroke', config.comparison_colourPalette[1])
             .attr('stroke-width', '2px')
             .attr('opacity', config.hasInteractiveComparison ? 0 : 1);
 
@@ -582,8 +582,8 @@ function addLegend(margin) {
         titleDivs.append('div')
             .style('background-color', (d, i) =>
                 d === 'x' ?
-                    config.colour_palette[i] :
-                    config.comparison_colour_palette[i]
+                    config.colourPalette[i] :
+                    config.comparison_colourPalette[i]
             )
             .attr('class', d =>
                 d === 'x' ? 'legend--icon--circle' : 'legend--icon--refline'
@@ -640,8 +640,8 @@ function changeDataFromDropdown(areacd) {
         .join('rect')
         .attr('fill', d =>
             d.sex === 'female' ?
-                config.colour_palette[0] :
-                config.colour_palette[1]
+                config.colourPalette[0] :
+                config.colourPalette[1]
         )
         .attr('y', d => y(d.age))
         .attr('height', y.bandwidth())

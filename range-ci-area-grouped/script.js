@@ -40,7 +40,7 @@ function drawGraphic() {
 	const series = [...new Set(graphic_data.map(d => d.series))]
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(series);
 
 	// create the y scale in groups
@@ -198,7 +198,7 @@ function drawGraphic() {
 		.data(
 			d3.zip(
 				series,
-				config.colour_palette
+				config.colourPalette
 			)
 		)
 		.enter()

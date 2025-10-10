@@ -22,7 +22,7 @@ function drawGraphic() {
 	const colorScale = d3
 		.scaleOrdinal()
 		.domain(categories)
-		.range(config.colour_palette);
+		.range(config.colourPalette);
 
 	// Set up the legend
 	const legenditem = d3

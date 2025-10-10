@@ -263,7 +263,7 @@ function drawGraphic() {
 
 	//remove the highlight stroke on mobile
 	if (size == 'sm') {
-		d3.selectAll('.dots').attr('stroke', config.colour_palette);
+		d3.selectAll('.dots').attr('stroke', config.colourPalette);
 	}
 
 	// // This does the y-axis label
@@ -376,13 +376,13 @@ function drawGraphic() {
 				d3.select(this)
 					.style('opacity', 0.75)
 					.style('stroke', (d) =>
-						d.highlight == 0 ? config.colour_palette : '#222222'
+						d.highlight == 0 ? config.colourPalette : '#222222'
 					);
 			} else {
 				tooltip.style('opacity', 0);
 				d3.select(this)
 					.style('opacity', 0.75)
-					.style('stroke', config.colour_palette);
+					.style('stroke', config.colourPalette);
 			}
 		};
 
@@ -400,11 +400,11 @@ function drawGraphic() {
 			.attr('cx', (d) => x(d.x))
 			.attr('cy', (d) => y(d.y))
 			.attr('r', config.size)
-			.attr('fill', config.colour_palette)
+			.attr('fill', config.colourPalette)
 			.attr('opacity', 0.75)
 			.attr('stroke-width', (d) => (d.highlight == 0 ? '1px' : '1.5px'))
 			.attr('stroke', (d) =>
-				d.highlight == 0 ? config.colour_palette : '#222222'
+				d.highlight == 0 ? config.colourPalette : '#222222'
 			);
 
 		d3.selectAll('.dots')

@@ -13,7 +13,7 @@ function drawGraphic() {
   //group data on the basis of plot
   nested_data = d3.group(graphic_data, d => d.series)
 
-  let colour = d3.scaleOrdinal(config.colour_palette); //
+  let colour = d3.scaleOrdinal(config.colourPalette); //
 
   const chartEvery = config.chartEvery[size];
 

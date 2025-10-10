@@ -141,7 +141,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .text(seriesName)
     .style("font-weight", "bold")
     .style("font-size", "16px")
-    .style("fill", config.colour_palette[chartIndex % config.colour_palette.length])
+    .style("fill", config.colourPalette[chartIndex % config.colourPalette.length])
     .call(wrap, 150);
 
 
@@ -159,7 +159,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .attr("y", (d, i) => y(graphic_data[i].name))
     .attr("width", (d) => Math.abs(x(d[0]) - x(d[1])))
     .attr("height", y.bandwidth())
-    .style("fill", config.colour_palette[chartIndex % config.colour_palette.length]);
+    .style("fill", config.colourPalette[chartIndex % config.colourPalette.length]);
 
   // This does the x-axis label
   if (chartIndex % chartsPerRow === chartsPerRow - 1) {

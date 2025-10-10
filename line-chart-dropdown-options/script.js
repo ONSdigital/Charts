@@ -169,7 +169,7 @@ function changeData(selectedOption) {
         category: category,
         index: index,
         data: filteredData,
-        color: config.colour_palette[index % config.colour_palette.length]
+        color: config.colourPalette[index % config.colourPalette.length]
     }));
     
     // Create line generator
@@ -226,7 +226,7 @@ function changeData(selectedOption) {
             index: index,
             x: x(lastDatum.date),
             y: y(lastDatum[category]),
-            color: config.colour_palette[index % config.colour_palette.length]
+            color: config.colourPalette[index % config.colourPalette.length]
         };
     });
     
@@ -281,7 +281,7 @@ function changeData(selectedOption) {
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
@@ -322,7 +322,7 @@ function createDirectLabels(categories, filteredData) {
 			.attr('y', y(lastDatum[category]))
 			.attr('dy', '.35em')
 			.attr('text-anchor', 'start')
-			.attr('fill', config.text_colour_palette[index % config.text_colour_palette.length])
+			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
 			.text(category)
 			.call(wrap, margin.right - 10);
 
@@ -389,7 +389,7 @@ function createDirectLabels(categories, filteredData) {
 					.attr('y1', label.originalY)
 					.attr('x2', label.x) // start of the label
 					.attr('y2', label.y)
-					.attr('stroke', config.colour_palette[categories.indexOf(label.category) % config.colour_palette.length])
+					.attr('stroke', config.colourPalette[categories.indexOf(label.category) % config.colourPalette.length])
 					.attr('stroke-width', 1)
 					.attr('stroke-dasharray', '2,2'); // optional: dashed line
 			}
@@ -412,7 +412,7 @@ function createDirectLabelsWithForce(categories, filteredData) {
 			.attr('y', y(lastDatum[category]))
 			.attr('dy', '.35em')
 			.attr('text-anchor', 'start')
-			.attr('fill', config.text_colour_palette[index % config.text_colour_palette.length])
+			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
 			.text(category)
 			.call(wrap, margin.right - 10);
 

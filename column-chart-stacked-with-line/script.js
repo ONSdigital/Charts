@@ -121,7 +121,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(1).filter(d => (d) !== config.line_series), config.colour_palette)
+			d3.zip(graphic_data.columns.slice(1).filter(d => (d) !== config.line_series), config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -196,7 +196,7 @@ function drawGraphic() {
 		.selectAll('g')
 		.data(series)
 		.join('g')
-		.attr('fill', (d, i) => config.colour_palette[i])
+		.attr('fill', (d, i) => config.colourPalette[i])
 		.selectAll('rect')
 		.data((d) => d)
 		.join('rect')
@@ -204,7 +204,7 @@ function drawGraphic() {
 		.attr('x', (d) => x(d.data.date))
 		.attr('height', (d) => Math.abs(y(d[0]) - y(d[1])))
 		.attr('width', x.bandwidth())
-	// .attr('fill', config.colour_palette[0]);
+	// .attr('fill', config.colourPalette[0]);
 
 
 	let thisCurve = d3.curveLinear

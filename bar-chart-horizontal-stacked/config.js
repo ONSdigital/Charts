@@ -1,6 +1,6 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette": ONSpalette,
+	"colourPalette": ONSpalette,
 	"drawLegend": true, // set to false to remove the legend (still working on this)
 	"someOtherVariable": "someOtherValue",
 	"sourceText": "Office for National Statistics",

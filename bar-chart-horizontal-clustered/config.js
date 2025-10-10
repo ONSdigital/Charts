@@ -1,7 +1,7 @@
 config = {
 	"graphic_data_url": "data.csv",
 	"legendLabels": ["Category 1 goes here", "Category 2 goes here"],
-	"colour_palette": ONSpalette,
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"dataLabels": {

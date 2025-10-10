@@ -158,8 +158,8 @@ function drawGraphic() {
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -179,8 +179,8 @@ function drawGraphic() {
 		svg.append('path')
 			.attr('class', 'shaded')
 			.attr('d', areaGenerator(graphic_data))
-			.attr('fill', config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+			.attr('fill', config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 			])
 			.attr('opacity', 0.15)
 
@@ -194,7 +194,7 @@ function drawGraphic() {
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+				.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -228,8 +228,8 @@ function drawGraphic() {
 				.attr('text-anchor', 'start')
 				.attr(
 					'fill', //Colours adjusted for text where needed
-					config.text_colour_palette[
-					categories.indexOf(category) % config.text_colour_palette.length
+					config.textColourPalette[
+					categories.indexOf(category) % config.textColourPalette.length
 					]
 				)
 				.text(category)
@@ -243,8 +243,8 @@ function drawGraphic() {
 				.attr('r', 4)
 				.attr(
 					'fill',
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+					config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 					]
 				);
 			// console.log(`Circle appended for category: ${category}`);

@@ -1,6 +1,6 @@
 config = {
     "graphic_data_url": "data.csv",
-    "colour_palette": ONScolours.oceanBlue,
+    "colourPalette": ONScolours.oceanBlue,
     "line_colour": ONScolours.nightBlue,
     "sourceText": "Office for National Statistics",
     "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title, and the data is available to download below.",
