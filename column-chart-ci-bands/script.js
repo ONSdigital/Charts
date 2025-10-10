@@ -137,7 +137,7 @@ function drawGraphic() {
         .attr('x', (d) => x(d.xvalue))
         .attr('height', (d) => Math.abs(y(d.upperCI) - y(d.lowerCI)))
         .attr('width', x.bandwidth())
-        .attr('fill', config.colour_palette)
+        .attr('fill', config.colourPalette)
         .attr("opacity", 0.65);
 
     svg
@@ -151,7 +151,7 @@ function drawGraphic() {
         .attr('y2', (d) => y((d.yvalue)))
         .attr('stroke-width', 3)
         .attr('stroke-linecap', 'butt')
-        .attr('stroke', config.line_colour)
+        .attr('stroke', config.lineColour)
         .attr('fill', 'none');
 
     // This does the x-axis label
@@ -186,13 +186,13 @@ function drawGraphic() {
 
     legenditemCI.append('div')
         .attr('class', 'legend--icon--rect')
-        .style('background-color', config.colour_palette);
+        .style('background-color', config.colourPalette);
 
 
     legenditemCI.append('div')
         .append('p')
         .attr('class', 'legend--text')
-        .html(config.CI_legend_text);
+        .html(config.legendIntervalText);
 
     var legenditem = d3
         .select('#legend')
@@ -205,13 +205,13 @@ function drawGraphic() {
     legenditem
         .append('div')
         .attr('class', 'legend--icon--estline')
-        .style('background-color', config.line_colour)
+        .style('background-color', config.lineColour)
 
     legenditem
         .append('div')
         .append('p')
         .attr('class', 'legend--text')
-        .html(config.est_text);
+        .html(config.legendEstimateText);
 
 
     //create link to source
@@ -223,7 +223,7 @@ function drawGraphic() {
     }
 }
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
     .then((data) => {
         let parseTime = d3.timeParse(config.dateFormat);
         //load chart data

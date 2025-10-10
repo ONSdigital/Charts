@@ -1,6 +1,6 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ONScolours.oceanBlue,
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",
 	"dataLabels": {
@@ -54,6 +54,5 @@ config = {
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"dropYAxis": true,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

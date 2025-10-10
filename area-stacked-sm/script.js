@@ -21,7 +21,7 @@ function drawGraphic() {
 		.attr('class', 'chart-container');
 
 	function drawChart(container, seriesName, data, chartIndex) {
-		const chartsPerRow = config.chart_every[size];
+		const chartsPerRow = config.chartEvery[size];
 		const chartPosition = chartIndex % chartsPerRow;
 
 		// Set dimensions
@@ -49,10 +49,10 @@ function drawGraphic() {
 		const colorScale = d3
 			.scaleOrdinal()
 			.domain(categories)
-			.range(config.colour_palette);
+			.range(config.colourPalette);
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colour_palette].slice(0, categories.length)
+		let colours = [...config.colourPalette].slice(0, categories.length)
 
 		// Set up the legend
 		const legenditem = legend
@@ -226,7 +226,7 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
 	.then((data) => {
 		// console.log("Original data:", data);
 

@@ -1,8 +1,8 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette_type": "categorical",
+	"graphicDataURL": "data.csv",
+	"colourPaletteType": "categorical",
 	// type can be mono, divergent, categorical
-	"colour_palette_colours": ONSpalette,
+	"colourPalette": ONSpalette,
 	"numberFormat": ".0f",
 	"rowWidth": {
 		"sm": 100,
@@ -13,5 +13,5 @@ config = {
 	"accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title.",
 	"sourceText": "Office for National Statistics",
 	"xAxisLabel": "x axis label",
-	"threshold_sm": 510
+	"smThreshold": 510
 };

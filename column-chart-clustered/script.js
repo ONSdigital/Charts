@@ -22,7 +22,7 @@ function drawGraphic() {
     legendItem
         .append('div')
         .attr('class', 'legend--icon--circle')
-        .style('background-color', (d, i) => config.colour_palette[i])
+        .style('background-color', (d, i) => config.colourPalette[i])
 
     legendItem
         .append('div')
@@ -63,7 +63,7 @@ function drawGraphic() {
         // Calculate the height based on the y-axis domain
         let height = config.chartHeight[size] - config.margin[size].top - config.margin[size].bottom;
 
-        let chartsPerRow = config.chart_every[size];
+        let chartsPerRow = config.chartEvery[size];
         let chartPosition = chartIndex % chartsPerRow;
 
         let margin = { ...config.margin[size] };
@@ -159,7 +159,7 @@ function drawGraphic() {
             .attr('y', d => y(Math.max(0, d.value)))
             .attr('width', x2.bandwidth())
             .attr('height', (d) => Math.abs(y(d.value) - y(0)))
-            .attr('fill', (d) => config.colour_palette[legendCategories.indexOf(d.category)]);
+            .attr('fill', (d) => config.colourPalette[legendCategories.indexOf(d.category)]);
 
         if (config.dataLabels.show == true && legendCategories.length <= 2) {
 			addDataLabelsVertical({
@@ -207,7 +207,7 @@ function drawGraphic() {
     }
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
     //load chart data
     graphic_data = data;
 

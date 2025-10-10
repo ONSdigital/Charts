@@ -32,8 +32,8 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -73,7 +73,7 @@ function drawGraphic() {
 		const colour = d3
 			.scaleOrdinal()
 			.domain(graphic_data.columns.slice(2))
-			.range(config.colour_palette);
+			.range(config.colourPalette);
 
 		//use the data to find unique entries in the date column
 		x.domain([...new Set(graphic_data.map((d) => d.date))]);
@@ -144,7 +144,7 @@ function drawGraphic() {
 		}
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colour_palette].slice(0, graphic_data.columns.slice(2).length)
+		let colours = [...config.colourPalette].slice(0, graphic_data.columns.slice(2).length)
 
 		// Set up the legend
 		let legenditem = d3
@@ -201,7 +201,7 @@ function drawGraphic() {
 			.selectAll('g')
 			.data(series)
 			.join('g')
-			.attr('fill', (d, i) => config.colour_palette[i])
+			.attr('fill', (d, i) => config.colourPalette[i])
 			.selectAll('rect')
 			.data((d) => d)
 			.join('rect')
@@ -243,7 +243,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

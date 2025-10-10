@@ -1,11 +1,10 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": { "min": "2011", "max": "2021" },
 	//the keys match the column names
-	"colour_palette": [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50],
+	"colourPalette": [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50],
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary":
-		"Here is the screenreader text describing the chart.",
+	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"numberFormat": ".0f",
 	"xAxisNumberFormat": ".0f",
 	"xAxisLabel": "x axis label",
@@ -17,7 +16,6 @@ config = {
 	"legendLineLength": 60,
 	"legendItemWidth": 150,
 	"showDataLabels": true,
-
 	"margin": {
 		"sm": {
 			"top": 5,

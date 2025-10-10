@@ -158,8 +158,8 @@ function drawGraphic() {
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -179,8 +179,8 @@ function drawGraphic() {
 		svg.append('path')
 			.attr('class', 'shaded')
 			.attr('d', areaGenerator(graphic_data))
-			.attr('fill', config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+			.attr('fill', config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 			])
 			.attr('opacity', 0.15)
 
@@ -194,7 +194,7 @@ function drawGraphic() {
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+				.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -228,8 +228,8 @@ function drawGraphic() {
 				.attr('text-anchor', 'start')
 				.attr(
 					'fill', //Colours adjusted for text where needed
-					config.text_colour_palette[
-					categories.indexOf(category) % config.text_colour_palette.length
+					config.textColourPalette[
+					categories.indexOf(category) % config.textColourPalette.length
 					]
 				)
 				.text(category)
@@ -243,8 +243,8 @@ function drawGraphic() {
 				.attr('r', 4)
 				.attr(
 					'fill',
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+					config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 					]
 				);
 			// console.log(`Circle appended for category: ${category}`);
@@ -254,7 +254,7 @@ function drawGraphic() {
 
 	});
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 	const ciSvg = d3.select('#legend')
 		.append('div')
 		.attr('class', 'legend--item')
@@ -292,7 +292,7 @@ function drawGraphic() {
 	// 	//alignment - left or right for vertical arrows, above or below for horizontal arrows
 	// 	'below',
 	// 	//annotation text
-	// 	config.CI_legend_interval_text,
+	// 	config.legendIntervalText,
 	// 	//wrap width
 	// 	150,
 	// 	//text adjust y
@@ -309,7 +309,7 @@ function drawGraphic() {
 		37,                    // endY
 		"vertical-first",     // bendDirection
 		"start",                // arrowAnchor
-		config.CI_legend_interval_text, // thisText
+		config.legendIntervalText, // thisText
 		150,                  // wrapWidth
 		25,                   // textAdjustY
 		"top",               // wrapVerticalAlign
@@ -331,7 +331,7 @@ function drawGraphic() {
 		//alignment - left or right for vertical arrows, above or below for horizontal arrows
 		'right',
 		//annotation text
-		config.CI_legend_text,
+		config.legendEstimateText,
 		//wrap width
 		1500,
 		//text adjust y
@@ -364,7 +364,7 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then(data => {
+d3.csv(config.graphicDataURL).then(data => {
 
 	graphic_data = data.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {

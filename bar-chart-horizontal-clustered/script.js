@@ -44,7 +44,7 @@ function drawGraphic() {
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(categoriesUnique);
 
 	//set up yAxis generator
@@ -62,7 +62,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(config.legendLabels, config.colour_palette)
+			d3.zip(config.legendLabels, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -166,7 +166,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

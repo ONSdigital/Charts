@@ -22,7 +22,7 @@ function drawGraphic() {
 	const colorScale = d3
 		.scaleOrdinal()
 		.domain(categories)
-		.range(config.colour_palette);
+		.range(config.colourPalette);
 
 	// Set up the legend
 	const legenditem = d3
@@ -163,7 +163,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((rawData) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
 	graphic_data = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),

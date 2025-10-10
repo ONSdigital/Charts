@@ -13,7 +13,7 @@ function drawGraphic() {
   //group data on the basis of plot
   nested_data = d3.group(graphic_data, d => d.series)
 
-  let colour = d3.scaleOrdinal(config.colour_palette); //
+  let colour = d3.scaleOrdinal(config.colourPalette); //
 
   const chartEvery = config.chartEvery[size];
 
@@ -172,7 +172,7 @@ function drawGraphic() {
 }
 
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
     graphic_data = data

@@ -1,6 +1,6 @@
 config = {
-  "graphic_data_url": "data.csv",
-  "colour_palette": ONSpalette,
+  "graphicDataURL": "data.csv",
+  "colourPalette": ONSpalette,
   "fillOpacity": 1,
   "strokeOpacity": 1,
   "dateFormat": "%d/%m/%Y",
@@ -59,6 +59,5 @@ config = {
   "mediumBreakpoint": 600,
   "dropYAxis": true,
 
-  "elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-  "chart_build": {}
+  "elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

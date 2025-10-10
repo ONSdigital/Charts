@@ -80,7 +80,7 @@ function drawGraphic() {
     .attr('y', (d) => y(d.name))
     .attr('width', (d) => x(d.value) - x(0))
     .attr('height', y.bandwidth())
-    .attr('fill', config.colour_palette);
+    .attr('fill', config.colourPalette);
 
 
   if (config.dataLabels.show == true) {
@@ -368,7 +368,7 @@ function drawGraphic() {
   }
 }
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
     graphic_data = data

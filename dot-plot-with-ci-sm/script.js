@@ -15,7 +15,7 @@ function drawGraphic() {
 
   let plots = [...new Set(graphic_data.map(d => d.series))];
 
-  let colour = d3.scaleOrdinal(config.colour_palette);
+  let colour = d3.scaleOrdinal(config.colourPalette);
 
   const chartEvery = config.chartEvery[size];
 
@@ -225,7 +225,7 @@ function drawGraphic() {
 }
 
 //load data 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then((data) => {
 
     let parseTime = d3.timeParse(config.dateFormat);

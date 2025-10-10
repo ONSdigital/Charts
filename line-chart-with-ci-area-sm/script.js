@@ -32,8 +32,8 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -101,8 +101,8 @@ function drawGraphic() {
 				.attr('fill', 'none')
 				.attr(
 					'stroke', /*() => (categories.indexOf(category) == chartIndex) ? "#206095" : "#dadada"*/
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+					config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
 				.attr('stroke-width', 2.5)
@@ -120,8 +120,8 @@ function drawGraphic() {
 			svg.append('path')
 				.attr('class', 'shaded')
 				.attr('d', areaGenerator(data))
-				.attr('fill', config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+				.attr('fill', config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 				])
 				.attr('opacity', 0.15)
 
@@ -221,7 +221,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(categories, config.colour_palette)
+			d3.zip(categories, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -243,7 +243,7 @@ function drawGraphic() {
 			return d[0];
 		});
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 
 		const ciSvg = d3.select('#legend')
 		.append('div')
@@ -276,7 +276,7 @@ function drawGraphic() {
 			37,                    // endY
 			"vertical-first",     // bendDirection
 			"start",                // arrowAnchor
-			config.CI_legend_interval_text, // thisText
+			config.legendIntervalText, // thisText
 			150,                  // wrapWidth
 			25,                   // textAdjustY
 			"top",               // wrapVerticalAlign
@@ -298,7 +298,7 @@ function drawGraphic() {
 		//alignment - left or right for vertical arrows, above or below for horizontal arrows
 		'right',
 		//annotation text
-		config.CI_legend_text,
+		config.legendEstimateText,
 		//wrap width
 		1500,
 		//text adjust y
@@ -322,7 +322,7 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
 	graphic_data = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),

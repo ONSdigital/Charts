@@ -11,7 +11,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	function calculateChartWidth(size) {
-		const chartEvery = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
 		const chartMargin = config.margin[size];
 
 		if (config.dropYAxis) {
@@ -47,7 +47,7 @@ function drawGraphic() {
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(Object.keys(config.legendLabels));
 
 	// create the y scale in groups
@@ -75,7 +75,7 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 		for (let i = 0; i < categories.length; i++) {
-			let chartPosition = i % config.chart_every[size]
+			let chartPosition = i % config.chartEvery[size]
 
 			let margin = { ...config.margin[size] };
 
@@ -228,7 +228,7 @@ function drawGraphic() {
 
 	// for (let i = 0; i < categories.length; i++) {
 
-	// 	let chartsPerRow = config.chart_every[size];
+	// 	let chartsPerRow = config.chartEvery[size];
 	// 	let chartPosition = i % chartsPerRow;
 
 
@@ -373,7 +373,7 @@ function drawGraphic() {
 		.data(
 			d3.zip(
 				Object.values(config.legendLabels),
-				config.colour_palette
+				config.colourPalette
 			)
 		)
 		.enter()
@@ -404,7 +404,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

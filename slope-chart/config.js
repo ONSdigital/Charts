@@ -1,11 +1,11 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ONSlinePalette,
-	"colour_palette_text": ONStextPalette,
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSlinePalette,
+	"textColourPalette": ONStextPalette,
 	"sourceText": "Census 2011 and Census 2021 from the Office for National Statistics",
 	"accessibleSummary": "",
-	"lineCurveType": "curveLinear", 
-	"yDomain": [0,550000],
+	"lineCurveType": "curveLinear",
+	"yDomain": [0, 550000],
 	// either "auto" or an array for the x domain e.g. [0,2000]
 	"xAxisTickFormat": {
 		"sm": "%b %y",

@@ -40,7 +40,7 @@ function drawGraphic() {
 	const series = [...new Set(graphic_data.map(d => d.series))]
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(series);
 
 	// create the y scale in groups
@@ -198,7 +198,7 @@ function drawGraphic() {
 		.data(
 			d3.zip(
 				series,
-				config.colour_palette
+				config.colourPalette
 			)
 		)
 		.enter()
@@ -220,7 +220,7 @@ function drawGraphic() {
 			return d[0];
 		});
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 
 
 		const ciSvg = legend
@@ -260,7 +260,7 @@ function drawGraphic() {
 			47,                    // endY
 			"vertical-first",     // bendDirection
 			"start",                // arrowAnchor
-			config.CI_legend_text, // thisText
+			config.legendEstimateText, // thisText
 			150,                  // wrapWidth
 			10,                   // textAdjustY
 			"top",               // wrapVerticalAlign
@@ -282,7 +282,7 @@ function drawGraphic() {
 			//alignment - left or right for vertical arrows, above or below for horizontal arrows
 			'right',
 			//annotation text
-			config.CI_legend_interval_text,
+			config.legendIntervalText,
 			//wrap width
 			150,
 			//text adjust y
@@ -302,7 +302,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

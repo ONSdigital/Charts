@@ -30,7 +30,7 @@ function drawGraphic() {
 		.attr('cx',13)
 		.attr('cy',8)
 		.attr('r',6)
-		.attr('fill', config.colour_palette)
+		.attr('fill', config.colourPalette)
 		.attr('class','legendCircle');
 	
 
@@ -128,7 +128,7 @@ function drawGraphic() {
 		.attr('y', (d) => y(d.name))
 		.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 		.attr('height', y.bandwidth())
-		.attr('fill', config.colour_palette);
+		.attr('fill', config.colourPalette);
 
 		svg
 		.selectAll('line.refline')
@@ -170,7 +170,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

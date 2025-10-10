@@ -10,7 +10,7 @@ function drawGraphic() {
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-  let colour = d3.scaleOrdinal(config.colour_palette);
+  let colour = d3.scaleOrdinal(config.colourPalette);
 
   const chartEvery = config.chartEvery[size];
 
@@ -263,7 +263,7 @@ function drawGraphic() {
 }
 
 //load data 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then((data) => {
 
     let parseTime = d3.timeParse(config.dateFormat);

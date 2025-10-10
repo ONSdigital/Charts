@@ -1,6 +1,6 @@
 config={
-  "graphic_data_url": "bubbleplotdata.csv",
-  "colour_palette": [ONScolours.oceanBlue,ONScolours.springGreen,ONScolours.coralPink,ONScolours.skyBlue],
+  "graphicDataURL": "bubbleplotdata.csv",
+  "colourPalette": [ONScolours.oceanBlue,ONScolours.springGreen,ONScolours.coralPink,ONScolours.skyBlue],
   "sourceText": "Office for National Statistics",
   "accessibleSummary":"Here is the screenreader text describing the chart.",
   "xDomain":[0,1],
@@ -56,6 +56,5 @@ config={
   },
   "mobileBreakpoint": 510,
   "mediumBreakpoint": 600,
-  "elements":{"select":0, "nav":0, "legend":0, "titles":0},
-  "chart_build":{}
+  "elements":{"select":0, "nav":0, "legend":0, "titles":0}
 };

@@ -270,7 +270,7 @@ function drawGraphic() {
 
   // Draw circles with positioned data
   chart.append("g")
-    .attr("fill", config.colour_palette)
+    .attr("fill", config.colourPalette)
     .attr("stroke", "white")
     .attr("stroke-width", 0.6)
     .selectAll("circle")
@@ -371,7 +371,7 @@ function drawGraphic() {
 
 
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     // First convert string values to numbers if needed
     data.forEach((d,index) => {

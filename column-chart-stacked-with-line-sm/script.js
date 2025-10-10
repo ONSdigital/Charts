@@ -32,8 +32,8 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -73,7 +73,7 @@ function drawGraphic() {
 		const colour = d3
 			.scaleOrdinal()
 			.domain(graphic_data.columns.slice(2))
-			.range(config.colour_palette);
+			.range(config.colourPalette);
 
 		//use the data to find unique entries in the date column
 		x.domain([...new Set(graphic_data.map((d) => d.date))]);
@@ -88,7 +88,7 @@ function drawGraphic() {
 
 		const stack = d3
 			.stack()
-			.keys(graphic_data.columns.slice(2).filter(d => (d) !== config.line_series))
+			.keys(graphic_data.columns.slice(2).filter(d => (d) !== config.lineSeries))
 			.offset(d3[config.stackOffset])
 			.order(d3[config.stackOrder]);
 
@@ -144,7 +144,7 @@ function drawGraphic() {
 		}
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colour_palette].slice(0, graphic_data.columns.slice(2).length - 1)
+		let colours = [...config.colourPalette].slice(0, graphic_data.columns.slice(2).length - 1)
 
 		//gets array of arrays for individual lines
 		let lines = [];
@@ -178,7 +178,7 @@ function drawGraphic() {
 		}
 
 		// console.log("keys: ", keys)
-		let bar_keys = keys.filter(d => d !== config.line_series);
+		let bar_keys = keys.filter(d => d !== config.lineSeries);
 		// console.log(bar_keys)
 
 		// Set up the legend
@@ -237,7 +237,7 @@ function drawGraphic() {
 			.selectAll('g')
 			.data(series)
 			.join('g')
-			.attr('fill', (d, i) => config.colour_palette[i])
+			.attr('fill', (d, i) => config.colourPalette[i])
 			.selectAll('rect')
 			.data((d) => d)
 			.join('rect')
@@ -255,14 +255,14 @@ function drawGraphic() {
 			.x((d) => x(d.name))
 			.y((d) => y(d.amt));
 
-		let line_values = Object.entries(lines).filter(d => d[0] == config.line_series);
+		let line_values = Object.entries(lines).filter(d => d[0] == config.lineSeries);
 
 		svg.append('g')
 			.selectAll('path')
 			.data(line_values)
 			.enter()
 			.append('path')
-			.attr("stroke", (d, i) => config.line_colour)
+			.attr("stroke", (d, i) => config.lineColour)
 			.attr("class", "dataLine")
 			.attr('d', (d) =>
 				line(d[1]))
@@ -297,12 +297,12 @@ function drawGraphic() {
 		.attr('class', 'legend--item line')
 		.append('div')
 		.attr('class', 'legend--icon--refline')
-		.style('background-color', config.line_colour);
+		.style('background-color', config.lineColour);
 
 	d3.select('.legend--item.line')
 		.append('div')
 		.attr('class', 'legend--text')
-		.text(config.line_series)
+		.text(config.lineSeries)
 
 	//create link to source
 	addSource('source', config.sourceText);
@@ -313,7 +313,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

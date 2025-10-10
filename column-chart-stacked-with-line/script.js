@@ -76,7 +76,7 @@ function drawGraphic() {
 
 	const stack = d3
 		.stack()
-		.keys(graphic_data.columns.slice(1).filter(d => (d) !== config.line_series))
+		.keys(graphic_data.columns.slice(1).filter(d => (d) !== config.lineSeries))
 		.offset(d3[config.stackOffset])
 		.order(d3[config.stackOrder]);
 
@@ -121,7 +121,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(1).filter(d => (d) !== config.line_series), config.colour_palette)
+			d3.zip(graphic_data.columns.slice(1).filter(d => (d) !== config.lineSeries), config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -147,12 +147,12 @@ function drawGraphic() {
 		.attr('class', 'legend--item line')
 		.append('div')
 		.attr('class', 'legend--icon--refline')
-		.style('background-color', config.line_colour);
+		.style('background-color', config.lineColour);
 
 	d3.select('.legend--item.line')
 		.append('div')
 		.attr('class', 'legend--text')
-		.text(config.line_series)
+		.text(config.lineSeries)
 
 
 	//create svg for chart
@@ -196,7 +196,7 @@ function drawGraphic() {
 		.selectAll('g')
 		.data(series)
 		.join('g')
-		.attr('fill', (d, i) => config.colour_palette[i])
+		.attr('fill', (d, i) => config.colourPalette[i])
 		.selectAll('rect')
 		.data((d) => d)
 		.join('rect')
@@ -204,7 +204,7 @@ function drawGraphic() {
 		.attr('x', (d) => x(d.data.date))
 		.attr('height', (d) => Math.abs(y(d[0]) - y(d[1])))
 		.attr('width', x.bandwidth())
-	// .attr('fill', config.colour_palette[0]);
+	// .attr('fill', config.colourPalette[0]);
 
 
 	let thisCurve = d3.curveLinear
@@ -216,18 +216,18 @@ function drawGraphic() {
 		.y((d) => y(d.amt));
 	// //     //opposite sex
 
-	let line_values = Object.entries(lines).filter(d => d[0] == config.line_series)
+	let line_values = Object.entries(lines).filter(d => d[0] == config.lineSeries)
 
 	// console.log("lines: ", lines)
 	// console.log("Object.entries(lines)", Object.entries(lines))
-	// console.log("filtered lines: ", Object.entries(lines).filter(d => d[0] == config.line_series))
+	// console.log("filtered lines: ", Object.entries(lines).filter(d => d[0] == config.lineSeries))
 
 	svg.append('g')
 		.selectAll('path')
 		.data(line_values)
 		.enter()
 		.append('path')
-		.attr("stroke", (d, i) => config.line_colour)
+		.attr("stroke", (d, i) => config.lineColour)
 		.attr("class", "dataLine")
 		.attr('d', (d) =>
 			line(d[1]))
@@ -252,7 +252,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

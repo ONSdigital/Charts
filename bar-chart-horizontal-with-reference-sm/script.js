@@ -15,7 +15,7 @@ function drawGraphic() {
 		.append('div')
 		.attr('class', 'legend--item--here')
 		.append('div').attr('class', 'legend--icon--circle')
-		.style('background-color', config.colour_palette)
+		.style('background-color', config.colourPalette)
 
 	d3.select(".legend--item--here")
 		.append('div')
@@ -67,7 +67,7 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -81,7 +81,7 @@ function drawGraphic() {
 
 		let chart_width = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
-			chartEvery: config.chart_every[size],
+			chartEvery: config.chartEvery[size],
 			chartMargin: config.margin[size]
 		})
 
@@ -162,7 +162,7 @@ function drawGraphic() {
 			.attr('y', (d) => y(d.name))
 			.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette);
+			.attr('fill', config.colourPalette);
 
 
 		svg
@@ -219,7 +219,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 	//use pym to create iframed chart dependent on specified variables

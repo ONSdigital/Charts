@@ -92,7 +92,7 @@ function drawGraphic() {
 				.domain(breaks.get(item).slice(0, -1))
 				.range(
 					chroma
-						.scale(chroma.brewer[config.colour_palette])
+						.scale(chroma.brewer[config.colourPalette])
 						.colors(config.numberOfBreaks)
 				)
 		);
@@ -182,7 +182,7 @@ function* pivot(data, columns, name, value, opts) {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

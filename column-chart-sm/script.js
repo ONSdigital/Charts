@@ -32,8 +32,8 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -155,7 +155,7 @@ function drawGraphic() {
 			.attr('x', (d) => x(d.date))
 			.attr('height', (d) => Math.abs(y(d.value) - y(0)))
 			.attr('width', x.bandwidth())
-			.attr('fill', config.colour_palette);
+			.attr('fill', config.colourPalette);
 
 		// This does the chart title label
 		addChartTitleLabel({
@@ -190,7 +190,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

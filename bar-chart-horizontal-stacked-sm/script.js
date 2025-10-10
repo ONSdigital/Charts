@@ -10,7 +10,7 @@ function drawGraphic() {
     size = initialise(size);
 
     const aspectRatio = config.aspectRatio[size];
-    const chartsPerRow = config.chart_every[size];
+    const chartsPerRow = config.chartEvery[size];
 
     // Get categories from the keys used in the stack generator
     const categories = graphic_data.columns.slice(2);
@@ -77,7 +77,7 @@ function drawGraphic() {
             .selectAll('g')
             .data(series)
             .join('g')
-            .attr('fill', (d, i) => config.colour_palette[i])
+            .attr('fill', (d, i) => config.colourPalette[i])
             .selectAll('rect')
             .data((d) => d)
             .join('rect')
@@ -196,7 +196,7 @@ function drawGraphic() {
     // Set up the legend
     let legenditem = legend
         .selectAll('div.legend--item')
-        .data(categories.map((cat, i) => [cat, config.colour_palette[i]]))
+        .data(categories.map((cat, i) => [cat, config.colourPalette[i]]))
         .enter()
         .append('div')
         .attr('class', 'legend--item');
@@ -233,7 +233,7 @@ function drawGraphic() {
 
 // Load the data
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
     graphic_data = data;
 
     pymChild = new pym.Child({

@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	//either bar, comet, dot or range
 	"chartType": "range",
 	"sourceText": "Office for National Statistics",
@@ -20,14 +20,13 @@ config = {
 	//comet: [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50]
 	//dot: [ONScolours.oceanBlue, ONScolours.grey50]
 	//range: [ONScolours.grey50, ONScolours.oceanBlue]
-	"colour_palette": [ONScolours.oceanBlue, ONScolours.skyBlue],
+	"colourPalette": [ONScolours.oceanBlue, ONScolours.skyBlue],
 	//applies to comet, dot and range
 	"dotsize": 6,
 	//adjustable for comet legend only showing the increase/decrease/nochange
 	"legendLineLength": 60,
 	"legendItemWidth": 150,
-
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 1,
 		"lg": 2
@@ -76,6 +75,5 @@ config = {
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"dropYAxis": true,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

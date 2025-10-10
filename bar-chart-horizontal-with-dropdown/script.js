@@ -121,7 +121,7 @@ function drawGraphic() {
 			// .attr('width', 0)
 			.attr('width', d => d.value < 0 ? Math.abs(x(d.value) - x(0)) : x(d.value) - x(0))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette)
+			.attr('fill', config.colourPalette)
 			.merge(bars)
 			.transition()
 			.duration(1250)
@@ -273,7 +273,7 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 

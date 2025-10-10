@@ -1,10 +1,9 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": ["2015-2019", "2020", "Average", "Another series"],
-	"colour_palette": ONSpalette,
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary":
-		"Here is the screenreader text describing the chart.",
+	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"xAxisNumberFormat": ".0f",
 	"xAxisLabel": "x axis label",
 	"xDomain": "auto",
