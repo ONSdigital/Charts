@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": ["2015-2019", "2020", "Average", "Another series"],
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",

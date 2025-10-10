@@ -338,7 +338,7 @@ function drawGraphic() {
 }
 
 
-d3.csv(config.graphic_data_url,d3.autoType)
+d3.csv(config.graphicDataURL,d3.autoType)
   .then(data => {
     // Add unique IDs based on original data order
     graphic_data = data.map((d, index) => ({

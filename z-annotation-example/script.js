@@ -368,7 +368,7 @@ function drawGraphic() {
   }
 }
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
     graphic_data = data

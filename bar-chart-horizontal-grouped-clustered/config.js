@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": ["Category 1 goes here", "Category 2 goes here"],
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",

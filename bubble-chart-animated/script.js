@@ -579,7 +579,7 @@ function drawGraphic() {
 	}
 } ///END DRAW GRAPHIC
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	data.forEach(function (d) {
 		d.x = +d.x;

@@ -364,7 +364,7 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then(data => {
+d3.csv(config.graphicDataURL).then(data => {
 
 	graphic_data = data.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {

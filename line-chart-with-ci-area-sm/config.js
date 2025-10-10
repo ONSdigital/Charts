@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
 	"sourceText": "Annual Population Survey from the Office for National Statistics ",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",

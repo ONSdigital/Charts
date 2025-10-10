@@ -263,7 +263,7 @@ function drawGraphic() {
 }
 
 //load data 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then((data) => {
 
     let parseTime = d3.timeParse(config.dateFormat);

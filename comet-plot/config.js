@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": { "min": "2011", "max": "2021" },
 	//the keys match the column names
 	"colourPalette": [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50],

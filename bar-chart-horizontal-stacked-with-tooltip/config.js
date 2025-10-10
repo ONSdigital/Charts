@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"colourPalette": ONSpalette,
 	"drawLegend": true, // set to false to remove the legend (still working on this)
 	"someOtherVariable": "someOtherValue",

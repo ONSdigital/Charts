@@ -202,7 +202,7 @@ function drawGraphic() {
     }
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
     //load chart data
     graphic_data = data.sort(function (a, b) {
         return b.value - a.value //  Sorting the categories by value, may prefer to sort alphabetically (a.category - b.category) or not at all

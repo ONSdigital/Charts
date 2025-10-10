@@ -1,5 +1,5 @@
 config={
-      "graphic_data_url": "data.csv",
+      "graphicDataURL": "data.csv",
       "colourPalette": ONSpalette,
       "sourceText": "Office for National Statistics",
       "accessibleSummary":"Bar chart showing that...",

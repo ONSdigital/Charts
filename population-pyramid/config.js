@@ -1,6 +1,6 @@
 const config = {
     // Data settings
-    graphic_data_url: "population-complex.csv",
+    graphicDataURL: "population-complex.csv",
     comparisonData: "population-comparison-complex.csv",
     comparisonTimeData: "population-comparison-time.csv",
     dataType: "counts", // "counts" or "percentages"

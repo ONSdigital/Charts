@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"colourPalette": ONSpalette,
 	"lineColour": ONScolours.black,
 	"sourceText": "Office for National Statistics",

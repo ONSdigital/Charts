@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": { "min": "Moved travel to work area (TTWA)", "max": "Moved region" },
 	//the keys match the column names
 	"colourPalette": [ONScolours.grey60, ONScolours.oceanBlue],

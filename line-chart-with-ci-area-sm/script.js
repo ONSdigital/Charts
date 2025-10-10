@@ -322,7 +322,7 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
 	graphic_data = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),

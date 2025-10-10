@@ -749,7 +749,7 @@ function pivot(data, columns, name, value) {
 }
 
 // Load data and initialize based on config
-const dataPromises = [d3.csv(config.graphic_data_url, d3.autoType)];
+const dataPromises = [d3.csv(config.graphicDataURL, d3.autoType)];
 
 if (config.hasComparison && config.comparisonData) {
     dataPromises.push(d3.csv(config.comparisonData, d3.autoType));

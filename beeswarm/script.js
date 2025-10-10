@@ -371,7 +371,7 @@ function drawGraphic() {
 
 
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     // First convert string values to numbers if needed
     data.forEach((d,index) => {

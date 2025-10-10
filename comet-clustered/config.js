@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"seriesLabels": { "series0": "Series 1", "series1": "Series 2" },
 	"legendLabels": { "min": "FYE 2022", "max": "FYE 2023" },
 	//the keys match the column names

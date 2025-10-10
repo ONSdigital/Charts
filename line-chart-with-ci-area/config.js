@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "datanumeric.csv",
+	"graphicDataURL": "datanumeric.csv",
 	"colourPalette": ONSlinePalette,
 	"textColourPalette": ONStextPalette,
 	"drawLegend": false,

@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"colourPaletteType": "categorical",
 	// type can be mono, divergent, categorical
 	"colourPalette": ONSpalette,

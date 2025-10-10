@@ -1,5 +1,5 @@
 config = {
-  "graphic_data_url": "data.csv",
+  "graphicDataURL": "data.csv",
   "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
   "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title.",

@@ -226,7 +226,7 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
 	.then((data) => {
 		// console.log("Original data:", data);
 

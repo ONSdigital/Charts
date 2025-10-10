@@ -895,7 +895,7 @@ function drawGraphic() {
 //create link to source
 addSource('source', config.sourceText);
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphic_data = data;
 	//use pym to create iframed chart dependent on specified variables

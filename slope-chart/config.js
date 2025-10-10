@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
 	"textColourPalette": ONStextPalette,
 	"sourceText": "Census 2011 and Census 2021 from the Office for National Statistics",

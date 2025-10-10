@@ -1,5 +1,5 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"colourPalette": "YlGnBu",
 	// must be a colour brewer palette
 	"sourceText": "Office for National Statistics",
