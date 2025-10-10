@@ -4,6 +4,8 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 let graphic = d3.select('#graphic');
 let pymChild = null;
 let graphic_data, size, xDomain, circleDist, radius;
+// let overlay; 
+// let positionedOverlayData; 
 
 function positionCircles(data, x, y, radius, layoutMethod = "binned", circleDist) {
   if (layoutMethod === "force") {
@@ -147,8 +149,10 @@ function drawGraphic() {
     });
 
     // set up dropdown
-  const dropdownData = graphic_data.sort((a,b)=>a.areanm.localeCompare(b.areanm)).map((point, index) => ({
-    id: index,
+  const dropdownData = graphic_data
+  .map((point, index) => ({ ...point, originalId: index })) // Add originalId first
+  .sort((a,b)=>a.areanm.localeCompare(b.areanm)).map((point, index) => ({
+    id: point.originalId,  // Use originalId instead of sorted index,
     label: point.areanm || `Point ${index + 1}`,
     group: point.group
   }));
@@ -164,7 +168,8 @@ function drawGraphic() {
     groupKey:'group',
     onChange: (selectedValue) => {
       if (selectedValue) {
-        overlay.highlightPoint(selectedValue.id);
+        const renderIndex = positionedOverlayData.findIndex(d => d.originalId === selectedValue.id);
+        overlay.highlightPoint(renderIndex);
       } else {
         overlay.clearHighlight();
       }
@@ -277,17 +282,20 @@ function drawGraphic() {
     .append("title")
     .text(d => d.areanm + ' ' + d.value);
 
+  const positionedOverlayData = positionedData.map((d, index) => ({
+    xvalue: d.x,
+    yvalue: d.y,
+    name: d.areanm,
+    group: d.group,
+    value: d.value,
+    formattedValue: d3.format(".1f")(d.value),
+    originalId: graphic_data.findIndex(orig => orig === graphic_data.find(g => g.areanm === d.areanm && g.group === d.group))
+  })).sort((a,b)=>a.name.localeCompare(b.name));  
+
   // Add Delaunay overlay
   const overlay = createDelaunayOverlay({
     svgContainer: chart,
-    data: positionedData.map(d => ({
-      xvalue: d.x,
-      yvalue: d.y,
-      name: d.areanm,
-      group: d.group,
-      value: d.value,
-      formattedValue: d3.format(".1f")(d.value)
-    })).sort((a,b)=>a.name.localeCompare(b.name)),
+    data: positionedOverlayData,
     chart_width: chart_width,
     height: height - margin.top - margin.bottom,
     xScale: (d)=>d,
@@ -296,10 +304,14 @@ function drawGraphic() {
       xLabel: config.xAxisLabel || 'Value',
       xValueFormat: d3.format(".1f"),
       showYValue: false,
+      showSize:false,
       backgroundColor:"#fff"
     },
     shape: () => 'circle',
     circleSize: Math.PI * (radius / 2) * (radius / 2),
+    getSymbolSize: () => Math.PI * (radius / 2) * (radius / 2), // Add this
+    sizeScale: null,  // Add this
+    sizeField: null,  // Add this
     radius: 25,
     margin: margin
   });
@@ -362,8 +374,9 @@ function drawGraphic() {
 d3.csv(config.graphic_data_url)
   .then(data => {
     // First convert string values to numbers if needed
-    data.forEach(d => {
+    data.forEach((d,index) => {
       d.value = +d.value;  // Convert to number if it's a string
+      d.originalId = index;  // Add stable ID
     });
 
 

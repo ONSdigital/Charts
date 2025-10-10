@@ -184,6 +184,40 @@ function drawGraphic() {
 		});
 	} //end cascadeX if loop
 
+		// Only run this functionality if config.xTicksAll is false
+		if (!config.xTicksAll) {
+			// Show ticks specified in xAxisTicks. If none are present, plot the first and last tick in the array, with the remaining n going in between.
+			if (Array.isArray(config.xAxisTicks) && config.xAxisTicks.length > 0) {
+				svg.select('.x.axis')
+					.call(xAxis.tickValues(config.xAxisTicks));
+			} else {
+				// Generate ticks: always include first and last, and xAxisTicksAuto evenly spaced in between
+				const domain = x.domain();
+				const n = config.xAxisTicksAuto[size] || 2;
+				let ticks = [];
+				if (domain.length <= n) {
+					ticks = domain;
+				} else {
+					const indices = Array.from({length: n}, (_, i) =>
+						Math.round(i * (domain.length - 1) / (n - 1))
+					);
+					ticks = Array.from(new Set(indices.map(idx => domain[idx])));
+					// Ensure the length matches n (in case of rounding duplicates)
+					while (ticks.length < n) {
+						// Fill in missing ticks if rounding caused duplicates
+						for (let i = 0; i < domain.length && ticks.length < n; i++) {
+							if (!ticks.includes(domain[i])) ticks.push(domain[i]);
+						}
+					}
+					if (ticks.length > n) {
+						ticks = ticks.slice(0, n);
+					}
+				}
+				svg.select('.x.axis')
+					.call(xAxis.tickValues(ticks));
+			}
+		}
+
 	svg
 		.append('g')
 		.attr('class', 'y axis')

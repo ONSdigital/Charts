@@ -46,7 +46,7 @@ function drawGraphic() {
 	const colour = d3
 		.scaleOrdinal()
 		.range(config.colour_palette)
-		.domain(Object.keys(config.legendLabels));
+		.domain(Object.values(config.seriesLabels));
 
 
 	// create the y scale in groups
@@ -111,23 +111,6 @@ function drawGraphic() {
 			});
 	});
 
-	// charts
-	// 	.selectAll("linearGradient")
-	// 	.attr("id", "line-gradient")
-	// 	.attr("gradientUnits", "userSpaceOnUse")
-	// 	.attr("x1", 0)
-	// 	.attr("y1", y(0))
-	// 	.attr("x2", 0)
-	// 	.attr("y2", y(max))
-	// 	.selectAll("stop")
-	// 	  .data([
-	// 		{offset: "0%", color: "blue"},
-	// 		{offset: "100%", color: "red"}
-	// 	  ])
-	// 	.enter().append("stop")
-	// 	  .attr("offset", function(d) { return d.offset; })
-	// 	  .attr("stop-color", function(d) { return d.color; });
-
 	charts
 		.selectAll('line.between')
 		.data((d) => d[1])
@@ -137,33 +120,10 @@ function drawGraphic() {
 		.attr('x2', (d) => x(d.max))
 		.attr('y1', (d, i) => groups.filter((e) => e[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series))
 		.attr('y2', (d, i) => groups.filter((e) => e[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series))
-		// .attr('stroke', (d) =>
-		// 	+d.min > +d.max
-		// 		? config.colour_palette[1]
-		// 		: +d.min < +d.max
-		// 		? config.colour_palette[0]
-		// 		: config.colour_palette[2]
-		// ) //old way of colouring by increase/decrease
 		.attr('stroke', (d) => colour(d.series))
 		.attr('stroke-width', '2px');
 
-	//   charts.selectAll('circle.min')
-	//     .data(d => d[1])
-	//     .join('circle')
-	//     .attr('class', 'min')
-	//     .attr('cx', d => x(d.min))
-	// 	.attr('cy', (d) => groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series))
-	// 	.attr('r', config.dotsize - 2.5)
-	//     .attr('fill', (d) => colour(d.series))
-
-	// charts
-	// 	.selectAll('sym.min')
-	// 	.data((d) => d[1])
-	// 	.join("path")
-	// 	.attr('class', 'min')
-	// 	.attr("d", minSym) 
-	// 	.attr('fill', (d) => colour(d.series))
-	// 	.attr("transform", d => "translate(" + x(d.min) + "," + (groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series)) + ") rotate(45)"); 
+	console.log(colour("series0"))
 
 	charts
 		.selectAll('line.min')
@@ -185,13 +145,6 @@ function drawGraphic() {
 		.attr('cx', (d) => x(d.max))
 		.attr('cy', (d) => groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series))
 		.attr('r', config.dotsize)
-		// .attr('fill', (d) =>
-		// 	+d.min > +d.max
-		// 		? config.colour_palette[1]
-		// 		: +d.min < +d.max
-		// 		? config.colour_palette[0]
-		// 		: config.colour_palette[2]
-		// )
 		.attr('fill', (d) => colour(d.series));
 
 	if (config.showDataLabels == true) {
@@ -203,19 +156,10 @@ function drawGraphic() {
 			.attr('x', (d) => x(d.min) - 2)
 			.attr('y', (d) => (groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series)) - 1)
 			.text((d) => config.numberSuffix + d3.format(config.numberFormat)(d.min))
-			// .attr('fill', (d) =>
-			// 	+d.min > +d.max
-			// 		? config.colour_palette[1]
-			// 		: +d.min < +d.max
-			// 		? config.colour_palette[0]
-			// 		: 'none'
-			// )
-			// .attr('fill', (d) => colour(d.series))
 			.attr("fill", config.colour_min_text)
 			.attr('dy', 6)
 			.attr('dx', (d) => (+d.min < +d.max ? -5 : 5))
-			.attr('text-anchor', (d) => (+d.min < +d.max ? 'end' : 'start'))
-		// .style('font-size', "12.5px");
+			.attr('text-anchor', (d) => (+d.min < +d.max ? 'end' : 'start'));
 
 		charts
 			.selectAll('text.max')
@@ -225,13 +169,6 @@ function drawGraphic() {
 			.attr('x', (d) => x(d.max))
 			.attr('y', (d) => (groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series)) - 1)
 			.text((d) => config.numberSuffix + d3.format(config.numberFormat)(d.max))
-			// .attr('fill', (d) =>
-			// 	+d.min > +d.max
-			// 		? config.colour_palette[1]
-			// 		: +d.min < +d.max
-			// 		? config.colour_palette[0]
-			// 		: config.colour_palette[2]
-			// )
 			.attr('fill', (d) => colour(d.series))
 			.attr('dy', 6)
 			.attr('dx', (d) =>
@@ -390,7 +327,7 @@ function drawGraphic() {
 			)
 			.attr('text-anchor', 'middle')
 			.attr('class', 'legendLabel')
-			.attr('fill', "#707070")
+			.attr('fill', ONScolours.grey75)
 			.text('Increase');
 
 		//Decrease legend item
@@ -408,29 +345,12 @@ function drawGraphic() {
 				config.legendLineLength
 			);
 
-
-
-
-
 		var_group2
 			.append('circle')
 			.attr('r', config.dotsize)
 			.attr('fill', config.legend_colour)
 			.attr('cx', maxTextWidth + config.dotsize)
 			.attr('cy', 26);
-
-		// var_group2
-		// 	.append('circle')
-		// 	.attr('r', config.dotsize - 2.5)
-		// 	.attr('fill', config.legend_colour)
-		// 	.attr('cx', maxTextWidth + config.legendLineLength + 2.5)
-		// 	.attr('cy', 26);
-
-		// var_group2
-		// 	.append("path")
-		// 	.attr("d", minSym) 
-		//     .attr("fill", config.legend_colour) 
-		//     .attr("transform", "translate(" + (maxTextWidth + config.legendLineLength + 2.5) + "," + 26 + ") rotate(45)"); 
 
 		var_group2
 			.append("line")
@@ -464,8 +384,7 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr('class', 'legendLabel')
 			.attr('fill', config.legend_colour)
-			.text(config.legendLabels.min)
-		// .style("font-size", "12.5px");
+			.text(config.legendLabels.min);
 
 		var_group2
 			.append('text')
@@ -480,9 +399,8 @@ function drawGraphic() {
 			)
 			.attr('text-anchor', 'middle')
 			.attr('class', 'legendLabel')
-			// .attr('fill', config.colour_palette[1])
 			.text('Decrease')
-			.attr('fill', "#707070");
+			.attr('fill', ONScolours.grey75);
 
 		// 	//No change legend item
 		// 	var_group3

@@ -12,9 +12,9 @@ output:
 knitr::opts_chunk$set(echo = F)
 ```
 
-The official repository for all publication ready ONS charts. See our [chart menu](https://onsvisual.github.io/Charts/chart-menu/) and [service manual](https://service-manual.ons.gov.uk/data-visualisation) for more guidance on the use of these charts, and of charts more generally. 
+The official repository for all publication ready ONS charts. See our [chart menu](https://onsdigital.github.io/Charts/chart-menu/) and [service manual](https://service-manual.ons.gov.uk/data-visualisation) for more guidance on the use of these charts, and of charts more generally. 
 
-We currently maintain a separate [map templates repository](https://github.com/ONSvisual/maptemplates).
+We currently maintain a separate [map templates repository](https://github.com/ONSdigital/maptemplates).
 
 (NOTE: This repository is still a work in progress.)
 
@@ -22,7 +22,7 @@ We currently maintain a separate [map templates repository](https://github.com/O
 Make a branch and name it something descriptive e.g. feature/new-autocomplete. Once you are happy, do a pull request and someone else will review it before it gets merged into main.
 
 ## If there's a problem with a template
-Please raise an [issue](https://github.com/ONSvisual/Charts/issues) and the team will have a look.
+Please raise an [issue](https://github.com/ONSdigital/Charts/issues) and the team will have a look.
 
 ## Guide to updating and placing an initial commit for a chart
 
@@ -49,9 +49,9 @@ folders <- dir()
 folders <- folders[!(folders %in% to_exclude)]
 chart_names <- .simpleCap(gsub("-", " ", folders))
 chart_names <- gsub("ci ", "CI ", chart_names)
-preview_link <- paste0("https://onsvisual.github.io/Charts/", folders, "/")
+preview_link <- paste0("https://onsdigital.github.io/Charts/", folders, "/")
 preview_link <- paste0("[View](", preview_link, ")")
-code_link <- paste0("https://github.com/ONSvisual/Charts/tree/main/", folders, "/")
+code_link <- paste0("https://github.com/ONSdigital/Charts/tree/main/", folders, "/")
 code_link <- paste0("[`</>`](", code_link, ")")
 readme_link <- paste0("https://github.com/ONSvisual/Charts/blob/main/", folders, "/README.md")
 readme_link <- paste0("[README](", readme_link, ")")

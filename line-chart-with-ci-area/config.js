@@ -1,21 +1,7 @@
 config = {
 	"graphic_data_url": "datanumeric.csv",
-	"colour_palette": [
-		"#206095",
-		"#27A0CC",
-		"#871A5B",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
-	"text_colour_palette": [
-		"#206095",
-		"#1F80A3",
-		"#871A5B",
-		"#6E7E26",
-		"#F66068",
-		"#118C7B"
-	],
+	"colour_palette": ONSlinePalette,
+	"text_colour_palette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",

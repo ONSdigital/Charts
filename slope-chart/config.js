@@ -1,23 +1,7 @@
 config = {
 	"graphic_data_url": "data.csv",
-	"colour_palette": [
-		"#8D8C8E",
-		"#206095",
-		"#27A0CC",
-		"#871A5B",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
-	"colour_palette_text": [
-		"#8D8C8E",
-		"#206095",
-		"#1F80A3",
-		"#871A5B",
-		"#6E7E26",
-		"#F66068",
-		"#118C7B"
-	],
+	"colour_palette": ONSlinePalette,
+	"colour_palette_text": ONStextPalette,
 	"sourceText": "Census 2011 and Census 2021 from the Office for National Statistics",
 	"accessibleSummary": "",
 	"lineCurveType": "curveLinear", 

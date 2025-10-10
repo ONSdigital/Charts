@@ -1,7 +1,7 @@
 config = {
     "graphic_data_url": "data.csv",
-    "colour_palette": "#206095",
-    "line_colour": "#003C57",
+    "colour_palette": ONScolours.oceanBlue,
+    "line_colour": ONScolours.nightBlue,
     "sourceText": "Office for National Statistics",
     "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title, and the data is available to download below.",
     "xAxisTickFormat": {
@@ -17,7 +17,7 @@ config = {
     "yDomain": ["auto"],
     "yAxisLabel": "y axis label",
     "xAxisLabel": "x axis label",
-    "CI_legend_text": "95% confidence interval",
+    "CI_legend_text": "Likely range (95% confidence interval)",
     "est_text": 'Estimate',
 
     "margin": {

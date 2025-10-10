@@ -1,9 +1,9 @@
 config = {
 	"graphic_data_url": "data.csv",
 	"colour_palette": [
-		"#206095",
-		"#27A0CC",
-		"#dadada"
+		ONScolours.oceanBlue,
+		ONScolours.skyBlue,
+		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
 	"reference_category": "England",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off

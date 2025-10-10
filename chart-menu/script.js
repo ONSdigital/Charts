@@ -1,5 +1,5 @@
 let grid = d3.select("#grid");
-let url = "https://onsvisual.github.io/Charts/";
+let url = "https://onsdigital.github.io/Charts/";
 let list = d3.select("#list");
 import chartConfig from "./chartConfig.js";
 

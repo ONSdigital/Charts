@@ -3,12 +3,11 @@ config = {
 	"seriesLabels": { "series0": "Series 1", "series1": "Series 2" },
 	"legendLabels": { "min": "FYE 2022", "max": "FYE 2023" },
 	//the keys match the column names
-	"colour_palette": ["#206095", "#871A5B"],
-	"colour_min_text": "#757575",
-	"legend_colour": "#757575",
+	"colour_palette": ONSpalette,
+	"colour_min_text": ONScolours.grey75,
+	"legend_colour": ONScolours.grey75,
 	"sourceText": "Country and Regional Public Sector Finances from the Office for National Statistics",
-	"accessibleSummary":
-		"The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"numberFormat": ".1f",
 	"xAxisNumberFormat": ".0f",
 	"numberSuffix": "",

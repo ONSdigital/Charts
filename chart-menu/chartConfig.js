@@ -1,7 +1,7 @@
 const chartConfig = [
     {
       name: "Area stacked small multiple",
-      url: "https://onsvisual.github.io/Charts/area-stacked-sm/",
+      url: "https://onsdigital.github.io/Charts/area-stacked-sm/",
       tags: {
         comparison: true,
         "change-over-time": true,
@@ -13,7 +13,7 @@ const chartConfig = [
     },
     {
       name: "Bar chart Split",
-      url: "https://onsvisual.github.io/Charts/split-bar-chart/",
+      url: "https://onsdigital.github.io/Charts/split-bar-chart/",
       tags: {
         comparison: true,
         distribution: true
@@ -24,7 +24,7 @@ const chartConfig = [
     },
     {
       name: "Bar chart small multiple",
-      url: "https://onsvisual.github.io/Charts/bar-chart-horizontal-sm/",
+      url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-sm/",
       tags: {
         comparison: true,
         rank: true
@@ -35,7 +35,7 @@ const chartConfig = [
     },
     {
       name: "Bar chart horizontal with reference small multiple",
-      url: "https://onsvisual.github.io/Charts/bar-chart-horizontal-with-reference-sm/",
+      url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-with-reference-sm/",
       tags: {
         comparison: true,
         "change-over-time": true
@@ -46,7 +46,7 @@ const chartConfig = [
     },
     {
       name: "Bar chart horizontal stacked small multiple",
-      url: "https://onsvisual.github.io/Charts/bar-chart-horizontal-stacked-sm/",
+      url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked-sm/",
       tags: {
         comparison: true,
         "part-to-whole": true
@@ -57,7 +57,7 @@ const chartConfig = [
     },
     {
       name: "Bar chart horizontal stacked group",
-      url: "https://onsvisual.github.io/Charts/bar-chart-horizontal-stacked-grouped/",
+      url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked-grouped/",
       tags: {
         comparison: true,
         "part-to-whole": true
@@ -68,7 +68,7 @@ const chartConfig = [
     },
     {
       name: "Bar chart horizontal grouped",
-      url: "https://onsvisual.github.io/Charts/bar-chart-horizontal-grouped/",
+      url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-grouped/",
       tags: {
         comparison: true
       },
@@ -78,7 +78,7 @@ const chartConfig = [
     },
     {
         name: "Beeswarm",
-        url: "https://onsvisual.github.io/Charts/beeswarm/",
+        url: "https://onsdigital.github.io/Charts/beeswarm/",
         tags: {
             distribution: true
         },
@@ -88,7 +88,7 @@ const chartConfig = [
     },
     {
       name: "Comet plot",
-      url: "https://onsvisual.github.io/Charts/comet-plot/",
+      url: "https://onsdigital.github.io/Charts/comet-plot/",
       tags: {
         comparison: true,
         "change-over-time": true
@@ -99,7 +99,7 @@ const chartConfig = [
     },
     {
       name: "Column small multiple",
-      url: "https://onsvisual.github.io/Charts/column-chart-sm/",
+      url: "https://onsdigital.github.io/Charts/column-chart-sm/",
       tags: {
         comparison: true,
         "change-over-time": true
@@ -110,7 +110,7 @@ const chartConfig = [
     },
     {
       name: "Column chart stacked small multiple",
-      url: "https://onsvisual.github.io/Charts/column-chart-stacked-sm/",
+      url: "https://onsdigital.github.io/Charts/column-chart-stacked-sm/",
       tags: {
         comparison: true,
         "part-to-whole": true,
@@ -122,7 +122,7 @@ const chartConfig = [
     },
     {
       name: "Column chart with confidence bands",
-      url: "https://onsvisual.github.io/Charts/column-chart-ci-bands/",
+      url: "https://onsdigital.github.io/Charts/column-chart-ci-bands/",
       tags: {
         comparison: true,
         uncertainty: true,
@@ -134,7 +134,7 @@ const chartConfig = [
     },
     {
       name: "Dotplot",
-      url: "https://onsvisual.github.io/Charts/dot-plot/",
+      url: "https://onsdigital.github.io/Charts/dot-plot/",
       tags: {
         comparison: true,
         distribution: true
@@ -145,7 +145,7 @@ const chartConfig = [
     },
     {
       name: "Heatmap",
-      url: "https://onsvisual.github.io/Charts/heatmap/",
+      url: "https://onsdigital.github.io/Charts/heatmap/",
       tags: {
         comparison: true,
         correlation: true
@@ -156,7 +156,7 @@ const chartConfig = [
     },
     {
       name: "Heatmap by column",
-      url: "https://onsvisual.github.io/Charts/heatmap-per-column/",
+      url: "https://onsdigital.github.io/Charts/heatmap-per-column/",
       tags: {
         comparison: true,
         correlation: true
@@ -167,7 +167,7 @@ const chartConfig = [
     },
     {
       name: "Line chart small multiple",
-      url: "https://onsvisual.github.io/Charts/line-chart-sm/",
+      url: "https://onsdigital.github.io/Charts/line-chart-sm/",
       tags: {
         "change-over-time": true
       },
@@ -177,7 +177,7 @@ const chartConfig = [
     },
     {
       name: "Line chart with area shaded",
-      url: "https://onsvisual.github.io/Charts/line-chart-with-ci-area/",
+      url: "https://onsdigital.github.io/Charts/line-chart-with-ci-area/",
       tags: {
         "change-over-time": true,
         uncertainty: true
@@ -188,7 +188,7 @@ const chartConfig = [
     },
     {
       name: "Population pyramid",
-      url: "https://onsvisual.github.io/Charts/population-pyramid/",
+      url: "https://onsdigital.github.io/Charts/population-pyramid/",
       tags: {
         comparison: true,
         distribution: true,
@@ -204,7 +204,7 @@ const chartConfig = [
     },
     {
       name: "Range plot",
-      url: "https://onsvisual.github.io/Charts/range-plot/",
+      url: "https://onsdigital.github.io/Charts/range-plot/",
       tags: {
         comparison: true,
         distribution: true
@@ -215,7 +215,7 @@ const chartConfig = [
     },
     {
       name: "Confidence interval range plot",
-      url: "https://onsvisual.github.io/Charts/range-ci-area-grouped/",
+      url: "https://onsdigital.github.io/Charts/range-ci-area-grouped/",
       tags: {
         comparison: true,
         uncertainty: true
@@ -226,7 +226,7 @@ const chartConfig = [
     },
     {
         name: "Range plot small multiple",
-        url: "https://onsvisual.github.io/Charts/range-plot-sm/",
+        url: "https://onsdigital.github.io/Charts/range-plot-sm/",
         tags: {
           comparison: true,
           distribution: true
@@ -237,7 +237,7 @@ const chartConfig = [
       },
       {
         name: "Scatter plot",
-        url: "https://onsvisual.github.io/Charts/scatter-plot/",
+        url: "https://onsdigital.github.io/Charts/scatter-plot/",
         tags: {
           correlation: true
         },
@@ -247,7 +247,7 @@ const chartConfig = [
       },
       {
         name: "Scatter plot small multiple",
-        url: "https://onsvisual.github.io/Charts/scatter-plot-sm/",
+        url: "https://onsdigital.github.io/Charts/scatter-plot-sm/",
         tags: {
           correlation: true,
           comparison: true
@@ -258,7 +258,7 @@ const chartConfig = [
       },
     {
       name: "Simple map",
-      url: "https://onsvisual.github.io/maptemplates/simplemap/",
+      url: "https://onsdigital.github.io/maptemplates/simplemap/",
       tags: {
         geospatial: true
       },
