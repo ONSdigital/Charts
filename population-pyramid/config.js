@@ -1,8 +1,8 @@
 const config = {
     // Data settings
     graphic_data_url: "population-complex.csv",
-    comparison_data: "population-comparison-complex.csv",
-    comparison_time_data: "population-comparison-time.csv",
+    comparisonData: "population-comparison-complex.csv",
+    comparisonTimeData: "population-comparison-time.csv",
     dataType: "counts", // "counts" or "percentages"
     dataStructure: "complex", // "simple" (age, maleBar, femaleBar) or "complex" (pivot structure)
 
@@ -23,7 +23,7 @@ const config = {
     displayType: "counts", // "counts" or "percentages"
     // Colors
     colourPalette: [ONScolours.femaleLight, ONScolours.male],
-    comparison_colourPalette: [ONScolours.grey100, ONScolours.grey100], // Comparison Female, Male
+    comparisonColourPalette: [ONScolours.grey100, ONScolours.grey100], // Comparison Female, Male
 
     // Legend
     legend: ["Current population", "Comparison population"],

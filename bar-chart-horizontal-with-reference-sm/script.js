@@ -67,7 +67,7 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -81,7 +81,7 @@ function drawGraphic() {
 
 		let chart_width = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
-			chartEvery: config.chart_every[size],
+			chartEvery: config.chartEvery[size],
 			chartMargin: config.margin[size]
 		})
 

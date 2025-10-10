@@ -20,7 +20,6 @@ config = {
 	"yAxisLabel": "Median hourly pay (£)",
 	"drawSliderButtons": true,
 	"highlight": true, //if you want to adjust where the highlight label goes, input top/bottom/middle for the relevant groups in the label_y column of the data file or start/middle/end to alter the text anchor in the label_anchor column
-
 	"margin": {
 		"sm": {
 			"top": 140,

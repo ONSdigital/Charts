@@ -15,8 +15,7 @@ config = {
 	"yDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]
 	"yAxisLabel": "y axis label",
-
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2
@@ -60,6 +59,5 @@ config = {
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"dropYAxis": true,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

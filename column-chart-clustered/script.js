@@ -63,7 +63,7 @@ function drawGraphic() {
         // Calculate the height based on the y-axis domain
         let height = config.chartHeight[size] - config.margin[size].top - config.margin[size].bottom;
 
-        let chartsPerRow = config.chart_every[size];
+        let chartsPerRow = config.chartEvery[size];
         let chartPosition = chartIndex % chartsPerRow;
 
         let margin = { ...config.margin[size] };

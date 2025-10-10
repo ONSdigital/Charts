@@ -15,10 +15,8 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"yDomainMax": "auto", // either "auto", "autoAll" or a value
 	"yDomainMin": 0, // either "auto", "autoAll" or a value
-
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%y",
@@ -31,7 +29,6 @@ config = {
 	"xAxisLabel": "",
 	"defaultOption": "option1",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],

@@ -11,9 +11,9 @@ function drawGraphic() {
 	size = initialise(size);
 
 	const aspectRatio = config.aspectRatio[size];
-	const chartsPerRow = config.chart_every[size];
+	const chartsPerRow = config.chartEvery[size];
 
-	const reference = config.reference_category;
+	const reference = config.referenceCategory;
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== reference);

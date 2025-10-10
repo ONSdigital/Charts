@@ -12,7 +12,6 @@ config = {
 	// either "auto" or an array for the x domain e.g. [0,100]
 	"xAxisLabel": "x axis label",
 	"defaultOption": "option1",
-
 	"margin": {
 		"sm": {
 			"top": 15,
@@ -45,6 +44,5 @@ config = {
 	},
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

@@ -17,7 +17,7 @@ function drawGraphic() {
 	//chart width calculated - allows small multiple chart widths to be calculated for the 'bar' chart type but defaults to 1 for the rest
 	let chart_width = calculateChartWidth({
 		screenWidth: parseInt(graphic.style('width')),
-		chartEvery: (config.chartType === "bar"? config.chart_every[size] : 1),
+		chartEvery: (config.chartType === "bar"? config.chartEvery[size] : 1),
 		chartMargin: config.margin[size]
 	})
 				
@@ -98,7 +98,7 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };

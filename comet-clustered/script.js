@@ -156,7 +156,7 @@ function drawGraphic() {
 			.attr('x', (d) => x(d.min) - 2)
 			.attr('y', (d) => (groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series)) - 1)
 			.text((d) => config.numberSuffix + d3.format(config.numberFormat)(d.min))
-			.attr("fill", config.colour_min_text)
+			.attr("fill", config.colourMinText)
 			.attr('dy', 6)
 			.attr('dx', (d) => (+d.min < +d.max ? -5 : 5))
 			.attr('text-anchor', (d) => (+d.min < +d.max ? 'end' : 'start'));
@@ -251,7 +251,7 @@ function drawGraphic() {
 			.attr('x', 0)
 			.attr('text-anchor', 'start')
 			.attr('class', 'mintext legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.min);
 
 		//this measures how wide the "min" value is so that we can place the legend items responsively
@@ -259,7 +259,7 @@ function drawGraphic() {
 
 		var_group
 			.append('line')
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '3px')
 			.attr('y1', 26)
 			.attr('y2', 26)
@@ -269,21 +269,21 @@ function drawGraphic() {
 		var_group
 			.append('circle')
 			.attr('r', config.dotsize)
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.attr('cx', minTextWidth + config.legendLineLength)
 			.attr('cy', 26);
 
 		// var_group
 		// 	.append('circle')
 		// 	.attr('r', config.dotsize - 2.5)
-		// 	.attr('fill', config.legend_colour)
+		// 	.attr('fill', config.legendColour)
 		// 	.attr('cx', minTextWidth + 1.25)
 		// 	.attr('cy', 26);
 
 		// var_group
 		// .append("path")
 		// .attr("d", minSym) 
-		// .attr("fill", config.legend_colour) 
+		// .attr("fill", config.legendColour) 
 		// .attr("transform", "translate(" + (minTextWidth) + "," + 26 + ") rotate(45)");
 
 		var_group
@@ -292,7 +292,7 @@ function drawGraphic() {
 			.attr("x2", minTextWidth)
 			.attr("y1", 26 + 7)
 			.attr("y2", 26 - 7)
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '2.5px');
 
 		var_group
@@ -307,7 +307,7 @@ function drawGraphic() {
 			)
 			.attr('text-anchor', 'start')
 			.attr('class', 'maxtext legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.max)
 			.style("font-weight", 700);
 
@@ -333,7 +333,7 @@ function drawGraphic() {
 		//Decrease legend item
 		var_group2
 			.append('line')
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '3px')
 			.attr('y1', 26)
 			.attr('y2', 26)
@@ -348,7 +348,7 @@ function drawGraphic() {
 		var_group2
 			.append('circle')
 			.attr('r', config.dotsize)
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.attr('cx', maxTextWidth + config.dotsize)
 			.attr('cy', 26);
 
@@ -358,7 +358,7 @@ function drawGraphic() {
 			.attr("x2", maxTextWidth + config.legendLineLength + config.dotsize)
 			.attr("y1", 26 + 7)
 			.attr("y2", 26 - 7)
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '2.5px');
 
 		var_group2
@@ -367,7 +367,7 @@ function drawGraphic() {
 			.attr('x', 0)
 			.attr('text-anchor', 'start')
 			.attr('class', 'legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.max)
 			.style("font-weight", 700);
 
@@ -383,7 +383,7 @@ function drawGraphic() {
 			)
 			.attr('text-anchor', 'start')
 			.attr('class', 'legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.min);
 
 		var_group2

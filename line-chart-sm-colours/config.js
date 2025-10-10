@@ -13,7 +13,6 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,2000]
 	"xAxisTickFormat": {
@@ -25,7 +24,7 @@ config = {
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
 	"zeroLine": "0",
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2

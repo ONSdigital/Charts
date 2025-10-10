@@ -32,8 +32,8 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -88,7 +88,7 @@ function drawGraphic() {
 
 		const stack = d3
 			.stack()
-			.keys(graphic_data.columns.slice(2).filter(d => (d) !== config.line_series))
+			.keys(graphic_data.columns.slice(2).filter(d => (d) !== config.lineSeries))
 			.offset(d3[config.stackOffset])
 			.order(d3[config.stackOrder]);
 
@@ -178,7 +178,7 @@ function drawGraphic() {
 		}
 
 		// console.log("keys: ", keys)
-		let bar_keys = keys.filter(d => d !== config.line_series);
+		let bar_keys = keys.filter(d => d !== config.lineSeries);
 		// console.log(bar_keys)
 
 		// Set up the legend
@@ -255,14 +255,14 @@ function drawGraphic() {
 			.x((d) => x(d.name))
 			.y((d) => y(d.amt));
 
-		let line_values = Object.entries(lines).filter(d => d[0] == config.line_series);
+		let line_values = Object.entries(lines).filter(d => d[0] == config.lineSeries);
 
 		svg.append('g')
 			.selectAll('path')
 			.data(line_values)
 			.enter()
 			.append('path')
-			.attr("stroke", (d, i) => config.line_colour)
+			.attr("stroke", (d, i) => config.lineColour)
 			.attr("class", "dataLine")
 			.attr('d', (d) =>
 				line(d[1]))
@@ -297,12 +297,12 @@ function drawGraphic() {
 		.attr('class', 'legend--item line')
 		.append('div')
 		.attr('class', 'legend--icon--refline')
-		.style('background-color', config.line_colour);
+		.style('background-color', config.lineColour);
 
 	d3.select('.legend--item.line')
 		.append('div')
 		.attr('class', 'legend--text')
-		.text(config.line_series)
+		.text(config.lineSeries)
 
 	//create link to source
 	addSource('source', config.sourceText);

@@ -15,7 +15,7 @@ config = {
 		"md": 300,
 		"lg": 300
 	},
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 1,
 		"lg": 1
@@ -54,6 +54,5 @@ config = {
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"dropYAxis": true,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

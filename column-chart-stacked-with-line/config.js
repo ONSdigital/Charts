@@ -1,7 +1,7 @@
 config = {
 	"graphic_data_url": "data.csv",
 	"colourPalette": ONSpalette,
-	"line_colour": ONScolours.black,
+	"lineColour": ONScolours.black,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"xAxisTickFormat": {
@@ -15,7 +15,7 @@ config = {
 	//the format your date data has in data.csv
 	"yDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]
-	"line_series": "value1",
+	"lineSeries": "value1",
 	"yAxisLabel": "y axis label",
 	"stackOffset": "stackOffsetDiverging",
 	// options include
@@ -29,7 +29,6 @@ config = {
 	// stackOrderAscending the smallest series (according to the sum of values) is at the bottom
 	// stackOrderDescending the largest series (according to the sum of values) is at the bottom
 	// stackOrderReverse reverse the order as set from the data file
-
 	"margin": {
 		"sm": {
 			"top": 30,
@@ -69,6 +68,5 @@ config = {
 	"addFinalDate": false,
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

@@ -47,7 +47,7 @@ config = {
 		}
 	},
 	"chartGap": 20,
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2
@@ -66,6 +66,5 @@ config = {
 	"dropYAxis": true,
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

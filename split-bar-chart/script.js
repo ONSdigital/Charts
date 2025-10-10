@@ -36,10 +36,10 @@ function drawGraphic() {
 	// unique columns
 	let xcategories = [...new Set(graphic_data.map((d) => d.xcategory))];
 
-	if (config.colourPalette_type == 'categorical') {
+	if (config.colourPaletteType == 'categorical') {
 		colour = d3
 			.scaleOrdinal()
-			.range(config.colourPalette_colours)
+			.range(config.colourPalette)
 			.domain(xcategories);
 
 		if (size == 'sm') {
@@ -47,7 +47,7 @@ function drawGraphic() {
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(d3.zip(xcategories, config.colourPalette_colours))
+				.data(d3.zip(xcategories, config.colourPalette))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -163,13 +163,13 @@ function drawGraphic() {
 			+d.value > 0 ? 100 - x(+d.value) + '%' : 100 - x(0) + '%'
 		)
 		.style('background', function (d) {
-			if (config.colourPalette_type == 'mono') {
-				return config.colourPalette_colours[0];
-			} else if (config.colourPalette_type == 'divergent') {
+			if (config.colourPaletteType == 'mono') {
+				return config.colourPalette[0];
+			} else if (config.colourPaletteType == 'divergent') {
 				return +d.value > 0
-					? config.colourPalette_colours[0]
-					: config.colourPalette_colours[1];
-			} else if (config.colourPalette_type == 'categorical') {
+					? config.colourPalette[0]
+					: config.colourPalette[1];
+			} else if (config.colourPaletteType == 'categorical') {
 				return colour(d.xcategory);
 			}
 		})

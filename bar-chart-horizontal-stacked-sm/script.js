@@ -10,7 +10,7 @@ function drawGraphic() {
     size = initialise(size);
 
     const aspectRatio = config.aspectRatio[size];
-    const chartsPerRow = config.chart_every[size];
+    const chartsPerRow = config.chartEvery[size];
 
     // Get categories from the keys used in the stack generator
     const categories = graphic_data.columns.slice(2);

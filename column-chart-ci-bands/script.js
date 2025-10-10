@@ -151,7 +151,7 @@ function drawGraphic() {
         .attr('y2', (d) => y((d.yvalue)))
         .attr('stroke-width', 3)
         .attr('stroke-linecap', 'butt')
-        .attr('stroke', config.line_colour)
+        .attr('stroke', config.lineColour)
         .attr('fill', 'none');
 
     // This does the x-axis label
@@ -192,7 +192,7 @@ function drawGraphic() {
     legenditemCI.append('div')
         .append('p')
         .attr('class', 'legend--text')
-        .html(config.CI_legend_text);
+        .html(config.legendIntervalText);
 
     var legenditem = d3
         .select('#legend')
@@ -205,13 +205,13 @@ function drawGraphic() {
     legenditem
         .append('div')
         .attr('class', 'legend--icon--estline')
-        .style('background-color', config.line_colour)
+        .style('background-color', config.lineColour)
 
     legenditem
         .append('div')
         .append('p')
         .attr('class', 'legend--text')
-        .html(config.est_text);
+        .html(config.legendEstimateText);
 
 
     //create link to source

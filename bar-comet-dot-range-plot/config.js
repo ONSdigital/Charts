@@ -26,8 +26,7 @@ config = {
 	//adjustable for comet legend only showing the increase/decrease/nochange
 	"legendLineLength": 60,
 	"legendItemWidth": 150,
-
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 1,
 		"lg": 2
@@ -76,6 +75,5 @@ config = {
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"dropYAxis": true,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

@@ -26,11 +26,10 @@ config = {
 	"xAxisNumberFormat": ".0f",
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
-	"CI_legend": true,
-	"CI_legend_interval_text": "Likely range (95% confidence interval)",
-	"CI_legend_text": "Estimated value",
+	"ciLegend": true,
+	"legendIntervalText": "Likely range (95% confidence interval)",
+	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [4, 3],

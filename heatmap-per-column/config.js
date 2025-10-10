@@ -10,7 +10,6 @@ config = {
 	"breaks": "jenks",
 	// either "jenks","equal" or an array with custom breaks
 	// if using custom breaks, it needs to be an object with keys the same as the columns and then an array of the value as the value of the key
-
 	"margin": {
 		"sm": {
 			"top": 15,

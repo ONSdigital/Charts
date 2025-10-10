@@ -15,7 +15,6 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"yDomainMax": "auto",  //"auto" for automatic y-axis max, or a number for fixed max
 	"yDomainMin": 0,
 	"xAxisTickFormat": {
@@ -29,7 +28,6 @@ config = {
 	"yAxisLabel": "y axis label",
 	"xAxisLabel": "",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],

@@ -27,7 +27,6 @@ config = {
 	// stackOrderAscending the smallest series (according to the sum of values) is at the bottom
 	// stackOrderDescending the largest series (according to the sum of values) is at the bottom
 	// stackOrderReverse reverse the order as set from the data file
-
 	"margin": {
 		"sm": {
 			"top": 50,
@@ -49,7 +48,7 @@ config = {
 		}
 	},
 	"chartGap": 10,
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2
@@ -73,6 +72,5 @@ config = {
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"dropYAxis": true,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

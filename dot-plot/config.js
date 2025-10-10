@@ -3,8 +3,7 @@ config = {
 	"legendLabels": ["2015-2019", "2020", "Average", "Another series"],
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary":
-		"Here is the screenreader text describing the chart.",
+	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"xAxisNumberFormat": ".0f",
 	"xAxisLabel": "x axis label",
 	"xDomain": "auto",

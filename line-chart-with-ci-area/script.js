@@ -254,7 +254,7 @@ function drawGraphic() {
 
 	});
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 	const ciSvg = d3.select('#legend')
 		.append('div')
 		.attr('class', 'legend--item')
@@ -292,7 +292,7 @@ function drawGraphic() {
 	// 	//alignment - left or right for vertical arrows, above or below for horizontal arrows
 	// 	'below',
 	// 	//annotation text
-	// 	config.CI_legend_interval_text,
+	// 	config.legendIntervalText,
 	// 	//wrap width
 	// 	150,
 	// 	//text adjust y
@@ -309,7 +309,7 @@ function drawGraphic() {
 		37,                    // endY
 		"vertical-first",     // bendDirection
 		"start",                // arrowAnchor
-		config.CI_legend_interval_text, // thisText
+		config.legendIntervalText, // thisText
 		150,                  // wrapWidth
 		25,                   // textAdjustY
 		"top",               // wrapVerticalAlign
@@ -331,7 +331,7 @@ function drawGraphic() {
 		//alignment - left or right for vertical arrows, above or below for horizontal arrows
 		'right',
 		//annotation text
-		config.CI_legend_text,
+		config.legendEstimateText,
 		//wrap width
 		1500,
 		//text adjust y

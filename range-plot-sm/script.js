@@ -11,7 +11,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	function calculateChartWidth(size) {
-		const chartEvery = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
 		const chartMargin = config.margin[size];
 
 		if (config.dropYAxis) {
@@ -75,7 +75,7 @@ function drawGraphic() {
 
 	function drawChart(container, seriesName, data, chartIndex) {
 		for (let i = 0; i < categories.length; i++) {
-			let chartPosition = i % config.chart_every[size]
+			let chartPosition = i % config.chartEvery[size]
 
 			let margin = { ...config.margin[size] };
 
@@ -228,7 +228,7 @@ function drawGraphic() {
 
 	// for (let i = 0; i < categories.length; i++) {
 
-	// 	let chartsPerRow = config.chart_every[size];
+	// 	let chartsPerRow = config.chartEvery[size];
 	// 	let chartPosition = i % chartsPerRow;
 
 

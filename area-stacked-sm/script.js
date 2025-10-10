@@ -21,7 +21,7 @@ function drawGraphic() {
 		.attr('class', 'chart-container');
 
 	function drawChart(container, seriesName, data, chartIndex) {
-		const chartsPerRow = config.chart_every[size];
+		const chartsPerRow = config.chartEvery[size];
 		const chartPosition = chartIndex % chartsPerRow;
 
 		// Set dimensions

@@ -4,8 +4,8 @@ config = {
 	"legendLabels": { "min": "FYE 2022", "max": "FYE 2023" },
 	//the keys match the column names
 	"colourPalette": ONSpalette,
-	"colour_min_text": ONScolours.grey75,
-	"legend_colour": ONScolours.grey75,
+	"colourMinText": ONScolours.grey75,
+	"legendColour": ONScolours.grey75,
 	"sourceText": "Country and Regional Public Sector Finances from the Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"numberFormat": ".1f",
@@ -21,7 +21,6 @@ config = {
 	"legendLineLength": 60,
 	"legendItemWidth": 205,
 	"showDataLabels": true,
-
 	"margin": {
 		"sm": {
 			"top": 10,
