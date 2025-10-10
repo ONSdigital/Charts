@@ -14,20 +14,6 @@ The unified population pyramid visualization supports multiple interaction types
 6. [HTML Requirements](#html-requirements)
 7. [Dependencies](#dependencies)
 
-## Configuration Structure
-
-The configuration object has two main sections:
-
-```javascript
-config = {
-  essential: {
-    // Core settings that define behavior and appearance
-  },
-  optional: {
-    // Responsive design and styling settings
-  },
-};
-```
 
 ## Configuration Options
 
@@ -53,7 +39,7 @@ config = {
 ### Display Settings
 
 | Property            | Type   | Description                                                       |
-| ------------------- | ------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ------------------- | ------ | ----------------------------------------------------------------- | 
 | `displayType`       | string | `"percentages"`, `"counts"`. Whether to display data as percentages or raw numbers (only applies when `dataType: "counts"`) |
 | `xAxisLabel`        | string | Label for x-axis (percentage axis)                                |
 | `yAxisLabel`        | string | Label for y-axis (age axis)                                       |

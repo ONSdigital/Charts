@@ -53,11 +53,14 @@ preview_link <- paste0("https://onsdigital.github.io/Charts/", folders, "/")
 preview_link <- paste0("[View](", preview_link, ")")
 code_link <- paste0("https://github.com/ONSdigital/Charts/tree/main/", folders, "/")
 code_link <- paste0("[`</>`](", code_link, ")")
+readme_link <- paste0("https://github.com/ONSvisual/Charts/blob/main/", folders, "/README.md")
+readme_link <- paste0("[README](", readme_link, ")")
 
 data.frame(
   `Chart Name` = chart_names,
   Preview = preview_link,
-  Code = code_link
+  Code = code_link,
+  README = readme_link
 ) |> 
   knitr::kable()
 ```

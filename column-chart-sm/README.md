@@ -1,0 +1,1 @@
+# Column chart (small multiple)

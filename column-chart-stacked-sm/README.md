@@ -1,0 +1,1 @@
+# Stacked column chart (small multiple)
