@@ -101,9 +101,9 @@ function drawGraphic() {
 		function setButtons() {
 			d3.select('#play').on('click', onPlay);
 
-			d3.select('#forward').on('click', fwd_animate);
+			d3.select('#forward').on('click', fwdAnimate);
 
-			d3.select('#back').on('click', rev_animate);
+			d3.select('#back').on('click', revAnimate);
 		}
 
 		//Call the functions to set the buttons and make the slider
@@ -119,7 +119,7 @@ function drawGraphic() {
 
 		//Forward animation function for the buttons
 
-		function fwd_animate() {
+		function fwdAnimate() {
 			// go forwards in time and then back to the beginning once it reaches the end
 			if (a < timepoints.length - 1) {
 				a = a + 1;
@@ -136,7 +136,7 @@ function drawGraphic() {
 
 		//Backwards animation function for the buttons
 
-		function rev_animate() {
+		function revAnimate() {
 			// go back in time
 			if (a > 0) {
 				a = a - 1;
@@ -154,9 +154,9 @@ function drawGraphic() {
 		//Function for clicking on the play button
 
 		function onPlay() {
-			fwd_animate(); // don't need a delay bfeore first animation
+			fwdAnimate(); // don't need a delay bfeore first animation
 			animating = setInterval(function () {
-				fwd_animate();
+				fwdAnimate();
 			}, 1500); //sets an brief interval before moving the slider on one point
 
 			// replace play control with pause
