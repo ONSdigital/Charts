@@ -255,11 +255,11 @@ function drawGraphic() {
 			.x((d) => x(d.name))
 			.y((d) => y(d.amt));
 
-		let line_values = Object.entries(lines).filter(d => d[0] == config.lineSeries);
+		let lineValues = Object.entries(lines).filter(d => d[0] == config.lineSeries);
 
 		svg.append('g')
 			.selectAll('path')
-			.data(line_values)
+			.data(lineValues)
 			.enter()
 			.append('path')
 			.attr("stroke", (d, i) => config.lineColour)
