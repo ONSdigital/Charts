@@ -11,12 +11,12 @@ function drawGraphic() {
 	size = initialise(size);
 
     var margin = config.margin[size];
-    var chart_width =
+    var chartWidth =
         parseInt(graphic.style('width')) - margin.left - margin.right;
     //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
     var height = config.chartHeight[size];
 
-    const radius = Math.min(chart_width, height) / 2
+    const radius = Math.min(chartWidth, height) / 2
     const outerRadius = radius * 1.1
 
     const arc = d3.arc()
@@ -40,7 +40,7 @@ function drawGraphic() {
     svg = d3
         .select('#graphic')
         .append('svg')
-        .attr('width', chart_width + margin.left + margin.right)
+        .attr('width', chartWidth + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .attr('class', 'chart')
         .append('g')
@@ -49,7 +49,7 @@ function drawGraphic() {
 
     //Drawing the pie
     svg.append('g')
-        .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+        .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
         .selectAll()
         .data(pie(graphicData))
         .join('path')
@@ -61,7 +61,7 @@ function drawGraphic() {
 
         //Adding layers for lines and labels
         let labels = svg.append("g")
-            .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+            .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
             .attr("class", "dataLabels")
 
         //Adding text for category and values
@@ -96,7 +96,7 @@ function drawGraphic() {
 
         //Adding connecting lines
         svg.append("g")
-            .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+            .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
             .attr("class", "lines")
             .selectAll('polyline')
             .data(pie(graphicData))
@@ -182,7 +182,7 @@ function drawGraphic() {
     // This does the centre label
     svg
         .append('g')
-        .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+        .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
         .append('text')
         .attr('fill', '#414042')
         .attr('x', 0)

@@ -69,7 +69,7 @@ function drawGraphic() {
         let margin = { ...config.margin[size] };
         let chartGap = config.optional?.chartGap || 10;
 
-        let chart_width = calculateChartWidth({
+        let chartWidth = calculateChartWidth({
             screenWidth: parseInt(graphic.style('width')),
             chartEvery: chartsPerRow,
             chartMargin: margin,
@@ -90,7 +90,7 @@ function drawGraphic() {
             .scaleBand()
             .paddingOuter(0.1)
             .paddingInner(0.2)
-            .range([0, chart_width])
+            .range([0, chartWidth])
             .round(true);
 
         // Use the data to find unique entries in the name column
@@ -116,14 +116,14 @@ function drawGraphic() {
         // Set up yAxis generator
         let yAxis = d3
             .axisLeft(y)
-            .tickSize(-chart_width)
+            .tickSize(-chartWidth)
             .tickFormat(d3.format(config.dataLabels.numberFormat))
             .ticks(config.xAxisTicks[size]);
 
         // Create svg for chart
         svg = addSvg({
             svgParent: container,
-            chart_width: chart_width,
+            chartWidth: chartWidth,
             height: height + margin.top + margin.bottom,
             margin: margin
         })
@@ -177,18 +177,18 @@ function drawGraphic() {
             yPosition: -15,
             xPosition: - margin.left +5,
             text: d => d[0],
-            wrapWidth: chart_width
+            wrapWidth: chartWidth
         })
 
         // This does the x-axis label
         if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nested_data].length - 1) {
             addAxisLabel({
                 svgContainer: svg,
-                xPosition: chart_width,
+                xPosition: chartWidth,
                 yPosition: height + 35,
                 text: config.xAxisLabel,
                 textAnchor: "end",
-                wrapWidth: chart_width
+                wrapWidth: chartWidth
             });
         }
     }

@@ -29,7 +29,7 @@ function drawGraphic() {
 		let chartGap = config.optional?.chartGap || 10;
 
 		// Calculate chart width here
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -87,13 +87,13 @@ function drawGraphic() {
 
 
 		let height =
-			chart_width * (config.aspectRatio[size][1] / config.aspectRatio[size][0]) - margin.top - margin.bottom;
+			chartWidth * (config.aspectRatio[size][1] / config.aspectRatio[size][0]) - margin.top - margin.bottom;
 
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 
 		const y = d3
 			.scaleLinear()
@@ -109,7 +109,7 @@ function drawGraphic() {
 		// Create an SVG for this chart
 		const svg = addSvg({
 			svgParent: graphic,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -186,18 +186,18 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		})
 
 		// This does the x-axis label
 		if (chartIndex % chartsPerRow === chartsPerRow - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 
@@ -208,7 +208,7 @@ function drawGraphic() {
 			yPosition: -10,
 			text: chartPosition == 0 ? config.yAxisLabel : "",
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 	// Draw the charts for each small multiple

@@ -66,7 +66,7 @@ function drawGraphic() {
 
     let chartGap = config.optional?.chartGap || 10;
 
-    let chart_width = calculateChartWidth({
+    let chartWidth = calculateChartWidth({
       screenWidth: parseInt(graphic.style('width')),
       chartEvery: chartsPerRow,
       chartMargin: margin,
@@ -80,13 +80,13 @@ function drawGraphic() {
       }
     }
     let aspectRatio = config.aspectRatio[size];
-    let height = (aspectRatio[0]*chart_width/aspectRatio[1] )- margin.top - margin.bottom;
+    let height = (aspectRatio[0]*chartWidth/aspectRatio[1] )- margin.top - margin.bottom;
 
     const x = d3
       .scaleBand()
       .paddingOuter(0.0)
       .paddingInner(0.1)
-      .range([0, chart_width])
+      .range([0, chartWidth])
       .round(false);
 
     //use the data to find unique entries in the date column
@@ -100,7 +100,7 @@ function drawGraphic() {
     //create svg for chart
     svg = addSvg({
       svgParent: container,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       height: height + margin.top + margin.bottom,
       margin: margin
     })
@@ -145,7 +145,7 @@ function drawGraphic() {
       .call(
         d3.axisLeft(y)
           .ticks(config.yAxisTicks[size])
-          .tickSize(-chart_width)
+          .tickSize(-chartWidth)
           .tickPadding(10)
           .tickFormat((d) => config.dropYAxis !== true ? d3.format(config.yAxisTickFormat)(d) :
             chartPosition == 0 ? d3.format(config.yAxisTickFormat)(d) : "")
@@ -215,18 +215,18 @@ function drawGraphic() {
       svgContainer: svg,
       yPosition: -margin.top / 2,
       text: seriesName,
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     })
 
     // This does the x-axis label
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + margin.bottom,
       text: chartIndex % chartEvery == chartEvery - 1 ?
         config.xAxisLabel : "",
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
     // This does the y-axis label
@@ -236,7 +236,7 @@ function drawGraphic() {
       yPosition: -10,
       text: chartPosition == 0 ? config.yAxisLabel : "",
       textAnchor: "start",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
 

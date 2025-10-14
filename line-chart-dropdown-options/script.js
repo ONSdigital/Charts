@@ -35,13 +35,13 @@ function drawGraphic() {
 	size = initialise(size);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
 	// Create an SVG element at the top so all functions can use it
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	});
@@ -159,7 +159,7 @@ function changeData(selectedOption) {
 			.call(
 				d3.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			);
 	}
@@ -452,7 +452,7 @@ function createDirectLabelsWithForce(categories, filteredData) {
 	}
 }
 	// Define the dimensions and margin, width and height of the chart.
-	// Remove duplicate declarations of margin, chart_width, and height in drawGraphic
+	// Remove duplicate declarations of margin, chartWidth, and height in drawGraphic
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
@@ -470,11 +470,11 @@ function createDirectLabelsWithForce(categories, filteredData) {
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	} else {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	}
 
 	const y = d3
@@ -606,17 +606,17 @@ function createDirectLabelsWithForce(categories, filteredData) {
 		yPosition: -15,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + margin.bottom - 25,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -640,7 +640,7 @@ function createDirectLabelsWithForce(categories, filteredData) {
 		.call(
 			d3.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickSize(-chart_width)
+				.tickSize(-chartWidth)
 				.tickFormat('')
 		)
 		.lower();

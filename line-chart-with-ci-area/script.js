@@ -16,9 +16,9 @@ function drawGraphic() {
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width
-	// console.log(`Margin, chart_width, and height set: ${margin}, ${chart_width}, ${height}`);
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth
+	// console.log(`Margin, chartWidth, and height set: ${margin}, ${chartWidth}, ${height}`);
 
 
 
@@ -48,15 +48,15 @@ function drawGraphic() {
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	} else if (config.xDomain == "auto") {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	} else {
 		x = d3.scaleLinear()
 			.domain(config.xDomain)
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	}
 	//console.log(`x defined`);
 
@@ -95,7 +95,7 @@ function drawGraphic() {
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -130,7 +130,7 @@ function drawGraphic() {
 			d3
 				.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickSize(-chart_width)
+				.tickSize(-chartWidth)
 				.tickFormat('')
 		);
 
@@ -349,7 +349,7 @@ function drawGraphic() {
 		yPosition: -10,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source

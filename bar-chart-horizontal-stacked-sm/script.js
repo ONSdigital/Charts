@@ -29,7 +29,7 @@ function drawGraphic() {
         let chartPosition = chartIndex % chartsPerRow;
         let margin = { ...config.margin[size] };
         let chartGap = config?.chartGap || 10;
-        let chart_width = calculateChartWidth({
+        let chartWidth = calculateChartWidth({
             screenWidth: parseInt(graphic.style('width')),
             chartEvery: chartsPerRow,
             chartMargin: margin,
@@ -42,10 +42,10 @@ function drawGraphic() {
             }
         }
 
-        let height = aspectRatio[1] / aspectRatio[0] * chart_width;
+        let height = aspectRatio[1] / aspectRatio[0] * chartWidth;
 
         // Flip axes: x is value, y is category
-        const x = d3.scaleLinear().range([0, chart_width]);
+        const x = d3.scaleLinear().range([0, chartWidth]);
         const y = d3.scaleBand().paddingOuter(0.0).paddingInner(0.1).range([0, height]).round(true);
 
         y.domain([...new Set(graphicData.map((d) => d.date))]);
@@ -67,7 +67,7 @@ function drawGraphic() {
         // Create an SVG element
         const svg = addSvg({
             svgParent: container,
-            chart_width: chart_width,
+            chartWidth: chartWidth,
             height: height + margin.top + margin.bottom,
             margin: margin
         });
@@ -145,7 +145,7 @@ function drawGraphic() {
             svgContainer: svg,
             yPosition: -margin.top / 2,
             text: seriesName,
-            wrapWidth: (chart_width + margin.right)
+            wrapWidth: (chartWidth + margin.right)
         });
 
         // This does the y-axis label
@@ -156,7 +156,7 @@ function drawGraphic() {
                 yPosition: 0,
                 text: config.yAxisLabel,
                 textAnchor: "start",
-                wrapWidth: chart_width
+                wrapWidth: chartWidth
             });
         }
 
@@ -164,11 +164,11 @@ function drawGraphic() {
         if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...chartContainers].length - 1) {
             addAxisLabel({
                 svgContainer: svg,
-                xPosition: chart_width,
+                xPosition: chartWidth,
                 yPosition: height + 35,
                 text: config.xAxisLabel,
                 textAnchor: "end",
-                wrapWidth: chart_width
+                wrapWidth: chartWidth
             });
         }
 
@@ -176,7 +176,7 @@ function drawGraphic() {
     //     if (chartIndex !== 0) {
     //         addAnnotationRangeHorizontal(
     //             svg,
-    //             chart_width,
+    //             chartWidth,
     //             y("two years") + (4 - chartIndex) * y.step(),
     //             y("five years") + y.bandwidth(),
     //             chartIndex == 1 ? 'N/A' : "",

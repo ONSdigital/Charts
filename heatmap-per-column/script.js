@@ -10,7 +10,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
@@ -70,9 +70,9 @@ function drawGraphic() {
 		.paddingOuter(0)
 		.paddingInner(
 			((columnNames.length - 1) * 10) /
-				(chart_width - (columnNames.length - 1) * 10)
+				(chartWidth - (columnNames.length - 1) * 10)
 		)
-		.range([0, chart_width])
+		.range([0, chartWidth])
 		.round(true)
 		.domain(columnNames);
 
@@ -110,7 +110,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})

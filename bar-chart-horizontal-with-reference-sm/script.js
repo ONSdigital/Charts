@@ -79,14 +79,14 @@ function drawGraphic() {
 			}
 		}
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: config.chartEvery[size],
 			chartMargin: config.margin[size]
 		})
 
 		//set up scales
-		const x = d3.scaleLinear().range([0, chart_width]);
+		const x = d3.scaleLinear().range([0, chartWidth]);
 
 		const y = d3
 			.scaleBand()
@@ -116,7 +116,7 @@ function drawGraphic() {
 		//create svg for chart
 		svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -179,7 +179,7 @@ function drawGraphic() {
 			addDataLabels({
 				svgContainer: svg,
 				data: data,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				labelPositionFactor: 7,
 				xScaleFunction: x,
 				yScaleFunction: y
@@ -190,17 +190,17 @@ function drawGraphic() {
 		addChartTitleLabel({
 			svgContainer: svg,
 			text: seriesName,
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 
 		// This does the x-axis label
 		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nested_data].length - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	}

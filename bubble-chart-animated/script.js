@@ -13,12 +13,12 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height = Math.ceil(
-		(chart_width * config.aspectRatio[size][1]) /
+		(chartWidth * config.aspectRatio[size][1]) /
 		config.aspectRatio[size][0]
 	);
 
@@ -30,7 +30,7 @@ function drawGraphic() {
 	let timeLoad = config.timeLoad;
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]);
+	const x = d3.scaleLinear().range([0, chartWidth]);
 
 	const y = d3.scaleLinear().range([height, 0]);
 
@@ -56,13 +56,13 @@ function drawGraphic() {
 			let sliderScale = d3
 				.scaleLinear()
 				.domain(sliderDomain)
-				.range([0, chart_width - margin.right]);
+				.range([0, chartWidth - margin.right]);
 
 			sliderSimple = d3
 				.sliderHorizontal(sliderScale)
 				.step(1)
 				.default(timepoints.indexOf(timeLoad)) //defaults the the slider to load with data from timeLoad in the config
-				.width(chart_width - 150)
+				.width(chartWidth - 150)
 				.displayFormat(function (i) {
 					return dateformat(dateparse(timepoints[i]));
 				}) //labels taken from timepoints
@@ -87,7 +87,7 @@ function drawGraphic() {
 
 			d3.select('#slider-simple')
 				.append('svg')
-				.attr('width', chart_width - 75)
+				.attr('width', chartWidth - 75)
 				.attr('height', 100)
 				.append('g')
 				.attr('transform', 'translate(' + margin.left + ',19)')
@@ -196,7 +196,7 @@ function drawGraphic() {
 	//set up yAxis generator
 	let yAxis = d3
 		.axisLeft(y)
-		.tickSize(-chart_width - 10)
+		.tickSize(-chartWidth - 10)
 		.tickFormat(d3.format(config.yDisplayFormat));
 
 	//set up xAxis generator
@@ -209,7 +209,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -286,17 +286,17 @@ function drawGraphic() {
 		yPosition: -20,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 		});
 
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 		});
 
 	//Initial draw of the chart with the data filtered on the timeLoad specified
@@ -349,7 +349,7 @@ function drawGraphic() {
 					)
 					.style(
 						'left',
-						d3.pointer(event)[0] > chart_width - 200
+						d3.pointer(event)[0] > chartWidth - 200
 							? d3.pointer(event)[0] - 200 + 'px'
 							: d3.pointer(event)[0] + 25 + 'px'
 					)

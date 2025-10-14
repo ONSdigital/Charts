@@ -39,7 +39,7 @@ function drawGraphic() {
 		let margin = { ...config.margin[size] };
 		let chartGap = config.optional?.chartGap || 10;
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -54,11 +54,11 @@ function drawGraphic() {
 		}
 
 		const aspectRatio = config.aspectRatio[size];
-		// let chart_width = calculateChartWidth(size)
+		// let chartWidth = calculateChartWidth(size)
 
 		//height is set by the aspect ratio
 		let height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		//set up scales
 		const y = d3.scaleLinear().range([height, 0]);
@@ -67,7 +67,7 @@ function drawGraphic() {
 			.scaleBand()
 			.paddingOuter(0.0)
 			.paddingInner(0.1)
-			.range([0, chart_width])
+			.range([0, chartWidth])
 			.round(false);
 
 		//use the data to find unique entries in the date column
@@ -75,7 +75,7 @@ function drawGraphic() {
 
 		//set up yAxis generator
 		let yAxis = d3.axisLeft(y)
-			.tickSize(-chart_width)
+			.tickSize(-chartWidth)
 			.tickPadding(10)
 			.ticks(config.yAxisTicks[size])
 			.tickFormat((d) => config.dropYAxis !== true ? d3.format(config.yAxisTickFormat)(d) :
@@ -111,7 +111,7 @@ function drawGraphic() {
 		//create svg for chart
 		svg = addSvg({
 			svgParent: graphic,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -162,7 +162,7 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -25,
 			text: seriesName,
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		})
 
 		// This does the y-axis label
@@ -172,7 +172,7 @@ function drawGraphic() {
 			yPosition: -10,
 			text: chartIndex % chartEvery == 0 ? config.yAxisLabel : "",
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 

@@ -21,7 +21,7 @@ Replace any code that is covered by a function in helpers.js, e.g.
     .append('g') 
     .attr('transform', `translate(0, ${height})`) 
     .append('text') 
-    .attr('x', chart_width) 
+    .attr('x', chartWidth) 
     .attr('y', 35) 
     .attr('class', 'axis--label') 
     .text(config.xAxisLabel) 
@@ -31,10 +31,10 @@ Becomes:
 
     addXAxisLabel({ 
     svgContainer: svg, 
-    xPosition: chart_width, 
+    xPosition: chartWidth, 
     yPosition: height + 35, 
     text: config.xAxisLabel, 
-    wrapWidth: chart_width 
+    wrapWidth: chartWidth 
     }); 
 
 ## General notes

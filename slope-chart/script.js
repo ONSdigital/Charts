@@ -65,7 +65,7 @@ function drawGraphic() {
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: parseInt(graphic.style('width')) - margin.left - margin.right,
+		chartWidth: parseInt(graphic.style('width')) - margin.left - margin.right,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})

@@ -10,7 +10,7 @@ function drawGraphic() {
   size = initialise(size);
 
   let margin = config.margin[size]
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
 
   let groups = d3.groups(graphicData, (d) => d.group)
 
@@ -28,7 +28,7 @@ function drawGraphic() {
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width])
+    .range([0, chartWidth])
     .domain(xDomain);
 
   const colour = d3.scaleOrdinal()
@@ -69,7 +69,7 @@ function drawGraphic() {
 
   let charts = addSvg({
     svgParent: divs,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: (d) => d[2] + margin.top + margin.bottom,
     margin: margin
   })
@@ -117,18 +117,18 @@ function drawGraphic() {
       .join('text')
       .attr('class', 'dataLabels')
       .attr('x', (d) => d.value > 0 ? x(d.value) :
-        Math.abs(x(d.value) - x(0)) < chart_width / labelPositionFactor ? x(0) : x(d.value))
+        Math.abs(x(d.value) - x(0)) < chartWidth / labelPositionFactor ? x(0) : x(d.value))
       .attr('dx', (d) => d.value > 0 ?
-        (Math.abs(x(d.value) - x(0)) < chart_width / labelPositionFactor ? 3 : -3) :
+        (Math.abs(x(d.value) - x(0)) < chartWidth / labelPositionFactor ? 3 : -3) :
         3)
       .attr('y', (d) => groups.filter(f => f[0] == d.group)[0][3](d.name) + groups.filter(f => f[0] == d.group)[0][3].bandwidth() / 2)
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', (d) => d.value > 0 ?
-        (Math.abs(x(d.value) - x(0)) < chart_width / labelPositionFactor ? 'start' : 'end') :
+        (Math.abs(x(d.value) - x(0)) < chartWidth / labelPositionFactor ? 'start' : 'end') :
         "start"
       )
       .attr('fill', (d) =>
-        (Math.abs(x(d.value) - x(0)) < chart_width / labelPositionFactor ? '#414042' : '#ffffff')
+        (Math.abs(x(d.value) - x(0)) < chartWidth / labelPositionFactor ? '#414042' : '#ffffff')
       )
       .text((d) => d3.format(config.dataLabels.numberFormat)(d.value))
   }//end if for datalabels
@@ -141,11 +141,11 @@ function drawGraphic() {
     if (i == groups.length - 1) {
       addAxisLabel({
         svgContainer: d3.select(this),
-        xPosition: chart_width,
+        xPosition: chartWidth,
         yPosition: d[2] + 35,
         text: config.xAxisLabel,
         textAnchor: "end",
-        wrapWidth: chart_width
+        wrapWidth: chartWidth
       });
     }
   })

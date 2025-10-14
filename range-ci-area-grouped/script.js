@@ -11,7 +11,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
 	groups = d3.groups(graphicData, (d) => d.group);
@@ -35,7 +35,7 @@ function drawGraphic() {
 	}
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]).domain(xDomain);
+	const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
 	const series = [...new Set(graphicData.map(d => d.series))]
 	const colour = d3
@@ -69,7 +69,7 @@ function drawGraphic() {
 
 	charts = addSvg({
 		svgParent: divs,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: (d) => d[2] + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -94,7 +94,7 @@ function drawGraphic() {
 						.append('line')
 						.attr('class', 'y-tick-line')
 						.attr('x1', 0)
-						.attr('x2', chart_width)
+						.attr('x2', chartWidth)
 						.attr('y1', y)
 						.attr('y2', y)
 						.attr('stroke', '#ccc')
@@ -180,11 +180,11 @@ function drawGraphic() {
 		if (i == groups.length - 1) {
 			addAxisLabel({
 				svgContainer: d3.select(this),
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: d[2] + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	});

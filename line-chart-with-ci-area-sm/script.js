@@ -40,7 +40,7 @@ function drawGraphic() {
 
 		let chartGap = config.optional?.chartGap || 10;
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -55,13 +55,13 @@ function drawGraphic() {
 
 		//height is set by the aspect ratio
 		var height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 
 
 		const y = d3
@@ -77,7 +77,7 @@ function drawGraphic() {
 		// Create an SVG element
 		const svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -135,7 +135,7 @@ function drawGraphic() {
 				d3
 					.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			)
 			.lower();
@@ -193,7 +193,7 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: (chart_width + margin.right)
+			wrapWidth: (chartWidth + margin.right)
 		})
 
 
@@ -205,7 +205,7 @@ function drawGraphic() {
 			text: chartIndex % chartEvery == 0 ?
 				config.yAxisLabel : "",
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 

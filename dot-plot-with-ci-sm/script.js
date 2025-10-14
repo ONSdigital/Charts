@@ -21,8 +21,8 @@ function drawGraphic() {
 
   let margin = config.margin[size]
   let aspectRatio = config.aspectRatio[size];
-  let chart_width = (parseInt(graphic.style("width")) / chartEvery) - margin.left - margin.right;
-	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
+  let chartWidth = (parseInt(graphic.style("width")) / chartEvery) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
   let xDataType;
 
@@ -41,11 +41,11 @@ function drawGraphic() {
   if (xDataType == 'date') {
     x = d3.scaleTime()
       .domain(d3.extent(graphicData, (d) => d.date))
-      .range([0, chart_width]);
+      .range([0, chartWidth]);
   } else {
     x = d3.scaleLinear()
       .domain(d3.extent(graphicData, (d) => +d.date))
-      .range([0, chart_width]);
+      .range([0, chartWidth]);
   }
 
 
@@ -65,7 +65,7 @@ function drawGraphic() {
 
     svg = addSvg({
       svgParent: container,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       height: height + margin.top + margin.bottom,
       margin: margin
     })
@@ -97,7 +97,7 @@ function drawGraphic() {
       .call(
         d3.axisLeft(y)
           .ticks(config.yAxisTicks[size])
-          .tickSize(-chart_width)
+          .tickSize(-chartWidth)
           .tickPadding(10)
           .tickFormat(d3.format(config.yAxisFormat))
       );
@@ -158,18 +158,18 @@ function drawGraphic() {
       svgContainer: svg,
       yPosition: -margin.top / 2,
       text: seriesName,
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     })
 
     // This does the x-axis label - just on the rightmost chart of each row
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + 40,
       text: chartIndex % chartEvery == chartEvery - 1 || chartIndex === plots.length - 1 ?
         config.xAxisLabel : "",
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
     // This does the y-axis label - just on the leftmost chart of each row
@@ -179,7 +179,7 @@ function drawGraphic() {
       yPosition: -10,
       text: (d) => chartIndex % chartEvery == 0 ? config.yAxisLabel : "",
       textAnchor: "start",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
   }

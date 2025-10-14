@@ -28,10 +28,10 @@ function drawGraphic() {
   let colour = d3.scaleOrdinal(config.colourPalette);
 
   let margin = config.margin[size];
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
-  let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth;
 
-  const x = d3.scaleLinear().range([0, chart_width]);
+  const x = d3.scaleLinear().range([0, chartWidth]);
   const y = d3.scaleLinear().range([height, 0]);
 
   // Create size scale for circles
@@ -45,7 +45,7 @@ function drawGraphic() {
 
   svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   });
@@ -196,7 +196,7 @@ function drawGraphic() {
     .call(
       d3.axisLeft(y)
         .ticks(config.yAxisTicks[size])
-        .tickSize(-chart_width)
+        .tickSize(-chartWidth)
         .tickPadding(10)
         .tickFormat(d3.format(config.yAxisFormat))
     ).selectAll('line')
@@ -263,7 +263,7 @@ function drawGraphic() {
         return 0
       }
     }),
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height,
     xScale: x,
     yScale: y,
@@ -307,11 +307,11 @@ function drawGraphic() {
   // This does the x-axis label
   addAxisLabel({
     svgContainer: svg,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height + 40,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   // This does the y-axis label
@@ -321,7 +321,7 @@ function drawGraphic() {
     yPosition: -10,
     text: config.yAxisLabel,
     textAnchor: "start",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
 

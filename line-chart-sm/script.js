@@ -40,7 +40,7 @@ function drawGraphic() {
 
 		let chartGap = config.optional?.chartGap || 10;
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -56,7 +56,7 @@ function drawGraphic() {
 
 		//height is set by the aspect ratio
 		let height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
 
@@ -75,11 +75,11 @@ function drawGraphic() {
 		if (xDataType == 'date') {
 			x = d3.scaleTime()
 				.domain(d3.extent(graphicData, (d) => d.date))
-				.range([0, chart_width]);
+				.range([0, chartWidth]);
 		} else {
 			x = d3.scaleLinear()
 				.domain(d3.extent(graphicData, (d) => +d.date))
-				.range([0, chart_width]);
+				.range([0, chartWidth]);
 		}
 
 
@@ -99,7 +99,7 @@ function drawGraphic() {
 		// Create an SVG element
 		const svg = addSvg({
 			svgParent: graphic,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -218,7 +218,7 @@ function drawGraphic() {
 				d3
 					.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			)
 			.lower();
@@ -283,7 +283,7 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: (chart_width + margin.right)
+			wrapWidth: (chartWidth + margin.right)
 		})
 
 
@@ -295,7 +295,7 @@ function drawGraphic() {
 				yPosition: 0,
 				text: config.yAxisLabel,
 				textAnchor: "start",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 
@@ -303,11 +303,11 @@ function drawGraphic() {
 		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...chartContainers].length - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	}

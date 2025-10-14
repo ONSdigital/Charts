@@ -18,13 +18,13 @@ function drawGraphic() {
   const chartEvery = config.chartEvery[size];
 
   let margin = config.margin[size]
-  let chart_width = (parseInt(graphic.style("width")) / chartEvery) - margin.left - margin.right;
-	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width
+  let chartWidth = (parseInt(graphic.style("width")) / chartEvery) - margin.left - margin.right;
+	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth
 
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width]);
+    .range([0, chartWidth]);
 
   const y = d3.scaleLinear()
     .range([height, 0])
@@ -57,7 +57,7 @@ function drawGraphic() {
 
     svg = addSvg({
       svgParent: container,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       height: height + margin.top + margin.bottom,
       margin: margin
     })
@@ -80,7 +80,7 @@ function drawGraphic() {
       .call(
         d3.axisLeft(y)
           .ticks(config.yAxisTicks[size])
-          .tickSize(-chart_width)
+          .tickSize(-chartWidth)
           .tickPadding(10)
           .tickFormat(d3.format(config.yAxisFormat))
       );
@@ -102,18 +102,18 @@ function drawGraphic() {
       svgContainer: svg,
       yPosition: -margin.top / 2,
       text: seriesName,
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     })
 
     // This does the x-axis label - just on the rightmost chart of each row
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + 40,
       text: chartIndex % chartEvery == chartEvery - 1 || chartIndex === plots.length - 1 ?
         config.xAxisLabel : "",
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
     // This does the y-axis label - just on the leftmost chart of each row
@@ -123,7 +123,7 @@ function drawGraphic() {
       yPosition: -10,
       text: (d) => chartIndex % chartEvery == 0 ? config.yAxisLabel : "",
       textAnchor: "start",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
   }
   // lets move on to setting up the legend for this chart. 

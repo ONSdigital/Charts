@@ -40,13 +40,13 @@ const chartWidth = calculateChartWidth({
 const svgParent = d3.select('#graphic');
 const svg = addSvg({
   svgParent: svgParent,
-  chart_width: chartWidth,
+  chartWidth: chartWidth,
   height: 400,
   margin: { top: 30, right: 20, bottom: 50, left: 50 }
 });
 
 // 4. Add data labels (requires d3.format and a 'config' object, not provided in this example)
-// addDataLabels({ svgContainer: svg, data: someData, chart_width: chartWidth, xScaleFunction: yourXScale, yScaleFunction: yourYScale });
+// addDataLabels({ svgContainer: svg, data: someData, chartWidth: chartWidth, xScaleFunction: yourXScale, yScaleFunction: yourYScale });
 
 // 5. Setup arrowhead for annotations
 setupArrowhead(svg);

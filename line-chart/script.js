@@ -88,8 +88,8 @@ function drawGraphic() {
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
@@ -109,11 +109,11 @@ function drawGraphic() {
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	} else {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	}
 
 	const y = d3
@@ -146,7 +146,7 @@ function drawGraphic() {
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -227,7 +227,7 @@ function drawGraphic() {
 					return d[0];
 				});
 		} else {
-		createDirectLabels(categories, graphicData, svg, x, y, margin, size, config, chart_width);
+		createDirectLabels(categories, graphicData, svg, x, y, margin, size, config, chartWidth);
 		}
 	
 
@@ -239,7 +239,7 @@ function drawGraphic() {
 			d3
 				.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickSize(-chart_width)
+				.tickSize(-chartWidth)
 				.tickFormat('')
 		)
 		.lower();
@@ -286,17 +286,17 @@ function drawGraphic() {
 		yPosition: -15,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + margin.bottom - 25,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -338,7 +338,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 
 });
 
-function createDirectLabels(categories, graphicData, svg, x, y, margin, size, config, chart_width) {
+function createDirectLabels(categories, graphicData, svg, x, y, margin, size, config, chartWidth) {
 
 	// Remove any existing direct labels before adding new ones
     svg.selectAll('text.directLineLabel').remove();

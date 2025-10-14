@@ -11,11 +11,11 @@ function drawGraphic() {
 
 	const aspectRatio = config.aspectRatio[size];
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by the aspect ratio
 	let height =
-		aspectRatio[1] / aspectRatio[0] * chart_width;
+		aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 	//set up scales
 	const y = d3.scaleLinear().range([height, 0]);
@@ -24,7 +24,7 @@ function drawGraphic() {
 		.scaleBand()
 		.paddingOuter(0.0)
 		.paddingInner(0.1)
-		.range([0, chart_width])
+		.range([0, chartWidth])
 		.round(false);
 
 	//use the data to find unique entries in the date column
@@ -47,7 +47,7 @@ function drawGraphic() {
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y)
-		.tickSize(-chart_width)
+		.tickSize(-chartWidth)
 		.tickPadding(10)
 		.ticks(config.yAxisTicks[size])
 		.tickFormat(d3.format(config.yAxisTickFormat));
@@ -76,7 +76,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -130,7 +130,7 @@ function drawGraphic() {
 		yPosition: -10,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source

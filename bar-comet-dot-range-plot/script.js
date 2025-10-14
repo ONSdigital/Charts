@@ -15,14 +15,14 @@ function drawGraphic() {
 	let margin = config.margin[size];
 
 	//chart width calculated - allows small multiple chart widths to be calculated for the 'bar' chart type but defaults to 1 for the rest
-	let chart_width = calculateChartWidth({
+	let chartWidth = calculateChartWidth({
 		screenWidth: parseInt(graphic.style('width')),
 		chartEvery: (config.chartType === "bar"? config.chartEvery[size] : 1),
 		chartMargin: config.margin[size]
 	})
 				
 	//set up linear x scales for all chart types
-	const x = d3.scaleLinear().range([0, chart_width]);
+	const x = d3.scaleLinear().range([0, chartWidth]);
 
 	//if the config is set to auto, it will take the min and max values from the ref and value columns
 	if (config.xDomain == 'auto') {
@@ -140,7 +140,7 @@ function drawGraphic() {
 		//create svg for chart
 		svg = container
 			.append('svg')
-			.attr('width', chart_width + margin.left + margin.right)
+			.attr('width', chartWidth + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
 			.attr('class', 'chart')
 			.style('background-color', '#fff')
@@ -196,7 +196,7 @@ function drawGraphic() {
 			addDataLabels({
 				svgContainer: svg,
 				data: data,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				labelPositionFactor: 7,
 				xScaleFunction: x,
 				yScaleFunction: y
@@ -208,7 +208,7 @@ function drawGraphic() {
 		addChartTitleLabel({
 			svgContainer: svg,
 			text: d => d[0],
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 
 		
@@ -217,10 +217,10 @@ function drawGraphic() {
 			//This does the x-axis label
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 			
 		}
@@ -245,7 +245,7 @@ function drawGraphic() {
 
 		
 	
-		let chart_width =
+		let chartWidth =
 			parseInt(graphic.style('width')) - margin.left - margin.right;
 
 	
@@ -285,7 +285,7 @@ function drawGraphic() {
 			.append('svg')
 			.attr('class', 'chart')
 			.attr('height', (d) => d[2] + margin.top + margin.bottom)
-			.attr('width', chart_width + margin.left + margin.right);
+			.attr('width', chartWidth + margin.left + margin.right);
 	
 		charts = svgs
 			.append('g')
@@ -400,7 +400,7 @@ function drawGraphic() {
 			if (i == groups.length - 1) {
 				d3.select(this)
 					.append('text')
-					.attr('x', chart_width)
+					.attr('x', chartWidth)
 					.attr('y', (d) => d[2] + 35)
 					.attr('class', 'axis--label')
 					.text(config.xAxisLabel)
@@ -591,7 +591,7 @@ function drawGraphic() {
 	
 	function drawDot() {
 
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height
 	let height = config.seriesHeight[size] * graphicData.length;
@@ -603,7 +603,7 @@ function drawGraphic() {
 	y.domain(graphicData.map((d) => d.name));
 
 	//set up yAxis generator
-	let yAxis = d3.axisLeft(y).tickSize(-chart_width).tickPadding(10);
+	let yAxis = d3.axisLeft(y).tickSize(-chartWidth).tickPadding(10);
 
 	//set up xAxis generator
 	let xAxis = d3
@@ -642,7 +642,7 @@ function drawGraphic() {
 	svg = d3
 		.select('#graphic')
 		.append('svg')
-		.attr('width', chart_width + margin.left + margin.right)
+		.attr('width', chartWidth + margin.left + margin.right)
 		.attr('height', height + margin.top + margin.bottom)
 		.attr('class', 'chart')
 		.style('background-color', '#fff')
@@ -770,7 +770,7 @@ function drawGraphic() {
 			.append('svg')
 			.attr('class', 'chart')
 			.attr('height', (d) => d[2] + margin.top + margin.bottom)
-			.attr('width', chart_width + margin.left + margin.right);
+			.attr('width', chartWidth + margin.left + margin.right);
 	
 		charts = svgs
 			.append('g')
@@ -868,7 +868,7 @@ function drawGraphic() {
 			if (i == groups.length - 1) {
 				d3.select(this)
 					.append('text')
-					.attr('x', chart_width)
+					.attr('x', chartWidth)
 					.attr('y', (d) => d[2] + 35)
 					.attr('class', 'axis--label')
 					.text(config.xAxisLabel)

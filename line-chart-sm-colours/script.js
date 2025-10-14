@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphicData, size, chart_width;
+let graphicData, size, chartWidth;
 
 function drawGraphic() {
 	
@@ -38,7 +38,7 @@ function drawGraphic() {
 		// If the chart is not in the first position in the row, reduce the left margin
 		if (config.dropYAxis && !config.freeYAxisScales) {
 
-			chart_width = calculateChartWidth({
+			chartWidth = calculateChartWidth({
 				screenWidth: parseInt(graphic.style('width')),
 				chartEvery: chartsPerRow,
 				chartMargin: margin,
@@ -48,7 +48,7 @@ function drawGraphic() {
 				margin.left = chartGap;
 			}
 		} else {
-			chart_width = ((parseInt(graphic.style('width')) / chartEvery) - margin.left - margin.right);
+			chartWidth = ((parseInt(graphic.style('width')) / chartEvery) - margin.left - margin.right);
 		}
 		// }
 
@@ -56,13 +56,13 @@ function drawGraphic() {
 
 		//height is set by the aspect ratio
 		var height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 
 
 		const y = d3
@@ -78,7 +78,7 @@ function drawGraphic() {
 		// Create an SVG element
 		const svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -121,7 +121,7 @@ function drawGraphic() {
 				d3
 					.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			)
 			.lower();
@@ -178,7 +178,7 @@ console.log(data)
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: (chart_width + margin.right)
+			wrapWidth: (chartWidth + margin.right)
 		})
 
 
@@ -191,7 +191,7 @@ console.log(data)
 				chartIndex % chartEvery == 0 ?
 					config.yAxisLabel : "", //May need to make the y-axis label an array in the config?
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 

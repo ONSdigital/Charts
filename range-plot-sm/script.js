@@ -86,10 +86,10 @@ function drawGraphic() {
 				}
 			}
 
-			let chart_width = calculateChartWidth(size)
+			let chartWidth = calculateChartWidth(size)
 
 			//set up scales
-			let x = d3.scaleLinear().range([0, chart_width]).domain(xDomain);
+			let x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
 
 			//set up xAxis generator
@@ -99,7 +99,7 @@ function drawGraphic() {
 
 			svg = addSvg({
 				svgParent: container,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				height: (d) => d[2] + margin.top + margin.bottom,
 				margin: margin
 			})
@@ -133,7 +133,7 @@ function drawGraphic() {
 					svgContainer: d3.select(this),
 					yPosition: -5,
 					text: chartPosition == 0 ? "Graduates" : "L3 to L5 non-graduates",
-					wrapWidth: chart_width
+					wrapWidth: chartWidth
 				})
 			})
 
@@ -204,12 +204,12 @@ function drawGraphic() {
 				if (chartIndex == groups.length - 1) {
 					addAxisLabel({
 						svgContainer: d3.select(this),
-						xPosition: chart_width,
+						xPosition: chartWidth,
 						yPosition: (d) => d[2] + 35,
 						text: chartPosition === categories.length - 1 ?
 							config.xAxisLabel : "",
 						textAnchor: "end",
-						wrapWidth: chart_width
+						wrapWidth: chartWidth
 					});
 				}
 			});
@@ -241,10 +241,10 @@ function drawGraphic() {
 	// 		}
 	// 	}
 
-	// 	let chart_width = calculateChartWidth(size)
+	// 	let chartWidth = calculateChartWidth(size)
 
 	// 	//set up scales
-	// 	let x = d3.scaleLinear().range([0, chart_width]).domain(xDomain);
+	// 	let x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
 
 	// 	//set up xAxis generator
@@ -256,7 +256,7 @@ function drawGraphic() {
 	// 		.append('svg')
 	// 		.attr('class', 'chart')
 	// 		.attr('height', (d) => d[2] + margin.top + margin.bottom)
-	// 		.attr('width', chart_width + margin.left + margin.right);
+	// 		.attr('width', chartWidth + margin.left + margin.right);
 
 	// 	charts = svgs[i]
 	// 		.append('g')
@@ -356,7 +356,7 @@ function drawGraphic() {
 	// 		if (i == groups.length - 1) {
 	// 			d3.select(this)
 	// 				.append('text')
-	// 				.attr('x', chart_width)
+	// 				.attr('x', chartWidth)
 	// 				.attr('y', (d) => d[2] + 35)
 	// 				.attr('class', 'axis--label')
 	// 				.text(config.xAxisLabel)

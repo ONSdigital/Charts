@@ -13,7 +13,7 @@ function drawGraphic() {
 	let margin = config.margin[size];
 	margin.centre = config.margin.centre;
 
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
 		config.seriesHeight[size] * graphicData.length +
@@ -48,7 +48,7 @@ function drawGraphic() {
 	//set up x scale
 	const x = d3
 		.scaleLinear()
-		.range([0, chart_width])
+		.range([0, chartWidth])
 		.domain(config.xDomain);
 
 	const seriesAll = stack(graphicData);
@@ -75,7 +75,7 @@ function drawGraphic() {
 
 	let charts = addSvg({
 		svgParent: divs,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: (d) => d[2] + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -126,11 +126,11 @@ function drawGraphic() {
 		if (i == groups.length - 1) {
 			addAxisLabel({
 				svgContainer: d3.select(this),
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: d[2] + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	});

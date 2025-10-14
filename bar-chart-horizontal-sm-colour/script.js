@@ -22,7 +22,7 @@ function drawGraphic(seriesName, graphicData, chartIndex) {
 
   let chartGap = config.chartGap || 10;
 
-  let chart_width = calculateChartWidth({
+  let chartWidth = calculateChartWidth({
     screenWidth: parseInt(graphic.style('width')),
     chartEvery: chartsPerRow,
     chartMargin: margin,
@@ -44,8 +44,8 @@ function drawGraphic(seriesName, graphicData, chartIndex) {
   const chartWidthPerRow = availableWidth / chartsPerRow;
 
   // Adjust the chart width based on the available space and desired grid layout
-  chart_width = Math.min(chartWidthPerRow, chart_width);
-  chart_width *= 1;
+  chartWidth = Math.min(chartWidthPerRow, chartWidth);
+  chartWidth *= 1;
 
   // Calculate the row index and column index based on chart position
   const rowIndex = Math.floor(chartIndex / chartsPerRow);
@@ -57,7 +57,7 @@ function drawGraphic(seriesName, graphicData, chartIndex) {
 
 
   // Define scales
-  const x = d3.scaleLinear().range([0, chart_width]);
+  const x = d3.scaleLinear().range([0, chartWidth]);
 
   const y = d3
     .scaleBand()
@@ -96,7 +96,7 @@ function drawGraphic(seriesName, graphicData, chartIndex) {
   // Create SVG
   let svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   })
@@ -165,11 +165,11 @@ function drawGraphic(seriesName, graphicData, chartIndex) {
   if (chartIndex % chartsPerRow === chartsPerRow - 1) {
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + 35,
       text: config.xAxisLabel,
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
   }
 

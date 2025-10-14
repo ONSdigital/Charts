@@ -11,7 +11,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height
 	let height = config.seriesHeight[size] * graphicData.length;
@@ -20,7 +20,7 @@ function drawGraphic() {
 	const keys = Object.keys(graphicData[0]).slice(1)
 
 	//set up scales
-	let x = d3.scaleLinear().range([0, chart_width]);
+	let x = d3.scaleLinear().range([0, chartWidth]);
 
 	let y = d3.scalePoint().padding(0.5).range([0, height]);
 
@@ -42,7 +42,7 @@ function drawGraphic() {
 	const processedData = handleMetricOverlap(graphicData, x, y, keys, { specialCategories: config.categoriesToMakeDiamonds });
 
 	//set up yAxis generator
-	let yAxis = d3.axisLeft(y).tickSize(-chart_width).tickPadding(10);
+	let yAxis = d3.axisLeft(y).tickSize(-chartWidth).tickPadding(10);
 
 	//set up xAxis generator
 	let xAxis = d3
@@ -80,7 +80,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -208,11 +208,11 @@ function drawGraphic() {
 
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 30,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source

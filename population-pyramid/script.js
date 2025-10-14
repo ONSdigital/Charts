@@ -14,7 +14,7 @@ let graphicData_new, comparisonData_new, time_comparisonData_new;
 let tidydatacomparison, rolledUpComparison, tidydataComparisonPercentage;
 
 // Chart variables
-let maxPercentage, width, chart_width, height;
+let maxPercentage, width, chartWidth, height;
 let xLeft, xRight, y, svg, lineLeft, lineRight, comparisons;
 let widths, dataForLegend, titleDivs;
 
@@ -311,7 +311,7 @@ function createChart(margin) {
     console.log(margin)
     // Set up dimensions
     width = parseInt(graphic.style('width'));
-    chart_width = (width - margin.centre - margin.left - margin.right) / 2;
+    chartWidth = (width - margin.centre - margin.left - margin.right) / 2;
 
     if (config.dataStructure === 'simple') {
         height = (graphicData_new.length / 2) * config.seriesHeight[size];
@@ -322,11 +322,11 @@ function createChart(margin) {
     // Set up scales
     xLeft = d3.scaleLinear()
         .domain([0, maxPercentage])
-        .rangeRound([chart_width, 0]);
+        .rangeRound([chartWidth, 0]);
 
     xRight = d3.scaleLinear()
         .domain(xLeft.domain())
-        .rangeRound([chart_width + margin.centre, chart_width * 2 + margin.centre]);
+        .rangeRound([chartWidth + margin.centre, chartWidth * 2 + margin.centre]);
 
     if (config.dataStructure === 'simple') {
         y = d3.scaleBand()
@@ -343,7 +343,7 @@ function createChart(margin) {
     // Create SVG
     svg = addSvg({
         svgParent: graphic,
-        chart_width: width,
+        chartWidth: width,
         height: height + margin.top + margin.bottom,
         margin: margin
     });
@@ -439,7 +439,7 @@ function addAxes(margin) {
     // Y-axis
     svg.append('g')
         .attr('class', 'y axis')
-        .attr('transform', `translate(${chart_width + margin.centre / 2 - 3},0)`)
+        .attr('transform', `translate(${chartWidth + margin.centre / 2 - 3},0)`)
         .call(
             d3.axisRight(y)
                 .tickSize(0)
@@ -541,7 +541,7 @@ function addAxisLabels(margin) {
 
     addAxisLabel({
         svgContainer: svg,
-        xPosition: chart_width + margin.centre / 2,
+        xPosition: chartWidth + margin.centre / 2,
         yPosition: -15,
         text: config.yAxisLabel,
         textAnchor: "middle",
@@ -550,7 +550,7 @@ function addAxisLabels(margin) {
 }
 
 function addLegend(margin) {
-    widths = [chart_width + margin.left, chart_width + margin.right];
+    widths = [chartWidth + margin.left, chartWidth + margin.right];
 
     legend.append('div')
         .attr('class', 'flex-row')

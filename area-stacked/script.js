@@ -13,8 +13,8 @@ function drawGraphic() {
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
 	let aspectRatio = config.aspectRatio[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
@@ -51,7 +51,7 @@ function drawGraphic() {
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -60,7 +60,7 @@ function drawGraphic() {
 	const x = d3
 		.scaleTime()
 		.domain(d3.extent(graphicData, (d) => d.date))
-		.range([0, chart_width]);
+		.range([0, chartWidth]);
 
 	// This function generates an array of approximately count + 1 uniformly-spaced, rounded values in the range of the given start and end dates (or numbers).
 	let tickValues = x.ticks(config.xAxisTicks[size]);
@@ -137,11 +137,11 @@ function drawGraphic() {
 	//This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	// This does the y-axis label
@@ -151,7 +151,7 @@ function drawGraphic() {
 		yPosition: -15,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source

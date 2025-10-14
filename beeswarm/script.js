@@ -121,7 +121,7 @@ function drawGraphic() {
 
   let margin = config.margin[size]
   let groups = d3.groups(graphicData, (d) => d.group)
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
   let height = config.seriesHeight[size] * groups.length
 
   // Set up the legend
@@ -188,7 +188,7 @@ function drawGraphic() {
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width])
+    .range([0, chartWidth])
     .domain(xDomain);
 
   const y = d3.scaleBand()
@@ -217,7 +217,7 @@ function drawGraphic() {
 
   let chart = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   })
@@ -296,7 +296,7 @@ function drawGraphic() {
   const overlay = createDelaunayOverlay({
     svgContainer: chart,
     data: positionedOverlayData,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height - margin.top - margin.bottom,
     xScale: (d)=>d,
     yScale: d3.scaleLinear().domain([0, height - margin.top - margin.bottom]).range([0, height - margin.top - margin.bottom]),
@@ -353,11 +353,11 @@ function drawGraphic() {
 
   addAxisLabel({
     svgContainer: chart,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height - margin.top - margin.bottom + 40,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   //create link to source
