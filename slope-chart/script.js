@@ -91,13 +91,13 @@ function drawGraphic() {
 
 	// Add text labels to the right of the circles
 	let xOffset = 8;
-	let text_length;
+	let textLength;
 	let rightWrapWidth = parseInt(graphic.style('width')) - margin.left - width - xOffset - 75;
 
 	//Calculating where to place the category label
 	function textLength(thing) {
-		// text_length = thing._groups[0][0].clientWidth + xOffset; <-- this has some issues once in Florence/live - better method below
-		text_length = thing.node().getComputedTextLength() + xOffset;
+		// textLength = thing._groups[0][0].clientWidth + xOffset; <-- this has some issues once in Florence/live - better method below
+		textLength = thing.node().getComputedTextLength() + xOffset;
 
 	}
 
@@ -148,7 +148,7 @@ function drawGraphic() {
 			.attr("class", "directLineLabelBold")
 			.call(textLength, this) //Work out the width of this bit of text for positioning the next bit
 			.append('tspan')
-			.attr('x', xOffset + text_length)
+			.attr('x', xOffset + textLength)
 			.attr('dy', '.35em')
 			.attr('text-anchor', 'start')
 			.attr(
