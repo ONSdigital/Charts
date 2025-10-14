@@ -36,7 +36,7 @@ function drawGraphic() {
 
 
   //lets also try a new smallmultiple version here which will group data on the basis of plot
-  let grouped_data = d3.group(graphicData, d => d.plot)
+  let groupedData = d3.group(graphicData, d => d.plot)
 
   let xDataType;
 
@@ -48,12 +48,12 @@ function drawGraphic() {
 
   // console.log(xDataType)
 
-  // console.log(Array.from(grouped_data))
+  // console.log(Array.from(groupedData))
 
   // Create a container div for each small multiple
   var chartContainers = graphic
     .selectAll('.chart-container')
-    .data(Array.from(grouped_data))
+    .data(Array.from(groupedData))
     .join('div')
     .attr('class', 'chart-container');
 
@@ -105,7 +105,7 @@ function drawGraphic() {
       margin: margin
     })
 
-    // console.log(grouped_data)
+    // console.log(groupedData)
 
     // both of these are need to be looked at.
     if (config.yDomain == "auto") {
