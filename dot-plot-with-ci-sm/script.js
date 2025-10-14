@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addChartTitleLabel, addAxisLabel, addSource }
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphicData, size, svg, nested_data;
+let graphicData, size, svg, nestedData;
 
 function drawGraphic() {
 
@@ -11,7 +11,7 @@ function drawGraphic() {
   size = initialise(size);
 
   //group data on the basis of plot
-  nested_data = d3.group(graphicData, d => d.series)
+  nestedData = d3.group(graphicData, d => d.series)
 
   let plots = [...new Set(graphicData.map(d => d.series))];
 
@@ -57,7 +57,7 @@ function drawGraphic() {
   // Create a container div for each small multiple
   let chartContainers = graphic
     .selectAll('.chart-container')
-    .data(Array.from(nested_data))
+    .data(Array.from(nestedData))
     .join('div')
     .attr('class', 'chart-container');
 

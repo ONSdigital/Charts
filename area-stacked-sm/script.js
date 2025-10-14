@@ -11,12 +11,12 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Group the data by the 'series' column
-	const nested_data = d3.groups(graphicData, (d) => d.series);
+	const nestedData = d3.groups(graphicData, (d) => d.series);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 

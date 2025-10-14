@@ -31,16 +31,16 @@ function drawGraphic() {
         .text(d => d)
 
     // Nest the graphicData by the 'series' column
-    let nested_data = d3.group(graphicData, (d) => d.series);
+    let nestedData = d3.group(graphicData, (d) => d.series);
 
     //Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
-    let namesArray = [...new Set([...nested_data][0][1].map(d => d.name))];
+    let namesArray = [...new Set([...nestedData][0][1].map(d => d.name))];
     // console.log(namesArray)
 
     // Create a container div for each small multiple
     let chartContainers = graphic
         .selectAll('.chart-container')
-        .data(Array.from(nested_data))
+        .data(Array.from(nestedData))
         .join('div')
         .attr('class', 'chart-container');
 
@@ -181,7 +181,7 @@ function drawGraphic() {
         })
 
         // This does the x-axis label
-        if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nested_data].length - 1) {
+        if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nestedData].length - 1) {
             addAxisLabel({
                 svgContainer: svg,
                 xPosition: chartWidth,

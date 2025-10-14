@@ -15,13 +15,13 @@ function drawGraphic() {
 	// console.log(categories)
 
 	// Nest the graphicData by the 'series' column
-	let nested_data = d3.group(graphicData, (d) => d.series);
+	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nested_data))
+	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
