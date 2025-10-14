@@ -1,6 +1,6 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
 
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
@@ -39,11 +39,7 @@ function drawGraphic() {
 		xDataType = 'numeric';
 	}
 
-	// console.log(xDataType)
-
 	let x;
-
-
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
@@ -58,7 +54,6 @@ function drawGraphic() {
 			.domain(config.xDomain)
 			.range([0, chartWidth]);
 	}
-	//console.log(`x defined`);
 
 	const y = d3
 		.scaleLinear()
@@ -72,8 +67,6 @@ function drawGraphic() {
 	} else {
 		y.domain(config.yDomain)
 	}
-	//console.log(`yAxis defined`);
-
 
 	// This function generates an array of approximately count + 1 uniformly-spaced, rounded values in the range of the given start and end dates (or numbers).
 	let tickValues = x.ticks(config.xAxisTicks[size]);
@@ -91,7 +84,6 @@ function drawGraphic() {
 		console.log("Last date added")
 	}
 
-
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
@@ -99,8 +91,6 @@ function drawGraphic() {
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
-	//console.log(`SVG element created`);
-
 
 	// Add the x-axis
 	svg
@@ -184,12 +174,7 @@ function drawGraphic() {
 			])
 			.attr('opacity', 0.15)
 
-		// console.log(`drawLegend: ${size}`);
-		// size === 'sm'
-
 		if (config.drawLegend || size === 'sm') {
-
-
 			// Set up the legend
 			let legenditem = d3
 				.select('#legend')
@@ -214,132 +199,92 @@ function drawGraphic() {
 					return d[0];
 				});
 
-		} else {
-
-			// Add text labels to the right of the circles
-			svg
-				.append('text')
-				.attr(
-					'transform',
-					`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`
-				)
-				.attr('x', 10)
-				.attr('dy', '.35em')
-				.attr('text-anchor', 'start')
-				.attr(
-					'fill', //Colours adjusted for text where needed
-					config.textColourPalette[
-					categories.indexOf(category) % config.textColourPalette.length
-					]
-				)
-				.text(category)
-				.attr("class", "directLineLabel")
-				.call(wrap, margin.right - 10); //wrap function for the direct labelling.
-
-			svg
-				.append('circle')
-				.attr('cx', x(lastDatum.date))
-				.attr('cy', y(lastDatum[category]))
-				.attr('r', 4)
-				.attr(
-					'fill',
-					config.colourPalette[
-					categories.indexOf(category) % config.colourPalette.length
-					]
-				);
-			// console.log(`Circle appended for category: ${category}`);
-
-		};
-
-
+		}
 	});
 
-	if (config.ciLegend) {
-	const ciSvg = d3.select('#legend')
-		.append('div')
-		.attr('class', 'legend--item')
-		.append('svg')
-		.attr('width', 205)
-		.attr('height', 70);
+	if (!config.drawLegend && size !== 'sm') {
+		createDirectLabels({
+			categories: categories,
+			data: graphic_data,
+			svg: svg,
+			xScale: x,
+			yScale: y,
+			margin: margin,
+			chartHeight: height,
+			config: config,
+			options: {
+				minSpacing: 0,
+				useLeaderLines: true,
+				leaderLineStyle: 'dashed',
+				labelStrategy: 'lastValid',
+				minLabelOffset: 5
+			}
+		});
+	}
 
-	ciSvg.append('rect')
-		.attr('x', 0)
-		.attr('y', 0)
-		.attr('width', 50)
-		.attr('height', 25)
-		.attr('fill', "#959495")
-		.attr('fill-opacity', 0.3);
+	if (config.CI_legend) {
+		const ciSvg = d3.select('#legend')
+			.append('div')
+			.attr('class', 'legend--item')
+			.append('svg')
+			.attr('width', 205)
+			.attr('height', 70);
 
-	ciSvg.append('line')
-		.attr('x1', 0)
-		.attr('y1', 12.5)
-		.attr('x2', 50)
-		.attr('y2', 12.5)
-		.attr('stroke', "#666666")
-		.attr('stroke-width', 2);
+		ciSvg.append('rect')
+			.attr('x', 0)
+			.attr('y', 0)
+			.attr('width', 50)
+			.attr('height', 25)
+			.attr('fill', "#959495")
+			.attr('fill-opacity', 0.3);
 
-	// addDirectionArrow(
-	// 	//name of your svg, normally just SVG
-	// 	ciSvg,
-	// 	//direction of arrow: left, right, up or down
-	// 	'up',
-	// 	//anchor end or start (end points the arrow towards your x value, start points away)
-	// 	'end',
-	// 	//x value
-	// 	20,
-	// 	//y value
-	// 	18,
-	// 	//alignment - left or right for vertical arrows, above or below for horizontal arrows
-	// 	'below',
-	// 	//annotation text
-	// 	config.legendIntervalText,
-	// 	//wrap width
-	// 	150,
-	// 	//text adjust y
-	// 	15,
-	// 	//Text vertical align: top, middle or bottom (default is middle)
-	// 	'left'
-	// )
+		ciSvg.append('line')
+			.attr('x1', 0)
+			.attr('y1', 12.5)
+			.attr('x2', 50)
+			.attr('y2', 12.5)
+			.attr('stroke', "#666666")
+			.attr('stroke-width', 2);
 
-	addElbowArrow(
-		ciSvg,                // svgName
-		25,                   // startX
-		25,                   // startY
-		68,                   // endX
-		37,                    // endY
-		"vertical-first",     // bendDirection
-		"start",                // arrowAnchor
-		config.legendIntervalText, // thisText
-		150,                  // wrapWidth
-		25,                   // textAdjustY
-		"top",               // wrapVerticalAlign
-		"#414042",            // arrowColour
-		"end"              // textAlignment
-	)
+		addElbowArrow(
+			ciSvg,                // svgName
+			25,                   // startX
+			25,                   // startY
+			68,                   // endX
+			37,                    // endY
+			"vertical-first",     // bendDirection
+			"start",                // arrowAnchor
+			config.CI_legend_interval_text, // thisText
+			150,                  // wrapWidth
+			25,                   // textAdjustY
+			"top",               // wrapVerticalAlign
+			"#414042",            // arrowColour
+			"end"              // textAlignment
+		)
 
-	addDirectionArrow(
-		//name of your svg, normally just SVG
-		ciSvg,
-		//direction of arrow: left, right, up or down
-		'left',
-		//anchor end or start (end points the arrow towards your x value, start points away)
-		'end',
-		//x value
-		50,
-		//y value
-		7,
-		//alignment - left or right for vertical arrows, above or below for horizontal arrows
-		'right',
-		//annotation text
-		config.legendEstimateText,
-		//wrap width
-		1500,
-		//text adjust y
-		0,
-		//Text vertical align: top, middle or bottom (default is middle)
-		'bottom'
-	)
-}
+		addDirectionArrow(
+			//name of your svg, normally just SVG
+			ciSvg,
+			//direction of arrow: left, right, up or down
+			'left',
+			//anchor end or start (end points the arrow towards your x value, start points away)
+			'end',
+			//x value
+			50,
+			//y value
+			7,
+			//alignment - left or right for vertical arrows, above or below for horizontal arrows
+			'right',
+			//annotation text
+			config.CI_legend_text,
+			//wrap width
+			1500,
+			//text adjust y
+			0,
+			//Text vertical align: top, middle or bottom (default is middle)
+			'bottom'
+		)
+	}
 
 
 	// This does the y-axis label

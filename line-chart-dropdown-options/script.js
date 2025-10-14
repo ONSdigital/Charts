@@ -1,31 +1,30 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
 let legend = d3.select('#legend');
 let graphicData, size;
-//console.log(`Graphic selected: ${graphic}`);
 
 let pymChild = null;
 
 // Set y domain for new config structure (min/max can be "auto", "autoAll", or a value)
 function getYDomainMinMax({ minType, maxType, allData, filteredData, categories }) {
-    let min, max;
-    if (minType === "autoAll") {
-        min = d3.min(allData, (d) => Math.min(...categories.map((c) => d[c])));
-    } else if (minType === "auto") {
-        min = d3.min(filteredData, (d) => Math.min(...categories.map((c) => d[c])));
-    } else {
-        min = +minType;
-    }
-    if (maxType === "autoAll") {
-        max = d3.max(allData, (d) => Math.max(...categories.map((c) => d[c])));
-    } else if (maxType === "auto") {
-        max = d3.max(filteredData, (d) => Math.max(...categories.map((c) => d[c])));
-    } else {
-        max = +maxType;
-    }
-    return [min, max];
+	let min, max;
+	if (minType === "autoAll") {
+		min = d3.min(allData, (d) => Math.min(...categories.map((c) => d[c])));
+	} else if (minType === "auto") {
+		min = d3.min(filteredData, (d) => Math.min(...categories.map((c) => d[c])));
+	} else {
+		min = +minType;
+	}
+	if (maxType === "autoAll") {
+		max = d3.max(allData, (d) => Math.max(...categories.map((c) => d[c])));
+	} else if (maxType === "auto") {
+		max = d3.max(filteredData, (d) => Math.max(...categories.map((c) => d[c])));
+	} else {
+		max = +maxType;
+	}
+	return [min, max];
 }
 
 function drawGraphic() {
@@ -97,8 +96,8 @@ function drawGraphic() {
 	function clearChart() {
 		// Clear the chart graphics
 		svg.selectAll('path')
-		// .transition().duration(2000)
-		.attr('width', 0).remove();
+			// .transition().duration(2000)
+			.attr('width', 0).remove();
 
 		svg.selectAll('circle.line-end')
 			// .transition().duration(2000)
@@ -113,25 +112,25 @@ function drawGraphic() {
 			.remove();
 	};
 
-// Function to change the data based on the selected option
-function changeData(selectedOption) {
-	// Remove all existing lines and circles
-	// svg.selectAll('path.line').remove();
-	// svg.selectAll('circle.line-end').remove();
-	// svg.selectAll('text.directLineLabel').remove();
-	// svg.selectAll('line.label-leader-line').remove();
+	// Function to change the data based on the selected option
+	function changeData(selectedOption) {
+		// Remove all existing lines and circles
+		// svg.selectAll('path.line').remove();
+		// svg.selectAll('circle.line-end').remove();
+		// svg.selectAll('text.directLineLabel').remove();
+		// svg.selectAll('line.label-leader-line').remove();
 
-	d3.selectAll('.y.axis .tick').attr('opacity', 1); // Reveal y-axis ticks
+		d3.selectAll('.y.axis .tick').attr('opacity', 1); // Reveal y-axis ticks
 
-	// Clear existing legend
-	d3.select('#legend').selectAll('div.legend--item').remove();
+		// Clear existing legend
+		d3.select('#legend').selectAll('div.legend--item').remove();
 
 	// Filter data for the selected option
 	let filteredData = graphicData.filter((d) => d.option === selectedOption);
 	if (filteredData.length === 0) return;
 
-	// Get categories (series) for this option
-	const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
+		// Get categories (series) for this option
+		const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
 
 	// Set y domain for "auto" min/max using filtered data
 	let yDomainMin = config.yDomainMin;
@@ -220,7 +219,7 @@ function changeData(selectedOption) {
     
     // CIRCLES: Handle end-of-line circles
     const circleData = categories.map((category, index) => {
-        const lastDatum = filteredData[filteredData.length - 1];
+        const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
         return {
             category: category,
             index: index,
@@ -286,173 +285,42 @@ function changeData(selectedOption) {
 			.append('div')
 			.attr('class', 'legend--item');
 
-		legenditem
-			.append('div')
-			.attr('class', 'legend--icon--circle')
-			.style('background-color', function (d) {
-				return d[1];
-			});
-
-		legenditem
-			.append('div')
-			.append('p')
-			.attr('class', 'legend--text')
-			.html(function (d) {
-				return d[0];
-			});
-	} else {
-		// Handle direct labels with collision detection
-		createDirectLabels(categories, filteredData);
-	}
-}
-
-// Separate function to handle direct label creation and positioning
-function createDirectLabels(categories, filteredData) {
-	let labelData = [];
-	const lastDatum = filteredData[filteredData.length - 1];
-
-	// Create all labels first and collect their data
-	categories.forEach(function (category, index) {
-		// Skip if the last value is null (no data point to label)
-		if (lastDatum[category] === null) return;
-
-		const label = svg.append('text')
-			.attr('class', 'directLineLabel')
-			.attr('x', x(lastDatum.date) + 10)
-			.attr('y', y(lastDatum[category]))
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
-			.text(category)
-			.call(wrap, margin.right - 10);
-
-		// Get the actual height of the text element after wrapping
-		const bbox = label.node().getBBox();
-		
-		labelData.push({
-			node: label,
-			x: x(lastDatum.date) + 10,
-			y: y(lastDatum[category]),
-			originalY: y(lastDatum[category]),
-			height: bbox.height,
-			category: category
-		});
-	});
-
-	// Only run collision detection if we have multiple labels
-	if (labelData.length > 1) {
-		// Sort labels by their y position for easier collision detection
-		labelData.sort((a, b) => a.y - b.y);
-
-		// Simple collision detection and adjustment
-		const minSpacing = 12; // Minimum pixels between label centers
-		
-		for (let i = 1; i < labelData.length; i++) {
-			const current = labelData[i];
-			const previous = labelData[i - 1];
-			
-			// Check if current label overlaps with previous
-			const overlap = (previous.y + previous.height/2 + minSpacing/2) - (current.y - current.height/2 - minSpacing/2);
-			
-			if (overlap > 0) {
-				// Move current label down
-				current.y += overlap;
-				
-				// Make sure it doesn't go below chart bounds
-				if (current.y + current.height/2 > height) {
-					// If it would go below, try moving the previous label up instead
-					const pushUp = (current.y + current.height/2) - height;
-					
-					// Move all previous labels up by the required amount
-					for (let j = i - 1; j >= 0; j--) {
-						labelData[j].y -= pushUp;
-						// Don't let them go above the chart
-						if (labelData[j].y - labelData[j].height/2 < 0) {
-							labelData[j].y = labelData[j].height/2;
-						}
-					}
-					
-					// Adjust current label to fit
-					current.y = height - current.height/2;
-				}
-			}
-		}
-
-		// Apply the adjusted positions
-		labelData.forEach(label => {
-			label.node.attr('y', label.y);
-			// Draw a leader line if the label is offset vertically from the end point
-			if (Math.abs(label.y - label.originalY) > 1) {
-				svg.append('line')
-					.attr('class', 'label-leader-line')
-					.attr('x1', label.x - 10) // end of the line (before label offset)
-					.attr('y1', label.originalY)
-					.attr('x2', label.x) // start of the label
-					.attr('y2', label.y)
-					.attr('stroke', config.colourPalette[categories.indexOf(label.category) % config.colourPalette.length])
-					.attr('stroke-width', 1)
-					.attr('stroke-dasharray', '2,2'); // optional: dashed line
-			}
-		});
-	}
-}
-
-// Alternative force-based approach which I can't get to work properly
-function createDirectLabelsWithForce(categories, filteredData) {
-	let labelData = [];
-	const lastDatum = filteredData[filteredData.length - 1];
-
-	// Create all labels first
-	categories.forEach(function (category, index) {
-		if (lastDatum[category] === null) return;
-
-		const label = svg.append('text')
-			.attr('class', 'directLineLabel')
-			.attr('x', x(lastDatum.date) + 10)
-			.attr('y', y(lastDatum[category]))
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
-			.text(category)
-			.call(wrap, margin.right - 10);
-
-		const bbox = label.node().getBBox();
-		
-		labelData.push({
-			node: label,
-			x: x(lastDatum.date) + 10,
-			y: y(lastDatum[category]),
-			originalY: y(lastDatum[category]),
-			height: bbox.height,
-			width: bbox.width
-		});
-	});
-
-	if (labelData.length > 1) {
-		// Use d3 force simulation for more sophisticated positioning
-		const simulation = d3.forceSimulation(labelData)
-			.force('y', d3.forceY(d => d.originalY).strength(0.8))
-			.force('collide', d3.forceCollide().radius(d => d.height/2 + 2))
-			.force('bounds', () => {
-				labelData.forEach(d => {
-					d.y = Math.max(d.height/2, Math.min(height - d.height/2, d.y));
+			legenditem
+				.append('div')
+				.attr('class', 'legend--icon--circle')
+				.style('background-color', function (d) {
+					return d[1];
 				});
-			})
-			.stop();
 
-		// Run simulation
-		for (let i = 0; i < 120; i++) {
-			simulation.tick();
+			legenditem
+				.append('div')
+				.append('p')
+				.attr('class', 'legend--text')
+				.html(function (d) {
+					return d[0];
+				});
+		} else {
+			createDirectLabels({
+				categories: categories,
+				data: filteredData,
+				svg: svg,
+				xScale: x,
+				yScale: y,
+				margin: margin,
+				chartHeight: height,
+				config: config,
+				options: {
+					labelStrategy: 'lastValid',
+					minSpacing: 15,
+					useLeaderLines: true,
+					leaderLineStyle: 'dashed',
+					minLabelOffset: 5
+				}
+			});
 		}
-
-		// Apply final positions
-		labelData.forEach(d => {
-			d.node.attr('y', d.y);
-		});
 	}
-}
-	// Define the dimensions and margin, width and height of the chart.
-	// Remove duplicate declarations of margin, chartWidth, and height in drawGraphic
+
+	
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
@@ -500,10 +368,10 @@ function createDirectLabelsWithForce(categories, filteredData) {
 
 	// Helper to generate x-axis ticks based on config
 	function getXAxisTicks({
-	    data,
-	    xDataType,
-	    size,
-	    config
+		data,
+		xDataType,
+		size,
+		config
 	}) {
 	    let ticks = [];
 	    const method = config.xAxisTickMethod || "interval";
