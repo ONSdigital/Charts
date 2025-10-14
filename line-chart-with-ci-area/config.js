@@ -65,7 +65,7 @@ config = {
 		},
 		"lg": {
 			"top": 30,
-			"right": 100,
+			"right": 150,
 			"bottom": 50,
 			"left": 30
 		}
