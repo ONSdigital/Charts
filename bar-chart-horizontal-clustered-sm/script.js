@@ -60,7 +60,7 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };

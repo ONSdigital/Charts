@@ -9,7 +9,7 @@ size = initialise(size);
 
 function drawGraphic(seriesName, graphicData, chartIndex) {
 
-  const chartsPerRow = config.chart_every[size];
+  const chartsPerRow = config.chartEvery[size];
   const chartPosition = chartIndex % chartsPerRow;
 
   // Set dimensions
