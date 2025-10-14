@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
-let graphic_data, size;
+let graphicData, size;
 
 let pymChild = null;
 
@@ -92,11 +92,11 @@ function drawGraphic() {
 	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -108,11 +108,11 @@ function drawGraphic() {
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chart_width]);
 	} else {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
+			.domain(d3.extent(graphicData, (d) => +d.date))
 			.range([0, chart_width]);
 	}
 
@@ -123,13 +123,13 @@ function drawGraphic() {
 	let maxY, minY;
 
 	if (config.yDomainMax === "auto") {
-		maxY = d3.max(graphic_data, d => d3.max(categories, c => d[c]));
+		maxY = d3.max(graphicData, d => d3.max(categories, c => d[c]));
 	} else {
 		maxY = config.yDomainMax;
 	}
 
 	if (config.yDomainMin === "auto") {
-		minY = d3.min(graphic_data, d => d3.min(categories, c => d[c]));
+		minY = d3.min(graphicData, d => d3.min(categories, c => d[c]));
 	} else {
 		minY = config.yDomainMin;
 	}
@@ -165,7 +165,7 @@ function drawGraphic() {
 
 		svg
 			.append('path')
-			.datum(graphic_data)
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
@@ -178,7 +178,7 @@ function drawGraphic() {
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
 
-		const lastDatum = graphic_data[graphic_data.length - 1];
+		const lastDatum = graphicData[graphicData.length - 1];
 		if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
 		const label = svg.append('text')
 			.attr('class', 'directLineLabel')
@@ -227,7 +227,7 @@ function drawGraphic() {
 					return d[0];
 				});
 		} else {
-		createDirectLabels(categories, graphic_data, svg, x, y, margin, size, config, chart_width);
+		createDirectLabels(categories, graphicData, svg, x, y, margin, size, config, chart_width);
 		}
 	
 
@@ -260,7 +260,7 @@ function drawGraphic() {
 			d3
 				.axisBottom(x)
 				.tickValues(getXAxisTicks({
-					data: graphic_data,
+					data: graphicData,
 					xDataType,
 					size,
 					config
@@ -311,7 +311,7 @@ function drawGraphic() {
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),
@@ -338,12 +338,12 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 
 });
 
-function createDirectLabels(categories, graphic_data, svg, x, y, margin, size, config, chart_width) {
+function createDirectLabels(categories, graphicData, svg, x, y, margin, size, config, chart_width) {
 
 	// Remove any existing direct labels before adding new ones
     svg.selectAll('text.directLineLabel').remove();
     let labelData = [];
-    const lastDatum = graphic_data[graphic_data.length - 1];
+    const lastDatum = graphicData[graphicData.length - 1];
     categories.forEach(function (category, index) {
         if (lastDatum[category] === null) return;
         const label = svg.append('text')

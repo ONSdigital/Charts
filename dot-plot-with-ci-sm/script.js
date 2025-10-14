@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addChartTitleLabel, addAxisLabel, addSource }
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg, nested_data;
+let graphicData, size, svg, nested_data;
 
 function drawGraphic() {
 
@@ -11,9 +11,9 @@ function drawGraphic() {
   size = initialise(size);
 
   //group data on the basis of plot
-  nested_data = d3.group(graphic_data, d => d.series)
+  nested_data = d3.group(graphicData, d => d.series)
 
-  let plots = [...new Set(graphic_data.map(d => d.series))];
+  let plots = [...new Set(graphicData.map(d => d.series))];
 
   let colour = d3.scaleOrdinal(config.colourPalette);
 
@@ -26,7 +26,7 @@ function drawGraphic() {
 
   let xDataType;
 
-  if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+  if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
     xDataType = 'date';
   } else {
     xDataType = 'numeric';
@@ -40,16 +40,16 @@ function drawGraphic() {
 
   if (xDataType == 'date') {
     x = d3.scaleTime()
-      .domain(d3.extent(graphic_data, (d) => d.date))
+      .domain(d3.extent(graphicData, (d) => d.date))
       .range([0, chart_width]);
   } else {
     x = d3.scaleLinear()
-      .domain(d3.extent(graphic_data, (d) => +d.date))
+      .domain(d3.extent(graphicData, (d) => +d.date))
       .range([0, chart_width]);
   }
 
 
-  // console.log("x",d3.extent(graphic_data, (d) => +d.date))
+  // console.log("x",d3.extent(graphicData, (d) => +d.date))
 
   const y = d3.scaleLinear()
     .range([height, 0])
@@ -73,7 +73,7 @@ function drawGraphic() {
     // both of these are need to be looked at.
 
     if (config.yDomain == "auto") {
-      y.domain([0, d3.max(graphic_data, function (d) { return d.upperCI })]);
+      y.domain([0, d3.max(graphicData, function (d) { return d.upperCI })]);
     } else {
       y.domain(config.yDomain)
     }
@@ -185,7 +185,7 @@ function drawGraphic() {
   }
 
   // lets move on to setting up the legend for this chart. 
-  let legendGroups = [...new Set(graphic_data.map(item => item.group))]; // this will extract the unique groups from the data.csv
+  let legendGroups = [...new Set(graphicData.map(item => item.group))]; // this will extract the unique groups from the data.csv
 
 
   let legenditem = d3
@@ -230,7 +230,7 @@ d3.csv(config.graphicDataURL)
 
     let parseTime = d3.timeParse(config.dateFormat);
     //load chart data
-    graphic_data = data;
+    graphicData = data;
 
     data.forEach((d, i) => {
 

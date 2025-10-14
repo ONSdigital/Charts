@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addSource } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, svg, columnNames, numbers, dataPivoted, breaks, colour, key, legendx;
+let graphicData, size, svg, columnNames, numbers, dataPivoted, breaks, colour, key, legendx;
 
 function drawGraphic() {
 
@@ -14,24 +14,24 @@ function drawGraphic() {
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
-		config.seriesHeight[size] * graphic_data.length +
-		3 * (graphic_data.length - 1);
+		config.seriesHeight[size] * graphicData.length +
+		3 * (graphicData.length - 1);
 
-	columnNames = graphic_data.columns.slice(1);
+	columnNames = graphicData.columns.slice(1);
 
 	const numbers = new Map();
 
 	columnNames.forEach((item) => {
 		numbers.set(
 			item,
-			graphic_data.map((d) => +d[item])
+			graphicData.map((d) => +d[item])
 		);
 	});
 
 	const breaks = new Map();
 
 	dataPivoted = Array.from(
-		pivot(graphic_data, graphic_data.columns.slice(1), 'region', 'value')
+		pivot(graphicData, graphicData.columns.slice(1), 'region', 'value')
 	);
 
 	if (config.breaks == 'jenks') {
@@ -79,7 +79,7 @@ function drawGraphic() {
 	const y = d3
 		.scaleBand()
 		.paddingOuter(0)
-		.paddingInner(((graphic_data.length - 1) * 3) / (graphic_data.length * 30))
+		.paddingInner(((graphicData.length - 1) * 3) / (graphicData.length * 30))
 		.range([0, height])
 		.round(true);
 
@@ -99,7 +99,7 @@ function drawGraphic() {
 	});
 
 	//use the data to find unique entries in the name column
-	y.domain([...new Set(graphic_data.map((d) => d.name))]);
+	y.domain([...new Set(graphicData.map((d) => d.name))]);
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
@@ -184,7 +184,7 @@ function* pivot(data, columns, name, value, opts) {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

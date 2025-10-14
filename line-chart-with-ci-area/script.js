@@ -7,7 +7,7 @@ let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
 let pymChild = null;
 
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -23,17 +23,17 @@ function drawGraphic() {
 
 
 	// Get categories from the keys used in the stack generator
-	// const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
-	const categories = Object.keys(graphic_data[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
+	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
 	// console.log(categories);
 
-	const fulldataKeys = Object.keys(graphic_data[0]).slice(1)
+	const fulldataKeys = Object.keys(graphicData[0]).slice(1)
 
 	// Define the x and y scales
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -47,11 +47,11 @@ function drawGraphic() {
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chart_width]);
 	} else if (config.xDomain == "auto") {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
+			.domain(d3.extent(graphicData, (d) => +d.date))
 			.range([0, chart_width]);
 	} else {
 		x = d3.scaleLinear()
@@ -66,8 +66,8 @@ function drawGraphic() {
 
 	if (config.yDomain == "auto") {
 		y.domain(
-			[d3.min(graphic_data, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-			d3.max(graphic_data, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
+			[d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
+			d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
 		)
 	} else {
 		y.domain(config.yDomain)
@@ -79,15 +79,15 @@ function drawGraphic() {
 	let tickValues = x.ticks(config.xAxisTicks[size]);
 
 	// Add the first and last dates to the ticks array, and use a Set to remove any duplicates
-	// tickValues = Array.from(new Set([graphic_data[0].date, ...tickValues, graphic_data[graphic_data.length - 1].date]));
+	// tickValues = Array.from(new Set([graphicData[0].date, ...tickValues, graphicData[graphicData.length - 1].date]));
 
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
@@ -154,7 +154,7 @@ function drawGraphic() {
 
 		svg
 			.append('path')
-			.datum(graphic_data)
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
@@ -168,7 +168,7 @@ function drawGraphic() {
 			.style('stroke-linecap', 'round');
 		//console.log(`Path appended for category: ${category}`);
 
-		const lastDatum = graphic_data[graphic_data.length - 1];
+		const lastDatum = graphicData[graphicData.length - 1];
 
 		const areaGenerator = d3.area()
 			.x(d => x(d.date))
@@ -178,7 +178,7 @@ function drawGraphic() {
 
 		svg.append('path')
 			.attr('class', 'shaded')
-			.attr('d', areaGenerator(graphic_data))
+			.attr('d', areaGenerator(graphicData))
 			.attr('fill', config.colourPalette[
 				categories.indexOf(category) % config.colourPalette.length
 			])
@@ -366,7 +366,7 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then(data => {
 
-	graphic_data = data.map((d) => {
+	graphicData = data.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),

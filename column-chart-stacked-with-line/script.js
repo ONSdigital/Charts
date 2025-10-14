@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -29,7 +29,7 @@ function drawGraphic() {
 		.round(false);
 
 	//use the data to find unique entries in the date column
-	x.domain([...new Set(graphic_data.map((d) => d.date))]);
+	x.domain([...new Set(graphicData.map((d) => d.date))]);
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y)
@@ -40,7 +40,7 @@ function drawGraphic() {
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -56,12 +56,12 @@ function drawGraphic() {
 
 	//Labelling the first and/or last bar if needed
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
@@ -76,17 +76,17 @@ function drawGraphic() {
 
 	const stack = d3
 		.stack()
-		.keys(graphic_data.columns.slice(1).filter(d => (d) !== config.lineSeries))
+		.keys(graphicData.columns.slice(1).filter(d => (d) !== config.lineSeries))
 		.offset(d3[config.stackOffset])
 		.order(d3[config.stackOrder]);
 
-	let series = stack(graphic_data);
+	let series = stack(graphicData);
 
 	//gets array of arrays for individual lines
 	let lines = [];
-	for (let column in graphic_data[0]) {
+	for (let column in graphicData[0]) {
 		if (column == 'date') continue;
-		lines[column] = graphic_data.map(function (d) {
+		lines[column] = graphicData.map(function (d) {
 			return {
 				'name': d.date,
 				'amt': d[column]
@@ -121,7 +121,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(1).filter(d => (d) !== config.lineSeries), config.colourPalette)
+			d3.zip(graphicData.columns.slice(1).filter(d => (d) !== config.lineSeries), config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -166,7 +166,7 @@ function drawGraphic() {
 	if (config.yDomain == 'auto') {
 		// y.domain([
 		// 	0,
-		// 	d3.max(graphic_data, (d) => d3.max(keys, (c) => d[c]))])
+		// 	d3.max(graphicData, (d) => d3.max(keys, (c) => d[c]))])
 		y.domain(d3.extent(series.flat(2)));
 	} else {
 		y.domain(config.yDomain);
@@ -254,7 +254,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	let parseTime = d3.timeParse(config.dateFormat);
 

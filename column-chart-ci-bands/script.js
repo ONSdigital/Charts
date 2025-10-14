@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -28,14 +28,14 @@ function drawGraphic() {
         .round(false);
 
     //use the data to find unique entries in the xvalue column
-    x.domain([...new Set(graphic_data.map((d) => d.xvalue))]);
+    x.domain([...new Set(graphicData.map((d) => d.xvalue))]);
 
     // determine what type of variable xvalue is
     let xDataType;
 
-    if (Object.prototype.toString.call(graphic_data[0].xvalue) === '[object Date]') {
+    if (Object.prototype.toString.call(graphicData[0].xvalue) === '[object Date]') {
         xDataType = 'date';
-    } else if (!isNaN(Number(graphic_data[0].xvalue))) {
+    } else if (!isNaN(Number(graphicData[0].xvalue))) {
         xDataType = 'numeric';
     } else {
         xDataType = 'categorical';
@@ -55,12 +55,12 @@ function drawGraphic() {
 
     //Labelling the first and/or last bar if needed
     if (config.addFirstDate == true) {
-        tickValues.push(graphic_data[0].xvalue)
+        tickValues.push(graphicData[0].xvalue)
         console.log("First date added")
     }
 
     if (config.addFinalDate == true) {
-        tickValues.push(graphic_data[graphic_data.length - 1].xvalue)
+        tickValues.push(graphicData[graphicData.length - 1].xvalue)
         console.log("Last date added")
     }
 
@@ -96,14 +96,14 @@ function drawGraphic() {
 
     // set ydomain based on max upperCI and min lowerCI
     if (config.yDomain == 'auto') {
-        if (d3.min(graphic_data.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
+        if (d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
             y.domain([
                 0,
-                d3.max(graphic_data.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
+                d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
         } else {
             y.domain([
-                d3.min(graphic_data.map(({ lowerCI }) => Number(lowerCI))),
-                d3.max(graphic_data.map(({ upperCI }) => Number(upperCI)))
+                d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))),
+                d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))
             ])
         }
     } else {
@@ -131,7 +131,7 @@ function drawGraphic() {
 
     svg
         .selectAll('rect')
-        .data(graphic_data)
+        .data(graphicData)
         .join('rect')
         .attr('y', (d) => y(d.upperCI))
         .attr('x', (d) => x(d.xvalue))
@@ -142,7 +142,7 @@ function drawGraphic() {
 
     svg
         .selectAll('estLine')
-        .data(graphic_data)
+        .data(graphicData)
         .attr("class", "estLine")
         .join('line')
         .attr('x1', (d) => x(d.xvalue))
@@ -227,7 +227,7 @@ d3.csv(config.graphicDataURL)
     .then((data) => {
         let parseTime = d3.timeParse(config.dateFormat);
         //load chart data
-        graphic_data = data;
+        graphicData = data;
 
         data.forEach((d, i) => {
 

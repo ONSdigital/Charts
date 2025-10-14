@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -16,15 +16,15 @@ function drawGraphic() {
 	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
-		config.seriesHeight[size] * graphic_data.length +
-		10 * (graphic_data.length - 1) +
+		config.seriesHeight[size] * graphicData.length +
+		10 * (graphicData.length - 1) +
 		12;
 
-	let groups = d3.groups(graphic_data, (d) => d.group);
+	let groups = d3.groups(graphicData, (d) => d.group);
 
 	const stack = d3
 		.stack()
-		.keys(graphic_data.columns.slice(2)) //Just the columns with data values
+		.keys(graphicData.columns.slice(2)) //Just the columns with data values
 		.offset(d3[config.stackOffset])
 		.order(d3[config.stackOrder]);
 
@@ -51,7 +51,7 @@ function drawGraphic() {
 		.range([0, chart_width])
 		.domain(config.xDomain);
 
-	const seriesAll = stack(graphic_data);
+	const seriesAll = stack(graphicData);
 
 	if (config.xDomain == 'auto') {
 		x.domain(d3.extent(seriesAll.flat(2))); //flatten the arrays and then get the extent
@@ -140,7 +140,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(2), config.colourPalette)
+			d3.zip(graphicData.columns.slice(2), config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -169,7 +169,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

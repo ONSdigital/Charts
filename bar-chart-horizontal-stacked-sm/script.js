@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
     //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
@@ -13,10 +13,10 @@ function drawGraphic() {
     const chartsPerRow = config.chartEvery[size];
 
     // Get categories from the keys used in the stack generator
-    const categories = graphic_data.columns.slice(2);
+    const categories = graphicData.columns.slice(2);
 
-    // Nest the graphic_data by the 'series' column
-    let nested_data = d3.group(graphic_data, (d) => d.series);
+    // Nest the graphicData by the 'series' column
+    let nested_data = d3.group(graphicData, (d) => d.series);
 
     // Create a container div for each small multiple
     let chartContainers = graphic
@@ -48,7 +48,7 @@ function drawGraphic() {
         const x = d3.scaleLinear().range([0, chart_width]);
         const y = d3.scaleBand().paddingOuter(0.0).paddingInner(0.1).range([0, height]).round(true);
 
-        y.domain([...new Set(graphic_data.map((d) => d.date))]);
+        y.domain([...new Set(graphicData.map((d) => d.date))]);
 
         const stack = d3.stack()
             .keys(categories)
@@ -56,7 +56,7 @@ function drawGraphic() {
             .order(d3[config.stackOrder]);
 
         const series = stack(data);
-        const seriesAll = stack(graphic_data);
+        const seriesAll = stack(graphicData);
 
         if (config.yDomain == 'auto') {
             x.domain(d3.extent(seriesAll.flat(2)));
@@ -234,7 +234,7 @@ function drawGraphic() {
 // Load the data
 
 d3.csv(config.graphicDataURL).then((data) => {
-    graphic_data = data;
+    graphicData = data;
 
     pymChild = new pym.Child({
         renderCallback: drawGraphic

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, keys, counter;
+let graphicData, size, keys, counter;
 
 function drawGraphic() {
 
@@ -16,11 +16,11 @@ function drawGraphic() {
 	const reference = config.referenceCategory;
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== reference);
-	const categoriesToPlot = Object.keys(graphic_data[0]).filter((k) => k !== 'date')
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== reference);
+	const categoriesToPlot = Object.keys(graphicData[0]).filter((k) => k !== 'date')
 
 	//This template works differently from the other small multiple templates in that we plot all the data on every chart,
-	//so we don't need to slice the data up - we use graphic_data every time. 
+	//so we don't need to slice the data up - we use graphicData every time. 
 	//This step shapes the input for the data join to be consistent with the other templates.
 	const categoriesWithNullData = categories.map(d => [d, null])
 
@@ -62,7 +62,7 @@ function drawGraphic() {
 
 		let xDataType;
 
-		if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+		if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 			xDataType = 'date';
 		} else {
 			xDataType = 'numeric';
@@ -74,11 +74,11 @@ function drawGraphic() {
 
 		if (xDataType == 'date') {
 			x = d3.scaleTime()
-				.domain(d3.extent(graphic_data, (d) => d.date))
+				.domain(d3.extent(graphicData, (d) => d.date))
 				.range([0, chart_width]);
 		} else {
 			x = d3.scaleLinear()
-				.domain(d3.extent(graphic_data, (d) => +d.date))
+				.domain(d3.extent(graphicData, (d) => +d.date))
 				.range([0, chart_width]);
 		}
 
@@ -88,8 +88,8 @@ function drawGraphic() {
 			.range([height, 0]);
 
 		if (config.yDomain == "auto") {
-			let minY = d3.min(graphic_data, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
-			let maxY = d3.max(graphic_data, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
+			let minY = d3.min(graphicData, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
+			let maxY = d3.max(graphicData, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
 			y.domain([minY, maxY])
 			// console.log(minY, maxY)
 		} else {
@@ -117,9 +117,9 @@ function drawGraphic() {
 				.context(null);
 
 			var lines = {};
-			for (var column in graphic_data[0]) {
+			for (var column in graphicData[0]) {
 				if (column == 'date') continue;
-				lines[column] = graphic_data.map(function (d) {
+				lines[column] = graphicData.map(function (d) {
 					return {
 						'date': d.date,
 						'amt': d[column]
@@ -166,7 +166,7 @@ function drawGraphic() {
 
 			svg.selectAll('.line' + chartIndex).attr('stroke-width', 2.5).raise()
 
-			const lastDatum = graphic_data[graphic_data.length - 1];
+			const lastDatum = graphicData[graphicData.length - 1];
 
 			//Labelling the final data point on each chart if option selected in the config
 			if (config.labelFinalPoint == true) {
@@ -238,7 +238,7 @@ function drawGraphic() {
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues(graphic_data
+					.tickValues(graphicData
 						.map((d) => xDataType == 'date' ?
 							d.date.getTime() : d.date
 						) //just get dates as seconds past unix epoch
@@ -252,7 +252,7 @@ function drawGraphic() {
 							return a - b
 						})
 						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == graphic_data.length - 1 //Rob's fussy comment about labelling the last date
+							return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == graphicData.length - 1 //Rob's fussy comment about labelling the last date
 						})
 					)
 					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
@@ -355,7 +355,7 @@ function drawGraphic() {
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),

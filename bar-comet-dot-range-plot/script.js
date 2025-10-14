@@ -3,7 +3,7 @@ import { initialise, calculateChartWidth, addDataLabels, addChartTitleLabel, add
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg, divs, svgs, charts; //need to set the values to work with the helpers module
+let graphicData, size, svg, divs, svgs, charts; //need to set the values to work with the helpers module
 
 function drawGraphic() {
 
@@ -27,11 +27,11 @@ function drawGraphic() {
 	//if the config is set to auto, it will take the min and max values from the ref and value columns
 	if (config.xDomain == 'auto') {
 				x.domain([
-					Math.min(0, d3.min(graphic_data.map(({ value }) => Number(value))),
-						d3.min(graphic_data.map(({ ref }) => Number(ref)))),
+					Math.min(0, d3.min(graphicData.map(({ value }) => Number(value))),
+						d3.min(graphicData.map(({ ref }) => Number(ref)))),
 					//x domain is the maximum out of the value and the reference value
-					Math.max(d3.max(graphic_data.map(({ value }) => Number(value))),
-						d3.max(graphic_data.map(({ ref }) => Number(ref))))
+					Math.max(d3.max(graphicData.map(({ value }) => Number(value))),
+						d3.max(graphicData.map(({ ref }) => Number(ref))))
 				])
 			} else {
 				x.domain(config.xDomain);
@@ -39,7 +39,7 @@ function drawGraphic() {
 
 	//create the data groups for comet and range charts
 
-	let groups = d3.groups(graphic_data, (d) => d.series);
+	let groups = d3.groups(graphicData, (d) => d.series);
 
 	//functions to draw the charts according to chart type (bar, comet, dot or range)
 
@@ -70,8 +70,8 @@ function drawGraphic() {
 		.append('p').attr('class', 'legend--text')
 		.html(config.legendLabels[1])
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nested_data = d3.group(graphicData, (d) => d.series);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
 	let namesArray = [...nested_data][0][1].map(d => d.name);
@@ -594,13 +594,13 @@ function drawGraphic() {
 	let chart_width =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height
-	let height = config.seriesHeight[size] * graphic_data.length;
+	let height = config.seriesHeight[size] * graphicData.length;
 
 	
 	let y = d3.scalePoint().padding(0.5).range([0, height]);
 
 	//use the data to find unique entries in the name column
-	y.domain(graphic_data.map((d) => d.name));
+	y.domain(graphicData.map((d) => d.name));
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y).tickSize(-chart_width).tickPadding(10);
@@ -672,7 +672,7 @@ function drawGraphic() {
 
 	svg
 		.selectAll('circle.min')
-		.data(graphic_data)
+		.data(graphicData)
 		.enter()
 		.append('circle')
 		.attr('class', 'min')
@@ -687,7 +687,7 @@ function drawGraphic() {
 
 	svg
 		.selectAll('circle.max')
-		.data(graphic_data)
+		.data(graphicData)
 		.enter()
 		.append('circle')
 		.attr('class', 'max')
@@ -897,7 +897,7 @@ addSource('source', config.sourceText);
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic

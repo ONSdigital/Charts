@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addDataLabels, addSource } from
 
 let graphic = d3.select("#graphic");
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -14,8 +14,8 @@ function drawGraphic() {
     parseInt(graphic.style("width")) - margin.left - margin.right;
   //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
   let height =
-    config.seriesHeight[size] * graphic_data.length +
-    10 * (graphic_data.length - 1) +
+    config.seriesHeight[size] * graphicData.length +
+    10 * (graphicData.length - 1) +
     12;
 
   //set up scales
@@ -24,12 +24,12 @@ function drawGraphic() {
   const y = d3
     .scaleBand()
     .paddingOuter(0.2)
-    .paddingInner(((graphic_data.length - 1) * 10) / (graphic_data.length * 30))
+    .paddingInner(((graphicData.length - 1) * 10) / (graphicData.length * 30))
     .range([0, height])
     .round(true);
 
   //use the data to find unique entries in the name column
-  y.domain([...new Set(graphic_data.map((d) => d.name))]);
+  y.domain([...new Set(graphicData.map((d) => d.name))]);
 
   //set up yAxis generator
   let yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
@@ -50,10 +50,10 @@ function drawGraphic() {
   })
 
   if (config.xDomain == "auto") {
-    if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
-      x.domain([0, d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+    if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
+      x.domain([0, d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
     } else {
-      x.domain(d3.extent(graphic_data.map(({ value }) => Number(value))));
+      x.domain(d3.extent(graphicData.map(({ value }) => Number(value))));
     }
   } else {
     x.domain(config.xDomain);
@@ -82,7 +82,7 @@ function drawGraphic() {
 
   svg
     .selectAll("rect")
-    .data(graphic_data)
+    .data(graphicData)
     .join("rect")
     .attr("x", (d) => (d.value < 0 ? x(d.value) : x(0)))
     .attr("y", (d) => y(d.name))
@@ -95,7 +95,7 @@ function drawGraphic() {
   if (config.dataLabels.show == true) {
     addDataLabels({
       svgContainer: svg,
-      data: graphic_data,
+      data: graphicData,
       chart_width: chart_width,
       labelPositionFactor: 7,
       xScaleFunction: x,
@@ -125,7 +125,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
   //load chart data
-  graphic_data = data;
+  graphicData = data;
 
   //use pym to create iframed chart dependent on specified variables
   pymChild = new pym.Child({

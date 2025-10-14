@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, chart_width;
+let graphicData, size, chart_width;
 
 function drawGraphic() {
 	
@@ -11,11 +11,11 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== 'series');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 	// console.log(categories)
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nested_data = d3.group(graphicData, (d) => d.series);
 
 	// console.log(Array.from(nested_data))
 	// Create a container div for each small multiple
@@ -61,7 +61,7 @@ function drawGraphic() {
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chart_width]);
 
 
@@ -69,7 +69,7 @@ function drawGraphic() {
 			.scaleLinear()
 			.domain([
 				0, //This should be a calculated rather than 0 to allow for negativ values
-				d3.max(config.freeYAxisScales ? data : graphic_data, (d) => Math.max(...categories.map((c) => d[c])))
+				d3.max(config.freeYAxisScales ? data : graphicData, (d) => Math.max(...categories.map((c) => d[c])))
 			])
 			.nice()
 			.range([height, 0]);
@@ -141,7 +141,7 @@ console.log(data)
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues([...new Set(graphic_data
+					.tickValues([...new Set(graphicData
 						.map(function (d) {
 							return d.date.getTime()
 						}))] //just get unique dates as seconds past unix epoch
@@ -240,7 +240,7 @@ console.log(data)
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+	graphicData = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),
 			...Object.entries(d)

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addChartTitleLabel, addAxisLabel, addSource }
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, nested_data, svg;
+let graphicData, size, nested_data, svg;
 
 function drawGraphic() {
 
@@ -11,7 +11,7 @@ function drawGraphic() {
   size = initialise(size);
 
   //group data on the basis of plot
-  nested_data = d3.group(graphic_data, d => d.series)
+  nested_data = d3.group(graphicData, d => d.series)
 
   let colour = d3.scaleOrdinal(config.colourPalette); //
 
@@ -29,19 +29,19 @@ function drawGraphic() {
   const y = d3.scaleLinear()
     .range([height, 0])
 
-  let plots = [...new Set(d3.map(graphic_data, d => d.series))];
+  let plots = [...new Set(d3.map(graphicData, d => d.series))];
 
   // both of these are need to be looked at.
 
   if (config.xDomain == "auto") {
-    x.domain([0, d3.max(graphic_data, function (d) { return d.xvalue })]);
+    x.domain([0, d3.max(graphicData, function (d) { return d.xvalue })]);
   } else {
     x.domain(config.xDomain)
   }
 
 
   if (config.yDomain == "auto") {
-    y.domain([0, d3.max(graphic_data, function (d) { return d.yvalue })]);
+    y.domain([0, d3.max(graphicData, function (d) { return d.yvalue })]);
   } else {
     y.domain(config.yDomain)
   }
@@ -127,7 +127,7 @@ function drawGraphic() {
     });
   }
   // lets move on to setting up the legend for this chart. 
-  let legendGroups = [...new Set(graphic_data.map(item => item.group))]; // this will extract the unique groups from the data.csv
+  let legendGroups = [...new Set(graphicData.map(item => item.group))]; // this will extract the unique groups from the data.csv
 
 
   let legenditem = legend
@@ -175,7 +175,7 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
-    graphic_data = data
+    graphicData = data
 
     //use pym to create iframed chart dependent on specified variables
     pymChild = new pym.Child({

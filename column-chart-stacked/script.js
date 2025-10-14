@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -31,11 +31,11 @@ function drawGraphic() {
 
 	const colour = d3
 		.scaleOrdinal()
-		.domain(graphic_data.columns.slice(1))
+		.domain(graphicData.columns.slice(1))
 		.range(config.colourPalette);
 
 	//use the data to find unique entries in the date column
-	x.domain([...new Set(graphic_data.map((d) => d.date))]);
+	x.domain([...new Set(graphicData.map((d) => d.date))]);
 
 	let tickValues = x.domain().filter(function (d, i) {
 		return !(i % config.xAxisTicksEvery[size])
@@ -43,12 +43,12 @@ function drawGraphic() {
 
 	//Labelling the first and/or last bar if needed
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
@@ -61,15 +61,15 @@ function drawGraphic() {
 
 	const stack = d3
 		.stack()
-		.keys(graphic_data.columns.slice(1))
+		.keys(graphicData.columns.slice(1))
 		.offset(d3[config.stackOffset])
 		.order(d3[config.stackOrder]);
 
-	const series = stack(graphic_data);
+	const series = stack(graphicData);
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -103,14 +103,14 @@ function drawGraphic() {
 	}
 
 	//Getting the list of colours used in this visualisation
-	let colours = [...config.colourPalette].slice(0, graphic_data.columns.slice(1).length)
+	let colours = [...config.colourPalette].slice(0, graphicData.columns.slice(1).length)
 
 	// Set up the legend
 	let legenditem = d3
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(1).reverse(), colours.reverse())
+			d3.zip(graphicData.columns.slice(1).reverse(), colours.reverse())
 		)
 		.enter()
 		.append('div')
@@ -191,7 +191,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	let parseTime = d3.timeParse(config.dateFormat);
 

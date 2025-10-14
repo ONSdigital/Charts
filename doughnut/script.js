@@ -3,7 +3,7 @@ import { initialise, wrap, addSource } from "../lib/helpers.js";
 var graphic = d3.select('#graphic');
 var legend = d3.select('#legend');
 var pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -51,7 +51,7 @@ function drawGraphic() {
     svg.append('g')
         .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
         .selectAll()
-        .data(pie(graphic_data))
+        .data(pie(graphicData))
         .join('path')
         .attr('class', (d, i) => 'path' + i)
         .attr('fill', (d, i) => config.colourPalette[i])
@@ -67,7 +67,7 @@ function drawGraphic() {
         //Adding text for category and values
         labels
             .selectAll('text')
-            .data(pie(graphic_data))
+            .data(pie(graphicData))
             .join('text')
             .attr('transform', d => {
                 var pos = labelArc.centroid(d);
@@ -86,7 +86,7 @@ function drawGraphic() {
 
         labels
             .selectAll('text')
-            .data(pie(graphic_data))
+            .data(pie(graphicData))
             .join('text')
             .append('tspan')
             .attr('x', 0)
@@ -99,7 +99,7 @@ function drawGraphic() {
             .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
             .attr("class", "lines")
             .selectAll('polyline')
-            .data(pie(graphic_data))
+            .data(pie(graphicData))
             .join('polyline')
             .attr('points', d => {
                 var pos = labelArc.centroid(d);
@@ -152,8 +152,8 @@ function drawGraphic() {
         // Set up the legend
         var legenditemPie = d3.select('#legend')
             .selectAll('div.legend--item')
-            .data(d3.zip(graphic_data.map(item => (item.category)),
-                graphic_data.map(item => d3.format(config.dataLabels.numberFormat)(item.value)),
+            .data(d3.zip(graphicData.map(item => (item.category)),
+                graphicData.map(item => d3.format(config.dataLabels.numberFormat)(item.value)),
                 config.colourPalette))
             .enter()
             .append('div')
@@ -204,7 +204,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
     //load chart data
-    graphic_data = data.sort(function (a, b) {
+    graphicData = data.sort(function (a, b) {
         return b.value - a.value //  Sorting the categories by value, may prefer to sort alphabetically (a.category - b.category) or not at all
     });
 

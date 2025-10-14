@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg, sliderSimple, animating;
+let graphicData, size, svg, sliderSimple, animating;
 
 function drawGraphic() {
 	// clear out existing graphics
@@ -23,7 +23,7 @@ function drawGraphic() {
 	);
 
 	//Set the timepoints from the data for the slider labels and sort from oldest to newest
-	let timepoints = [...new Set(graphic_data.map((d) => d.year))].sort();
+	let timepoints = [...new Set(graphicData.map((d) => d.year))].sort();
 
 	//Takes the last data point from the date series
 
@@ -77,7 +77,7 @@ function drawGraphic() {
 						a = val;
 					}
 					updateVisuals(
-						graphic_data.filter(function (d) {
+						graphicData.filter(function (d) {
 							return d.year == timepoints[val];
 						})
 					); //update the chart according to the timepoint value from the slider by filtering on the timepoint
@@ -128,7 +128,7 @@ function drawGraphic() {
 			}
 			moveSliderToVal(); //retrieves the value from the slider
 			updateVisuals(
-				graphic_data.filter(function (d) {
+				graphicData.filter(function (d) {
 					return d.year == timepoints[a];
 				})
 			); //update the chart according to the timepoint value from the slider by filtering on the timepoint
@@ -145,7 +145,7 @@ function drawGraphic() {
 			}
 			moveSliderToVal(); //retrieves the value from the slider
 			updateVisuals(
-				graphic_data.filter(function (d) {
+				graphicData.filter(function (d) {
 					return d.year == timepoints[a];
 				})
 			); //update the chart according to the timepoint value from the slider by filtering on the timepoint
@@ -218,8 +218,8 @@ function drawGraphic() {
 	//X scale
 	if (config.xDomain == 'auto') {
 		x.domain([
-			d3.min(graphic_data, (d) => d.x),
-			d3.max(graphic_data, (d) => d.x)
+			d3.min(graphicData, (d) => d.x),
+			d3.max(graphicData, (d) => d.x)
 		]);
 	} else {
 		x.domain(config.xDomain);
@@ -228,8 +228,8 @@ function drawGraphic() {
 	//Y Scale
 	if (config.yDomain == 'auto') {
 		y.domain([
-			d3.min(graphic_data, (d) => d.y),
-			d3.max(graphic_data, (d) => d.y)
+			d3.min(graphicData, (d) => d.y),
+			d3.max(graphicData, (d) => d.y)
 		]);
 	} else {
 		y.domain(config.yDomain);
@@ -238,8 +238,8 @@ function drawGraphic() {
 	//R scale for the size of the circle
 	if (config.rDomain == 'auto') {
 		r.domain([
-			d3.min(graphic_data, (d) => d.size),
-			d3.max(graphic_data, (d) => d.size)
+			d3.min(graphicData, (d) => d.size),
+			d3.max(graphicData, (d) => d.size)
 		]);
 		r.range([0, 20]);
 	} else {
@@ -302,7 +302,7 @@ function drawGraphic() {
 	//Initial draw of the chart with the data filtered on the timeLoad specified
 
 	updateVisuals(
-		graphic_data.filter(function (d) {
+		graphicData.filter(function (d) {
 			return d.year == timeLoad;
 		})
 	);
@@ -588,7 +588,7 @@ d3.csv(config.graphicDataURL).then((data) => {
 		d.highlight = +d.highlight;
 	});
 
-	graphic_data = data;
+	graphicData = data;
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic

@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, svg, xDomain;
+let graphicData, size, svg, xDomain;
 
 function drawGraphic() {
 
@@ -12,14 +12,14 @@ function drawGraphic() {
   let margin = config.margin[size]
   let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
 
-  let groups = d3.groups(graphic_data, (d) => d.group)
+  let groups = d3.groups(graphicData, (d) => d.group)
 
   if (config.xDomain == "auto") {
     let min = 0
     let max = 0
-    for (let i = 2; i < graphic_data.columns.length; i++) {
-      min = d3.min([min, d3.min(graphic_data, (d) => +d[graphic_data.columns[i]])])
-      max = d3.max([max, d3.max(graphic_data, (d) => +d[graphic_data.columns[i]])])
+    for (let i = 2; i < graphicData.columns.length; i++) {
+      min = d3.min([min, d3.min(graphicData, (d) => +d[graphicData.columns[i]])])
+      max = d3.max([max, d3.max(graphicData, (d) => +d[graphicData.columns[i]])])
     }
     xDomain = [min, max]
   } else {
@@ -43,7 +43,7 @@ function drawGraphic() {
     // y scale
     d[3] = d3.scaleBand()
       .paddingOuter(0.2)
-      .paddingInner((graphic_data.length - 1) * 10 / (graphic_data.length * 30))
+      .paddingInner((graphicData.length - 1) * 10 / (graphicData.length * 30))
       .range([0, d[2]])
       .domain(d[1].map(d => d.name));
     //y axis generator
@@ -165,7 +165,7 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
-    graphic_data = data
+    graphicData = data
 
     //use pym to create iframed chart dependent on specified variables
     pymChild = new pym.Child({

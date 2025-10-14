@@ -3,7 +3,7 @@ import { initialise, addSource} from "../lib/helpers.js";
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, colour, plots, chart, headers, rows, splitBar, splitBarInner, finalrow;
+let graphicData, size, colour, plots, chart, headers, rows, splitBar, splitBarInner, finalrow;
 
 function drawGraphic() {
 	// Remove any existing chart elements
@@ -22,19 +22,19 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([0, 100])
 		.domain([
-			d3.min([0, d3.min(graphic_data, (d) => +d.value)]),
-			d3.max(graphic_data, (d) => +d.value)
+			d3.min([0, d3.min(graphicData, (d) => +d.value)]),
+			d3.max(graphicData, (d) => +d.value)
 		]);
 
 	// nest data
 	let groupedData = d3.groups(
-		graphic_data,
+		graphicData,
 		(d) => d.plot,
 		(d) => d.ycategory
 	);
 
 	// unique columns
-	let xcategories = [...new Set(graphic_data.map((d) => d.xcategory))];
+	let xcategories = [...new Set(graphicData.map((d) => d.xcategory))];
 
 	if (config.colourPaletteType == 'categorical') {
 		colour = d3
@@ -238,7 +238,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

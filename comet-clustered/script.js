@@ -4,7 +4,7 @@ let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let legendTop = d3.select('#legendTop');
 let pymChild = null;
-let graphic_data, size, svg, xDomain;
+let graphicData, size, svg, xDomain;
 
 // var minSym = d3.symbol() 
 // .type(d3.symbolSquare).size(57)
@@ -20,19 +20,19 @@ function drawGraphic() {
 	let chart_width =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
-	let groups = d3.groups(graphic_data, (d) => d.group);
+	let groups = d3.groups(graphicData, (d) => d.group);
 
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphic_data.columns.length; i++) {
+		for (i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
-				d3.min(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 			max = d3.max([
 				max,
-				d3.max(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.max(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 		}
 		xDomain = [min, max];
@@ -64,7 +64,7 @@ function drawGraphic() {
 		d[4] = d3.axisLeft(d[3]).tickSize(0).tickPadding(9);
 		d[5] = d3.scaleBand()
 			.range([0, d[3].bandwidth()])
-			.domain([...new Set(graphic_data.map(d => d.series))])
+			.domain([...new Set(graphicData.map(d => d.series))])
 	});
 
 	//set up xAxis generator
@@ -431,7 +431,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let pymChild = null;
 let legend = d3.select('#legend');
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -36,11 +36,11 @@ function drawGraphic() {
 
 
   //lets also try a new smallmultiple version here which will group data on the basis of plot
-  let grouped_data = d3.group(graphic_data, d => d.plot)
+  let grouped_data = d3.group(graphicData, d => d.plot)
 
   let xDataType;
 
-  if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+  if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
     xDataType = 'date';
   } else {
     xDataType = 'numeric';
@@ -90,9 +90,9 @@ function drawGraphic() {
       .round(false);
 
     //use the data to find unique entries in the date column
-    x.domain([...new Set(graphic_data.map((d) => d.date))]);
+    x.domain([...new Set(graphicData.map((d) => d.date))]);
 
-    // console.log("x", d3.extent(graphic_data, (d) => +d.date))
+    // console.log("x", d3.extent(graphicData, (d) => +d.date))
 
     const y = d3.scaleLinear()
       .range([height, 0])
@@ -109,12 +109,12 @@ function drawGraphic() {
 
     // both of these are need to be looked at.
     if (config.yDomain == "auto") {
-      if (d3.min(graphic_data.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
+      if (d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
         y.domain([
           0,
-          d3.max(graphic_data.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
+          d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
       } else {
-        y.domain([d3.min(graphic_data, function (d) { return d.lowerCI }), d3.max(graphic_data, function (d) { return d.upperCI })])
+        y.domain([d3.min(graphicData, function (d) { return d.lowerCI }), d3.max(graphicData, function (d) { return d.upperCI })])
       }
 
     } else {
@@ -268,7 +268,7 @@ d3.csv(config.graphicDataURL)
 
     let parseTime = d3.timeParse(config.dateFormat);
     //load chart data
-    graphic_data = data;
+    graphicData = data;
 
     data.forEach((d, i) => {
 

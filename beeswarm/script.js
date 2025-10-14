@@ -3,7 +3,7 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, xDomain, circleDist, radius;
+let graphicData, size, xDomain, circleDist, radius;
 // let overlay; 
 // let positionedOverlayData; 
 
@@ -120,7 +120,7 @@ function drawGraphic() {
   size = initialise(size);
 
   let margin = config.margin[size]
-  let groups = d3.groups(graphic_data, (d) => d.group)
+  let groups = d3.groups(graphicData, (d) => d.group)
   let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
   let height = config.seriesHeight[size] * groups.length
 
@@ -149,7 +149,7 @@ function drawGraphic() {
     });
 
     // set up dropdown
-  const dropdownData = graphic_data
+  const dropdownData = graphicData
   .map((point, index) => ({ ...point, originalId: index })) // Add originalId first
   .sort((a,b)=>a.areanm.localeCompare(b.areanm)).map((point, index) => ({
     id: point.originalId,  // Use originalId instead of sorted index,
@@ -176,8 +176,8 @@ function drawGraphic() {
     }
   });
 
-  const min = d3.min(graphic_data, (d) => +d["value"])
-  const max = d3.max(graphic_data, (d) => +d["value"])
+  const min = d3.min(graphicData, (d) => +d["value"])
+  const max = d3.max(graphicData, (d) => +d["value"])
 
   if (config.xDomain == "auto") {
     xDomain = [min, max]
@@ -209,7 +209,7 @@ function drawGraphic() {
   }
 
   if (config.circleDist == "auto") {
-    circleDist = (y.bandwidth() * 0.95 - radius) / d3.max(graphic_data, d => d.value);
+    circleDist = (y.bandwidth() * 0.95 - radius) / d3.max(graphicData, d => d.value);
   } else {
     circleDist = config.circleDist * radius
   }
@@ -260,7 +260,7 @@ function drawGraphic() {
 
     // Position circles based on selected method
   const positionedData = positionCircles(
-    [...graphic_data],
+    [...graphicData],
     x,
     y,
     radius,
@@ -289,7 +289,7 @@ function drawGraphic() {
     group: d.group,
     value: d.value,
     formattedValue: d3.format(".1f")(d.value),
-    originalId: graphic_data.findIndex(orig => orig === graphic_data.find(g => g.areanm === d.areanm && g.group === d.group))
+    originalId: graphicData.findIndex(orig => orig === graphicData.find(g => g.areanm === d.areanm && g.group === d.group))
   })).sort((a,b)=>a.name.localeCompare(b.name));  
 
   // Add Delaunay overlay
@@ -381,7 +381,7 @@ d3.csv(config.graphicDataURL)
 
 
 
-    graphic_data = data;
+    graphicData = data;
 
     // Create visualization using pym
     pymChild = new pym.Child({

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, groups, xDomain, divs, svgs, charts;
+let graphicData, size, groups, xDomain, divs, svgs, charts;
 
 function drawGraphic() {
 
@@ -14,19 +14,19 @@ function drawGraphic() {
 	let chart_width =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
-	groups = d3.groups(graphic_data, (d) => d.group);
+	groups = d3.groups(graphicData, (d) => d.group);
 
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphic_data.columns.length; i++) {
+		for (i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
-				d3.min(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 			max = d3.max([
 				max,
-				d3.max(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.max(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 		}
 		xDomain = [min, max];
@@ -229,7 +229,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

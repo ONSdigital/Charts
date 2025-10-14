@@ -3,14 +3,14 @@ import { initialise, wrap, addSvg, calculateChartWidth, addDataLabels, addChartT
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	let legendCategories = [...new Set(graphic_data.map((d) => d.category))]
+	let legendCategories = [...new Set(graphicData.map((d) => d.category))]
 
 	//Set up the legend
 	let legendItem = legend
@@ -30,8 +30,8 @@ function drawGraphic() {
 		.attr('class', 'legend--text')
 		.text(d => d)
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nested_data = d3.group(graphicData, (d) => d.series);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
 	let namesArray = [...new Set([...nested_data][0][1].map(d => d.name))];
@@ -131,9 +131,9 @@ function drawGraphic() {
 
 		if (config.xDomain == 'auto') {
 			x.domain([
-				Math.min(0, d3.min(graphic_data.map(({ value }) => Number(value)))),
+				Math.min(0, d3.min(graphicData.map(({ value }) => Number(value)))),
 				//x domain is the maximum out of the value and the reference value
-				Math.max(0, d3.max(graphic_data.map(({ value }) => Number(value))))
+				Math.max(0, d3.max(graphicData.map(({ value }) => Number(value))))
 			])
 		} else {
 			x.domain(config.xDomain);
@@ -220,7 +220,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let pymChild = null;
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
-let size, graphic_data;
+let size, graphicData;
 
 function drawGraphic() {
 
@@ -11,7 +11,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Group the data by the 'series' column
-	const nested_data = d3.groups(graphic_data, (d) => d.series);
+	const nested_data = d3.groups(graphicData, (d) => d.series);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
@@ -44,7 +44,7 @@ function drawGraphic() {
 		}
 
 		// Get categories from the keys used in the stack generator
-		const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== 'series');
+		const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 
 		const colorScale = d3
 			.scaleOrdinal()
@@ -92,12 +92,12 @@ function drawGraphic() {
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chart_width]);
 
 		const y = d3
 			.scaleLinear()
-			.domain([0, d3.max(graphic_data, (d) => d3.sum(categories, (c) => d[c]))])
+			.domain([0, d3.max(graphicData, (d) => d3.sum(categories, (c) => d[c]))])
 			.range([height, 0]);
 
 		// Define the stack generator
@@ -153,7 +153,7 @@ function drawGraphic() {
 							return a - b
 						})
 						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == graphic_data.length - 1 //Rob's fussy comment about labelling the last date
+							return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == graphicData.length - 1 //Rob's fussy comment about labelling the last date
 						})
 					)
 					.tickFormat(d3.timeFormat(config.xAxisTickFormat[size]))
@@ -231,10 +231,10 @@ d3.csv(config.graphicDataURL)
 		// console.log("Original data:", data);
 
 
-		graphic_data = data;
+		graphicData = data;
 
 		// 	);
-		graphic_data.forEach((d) => {
+		graphicData.forEach((d) => {
 			d.date = d3.timeParse(config.dateFormat)(d.date);
 		});
 

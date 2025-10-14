@@ -3,15 +3,15 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nested_data = d3.group(graphicData, (d) => d.series);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
@@ -22,7 +22,7 @@ function drawGraphic() {
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -72,11 +72,11 @@ function drawGraphic() {
 
 		const colour = d3
 			.scaleOrdinal()
-			.domain(graphic_data.columns.slice(2))
+			.domain(graphicData.columns.slice(2))
 			.range(config.colourPalette);
 
 		//use the data to find unique entries in the date column
-		x.domain([...new Set(graphic_data.map((d) => d.date))]);
+		x.domain([...new Set(graphicData.map((d) => d.date))]);
 
 		//set up yAxis generator
 		const yAxis = d3.axisLeft(y)
@@ -88,12 +88,12 @@ function drawGraphic() {
 
 		const stack = d3
 			.stack()
-			.keys(graphic_data.columns.slice(2).filter(d => (d) !== config.lineSeries))
+			.keys(graphicData.columns.slice(2).filter(d => (d) !== config.lineSeries))
 			.offset(d3[config.stackOffset])
 			.order(d3[config.stackOrder]);
 
 		const series = stack(data);
-		const seriesAll = stack(graphic_data);
+		const seriesAll = stack(graphicData);
 
 		let xTime = d3.timeFormat(config.xAxisTickFormat[size])
 
@@ -102,7 +102,7 @@ function drawGraphic() {
 			.axisBottom(x)
 			.tickSize(10)
 			.tickPadding(10)
-			.tickValues(xDataType == 'date' ? graphic_data
+			.tickValues(xDataType == 'date' ? graphicData
 				.map(function (d) {
 					return d.date.getTime()
 				}) //just get dates as seconds past unix epoch
@@ -116,8 +116,8 @@ function drawGraphic() {
 					return a - b
 				})
 				.filter(function (d, i) {
-					return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == data.length - 1 //Rob's fussy comment about labelling the last date
-				}) : x.domain().filter((d, i) => { return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == data.length - 1 })
+					return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == data.length - 1 //Rob's fussy comment about labelling the last date
+				}) : x.domain().filter((d, i) => { return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == data.length - 1 })
 			)
 			.tickFormat((d) => xDataType == 'date' ? xTime(d)
 				: d3.format(config.xAxisNumberFormat)(d));
@@ -144,11 +144,11 @@ function drawGraphic() {
 		}
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colourPalette].slice(0, graphic_data.columns.slice(2).length - 1)
+		let colours = [...config.colourPalette].slice(0, graphicData.columns.slice(2).length - 1)
 
 		//gets array of arrays for individual lines
 		let lines = [];
-		for (let column in graphic_data[0]) {
+		for (let column in graphicData[0]) {
 			if (column == 'date' || column == 'series') continue;
 			lines[column] = data.map(function (d) {
 				return {
@@ -315,7 +315,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	let parseTime = d3.timeParse(config.dateFormat);
 

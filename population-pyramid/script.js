@@ -7,10 +7,10 @@ const legend = d3.select('#legend');
 let pymChild = null;
 
 // Data variables
-let graphic_data, comparisonData, time_comparisonData, dropdownData;
+let graphicData, comparisonData, time_comparisonData, dropdownData;
 let size, allAges, tidydata, rolledUp, tidydataPercentage;
 let popTotal, comparisonPopTotal, timeComparisonPopTotal;
-let graphic_data_new, comparisonData_new, time_comparisonData_new;
+let graphicData_new, comparisonData_new, time_comparisonData_new;
 let tidydatacomparison, rolledUpComparison, tidydataComparisonPercentage;
 
 // Chart variables
@@ -112,7 +112,7 @@ function buildToggleControls() {
 
 function buildDropdownControls() {
     // Build dropdown with unique areas
-    dropdownData = graphic_data
+    dropdownData = graphicData
         .map(d => ({ nm: d.AREANM, cd: d.AREACD }))
         .filter(function (a) {
             let key = a.nm + '|' + a.cd;
@@ -155,7 +155,7 @@ function processData() {
 function processSimpleData() {
     if (config.dataType === 'counts') {
         // Calculate totals and percentages
-        popTotal = d3.sum(graphic_data, d => d.maleBar + d.femaleBar);
+        popTotal = d3.sum(graphicData, d => d.maleBar + d.femaleBar);
 
         if (comparisonData) {
             comparisonPopTotal = d3.sum(comparisonData, d => d.maleBar + d.femaleBar);
@@ -168,7 +168,7 @@ function processSimpleData() {
         // Transform to tidy data - use raw counts or percentages based on displayType
         const usePercentages = config.displayType !== 'counts';
 
-        graphic_data_new = graphic_data
+        graphicData_new = graphicData
             .map(d => [
                 { age: d.age, sex: 'female', value: usePercentages ? d.femaleBar / popTotal : d.femaleBar },
                 { age: d.age, sex: 'male', value: usePercentages ? d.maleBar / popTotal : d.maleBar }
@@ -192,7 +192,7 @@ function processSimpleData() {
         }
     } else {
         // Data is already in percentages
-        graphic_data_new = graphic_data
+        graphicData_new = graphicData
             .map(d => [
                 { age: d.age, value: d.femaleBar, sex: 'female' },
                 { age: d.age, sex: 'male', value: d.maleBar }
@@ -218,7 +218,7 @@ function processSimpleData() {
 
     // Calculate max percentage for scales based on xDomain setting
     if (config.xDomain === 'auto') {
-        let maxValues = [d3.max(graphic_data_new, d => d.value)];
+        let maxValues = [d3.max(graphicData_new, d => d.value)];
         if (comparisonData_new) {
             maxValues.push(d3.max(comparisonData_new, d => Math.max(d.femalePercent, d.malePercent)));
         }
@@ -229,16 +229,16 @@ function processSimpleData() {
     } else if (Array.isArray(config.xDomain)) {
         maxPercentage = config.xDomain[1];
     } else if (config.xDomain === 'auto-each') {
-        maxPercentage = d3.max(graphic_data_new, d => d.value);
+        maxPercentage = d3.max(graphicData_new, d => d.value);
     }
 }
 
 function processComplexData() {
-    allAges = graphic_data.columns.slice(3);
+    allAges = graphicData.columns.slice(3);
 
     if (config.dataType === 'counts') {
         // Turn into tidy data
-        tidydata = pivot(graphic_data, allAges, 'age', 'value');
+        tidydata = pivot(graphicData, allAges, 'age', 'value');
 
         // Calculate totals by area
         rolledUp = d3.rollup(
@@ -278,7 +278,7 @@ function processComplexData() {
         }
     } else {
         // Data already in percentages
-        tidydataPercentage = pivot(graphic_data, allAges, 'age', 'percentage');
+        tidydataPercentage = pivot(graphicData, allAges, 'age', 'percentage');
 
         if (comparisonData && config.hasInteractiveComparison) {
             tidydataComparisonPercentage = pivot(comparisonData, allAges, 'age', 'percentage');
@@ -314,7 +314,7 @@ function createChart(margin) {
     chart_width = (width - margin.centre - margin.left - margin.right) / 2;
 
     if (config.dataStructure === 'simple') {
-        height = (graphic_data_new.length / 2) * config.seriesHeight[size];
+        height = (graphicData_new.length / 2) * config.seriesHeight[size];
     } else {
         height = allAges.length * config.seriesHeight[size];
     }
@@ -330,7 +330,7 @@ function createChart(margin) {
 
     if (config.dataStructure === 'simple') {
         y = d3.scaleBand()
-            .domain([...new Set(graphic_data_new.map(d => d.age))])
+            .domain([...new Set(graphicData_new.map(d => d.age))])
             .rangeRound([height, 0])
             .paddingInner(0.1);
     } else {
@@ -454,9 +454,9 @@ function addAxes(margin) {
 function addBars() {
     let barData;
     if (config.dataStructure === 'simple') {
-        barData = graphic_data_new;
+        barData = graphicData_new;
     } else if (config.interactionType === 'dropdown') {
-        barData = tidydataPercentage.filter(d => d.AREACD === graphic_data[0].AREACD);
+        barData = tidydataPercentage.filter(d => d.AREACD === graphicData[0].AREACD);
     } else {
         barData = tidydataPercentage;
     }
@@ -760,7 +760,7 @@ if (config.interactionType === 'toggle' && config.comparisonTimeData) {
 }
 
 Promise.all(dataPromises).then(dataArrays => {
-    graphic_data = dataArrays[0];
+    graphicData = dataArrays[0];
 
     if (dataArrays.length > 1) {
         comparisonData = dataArrays[1];

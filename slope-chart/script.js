@@ -4,7 +4,7 @@ let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
 
 let pymChild = null;
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -20,12 +20,12 @@ function drawGraphic() {
 	// console.log(`Margin, width, and height set: ${margin}, ${width}, ${height}`);
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 	// console.log(`Categories retrieved: ${categories}`);
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -39,11 +39,11 @@ function drawGraphic() {
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, width]);
 	} else {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
+			.domain(d3.extent(graphicData, (d) => +d.date))
 			.range([0, width]);
 	}
 	//console.log(`x defined`);
@@ -53,8 +53,8 @@ function drawGraphic() {
 		.range([height, 0]);
 
 	if (config.yDomain == "auto") {
-		let minY = d3.min(graphic_data, (d) => Math.min(...categories.map((c) => d[c])))
-		let maxY = d3.max(graphic_data, (d) => Math.max(...categories.map((c) => d[c])))
+		let minY = d3.min(graphicData, (d) => Math.min(...categories.map((c) => d[c])))
+		let maxY = d3.max(graphicData, (d) => Math.max(...categories.map((c) => d[c])))
 		y.domain([minY, maxY])
 		console.log(minY, maxY)
 	} else {
@@ -71,8 +71,8 @@ function drawGraphic() {
 	})
 	//console.log(`SVG element created`);
 
-	const lastDatum = graphic_data[graphic_data.length - 1];
-	const firstDatum = graphic_data[0];
+	const lastDatum = graphicData[graphicData.length - 1];
+	const firstDatum = graphicData[0];
 
 	// Add the x-axis
 	svg
@@ -113,7 +113,7 @@ function drawGraphic() {
 
 		svg
 			.append('path')
-			.datum(graphic_data)
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
@@ -250,7 +250,7 @@ function drawGraphic() {
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),
@@ -270,12 +270,12 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 		}
 	});
 
-	// console.log(graphic_data);
+	// console.log(graphicData);
 
 	// console.log(`Data from CSV processed`);
 
 	// console.log('Final data structure:');
-	// console.log(graphic_data);
+	// console.log(graphicData);
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({

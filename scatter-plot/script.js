@@ -4,7 +4,7 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 const circleSize = 105; // Define size for circles in pixels
 const squareSize = 90; // Define size for squares in pixels
@@ -36,8 +36,8 @@ function drawGraphic() {
 
   // Create size scale for circles
   let sizeScale = null;
-  if (config.sizeConfig.enabled && graphic_data.some(d => d[config.sizeConfig.sizeField] !== undefined)) {
-    const sizeExtent = d3.extent(graphic_data, d => +d[config.sizeConfig.sizeField]);
+  if (config.sizeConfig.enabled && graphicData.some(d => d[config.sizeConfig.sizeField] !== undefined)) {
+    const sizeExtent = d3.extent(graphicData, d => +d[config.sizeConfig.sizeField]);
     sizeScale = d3.scaleSqrt()
       .domain(sizeExtent)
       .range([config.sizeConfig.minSize, config.sizeConfig.maxSize]);
@@ -50,7 +50,7 @@ function drawGraphic() {
     margin: margin
   });
 
-  let groups = [...new Set(graphic_data.map(item => item.group))].sort();
+  let groups = [...new Set(graphicData.map(item => item.group))].sort();
 
   let shape = d3.scaleOrdinal()
     .domain(groups)
@@ -130,7 +130,7 @@ function drawGraphic() {
   }
 
   // set up dropdown
-  const dropdownData = graphic_data
+  const dropdownData = graphicData
   .slice() // Create copy to avoid mutating original
   .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
   .map((point) => ({
@@ -150,7 +150,7 @@ function drawGraphic() {
     groupKey: 'group',
     onChange: (selectedValue) => {
       if (selectedValue) {
-        const renderIndex = graphic_data.findIndex(d => d.originalId === selectedValue.id);
+        const renderIndex = graphicData.findIndex(d => d.originalId === selectedValue.id);
         overlayCleanup.highlightPoint(renderIndex);
       } else {
         overlayCleanup.clearHighlight();
@@ -161,14 +161,14 @@ function drawGraphic() {
 
 
   if (config.xDomain == "auto") {
-    x.domain([d3.min(graphic_data, d => d.xvalue), d3.max(graphic_data, d => d.xvalue)]);
+    x.domain([d3.min(graphicData, d => d.xvalue), d3.max(graphicData, d => d.xvalue)]);
   } else {
     x.domain(config.xDomain);
   }
 
 
   if (config.yDomain == "auto") {
-    y.domain([d3.min(graphic_data, d => d.yvalue), d3.max(graphic_data, d => d.yvalue)]);
+    y.domain([d3.min(graphicData, d => d.yvalue), d3.max(graphicData, d => d.yvalue)]);
   } else {
     y.domain(config.yDomain);
   }
@@ -222,7 +222,7 @@ function drawGraphic() {
   }
 
   svg.append('g').selectAll('path')
-    .data(graphic_data.sort((a, b) => { 
+    .data(graphicData.sort((a, b) => { 
       if (sizeScale) { 
         return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
       } else {
@@ -256,7 +256,7 @@ function drawGraphic() {
   // Create Delaunay overlay for tooltips (Basic version)
   overlayCleanup = createDelaunayOverlay({
     svgContainer: svg,
-    data: graphic_data.sort((a, b) => { 
+    data: graphicData.sort((a, b) => { 
       if (sizeScale) { 
         return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
       } else {
@@ -286,7 +286,7 @@ function drawGraphic() {
   });
 
   svg.selectAll('text.label')
-    .data(graphic_data.filter(d => d.highlight === 'y'))
+    .data(graphicData.filter(d => d.highlight === 'y'))
     .join('text')
     .attr('class', 'dataLabels')
     .attr('x', d => x(d.xvalue))
@@ -341,14 +341,14 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL,d3.autoType)
   .then(data => {
     // Add unique IDs based on original data order
-    graphic_data = data.map((d, index) => ({
+    graphicData = data.map((d, index) => ({
       ...d,
       originalId: index  // Add stable unique ID
     }));
 
     // Sort for rendering (largest circles first)
     if (config.sizeConfig.enabled) {
-      graphic_data.sort((a, b) => (+b[config.sizeConfig.sizeField]) - (+a[config.sizeConfig.sizeField]));
+      graphicData.sort((a, b) => (+b[config.sizeConfig.sizeField]) - (+a[config.sizeConfig.sizeField]));
     }
 
     //use pym to create iframed chart dependent on specified variables

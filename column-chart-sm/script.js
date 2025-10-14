@@ -3,15 +3,15 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend')
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.groups(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nested_data = d3.groups(graphicData, (d) => d.series);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
@@ -22,7 +22,7 @@ function drawGraphic() {
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -71,7 +71,7 @@ function drawGraphic() {
 			.round(false);
 
 		//use the data to find unique entries in the date column
-		x.domain([...new Set(graphic_data.map((d) => d.date))]);
+		x.domain([...new Set(graphicData.map((d) => d.date))]);
 
 		//set up yAxis generator
 		let yAxis = d3.axisLeft(y)
@@ -88,7 +88,7 @@ function drawGraphic() {
 			.axisBottom(x)
 			.tickSize(10)
 			.tickPadding(10)
-			.tickValues(xDataType == 'date' ? graphic_data
+			.tickValues(xDataType == 'date' ? graphicData
 				.map(function (d) {
 					return d.date.getTime()
 				}) //just get dates as seconds past unix epoch
@@ -102,8 +102,8 @@ function drawGraphic() {
 					return a - b
 				})
 				.filter(function (d, i) {
-					return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == data.length - 1 //Rob's fussy comment about labelling the last date
-				}) : x.domain().filter((d, i) => { return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == data.length - 1 })
+					return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == data.length - 1 //Rob's fussy comment about labelling the last date
+				}) : x.domain().filter((d, i) => { return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == data.length - 1 })
 			)
 			.tickFormat((d) => xDataType == 'date' ? xTime(d)
 				: d3.format(config.xAxisNumberFormat)(d));
@@ -117,12 +117,12 @@ function drawGraphic() {
 		})
 
 		if (config.yDomain == 'auto') {
-			if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
+			if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
 				y.domain([
 					0,
-					d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+					d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
 			} else {
-				y.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
+				y.domain(d3.extent(graphicData.map(({ value }) => Number(value))))
 			}
 		} else {
 			y.domain(config.yDomain);
@@ -192,7 +192,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	let parseTime = d3.timeParse(config.dateFormat);
 

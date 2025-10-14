@@ -2,12 +2,12 @@ import { initialise, wrap, addSvg, calculateChartWidth, addAxisLabel, addSource 
 
 let pymChild = null;
 let graphic = d3.select("#graphic");
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 size = initialise(size);
 
-function drawGraphic(seriesName, graphic_data, chartIndex) {
+function drawGraphic(seriesName, graphicData, chartIndex) {
 
   const chartsPerRow = config.chart_every[size];
   const chartPosition = chartIndex % chartsPerRow;
@@ -16,8 +16,8 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
   let margin = { ...config.margin[size] };
 
   let height =
-    config.seriesHeight[size] * graphic_data.length +
-    10 * (graphic_data.length - 1) +
+    config.seriesHeight[size] * graphicData.length +
+    10 * (graphicData.length - 1) +
     12;
 
   let chartGap = config.chartGap || 10;
@@ -62,7 +62,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
   const y = d3
     .scaleBand()
     .paddingOuter(0.2)
-    .paddingInner(((graphic_data.length - 1) * 10) / (graphic_data.length * 30))
+    .paddingInner(((graphicData.length - 1) * 10) / (graphicData.length * 30))
     .range([0, height])
     .round(true);
 
@@ -80,9 +80,9 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .stack()
     .offset(d3[config.stackOffset])
     .order(d3[config.stackOrder])
-    .keys(graphic_data.columns.slice(1, -1));
+    .keys(graphicData.columns.slice(1, -1));
 
-  const series = stack(graphic_data);
+  const series = stack(graphicData);
 
   // trying a different version because d3.nice() is causing issues.
   if (config.xDomain === "auto") {
@@ -91,7 +91,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     x.domain([0, config.xDomain[1]]);
   }
 
-  y.domain(graphic_data.map((d) => d.name));
+  y.domain(graphicData.map((d) => d.name));
 
   // Create SVG
   let svg = addSvg({
@@ -156,7 +156,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .data((d) => d)
     .join("rect")
     .attr("x", (d) => x(d.data.name))
-    .attr("y", (d, i) => y(graphic_data[i].name))
+    .attr("y", (d, i) => y(graphicData[i].name))
     .attr("width", (d) => Math.abs(x(d[0]) - x(d[1])))
     .attr("height", y.bandwidth())
     .style("fill", config.colourPalette[chartIndex % config.colourPalette.length]);
@@ -200,14 +200,14 @@ function renderCallback() {
 
       groupedData.forEach((group, i) => {
         const seriesName = group[0];
-        const graphic_data = group[1];
+        const graphicData = group[1];
 
         //Sort the data so that the bars in each chart are in the same order
-        graphic_data.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
+        graphicData.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
 
-        graphic_data.columns = data.columns;
+        graphicData.columns = data.columns;
 
-        drawGraphic(seriesName, graphic_data, i);
+        drawGraphic(seriesName, graphicData, i);
       });
     })
     .catch((error) => console.error(error));

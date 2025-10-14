@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -17,7 +17,7 @@ function drawGraphic() {
 	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 
 	const colorScale = d3
 		.scaleOrdinal()
@@ -59,22 +59,22 @@ function drawGraphic() {
 	// Define the x and y scales
 	const x = d3
 		.scaleTime()
-		.domain(d3.extent(graphic_data, (d) => d.date))
+		.domain(d3.extent(graphicData, (d) => d.date))
 		.range([0, chart_width]);
 
 	// This function generates an array of approximately count + 1 uniformly-spaced, rounded values in the range of the given start and end dates (or numbers).
 	let tickValues = x.ticks(config.xAxisTicks[size]);
 
 	// Add the first and last dates to the ticks array, and use a Set to remove any duplicates
-	// tickValues = Array.from(new Set([graphic_data[0].date, ...tickValues, graphic_data[graphic_data.length - 1].date]));
+	// tickValues = Array.from(new Set([graphicData[0].date, ...tickValues, graphicData[graphicData.length - 1].date]));
 
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
@@ -91,7 +91,7 @@ function drawGraphic() {
 		.offset(d3[config.stackOffset]); // Convert to percentage values
 
 	// Generate the stacked data
-	const stackedData = stack(graphic_data);
+	const stackedData = stack(graphicData);
 
 	// console.log("stackedData:", stackedData);
 
@@ -164,7 +164,7 @@ function drawGraphic() {
 }
 
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+	graphicData = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),
 			...Object.entries(d)
@@ -174,7 +174,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 		};
 	});
 
-	// console.log('Final data structure:',graphic_data);
+	// console.log('Final data structure:',graphicData);
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({

@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -28,7 +28,7 @@ function drawGraphic() {
 		.round(false);
 
 	//use the data to find unique entries in the date column
-	x.domain([...new Set(graphic_data.map((d) => d.date))]);
+	x.domain([...new Set(graphicData.map((d) => d.date))]);
 
 	let tickValues = x.domain().filter(function (d, i) {
 		return !(i % config.xAxisTicksEvery[size])
@@ -36,12 +36,12 @@ function drawGraphic() {
 
 	//Labelling the first and/or last bar if needed
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
@@ -54,7 +54,7 @@ function drawGraphic() {
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -82,12 +82,12 @@ function drawGraphic() {
 	})
 
 	if (config.yDomain == 'auto') {
-		if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
+		if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
 			y.domain([
 				0,
-				d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+				d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
 		} else {
-			y.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
+			y.domain(d3.extent(graphicData.map(({ value }) => Number(value))))
 		}
 	} else {
 		y.domain(config.yDomain);
@@ -114,7 +114,7 @@ function drawGraphic() {
 
 	svg
 		.selectAll('rect')
-		.data(graphic_data)
+		.data(graphicData)
 		.join('rect')
 		.attr('y', (d) => y(Math.max(d.value, 0)))
 		.attr('x', (d) => x(d.date))
@@ -144,7 +144,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	let parseTime = d3.timeParse(config.dateFormat);
 

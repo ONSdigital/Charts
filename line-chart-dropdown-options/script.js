@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
 let legend = d3.select('#legend');
-let graphic_data, size;
+let graphicData, size;
 //console.log(`Graphic selected: ${graphic}`);
 
 let pymChild = null;
@@ -46,7 +46,7 @@ function drawGraphic() {
 		margin: margin
 	});
 
-	let uniqueOptions = [...new Set(graphic_data.map((d) => d.option))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
 
 	const optns = select
 		.append('div')
@@ -127,7 +127,7 @@ function changeData(selectedOption) {
 	d3.select('#legend').selectAll('div.legend--item').remove();
 
 	// Filter data for the selected option
-	let filteredData = graphic_data.filter((d) => d.option === selectedOption);
+	let filteredData = graphicData.filter((d) => d.option === selectedOption);
 	if (filteredData.length === 0) return;
 
 	// Get categories (series) for this option
@@ -140,7 +140,7 @@ function changeData(selectedOption) {
 		const [minY, maxY] = getYDomainMinMax({
 			minType: yDomainMin,
 			maxType: yDomainMax,
-			allData: graphic_data,
+			allData: graphicData,
 			filteredData: filteredData,
 			categories
 		});
@@ -455,11 +455,11 @@ function createDirectLabelsWithForce(categories, filteredData) {
 	// Remove duplicate declarations of margin, chart_width, and height in drawGraphic
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== 'option');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -469,11 +469,11 @@ function createDirectLabelsWithForce(categories, filteredData) {
 	let x;
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chart_width]);
 	} else {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
+			.domain(d3.extent(graphicData, (d) => +d.date))
 			.range([0, chart_width]);
 	}
 
@@ -491,8 +491,8 @@ function createDirectLabelsWithForce(categories, filteredData) {
 		const [minY, maxY] = getYDomainMinMax({
 			minType: yDomainMin,
 			maxType: yDomainMax,
-			allData: graphic_data,
-			filteredData: graphic_data,
+			allData: graphicData,
+			filteredData: graphicData,
 			categories: categories
 		});
 		y.domain([minY, maxY]);
@@ -581,7 +581,7 @@ function createDirectLabelsWithForce(categories, filteredData) {
 			d3
 				.axisBottom(x)
 				.tickValues(getXAxisTicks({
-					data: graphic_data,
+					data: graphicData,
 					xDataType,
 					size,
 					config
@@ -654,7 +654,7 @@ function createDirectLabelsWithForce(categories, filteredData) {
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),

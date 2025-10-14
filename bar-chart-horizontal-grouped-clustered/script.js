@@ -3,27 +3,27 @@ import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource } from
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	let namesUnique = [...new Set(graphic_data.map((d) => d.name))];
-	let categoriesUnique = [...new Set(graphic_data.map((d) => d.category))];
+	let namesUnique = [...new Set(graphicData.map((d) => d.name))];
+	let categoriesUnique = [...new Set(graphicData.map((d) => d.category))];
 
 	let margin = config.margin[size];
 	let chart_width =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
-		config.seriesHeight[size] * graphic_data.length +
+		config.seriesHeight[size] * graphicData.length +
 		14 * (namesUnique.length - 1) +
 		(config.seriesHeight[size] * categoriesUnique.length + 14) * 0.2;
 
 	//grouping the data
-	let groups = d3.groups(graphic_data, (d) => d.group)
+	let groups = d3.groups(graphicData, (d) => d.group)
 
 	// create the y scale in groups
 	groups.map(function (d) {
@@ -51,12 +51,12 @@ function drawGraphic() {
 	const x = d3.scaleLinear().range([0, chart_width]);
 
 	if (config.xDomain == 'auto') {
-		if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
+		if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
 			x.domain([
 				0,
-				d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+				d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
 		} else {
-			x.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
+			x.domain(d3.extent(graphicData.map(({ value }) => Number(value))))
 		}
 	} else {
 		x.domain(config.xDomain);
@@ -190,7 +190,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
