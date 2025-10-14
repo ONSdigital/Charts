@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -200,36 +200,76 @@ function drawGraphic() {
 		});
 	});
 
+	if (config.addEndMarkers) {
+		const circleData = categories.map((category, index) => {
+			// Find last valid datum for this category
+			const lastDatum = [...graphic_data].reverse().find(d => d[category] != null && d[category] !== "");
+			return lastDatum ? {
+				category: category,
+				index: index,
+				x: x(lastDatum.date),
+				y: y(lastDatum[category]),
+				color: config.colour_palette[index % config.colour_palette.length]
+			} : null;
+		}).filter(d => d); // Remove null entries
 
-		// size === 'sm'
-		if (config.drawLegend || size === 'sm') {
-			// Set up the legend
-			let legenditem = d3
-				.select('#legend')
-				.selectAll('div.legend--item')
-				.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
-				.enter()
-				.append('div')
-				.attr('class', 'legend--item');
+		const circles = svg.selectAll('circle.line-end')
+			.data(circleData, d => d.category)
+			.enter()
+			.append('circle')
+			.attr('cx', d => d.x)
+			.attr('cy', d => d.y)
+			.style('fill', d => d.color)
+			.attr('r', 4)
+			.attr('class', 'line-end');
+	}
 
-			legenditem
-				.append('div')
-				.attr('class', 'legend--icon--circle')
-				.style('background-color', function (d) {
-					return d[1];
-				});
 
-			legenditem
-				.append('div')
-				.append('p')
-				.attr('class', 'legend--text')
-				.html(function (d) {
-					return d[0];
-				});
-		} else {
-		createDirectLabels(categories, graphic_data, svg, x, y, margin, size, config, chart_width);
-		}
-	
+	// size === 'sm'
+	if (config.drawLegend || size === 'sm') {
+		legend.selectAll("*").remove()
+
+		// Set up the legend
+		let legenditem = legend
+			.selectAll('div.legend--item')
+			.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+			.enter()
+			.append('div')
+			.attr('class', 'legend--item');
+
+		legenditem
+			.append('div')
+			.attr('class', 'legend--icon--circle')
+			.style('background-color', function (d) {
+				return d[1];
+			});
+
+		legenditem
+			.append('div')
+			.append('p')
+			.attr('class', 'legend--text')
+			.html(function (d) {
+				return d[0];
+			});
+	} else {
+		createDirectLabels({
+			categories: categories,
+			data: graphic_data,
+			svg: svg,
+			xScale: x,
+			yScale: y,
+			margin: margin,
+			chartHeight: height,
+			config: config,
+			options: {
+				labelStrategy: 'lastValid',
+				minSpacing: 12,
+				useLeaderLines: true,
+				leaderLineStyle: 'dashed'
+			}
+		});
+	}
+
 
 	// add grid lines to y axis
 	svg
@@ -337,46 +377,3 @@ d3.csv(config.graphic_data_url).then((rawData) => {
 	});
 
 });
-
-function createDirectLabels(categories, graphic_data, svg, x, y, margin, size, config, chart_width) {
-
-	// Remove any existing direct labels before adding new ones
-    svg.selectAll('text.directLineLabel').remove();
-    let labelData = [];
-    const lastDatum = graphic_data[graphic_data.length - 1];
-    categories.forEach(function (category, index) {
-        if (lastDatum[category] === null) return;
-        const label = svg.append('text')
-            .attr('class', 'directLineLabel')
-            .attr('x', x(lastDatum.date) + 10)
-            .attr('y', y(lastDatum[category]))
-            .attr('dy', '.35em')
-            .attr('text-anchor', 'start')
-            .attr('fill', config.text_colour_palette[index % config.text_colour_palette.length])
-            .text(category)
-            .call(wrap, margin.right - 10);
-        const bbox = label.node().getBBox();
-        labelData.push({
-            node: label,
-            x: x(lastDatum.date) + 10,
-            y: y(lastDatum[category]),
-            originalY: y(lastDatum[category]),
-            height: bbox.height,
-            category: category
-        });
-    });
-    if (labelData.length > 1) {
-        labelData.sort((a, b) => a.y - b.y);
-        const minSpacing = 12;
-        for (let i = 1; i < labelData.length; i++) {
-            const current = labelData[i];
-            const previous = labelData[i - 1];
-            if (current.y - previous.y < minSpacing) {
-                current.y = previous.y + minSpacing;
-            }
-        }
-        labelData.forEach(label => {
-            label.node.attr('y', label.y);
-        });
-    }
-}
