@@ -7,10 +7,10 @@ const legend = d3.select('#legend');
 let pymChild = null;
 
 // Data variables
-let graphicData, comparisonData, time_comparisonData, dropdownData;
+let graphicData, comparisonData, timeComparisonData, dropdownData;
 let size, allAges, tidydata, rolledUp, tidydataPercentage;
 let popTotal, comparisonPopTotal, timeComparisonPopTotal;
-let graphicData_new, comparisonData_new, time_comparisonData_new;
+let graphicDataNew, comparisonDataNew, timeComparisonDataNew;
 let tidydatacomparison, rolledUpComparison, tidydataComparisonPercentage;
 
 // Chart variables
@@ -161,14 +161,14 @@ function processSimpleData() {
             comparisonPopTotal = d3.sum(comparisonData, d => d.maleBar + d.femaleBar);
         }
 
-        if (time_comparisonData) {
-            timeComparisonPopTotal = d3.sum(time_comparisonData, d => d.maleBar + d.femaleBar);
+        if (timeComparisonData) {
+            timeComparisonPopTotal = d3.sum(timeComparisonData, d => d.maleBar + d.femaleBar);
         }
 
         // Transform to tidy data - use raw counts or percentages based on displayType
         const usePercentages = config.displayType !== 'counts';
 
-        graphicData_new = graphicData
+        graphicDataNew = graphicData
             .map(d => [
                 { age: d.age, sex: 'female', value: usePercentages ? d.femaleBar / popTotal : d.femaleBar },
                 { age: d.age, sex: 'male', value: usePercentages ? d.maleBar / popTotal : d.maleBar }
@@ -176,15 +176,15 @@ function processSimpleData() {
             .flatMap(d => d);
 
         if (comparisonData) {
-            comparisonData_new = comparisonData.map(d => ({
+            comparisonDataNew = comparisonData.map(d => ({
                 age: d.age,
                 malePercent: usePercentages ? d.maleBar / comparisonPopTotal : d.maleBar,
                 femalePercent: usePercentages ? d.femaleBar / comparisonPopTotal : d.femaleBar
             }));
         }
 
-        if (time_comparisonData) {
-            time_comparisonData_new = time_comparisonData.map(d => ({
+        if (timeComparisonData) {
+            timeComparisonDataNew = timeComparisonData.map(d => ({
                 age: d.age,
                 malePercent: usePercentages ? d.maleBar / timeComparisonPopTotal : d.maleBar,
                 femalePercent: usePercentages ? d.femaleBar / timeComparisonPopTotal : d.femaleBar
@@ -192,7 +192,7 @@ function processSimpleData() {
         }
     } else {
         // Data is already in percentages
-        graphicData_new = graphicData
+        graphicDataNew = graphicData
             .map(d => [
                 { age: d.age, value: d.femaleBar, sex: 'female' },
                 { age: d.age, sex: 'male', value: d.maleBar }
@@ -200,15 +200,15 @@ function processSimpleData() {
             .flatMap(d => d);
 
         if (comparisonData) {
-            comparisonData_new = comparisonData.map(d => ({
+            comparisonDataNew = comparisonData.map(d => ({
                 age: d.age,
                 malePercent: d.maleBar,
                 femalePercent: d.femaleBar
             }));
         }
 
-        if (time_comparisonData) {
-            time_comparisonData_new = time_comparisonData.map(d => ({
+        if (timeComparisonData) {
+            timeComparisonDataNew = timeComparisonData.map(d => ({
                 age: d.age,
                 malePercent: d.maleBar,
                 femalePercent: d.femaleBar
@@ -218,18 +218,18 @@ function processSimpleData() {
 
     // Calculate max percentage for scales based on xDomain setting
     if (config.xDomain === 'auto') {
-        let maxValues = [d3.max(graphicData_new, d => d.value)];
-        if (comparisonData_new) {
-            maxValues.push(d3.max(comparisonData_new, d => Math.max(d.femalePercent, d.malePercent)));
+        let maxValues = [d3.max(graphicDataNew, d => d.value)];
+        if (comparisonDataNew) {
+            maxValues.push(d3.max(comparisonDataNew, d => Math.max(d.femalePercent, d.malePercent)));
         }
-        if (time_comparisonData_new) {
-            maxValues.push(d3.max(time_comparisonData_new, d => Math.max(d.femalePercent, d.malePercent)));
+        if (timeComparisonDataNew) {
+            maxValues.push(d3.max(timeComparisonDataNew, d => Math.max(d.femalePercent, d.malePercent)));
         }
         maxPercentage = d3.max(maxValues);
     } else if (Array.isArray(config.xDomain)) {
         maxPercentage = config.xDomain[1];
     } else if (config.xDomain === 'auto-each') {
-        maxPercentage = d3.max(graphicData_new, d => d.value);
+        maxPercentage = d3.max(graphicDataNew, d => d.value);
     }
 }
 
@@ -270,7 +270,7 @@ function processComplexData() {
         } else if (comparisonData) {
             // Simple comparison data structure
             const comparisonTotal = d3.sum(comparisonData, d => d.maleBar + d.femaleBar);
-            comparisonData_new = comparisonData.map(d => ({
+            comparisonDataNew = comparisonData.map(d => ({
                 age: d.age,
                 male: usePercentages ? d.maleBar / comparisonTotal : d.maleBar,
                 female: usePercentages ? d.femaleBar / comparisonTotal : d.femaleBar
@@ -283,7 +283,7 @@ function processComplexData() {
         if (comparisonData && config.hasInteractiveComparison) {
             tidydataComparisonPercentage = pivot(comparisonData, allAges, 'age', 'percentage');
         } else if (comparisonData) {
-            comparisonData_new = comparisonData.map(d => ({
+            comparisonDataNew = comparisonData.map(d => ({
                 age: d.age,
                 male: d.maleBar,
                 female: d.femaleBar
@@ -296,8 +296,8 @@ function processComplexData() {
         let maxValues = [d3.max(tidydataPercentage, d => d.percentage)];
         if (tidydataComparisonPercentage) {
             maxValues.push(d3.max(tidydataComparisonPercentage, d => d.percentage));
-        } else if (comparisonData_new) {
-            maxValues.push(d3.max(comparisonData_new, d => Math.max(d.female, d.male)));
+        } else if (comparisonDataNew) {
+            maxValues.push(d3.max(comparisonDataNew, d => Math.max(d.female, d.male)));
         }
         maxPercentage = d3.max(maxValues);
     } else if (Array.isArray(config.xDomain)) {
@@ -314,7 +314,7 @@ function createChart(margin) {
     chartWidth = (width - margin.centre - margin.left - margin.right) / 2;
 
     if (config.dataStructure === 'simple') {
-        height = (graphicData_new.length / 2) * config.seriesHeight[size];
+        height = (graphicDataNew.length / 2) * config.seriesHeight[size];
     } else {
         height = allAges.length * config.seriesHeight[size];
     }
@@ -330,7 +330,7 @@ function createChart(margin) {
 
     if (config.dataStructure === 'simple') {
         y = d3.scaleBand()
-            .domain([...new Set(graphicData_new.map(d => d.age))])
+            .domain([...new Set(graphicDataNew.map(d => d.age))])
             .rangeRound([height, 0])
             .paddingInner(0.1);
     } else {
@@ -454,7 +454,7 @@ function addAxes(margin) {
 function addBars() {
     let barData;
     if (config.dataStructure === 'simple') {
-        barData = graphicData_new;
+        barData = graphicDataNew;
     } else if (config.interactionType === 'dropdown') {
         barData = tidydataPercentage.filter(d => d.AREACD === graphicData[0].AREACD);
     } else {
@@ -495,14 +495,14 @@ function addComparisonLines() {
         comparisons.append('path')
             .attr('class', 'line')
             .attr('id', 'comparisonLineLeft')
-            .attr('d', lineLeft(comparisonData_new) + 'l 0 ' + -y.bandwidth())
+            .attr('d', lineLeft(comparisonDataNew) + 'l 0 ' + -y.bandwidth())
             .attr('stroke', config.comparisonColourPalette[0])
             .attr('stroke-width', '2px');
 
         comparisons.append('path')
             .attr('class', 'line')
             .attr('id', 'comparisonLineRight')
-            .attr('d', lineRight(comparisonData_new) + 'l 0 ' + -y.bandwidth())
+            .attr('d', lineRight(comparisonDataNew) + 'l 0 ' + -y.bandwidth())
             .attr('stroke', config.comparisonColourPalette[1])
             .attr('stroke-width', '2px');
     } else if (config.interactionType === 'dropdown') {
@@ -522,9 +522,9 @@ function addComparisonLines() {
 
         if (!config.hasInteractiveComparison) {
             d3.select('#comparisonLineLeft')
-                .attr('d', lineLeft(comparisonData_new) + 'l 0 ' + -y.bandwidth());
+                .attr('d', lineLeft(comparisonDataNew) + 'l 0 ' + -y.bandwidth());
             d3.select('#comparisonLineRight')
-                .attr('d', lineRight(comparisonData_new) + 'l 0 ' + -y.bandwidth());
+                .attr('d', lineRight(comparisonDataNew) + 'l 0 ' + -y.bandwidth());
         }
     }
 }
@@ -687,7 +687,7 @@ function changeDataFromDropdown(areacd) {
 }
 
 function onToggleChange(value) {
-    const dataToUse = value == 0 ? comparisonData_new : time_comparisonData_new;
+    const dataToUse = value == 0 ? comparisonDataNew : timeComparisonDataNew;
 
     d3.select('#comparisonLineLeft')
         .transition()
@@ -767,7 +767,7 @@ Promise.all(dataPromises).then(dataArrays => {
     }
 
     if (dataArrays.length > 2) {
-        time_comparisonData = dataArrays[2];
+        timeComparisonData = dataArrays[2];
     }
 
     // Initialize pym
