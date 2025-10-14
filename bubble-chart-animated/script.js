@@ -318,7 +318,7 @@ function drawGraphic() {
 			.style('opacity', 0);
 
 		//Set the date format
-		let data_format = d3.format('.1f');
+		let dataFormat = d3.format('.1f');
 
 		// Three functions that change the tooltip when user hover / move / leave the circle
 
@@ -337,13 +337,13 @@ function drawGraphic() {
 						'<br><br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Wage growth: ' +
-						data_format(d.y) +
+						dataFormat(d.y) +
 						' p.p.' +
 						'</span>' +
 						'<br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Median hourly pay (£): ' +
-						data_format(d.x) +
+						dataFormat(d.x) +
 						'%' +
 						'</span>'
 					)
@@ -369,13 +369,13 @@ function drawGraphic() {
 						'<br><br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Wage growth: ' +
-						data_format(d.y) +
+						dataFormat(d.y) +
 						' p.p.' +
 						'</span>' +
 						'<br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Median hourly pay (£): ' +
-						data_format(d.x) +
+						dataFormat(d.x) +
 						'%' +
 						'</span>'
 					)
