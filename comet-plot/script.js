@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphicData, size, svgs, xDomain, divs, charts, var_group, var_group2, var_group3;
+let graphicData, size, svgs, xDomain, divs, charts, varGroup, varGroup2, varGroup3;
 
 function drawGraphic() {
 
@@ -210,19 +210,19 @@ function drawGraphic() {
 	drawLegend();
 
 	function drawLegend() {
-		var_group = d3
+		varGroup = d3
 			.select('#legend')
 			.selectAll('div.legend--item.Inc')
 			.append('svg')
 			.attr('height', config.legendHeight[size])
 			.attr('width', config.legendItemWidth);
-		var_group2 = d3
+		varGroup2 = d3
 			.select('#legend')
 			.selectAll('div.legend--item.Dec')
 			.append('svg')
 			.attr('height', config.legendHeight[size])
 			.attr('width', config.legendItemWidth);
-		var_group3 = d3
+		varGroup3 = d3
 			.select('#legend')
 			.selectAll('div.legend--item.No')
 			.append('svg')
@@ -230,7 +230,7 @@ function drawGraphic() {
 			.attr('width', config.legendItemWidth);
 
 		//Increase legend item
-		var_group
+		varGroup
 			.append('text')
 			.attr('y', 30)
 			.attr('x', 0)
@@ -242,7 +242,7 @@ function drawGraphic() {
 		//this measures how wide the "min" value is so that we can place the legend items responsively
 		let minTextWidth = d3.select('text.mintext').node().getBBox().width + 5;
 
-		var_group
+		varGroup
 			.append('line')
 			.attr('stroke', config.colourPalette[0])
 			.attr('stroke-width', '3px')
@@ -251,14 +251,14 @@ function drawGraphic() {
 			.attr('x1', minTextWidth)
 			.attr('x2', minTextWidth + config.legendLineLength);
 
-		var_group
+		varGroup
 			.append('circle')
 			.attr('r', config.dotsize)
 			.attr('fill', config.colourPalette[0])
 			.attr('cx', minTextWidth + config.legendLineLength)
 			.attr('cy', 26);
 
-		var_group
+		varGroup
 			.append('text')
 			.attr('y', 30)
 			.attr(
@@ -276,7 +276,7 @@ function drawGraphic() {
 		//this measures how wide the "max" value is so that we can place the legend items responsively
 		let maxTextWidth = d3.select('text.maxtext').node().getBBox().width + 5;
 
-		var_group
+		varGroup
 			.append('text')
 			.attr('y', 15)
 			.attr(
@@ -293,7 +293,7 @@ function drawGraphic() {
 			.text('Increase');
 
 		//Decrease legend item
-		var_group2
+		varGroup2
 			.append('line')
 			.attr('stroke', config.colourPalette[1])
 			.attr('stroke-width', '3px')
@@ -307,14 +307,14 @@ function drawGraphic() {
 				config.legendLineLength
 			);
 
-		var_group2
+		varGroup2
 			.append('circle')
 			.attr('r', config.dotsize)
 			.attr('fill', config.colourPalette[1])
 			.attr('cx', maxTextWidth + config.dotsize)
 			.attr('cy', 26);
 
-		var_group2
+		varGroup2
 			.append('text')
 			.attr('y', 30)
 			.attr('x', 0)
@@ -323,7 +323,7 @@ function drawGraphic() {
 			.attr('fill', config.colourPalette[1])
 			.text(config.legendLabels.max);
 
-		var_group2
+		varGroup2
 			.append('text')
 			.attr('y', 30)
 			.attr(
@@ -338,7 +338,7 @@ function drawGraphic() {
 			.attr('fill', config.colourPalette[1])
 			.text(config.legendLabels.min);
 
-		var_group2
+		varGroup2
 			.append('text')
 			.attr('y', 15)
 			.attr(
@@ -355,14 +355,14 @@ function drawGraphic() {
 			.text('Decrease');
 
 		//No change legend item
-		var_group3
+		varGroup3
 			.append('circle')
 			.attr('r', config.dotsize)
 			.attr('fill', config.colourPalette[2])
 			.attr('cx', 10)
 			.attr('cy', 26);
 
-		var_group3
+		varGroup3
 			.append('text')
 			.attr('y', 30)
 			.attr('x', config.dotsize + 15)
