@@ -178,15 +178,15 @@ function drawGraphic() {
 		}
 
 		// console.log("keys: ", keys)
-		let bar_keys = keys.filter(d => d !== config.lineSeries);
-		// console.log(bar_keys)
+		let barKeys = keys.filter(d => d !== config.lineSeries);
+		// console.log(barKeys)
 
 		// Set up the legend
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
 			.data(
-				d3.zip(bar_keys.reverse(), colours.reverse())
+				d3.zip(barKeys.reverse(), colours.reverse())
 			)
 			.enter()
 			.append('div')
