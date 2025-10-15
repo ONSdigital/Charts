@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, customTimeAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -297,15 +297,17 @@ function drawGraphic() {
 		.attr('class', 'x axis')
 		.attr('transform', `translate(0, ${height})`)
 		.call(
-			d3
-				.axisBottom(x)
-				.tickValues(getXAxisTicks({
-					data: graphic_data,
-					xDataType,
-					size,
-					config
-				}))
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
+			customTimeAxis(x)
+			.tickSize(20)
+			// d3
+			// 	.axisBottom(x)
+			// 	.tickValues(getXAxisTicks({
+			// 		data: graphic_data,
+			// 		xDataType,
+			// 		size,
+			// 		config
+			// 	}))
+			.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
 					: d3.format(config.xAxisNumberFormat)(d))
 		);
 
