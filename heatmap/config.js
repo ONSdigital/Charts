@@ -1,6 +1,6 @@
 config = {
 	// Added a dataNumeric.csv to the folder to demonstrate a numeric x axis
-	"graphicDataURL": "dataNumeric.csv",
+	"graphicDataURL": "data.csv",
 	"colourPalette": "YlGnBu",
 	// colour brewer palette or custom array of colours
 	"sourceText": "Office for National Statistics",
@@ -14,9 +14,9 @@ config = {
 	//turns on or off cascading xaxis label
 	"legendFormat": ".0f",
 	// If you have categorical x axis, set to true to show all ticks
-	"xTicksAll": false,
+	"xTicksAll": true,
 	// If you have numeric data on the x axis:
-	"xAxisTicks": ['1981', '1984', '1987'], // leave empty to use automatic ticks instead, specify n below
+	"xAxisTicks": [], // leave empty to use automatic ticks instead, specify n below
 	"xAxisTicksAuto": {
 		"sm": 3,
 		"md": 3,

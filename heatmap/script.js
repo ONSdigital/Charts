@@ -230,30 +230,15 @@ function drawGraphic() {
 		.selectAll('rect')
 		.data(dataPivoted)
 		.join('rect')
+		.attr('class', (d) => {
+			return 'dataRect ' + d.region.toLowerCase().replace(/ /g, '') + '-Xrect ' + d.name.toLowerCase().replace(/ /g, '') + '-Yrect';
+		})
 		.attr('fill', (d) => colour(+d.value))
 		.attr('x', (d) => x(d.region))
 		.attr('y', (d) => y(d.name))
 		.attr('width', x.bandwidth())
 		.attr('height', y.bandwidth())
-		.on('mouseover', function (d) {
-			d3.select('#keytext')
-				.text(
-					d3.format(config.dataLabelsNumberFormat)(
-						d3.select(this).data()[0].value
-					)
-				)
-				.transition()
-				.attr('x', legendx(+d3.select(this).data()[0].value));
-
-			d3.select('#keysymbol path').attr('opacity', 1);
-
-			d3.select('#keysymbol')
-				.transition()
-				.attr(
-					'transform',
-					'translate(' + legendx(+d3.select(this).data()[0].value) + ',0)'
-				);
-		})
+		.on('mouseover', mouseover)
 		.on('mouseout', mouseout);
 
 	svg
@@ -261,7 +246,9 @@ function drawGraphic() {
 		.selectAll('text')
 		.data(dataPivoted)
 		.join('text')
-		.attr('class', 'dataLabels')
+		.attr('class', (d) => {
+			return 'dataLabels ' + d.region.toLowerCase().replace(/ /g, '') + '-Xlabel ' + d.name.toLowerCase().replace(/ /g, '') + '-Ylabel';
+		})
 		.attr('fill', (d) => {
 			// Calculate contrast ratio and decide text color
 			const rectColor = colour(+d.value);
@@ -288,6 +275,59 @@ function drawGraphic() {
 function mouseout() {
 	d3.select('#keytext').text('');
 	d3.select('#keysymbol path').attr('opacity', 0);
+	d3.selectAll('.dataRect').classed('hovered', false);
+	d3.selectAll('.dataRect').classed('opaque', false);
+	d3.selectAll('.dataLabels').classed('opaque', false);
+}
+
+function mouseover() {
+	const hoveredY = d3.select(this).data()[0].name.toLowerCase().replace(/ /g, '');
+	const hoveredX = d3.select(this).data()[0].region.toLowerCase().replace(/ /g, '');
+	highlightrows(hoveredX, hoveredY);
+
+	d3.select('#keytext')
+		.text(
+			d3.format(config.dataLabelsNumberFormat)(
+				d3.select(this).data()[0].value
+			)
+		)
+		.transition()
+		.attr('x', legendx(+d3.select(this).data()[0].value));
+
+	d3.select('#keysymbol path').attr('opacity', 1);
+
+	d3.select(this).classed('hovered', true);
+
+	d3.select('#keysymbol')
+		.transition()
+		.attr(
+			'transform',
+			'translate(' + legendx(+d3.select(this).data()[0].value) + ',0)'
+		);
+}
+
+function highlightrows(hoveredX, hoveredY) {
+	d3.selectAll('.dataRect').each(function (d) {
+		if (
+			d3.select(this).attr('class').includes(hoveredY + '-Yrect') ||
+			d3.select(this).attr('class').includes(hoveredX + '-Xrect')
+		) {
+			d3.select(this).classed('opaque', false);
+		} else {
+			d3.select(this).classed('opaque', true);
+		}
+	});
+
+	d3.selectAll('.dataLabels').each(function (d) {
+		if (
+			d3.select(this).attr('class').includes(hoveredY + '-Ylabel') ||
+			d3.select(this).attr('class').includes(hoveredX + '-Xlabel')
+		) {
+			d3.select(this).classed('opaque', false);
+		} else {
+			d3.select(this).classed('opaque', true);
+		}
+	});
 }
 
 
