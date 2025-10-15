@@ -4,7 +4,7 @@ let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let legendTop = d3.select('#legendTop');
 let pymChild = null;
-let graphic_data, size, svg, xDomain;
+let graphicData, size, svg, xDomain;
 
 // var minSym = d3.symbol() 
 // .type(d3.symbolSquare).size(57)
@@ -17,22 +17,22 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
-	let groups = d3.groups(graphic_data, (d) => d.group);
+	let groups = d3.groups(graphicData, (d) => d.group);
 
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphic_data.columns.length; i++) {
+		for (i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
-				d3.min(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 			max = d3.max([
 				max,
-				d3.max(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.max(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 		}
 		xDomain = [min, max];
@@ -41,11 +41,11 @@ function drawGraphic() {
 	}
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]).domain(xDomain);
+	const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(Object.values(config.seriesLabels));
 
 
@@ -64,7 +64,7 @@ function drawGraphic() {
 		d[4] = d3.axisLeft(d[3]).tickSize(0).tickPadding(9);
 		d[5] = d3.scaleBand()
 			.range([0, d[3].bandwidth()])
-			.domain([...new Set(graphic_data.map(d => d.series))])
+			.domain([...new Set(graphicData.map(d => d.series))])
 	});
 
 	//set up xAxis generator
@@ -81,7 +81,7 @@ function drawGraphic() {
 
 	let charts = addSvg({
 		svgParent: divs,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: (d) => d[2] + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -156,7 +156,7 @@ function drawGraphic() {
 			.attr('x', (d) => x(d.min) - 2)
 			.attr('y', (d) => (groups.filter((f) => f[0] == d.group)[0][3](d.name) + groups.filter(e => e[0] == d.group)[0][5](d.series)) - 1)
 			.text((d) => config.numberSuffix + d3.format(config.numberFormat)(d.min))
-			.attr("fill", config.colour_min_text)
+			.attr("fill", config.colourMinText)
 			.attr('dy', 6)
 			.attr('dx', (d) => (+d.min < +d.max ? -5 : 5))
 			.attr('text-anchor', (d) => (+d.min < +d.max ? 'end' : 'start'));
@@ -185,11 +185,11 @@ function drawGraphic() {
 		if (i == groups.length - 1) {
 			addAxisLabel({
 				svgContainer: d3.select(this),
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: d[2] + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	});
@@ -197,7 +197,7 @@ function drawGraphic() {
 	// Set up the legend
 	var legenditemTop = d3.select('#legendTop')
 		.selectAll('div.legend--item')
-		.data(d3.zip(Object.values(config.seriesLabels), config.colour_palette))
+		.data(d3.zip(Object.values(config.seriesLabels), config.colourPalette))
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item')
@@ -224,19 +224,19 @@ function drawGraphic() {
 	drawLegend();
 
 	function drawLegend() {
-		let var_group = d3
+		let varGroup = d3
 			.select('#legend')
 			.selectAll('div.legend--item.Inc')
 			.append('svg')
 			.attr('height', config.legendHeight[size])
 			.attr('width', config.legendItemWidth);
-		let var_group2 = d3
+		let varGroup2 = d3
 			.select('#legend')
 			.selectAll('div.legend--item.Dec')
 			.append('svg')
 			.attr('height', config.legendHeight[size])
 			.attr('width', config.legendItemWidth);
-		// var_group3 = d3
+		// varGroup3 = d3
 		// 	.select('#legend')
 		// 	.selectAll('div.legend--item.No')
 		// 	.append('svg')
@@ -244,58 +244,58 @@ function drawGraphic() {
 		// 	.attr('width', config.legendItemWidth);
 
 		//Increase legend item
-		var_group
+		varGroup
 			.append('text')
 			.attr('y', 30)
 			// .style("font-size", "12.5px")
 			.attr('x', 0)
 			.attr('text-anchor', 'start')
 			.attr('class', 'mintext legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.min);
 
 		//this measures how wide the "min" value is so that we can place the legend items responsively
 		let minTextWidth = d3.select('text.mintext').node().getBBox().width + 5;
 
-		var_group
+		varGroup
 			.append('line')
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '3px')
 			.attr('y1', 26)
 			.attr('y2', 26)
 			.attr('x1', minTextWidth)
 			.attr('x2', minTextWidth + config.legendLineLength);
 
-		var_group
+		varGroup
 			.append('circle')
 			.attr('r', config.dotsize)
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.attr('cx', minTextWidth + config.legendLineLength)
 			.attr('cy', 26);
 
-		// var_group
+		// varGroup
 		// 	.append('circle')
 		// 	.attr('r', config.dotsize - 2.5)
-		// 	.attr('fill', config.legend_colour)
+		// 	.attr('fill', config.legendColour)
 		// 	.attr('cx', minTextWidth + 1.25)
 		// 	.attr('cy', 26);
 
-		// var_group
+		// varGroup
 		// .append("path")
 		// .attr("d", minSym) 
-		// .attr("fill", config.legend_colour) 
+		// .attr("fill", config.legendColour) 
 		// .attr("transform", "translate(" + (minTextWidth) + "," + 26 + ") rotate(45)");
 
-		var_group
+		varGroup
 			.append("line")
 			.attr("x1", minTextWidth)
 			.attr("x2", minTextWidth)
 			.attr("y1", 26 + 7)
 			.attr("y2", 26 - 7)
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '2.5px');
 
-		var_group
+		varGroup
 			.append('text')
 			.attr('y', 30)
 			.attr(
@@ -307,14 +307,14 @@ function drawGraphic() {
 			)
 			.attr('text-anchor', 'start')
 			.attr('class', 'maxtext legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.max)
 			.style("font-weight", 700);
 
 		//this measures how wide the "max" value is so that we can place the legend items responsively
 		let maxTextWidth = d3.select('text.maxtext').node().getBBox().width + 5;
 
-		var_group
+		varGroup
 			.append('text')
 			.attr('y', 15)
 			.attr(
@@ -331,9 +331,9 @@ function drawGraphic() {
 			.text('Increase');
 
 		//Decrease legend item
-		var_group2
+		varGroup2
 			.append('line')
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '3px')
 			.attr('y1', 26)
 			.attr('y2', 26)
@@ -345,33 +345,33 @@ function drawGraphic() {
 				config.legendLineLength
 			);
 
-		var_group2
+		varGroup2
 			.append('circle')
 			.attr('r', config.dotsize)
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.attr('cx', maxTextWidth + config.dotsize)
 			.attr('cy', 26);
 
-		var_group2
+		varGroup2
 			.append("line")
 			.attr("x1", maxTextWidth + config.legendLineLength + config.dotsize)
 			.attr("x2", maxTextWidth + config.legendLineLength + config.dotsize)
 			.attr("y1", 26 + 7)
 			.attr("y2", 26 - 7)
-			.attr('stroke', config.legend_colour)
+			.attr('stroke', config.legendColour)
 			.attr('stroke-width', '2.5px');
 
-		var_group2
+		varGroup2
 			.append('text')
 			.attr('y', 30)
 			.attr('x', 0)
 			.attr('text-anchor', 'start')
 			.attr('class', 'legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.max)
 			.style("font-weight", 700);
 
-		var_group2
+		varGroup2
 			.append('text')
 			.attr('y', 30)
 			.attr(
@@ -383,10 +383,10 @@ function drawGraphic() {
 			)
 			.attr('text-anchor', 'start')
 			.attr('class', 'legendLabel')
-			.attr('fill', config.legend_colour)
+			.attr('fill', config.legendColour)
 			.text(config.legendLabels.min);
 
-		var_group2
+		varGroup2
 			.append('text')
 			.attr('y', 15)
 			.attr(
@@ -403,20 +403,20 @@ function drawGraphic() {
 			.attr('fill', ONScolours.grey75);
 
 		// 	//No change legend item
-		// 	var_group3
+		// 	varGroup3
 		// 		.append('circle')
 		// 		.attr('r', config.dotsize)
-		// 		.attr('fill', config.colour_palette[2])
+		// 		.attr('fill', config.colourPalette[2])
 		// 		.attr('cx', 10)
 		// 		.attr('cy', 26);
 
-		// 	var_group3
+		// 	varGroup3
 		// 		.append('text')
 		// 		.attr('y', 30)
 		// 		.attr('x', config.dotsize + 15)
 		// 		.attr('text-anchor', 'start')
 		// 		.attr('class', 'legendLabel')
-		// 		.attr('fill', config.colour_palette[2])
+		// 		.attr('fill', config.colourPalette[2])
 		// 		.text('No change');
 	} //End drawLegend
 
@@ -429,9 +429,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

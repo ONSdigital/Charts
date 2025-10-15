@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, groups, xDomain, divs, svgs, charts;
+let graphicData, size, groups, xDomain, divs, svgs, charts;
 
 function drawGraphic() {
 
@@ -11,22 +11,22 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
-	groups = d3.groups(graphic_data, (d) => d.group);
+	groups = d3.groups(graphicData, (d) => d.group);
 
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphic_data.columns.length; i++) {
+		for (i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
-				d3.min(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 			max = d3.max([
 				max,
-				d3.max(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.max(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 		}
 		xDomain = [min, max];
@@ -35,11 +35,11 @@ function drawGraphic() {
 	}
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]).domain(xDomain);
+	const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(Object.keys(config.legendLabels));
 
 	// create the y scale in groups
@@ -68,7 +68,7 @@ function drawGraphic() {
 
 	charts = addSvg({
 		svgParent: divs,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: (d) => d[2] + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -180,11 +180,11 @@ function drawGraphic() {
 		if (i == groups.length - 1) {
 			addAxisLabel({
 				svgContainer: d3.select(this),
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: d[2] + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	});
@@ -196,7 +196,7 @@ function drawGraphic() {
 		.data(
 			d3.zip(
 				Object.values(config.legendLabels),
-				config.colour_palette
+				config.colourPalette
 			)
 		)
 		.enter()
@@ -227,9 +227,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

@@ -3,33 +3,33 @@ import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource } from
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	let namesUnique = [...new Set(graphic_data.map((d) => d.name))];
-	let categoriesUnique = [...new Set(graphic_data.map((d) => d.category))];
+	let namesUnique = [...new Set(graphicData.map((d) => d.name))];
+	let categoriesUnique = [...new Set(graphicData.map((d) => d.category))];
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
-		config.seriesHeight[size] * graphic_data.length +
+		config.seriesHeight[size] * graphicData.length +
 		14 * (namesUnique.length - 1) +
 		(config.seriesHeight[size] * categoriesUnique.length + 14) * 0.2;
 
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]);
+	const x = d3.scaleLinear().range([0, chartWidth]);
 
 	const y = d3
 		.scaleBand()
 		.paddingOuter(0.1)
-		.paddingInner(((namesUnique.length - 1) * 14) / (graphic_data.length * 28))
+		.paddingInner(((namesUnique.length - 1) * 14) / (graphicData.length * 28))
 		.range([0, height])
 		.round(true);
 
@@ -44,7 +44,7 @@ function drawGraphic() {
 
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(categoriesUnique);
 
 	//set up yAxis generator
@@ -62,7 +62,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(config.legendLabels, config.colour_palette)
+			d3.zip(config.legendLabels, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -86,18 +86,18 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
 
 	if (config.xDomain == 'auto') {
-		if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
+		if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
 			x.domain([
 				0,
-				d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+				d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
 		} else {
-			x.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
+			x.domain(d3.extent(graphicData.map(({ value }) => Number(value))))
 		}
 	} else {
 		x.domain(config.xDomain);
@@ -124,7 +124,7 @@ function drawGraphic() {
 
 	svg
 		.selectAll('rect')
-		.data(graphic_data)
+		.data(graphicData)
 		.join('rect')
 		.attr('x', d => d.value < 0 ? x(d.value) : x(0))
 		.attr('y', (d) => y(d.name) + y2(d.category))
@@ -138,8 +138,8 @@ function drawGraphic() {
 
 		addDataLabels({
 			svgContainer: svg,
-			data: graphic_data,
-			chart_width: chart_width,
+			data: graphicData,
+			chartWidth: chartWidth,
 			labelPositionFactor: 7,
 			xScaleFunction: x,
 			yScaleFunction: y,
@@ -150,11 +150,11 @@ function drawGraphic() {
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -166,9 +166,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

@@ -2,27 +2,27 @@ import { initialise, wrap, addSvg, calculateChartWidth, addAxisLabel, addSource 
 
 let pymChild = null;
 let graphic = d3.select("#graphic");
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 size = initialise(size);
 
-function drawGraphic(seriesName, graphic_data, chartIndex) {
+function drawGraphic(seriesName, graphicData, chartIndex) {
 
-  const chartsPerRow = config.chart_every[size];
+  const chartsPerRow = config.chartEvery[size];
   const chartPosition = chartIndex % chartsPerRow;
 
   // Set dimensions
   let margin = { ...config.margin[size] };
 
   let height =
-    config.seriesHeight[size] * graphic_data.length +
-    10 * (graphic_data.length - 1) +
+    config.seriesHeight[size] * graphicData.length +
+    10 * (graphicData.length - 1) +
     12;
 
   let chartGap = config.chartGap || 10;
 
-  let chart_width = calculateChartWidth({
+  let chartWidth = calculateChartWidth({
     screenWidth: parseInt(graphic.style('width')),
     chartEvery: chartsPerRow,
     chartMargin: margin,
@@ -44,8 +44,8 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
   const chartWidthPerRow = availableWidth / chartsPerRow;
 
   // Adjust the chart width based on the available space and desired grid layout
-  chart_width = Math.min(chartWidthPerRow, chart_width);
-  chart_width *= 1;
+  chartWidth = Math.min(chartWidthPerRow, chartWidth);
+  chartWidth *= 1;
 
   // Calculate the row index and column index based on chart position
   const rowIndex = Math.floor(chartIndex / chartsPerRow);
@@ -57,12 +57,12 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
 
 
   // Define scales
-  const x = d3.scaleLinear().range([0, chart_width]);
+  const x = d3.scaleLinear().range([0, chartWidth]);
 
   const y = d3
     .scaleBand()
     .paddingOuter(0.2)
-    .paddingInner(((graphic_data.length - 1) * 10) / (graphic_data.length * 30))
+    .paddingInner(((graphicData.length - 1) * 10) / (graphicData.length * 30))
     .range([0, height])
     .round(true);
 
@@ -80,9 +80,9 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .stack()
     .offset(d3[config.stackOffset])
     .order(d3[config.stackOrder])
-    .keys(graphic_data.columns.slice(1, -1));
+    .keys(graphicData.columns.slice(1, -1));
 
-  const series = stack(graphic_data);
+  const series = stack(graphicData);
 
   // trying a different version because d3.nice() is causing issues.
   if (config.xDomain === "auto") {
@@ -91,12 +91,12 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     x.domain([0, config.xDomain[1]]);
   }
 
-  y.domain(graphic_data.map((d) => d.name));
+  y.domain(graphicData.map((d) => d.name));
 
   // Create SVG
   let svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   })
@@ -141,7 +141,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .text(seriesName)
     .style("font-weight", "bold")
     .style("font-size", "16px")
-    .style("fill", config.colour_palette[chartIndex % config.colour_palette.length])
+    .style("fill", config.colourPalette[chartIndex % config.colourPalette.length])
     .call(wrap, 150);
 
 
@@ -156,20 +156,20 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
     .data((d) => d)
     .join("rect")
     .attr("x", (d) => x(d.data.name))
-    .attr("y", (d, i) => y(graphic_data[i].name))
+    .attr("y", (d, i) => y(graphicData[i].name))
     .attr("width", (d) => Math.abs(x(d[0]) - x(d[1])))
     .attr("height", y.bandwidth())
-    .style("fill", config.colour_palette[chartIndex % config.colour_palette.length]);
+    .style("fill", config.colourPalette[chartIndex % config.colourPalette.length]);
 
   // This does the x-axis label
   if (chartIndex % chartsPerRow === chartsPerRow - 1) {
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + 35,
       text: config.xAxisLabel,
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
   }
 
@@ -184,7 +184,7 @@ function drawGraphic(seriesName, graphic_data, chartIndex) {
 
 function renderCallback() {
   // Load the data
-  d3.csv(config.graphic_data_url)
+  d3.csv(config.graphicDataURL)
     .then((data) => {
       // console.log("Original data:", data);
 
@@ -200,14 +200,14 @@ function renderCallback() {
 
       groupedData.forEach((group, i) => {
         const seriesName = group[0];
-        const graphic_data = group[1];
+        const graphicData = group[1];
 
         //Sort the data so that the bars in each chart are in the same order
-        graphic_data.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
+        graphicData.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
 
-        graphic_data.columns = data.columns;
+        graphicData.columns = data.columns;
 
-        drawGraphic(seriesName, graphic_data, i);
+        drawGraphic(seriesName, graphicData, i);
       });
     })
     .catch((error) => console.error(error));

@@ -3,7 +3,7 @@ import { initialise, wrap, addAxisLabel, addSvg, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -11,38 +11,38 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height
-	let height = config.seriesHeight[size] * graphic_data.length;
+	let height = config.seriesHeight[size] * graphicData.length;
 
 	// Get the column headers with numbers in
-	const keys = Object.keys(graphic_data[0]).slice(1)
+	const keys = Object.keys(graphicData[0]).slice(1)
 
 	//set up scales
-	let x = d3.scaleLinear().range([0, chart_width]);
+	let x = d3.scaleLinear().range([0, chartWidth]);
 
 	let y = d3.scalePoint().padding(0.5).range([0, height]);
 
 	const colour = d3.scaleOrdinal()
 		.domain(keys)
-		.range(config.colour_palette);
+		.range(config.colourPalette);
 
 	if (config.xDomain == 'auto') {
-		let max = d3.max(graphic_data, d => d3.max(keys, col => parseFloat(d[col])));
-		let min = d3.min([0,d3.min(graphic_data,d => d3.min(keys, col => parseFloat(d[col])))])
+		let max = d3.max(graphicData, d => d3.max(keys, col => parseFloat(d[col])));
+		let min = d3.min([0,d3.min(graphicData,d => d3.min(keys, col => parseFloat(d[col])))])
 		x.domain([min, max]);
 	} else {
 		x.domain(config.xDomain);
 	}
 
 	//use the data to find unique entries in the name column
-	y.domain(graphic_data.map((d) => d.name));
+	y.domain(graphicData.map((d) => d.name));
 
-	const processedData = handleMetricOverlap(graphic_data, x, y, keys, { specialCategories: config.categoriesToMakeDiamonds });
+	const processedData = handleMetricOverlap(graphicData, x, y, keys, { specialCategories: config.categoriesToMakeDiamonds });
 
 	//set up yAxis generator
-	let yAxis = d3.axisLeft(y).tickSize(-chart_width).tickPadding(10);
+	let yAxis = d3.axisLeft(y).tickSize(-chartWidth).tickPadding(10);
 
 	//set up xAxis generator
 	let xAxis = d3
@@ -56,7 +56,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(config.legendLabels, config.colour_palette)
+			d3.zip(config.legendLabels, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -80,7 +80,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -208,11 +208,11 @@ function drawGraphic() {
 
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 30,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -224,9 +224,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

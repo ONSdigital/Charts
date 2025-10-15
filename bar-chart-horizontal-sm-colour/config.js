@@ -1,6 +1,6 @@
 config = {
-  graphic_data_url: "data.csv", 
-  colour_palette: ONSpalette,
+  graphicDataURL: "data.csv", 
+  colourPalette: ONSpalette,
   sourceText: "Office for National Statistics",
   accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   xDomain: [0, 80],
@@ -19,7 +19,7 @@ config = {
   // stackOrderAscending the smallest series (according to the sum of values) is at the bottom
   // stackOrderDescending the largest series (according to the sum of values) is at the bottom
   // stackOrderReverse reverse the order as set from the data file
-  chart_every: {
+  chartEvery: {
     sm: 1,
     md: 2,
     lg: 2, // This indicates you want 2 charts side by side

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addDataLabels, addChartT
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -15,7 +15,7 @@ function drawGraphic() {
 		.append('div')
 		.attr('class', 'legend--item--here')
 		.append('div').attr('class', 'legend--icon--circle')
-		.style('background-color', config.colour_palette)
+		.style('background-color', config.colourPalette)
 
 	d3.select(".legend--item--here")
 		.append('div')
@@ -40,16 +40,16 @@ function drawGraphic() {
 		.append('p').attr('class', 'legend--text')
 		.html("Reference value")
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nestedData = d3.group(graphicData, (d) => d.series);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
-	let namesArray = [...nested_data][0][1].map(d => d.name);
+	let namesArray = [...nestedData][0][1].map(d => d.name);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
@@ -67,7 +67,7 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -79,14 +79,14 @@ function drawGraphic() {
 			}
 		}
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
-			chartEvery: config.chart_every[size],
+			chartEvery: config.chartEvery[size],
 			chartMargin: config.margin[size]
 		})
 
 		//set up scales
-		const x = d3.scaleLinear().range([0, chart_width]);
+		const x = d3.scaleLinear().range([0, chartWidth]);
 
 		const y = d3
 			.scaleBand()
@@ -116,18 +116,18 @@ function drawGraphic() {
 		//create svg for chart
 		svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
 
 		if (config.xDomain == 'auto') {
 			x.domain([
-				Math.min(0, d3.min(graphic_data.map(({ value }) => Number(value))),
-					d3.min(graphic_data.map(({ ref }) => Number(ref)))),
+				Math.min(0, d3.min(graphicData.map(({ value }) => Number(value))),
+					d3.min(graphicData.map(({ ref }) => Number(ref)))),
 				//x domain is the maximum out of the value and the reference value
-				Math.max(d3.max(graphic_data.map(({ value }) => Number(value))),
-					d3.max(graphic_data.map(({ ref }) => Number(ref))))
+				Math.max(d3.max(graphicData.map(({ value }) => Number(value))),
+					d3.max(graphicData.map(({ ref }) => Number(ref))))
 			])
 		} else {
 			x.domain(config.xDomain);
@@ -162,7 +162,7 @@ function drawGraphic() {
 			.attr('y', (d) => y(d.name))
 			.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette);
+			.attr('fill', config.colourPalette);
 
 
 		svg
@@ -179,7 +179,7 @@ function drawGraphic() {
 			addDataLabels({
 				svgContainer: svg,
 				data: data,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				labelPositionFactor: 7,
 				xScaleFunction: x,
 				yScaleFunction: y
@@ -190,17 +190,17 @@ function drawGraphic() {
 		addChartTitleLabel({
 			svgContainer: svg,
 			text: seriesName,
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 
 		// This does the x-axis label
-		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nested_data].length - 1) {
+		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nestedData].length - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	}
@@ -219,9 +219,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic

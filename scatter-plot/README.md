@@ -32,7 +32,7 @@ Your CSV data should have the following structure:
 ### Configuration
 ```javascript
 const scatterConfig = {
-  "graphic_data_url": "data.csv",
+  "graphicData_url": "data.csv",
   "colour_palette": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"],
   "fillOpacity": 1,
   "strokeOpacity": 1,
@@ -84,7 +84,7 @@ xvalue,yvalue,group,name,highlight
 ### Configuration
 ```javascript
 const bubbleConfig = {
-  "graphic_data_url": "bubble_data.csv",
+  "graphicData_url": "bubble_data.csv",
   "colour_palette": ["#206095", "#A8BD3A", "#F66068", "#27A0CC"],
   "fillOpacity": 0.75,
   "strokeOpacity": 1,

@@ -1,18 +1,17 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": { "min": "Moved travel to work area (TTWA)", "max": "Moved region" },
 	//the keys match the column names
-	"colour_palette": [ONScolours.grey60, ONScolours.oceanBlue],
+	"colourPalette": [ONScolours.grey60, ONScolours.oceanBlue],
 	"sourceText": "Office for National Statistics (ONS) analysis using Longitudinal Education Outcomes (LEO) from the Department for Education (DfE)",
-	"accessibleSummary":
-		"Here is the screenreader text describing the chart.",
+	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"numberFormat": ".0%",
 	"xAxisTickFormat": ".0%",
 	"xAxisLabel": "Percentage",
 	"xDomain": [0.2, 0.95],
 	// either auto or a custom domain as an array e.g [0,100]
 	"showDataLabels": false,
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2

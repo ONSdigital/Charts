@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, sliderDomain, sliderSimple, svg, animating;
+let graphicData, size, sliderDomain, sliderSimple, svg, animating;
 
 function drawGraphic() {
 	// Remove any existing chart elements
@@ -14,24 +14,24 @@ function drawGraphic() {
 
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height = Math.ceil(
-		(chart_width * config.aspectRatio[size][1]) /
+		(chartWidth * config.aspectRatio[size][1]) /
 		config.aspectRatio[size][0]
 	);
 
 	//Set the timepoints from the data for the slider labels and sort from oldest to newest
-	let timepoints = [...new Set(graphic_data.map((d) => d.year))].sort();
+	let timepoints = [...new Set(graphicData.map((d) => d.year))].sort();
 
 	//Takes the last data point from the date series
 
 	let timeLoad = config.timeLoad;
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]);
+	const x = d3.scaleLinear().range([0, chartWidth]);
 
 	const y = d3.scaleLinear().range([height, 0]);
 
@@ -55,13 +55,13 @@ function drawGraphic() {
 			let sliderScale = d3
 				.scaleLinear()
 				.domain(sliderDomain)
-				.range([0, chart_width - margin.right]);
+				.range([0, chartWidth - margin.right]);
 
 			sliderSimple = d3
 				.sliderHorizontal(sliderScale)
 				.step(1)
 				.default(timepoints.indexOf(timeLoad)) //defaults the the slider to load with data from timeLoad in the config
-				.width(chart_width - 150)
+				.width(chartWidth - 150)
 				.displayFormat(function (i) {
 					return dateformat(dateparse(timepoints[i]));
 				}) //labels taken from timepoints
@@ -76,7 +76,7 @@ function drawGraphic() {
 						a = val;
 					}
 					updateVisuals(
-						graphic_data.filter(function (d) {
+						graphicData.filter(function (d) {
 							return d.year == timepoints[val];
 						})
 					); //update the chart according to the timepoint value from the slider by filtering on the timepoint
@@ -86,7 +86,7 @@ function drawGraphic() {
 
 			d3.select('#slider-simple')
 				.append('svg')
-				.attr('width', chart_width - 75)
+				.attr('width', chartWidth - 75)
 				.attr('height', 100)
 				.append('g')
 				.attr('transform', 'translate(' + margin.left + ',19)')
@@ -100,9 +100,9 @@ function drawGraphic() {
 		function setButtons() {
 			d3.select('#play').on('click', onPlay);
 
-			d3.select('#forward').on('click', fwd_animate);
+			d3.select('#forward').on('click', fwdAnimate);
 
-			d3.select('#back').on('click', rev_animate);
+			d3.select('#back').on('click', revAnimate);
 		}
 
 		//Call the functions to set the buttons and make the slider
@@ -118,7 +118,7 @@ function drawGraphic() {
 
 		//Forward animation function for the buttons
 
-		function fwd_animate() {
+		function fwdAnimate() {
 			// go forwards in time and then back to the beginning once it reaches the end
 			if (a < timepoints.length - 1) {
 				a = a + 1;
@@ -127,7 +127,7 @@ function drawGraphic() {
 			}
 			moveSliderToVal(); //retrieves the value from the slider
 			updateVisuals(
-				graphic_data.filter(function (d) {
+				graphicData.filter(function (d) {
 					return d.year == timepoints[a];
 				})
 			); //update the chart according to the timepoint value from the slider by filtering on the timepoint
@@ -135,7 +135,7 @@ function drawGraphic() {
 
 		//Backwards animation function for the buttons
 
-		function rev_animate() {
+		function revAnimate() {
 			// go back in time
 			if (a > 0) {
 				a = a - 1;
@@ -144,7 +144,7 @@ function drawGraphic() {
 			}
 			moveSliderToVal(); //retrieves the value from the slider
 			updateVisuals(
-				graphic_data.filter(function (d) {
+				graphicData.filter(function (d) {
 					return d.year == timepoints[a];
 				})
 			); //update the chart according to the timepoint value from the slider by filtering on the timepoint
@@ -153,9 +153,9 @@ function drawGraphic() {
 		//Function for clicking on the play button
 
 		function onPlay() {
-			fwd_animate(); // don't need a delay bfeore first animation
+			fwdAnimate(); // don't need a delay bfeore first animation
 			animating = setInterval(function () {
-				fwd_animate();
+				fwdAnimate();
 			}, 1500); //sets an brief interval before moving the slider on one point
 
 			// replace play control with pause
@@ -195,7 +195,7 @@ function drawGraphic() {
 	//set up yAxis generator
 	let yAxis = d3
 		.axisLeft(y)
-		.tickSize(-chart_width - 10)
+		.tickSize(-chartWidth - 10)
 		.tickFormat(d3.format(config.yDisplayFormat));
 
 	//set up xAxis generator
@@ -208,7 +208,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -217,8 +217,8 @@ function drawGraphic() {
 	//X scale
 	if (config.xDomain == 'auto') {
 		x.domain([
-			d3.min(graphic_data, (d) => d.x),
-			d3.max(graphic_data, (d) => d.x)
+			d3.min(graphicData, (d) => d.x),
+			d3.max(graphicData, (d) => d.x)
 		]);
 	} else {
 		x.domain(config.xDomain);
@@ -227,8 +227,8 @@ function drawGraphic() {
 	//Y Scale
 	if (config.yDomain == 'auto') {
 		y.domain([
-			d3.min(graphic_data, (d) => d.y),
-			d3.max(graphic_data, (d) => d.y)
+			d3.min(graphicData, (d) => d.y),
+			d3.max(graphicData, (d) => d.y)
 		]);
 	} else {
 		y.domain(config.yDomain);
@@ -263,7 +263,7 @@ function drawGraphic() {
 
 	//remove the highlight stroke on mobile
 	if (size == 'sm') {
-		d3.selectAll('.dots').attr('stroke', config.colour_palette);
+		d3.selectAll('.dots').attr('stroke', config.colourPalette);
 	}
 
 	// // This does the y-axis label
@@ -273,23 +273,23 @@ function drawGraphic() {
 		yPosition: -20,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	// // This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//Initial draw of the chart with the data filtered on the timeLoad specified
 
 	updateVisuals(
-		graphic_data.filter(function (d) {
+		graphicData.filter(function (d) {
 			return d.year == timeLoad;
 		})
 	);
@@ -305,7 +305,7 @@ function drawGraphic() {
 			.style('opacity', 0);
 
 		//Set the date format
-		let data_format = d3.format('.1f');
+		let dataFormat = d3.format('.1f');
 
 		// Three functions that change the tooltip when user hover / move / leave the circle
 
@@ -324,19 +324,19 @@ function drawGraphic() {
 						'<br><br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Wage growth: ' +
-						data_format(d.y) +
+						dataFormat(d.y) +
 						' p.p.' +
 						'</span>' +
 						'<br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Median hourly pay (£): ' +
-						data_format(d.x) +
+						dataFormat(d.x) +
 						'%' +
 						'</span>'
 					)
 					.style(
 						'left',
-						d3.pointer(event)[0] > chart_width - 200
+						d3.pointer(event)[0] > chartWidth - 200
 							? d3.pointer(event)[0] - 200 + 'px'
 							: d3.pointer(event)[0] + 25 + 'px'
 					)
@@ -356,13 +356,13 @@ function drawGraphic() {
 						'<br><br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Wage growth: ' +
-						data_format(d.y) +
+						dataFormat(d.y) +
 						' p.p.' +
 						'</span>' +
 						'<br>' +
 						'<span style="font-weight:500; opacity:1">' +
 						'Median hourly pay (£): ' +
-						data_format(d.x) +
+						dataFormat(d.x) +
 						'%' +
 						'</span>'
 					)
@@ -376,13 +376,13 @@ function drawGraphic() {
 				d3.select(this)
 					.style('opacity', 0.75)
 					.style('stroke', (d) =>
-						d.highlight == 0 ? config.colour_palette : '#222222'
+						d.highlight == 0 ? config.colourPalette : '#222222'
 					);
 			} else {
 				tooltip.style('opacity', 0);
 				d3.select(this)
 					.style('opacity', 0.75)
-					.style('stroke', config.colour_palette);
+					.style('stroke', config.colourPalette);
 			}
 		};
 
@@ -400,11 +400,11 @@ function drawGraphic() {
 			.attr('cx', (d) => x(d.x))
 			.attr('cy', (d) => y(d.y))
 			.attr('r', config.size)
-			.attr('fill', config.colour_palette)
+			.attr('fill', config.colourPalette)
 			.attr('opacity', 0.75)
 			.attr('stroke-width', (d) => (d.highlight == 0 ? '1px' : '1.5px'))
 			.attr('stroke', (d) =>
-				d.highlight == 0 ? config.colour_palette : '#222222'
+				d.highlight == 0 ? config.colourPalette : '#222222'
 			);
 
 		d3.selectAll('.dots')
@@ -490,7 +490,7 @@ function drawGraphic() {
 	}
 } ///END DRAW GRAPHIC
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	data.forEach(function (d) {
 		d.x = +d.x;
@@ -499,7 +499,7 @@ d3.csv(config.graphic_data_url).then((data) => {
 		d.highlight = +d.highlight;
 	});
 
-	graphic_data = data;
+	graphicData = data;
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic

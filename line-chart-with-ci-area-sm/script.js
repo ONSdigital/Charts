@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -11,36 +11,36 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Get categories from the keys used in the stack generator
-	// const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
-	const categories = Object.keys(graphic_data[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1).filter((k) => k !== 'series')
+	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1).filter((k) => k !== 'series')
 	//  console.log(categories);
 
-	const fulldataKeys = Object.keys(graphic_data[0]).slice(1).filter((k) => k !== 'series')
+	const fulldataKeys = Object.keys(graphicData[0]).slice(1).filter((k) => k !== 'series')
 
 	// console.log(fulldataKeys);
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nested_data))
+	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
 
 		let chartGap = config.optional?.chartGap || 10;
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -55,20 +55,20 @@ function drawGraphic() {
 
 		//height is set by the aspect ratio
 		var height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => d.date))
+			.range([0, chartWidth]);
 
 
 		const y = d3
 			.scaleLinear()
 			.domain([
-				d3.min(graphic_data, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-				d3.max(graphic_data, (d) => Math.max(...fulldataKeys.map((c) => d[c])))
+				d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
+				d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))
 			])
 			// .nice()
 			.range([height, 0]);
@@ -77,7 +77,7 @@ function drawGraphic() {
 		// Create an SVG element
 		const svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -101,8 +101,8 @@ function drawGraphic() {
 				.attr('fill', 'none')
 				.attr(
 					'stroke', /*() => (categories.indexOf(category) == chartIndex) ? "#206095" : "#dadada"*/
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+					config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
 				.attr('stroke-width', 2.5)
@@ -120,8 +120,8 @@ function drawGraphic() {
 			svg.append('path')
 				.attr('class', 'shaded')
 				.attr('d', areaGenerator(data))
-				.attr('fill', config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+				.attr('fill', config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 				])
 				.attr('opacity', 0.15)
 
@@ -135,7 +135,7 @@ function drawGraphic() {
 				d3
 					.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			)
 			.lower();
@@ -155,7 +155,7 @@ function drawGraphic() {
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues([...new Set(graphic_data
+					.tickValues([...new Set(graphicData
 						.map(function (d) {
 							return d.date.getTime()
 						}))] //just get unique dates as seconds past unix epoch
@@ -193,7 +193,7 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: (chart_width + margin.right)
+			wrapWidth: (chartWidth + margin.right)
 		})
 
 
@@ -205,7 +205,7 @@ function drawGraphic() {
 			text: chartIndex % chartEvery == 0 ?
 				config.yAxisLabel : "",
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 
@@ -221,7 +221,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(categories, config.colour_palette)
+			d3.zip(categories, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -243,7 +243,7 @@ function drawGraphic() {
 			return d[0];
 		});
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 
 		const ciSvg = d3.select('#legend')
 		.append('div')
@@ -276,7 +276,7 @@ function drawGraphic() {
 			37,                    // endY
 			"vertical-first",     // bendDirection
 			"start",                // arrowAnchor
-			config.CI_legend_interval_text, // thisText
+			config.legendIntervalText, // thisText
 			150,                  // wrapWidth
 			25,                   // textAdjustY
 			"top",               // wrapVerticalAlign
@@ -298,7 +298,7 @@ function drawGraphic() {
 		//alignment - left or right for vertical arrows, above or below for horizontal arrows
 		'right',
 		//annotation text
-		config.CI_legend_text,
+		config.legendEstimateText,
 		//wrap width
 		1500,
 		//text adjust y
@@ -322,8 +322,8 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
+	graphicData = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),
 			...Object.entries(d)

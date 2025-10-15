@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addChartTitleLabel, addAxisLabel, addSource }
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, nested_data, svg;
+let graphicData, size, nestedData, svg;
 
 function drawGraphic() {
 
@@ -11,37 +11,37 @@ function drawGraphic() {
   size = initialise(size);
 
   //group data on the basis of plot
-  nested_data = d3.group(graphic_data, d => d.series)
+  nestedData = d3.group(graphicData, d => d.series)
 
-  let colour = d3.scaleOrdinal(config.colour_palette); //
+  let colour = d3.scaleOrdinal(config.colourPalette); //
 
   const chartEvery = config.chartEvery[size];
 
   let margin = config.margin[size]
-  let chart_width = (parseInt(graphic.style("width")) / chartEvery) - margin.left - margin.right;
-	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width
+  let chartWidth = (parseInt(graphic.style("width")) / chartEvery) - margin.left - margin.right;
+	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth
 
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width]);
+    .range([0, chartWidth]);
 
   const y = d3.scaleLinear()
     .range([height, 0])
 
-  let plots = [...new Set(d3.map(graphic_data, d => d.series))];
+  let plots = [...new Set(d3.map(graphicData, d => d.series))];
 
   // both of these are need to be looked at.
 
   if (config.xDomain == "auto") {
-    x.domain([0, d3.max(graphic_data, function (d) { return d.xvalue })]);
+    x.domain([0, d3.max(graphicData, function (d) { return d.xvalue })]);
   } else {
     x.domain(config.xDomain)
   }
 
 
   if (config.yDomain == "auto") {
-    y.domain([0, d3.max(graphic_data, function (d) { return d.yvalue })]);
+    y.domain([0, d3.max(graphicData, function (d) { return d.yvalue })]);
   } else {
     y.domain(config.yDomain)
   }
@@ -49,7 +49,7 @@ function drawGraphic() {
   // Create a container div for each small multiple
   let chartContainers = graphic
     .selectAll('.chart-container')
-    .data(Array.from(nested_data))
+    .data(Array.from(nestedData))
     .join('div')
     .attr('class', 'chart-container');
 
@@ -57,7 +57,7 @@ function drawGraphic() {
 
     svg = addSvg({
       svgParent: container,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       height: height + margin.top + margin.bottom,
       margin: margin
     })
@@ -80,7 +80,7 @@ function drawGraphic() {
       .call(
         d3.axisLeft(y)
           .ticks(config.yAxisTicks[size])
-          .tickSize(-chart_width)
+          .tickSize(-chartWidth)
           .tickPadding(10)
           .tickFormat(d3.format(config.yAxisFormat))
       );
@@ -102,18 +102,18 @@ function drawGraphic() {
       svgContainer: svg,
       yPosition: -margin.top / 2,
       text: seriesName,
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     })
 
     // This does the x-axis label - just on the rightmost chart of each row
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + 40,
       text: chartIndex % chartEvery == chartEvery - 1 || chartIndex === plots.length - 1 ?
         config.xAxisLabel : "",
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
     // This does the y-axis label - just on the leftmost chart of each row
@@ -123,11 +123,11 @@ function drawGraphic() {
       yPosition: -10,
       text: (d) => chartIndex % chartEvery == 0 ? config.yAxisLabel : "",
       textAnchor: "start",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
   }
   // lets move on to setting up the legend for this chart. 
-  let legendGroups = [...new Set(graphic_data.map(item => item.group))]; // this will extract the unique groups from the data.csv
+  let legendGroups = [...new Set(graphicData.map(item => item.group))]; // this will extract the unique groups from the data.csv
 
 
   let legenditem = legend
@@ -172,10 +172,10 @@ function drawGraphic() {
 }
 
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
-    graphic_data = data
+    graphicData = data
 
     //use pym to create iframed chart dependent on specified variables
     pymChild = new pym.Child({

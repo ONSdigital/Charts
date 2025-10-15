@@ -3,7 +3,7 @@ import { initialise, calculateChartWidth, addDataLabels, addChartTitleLabel, add
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg, divs, svgs, charts; //need to set the values to work with the helpers module
+let graphicData, size, svg, divs, svgs, charts; //need to set the values to work with the helpers module
 
 function drawGraphic() {
 
@@ -15,23 +15,23 @@ function drawGraphic() {
 	let margin = config.margin[size];
 
 	//chart width calculated - allows small multiple chart widths to be calculated for the 'bar' chart type but defaults to 1 for the rest
-	let chart_width = calculateChartWidth({
+	let chartWidth = calculateChartWidth({
 		screenWidth: parseInt(graphic.style('width')),
-		chartEvery: (config.chartType === "bar"? config.chart_every[size] : 1),
+		chartEvery: (config.chartType === "bar"? config.chartEvery[size] : 1),
 		chartMargin: config.margin[size]
 	})
 				
 	//set up linear x scales for all chart types
-	const x = d3.scaleLinear().range([0, chart_width]);
+	const x = d3.scaleLinear().range([0, chartWidth]);
 
 	//if the config is set to auto, it will take the min and max values from the ref and value columns
 	if (config.xDomain == 'auto') {
 				x.domain([
-					Math.min(0, d3.min(graphic_data.map(({ value }) => Number(value))),
-						d3.min(graphic_data.map(({ ref }) => Number(ref)))),
+					Math.min(0, d3.min(graphicData.map(({ value }) => Number(value))),
+						d3.min(graphicData.map(({ ref }) => Number(ref)))),
 					//x domain is the maximum out of the value and the reference value
-					Math.max(d3.max(graphic_data.map(({ value }) => Number(value))),
-						d3.max(graphic_data.map(({ ref }) => Number(ref))))
+					Math.max(d3.max(graphicData.map(({ value }) => Number(value))),
+						d3.max(graphicData.map(({ ref }) => Number(ref))))
 				])
 			} else {
 				x.domain(config.xDomain);
@@ -39,7 +39,7 @@ function drawGraphic() {
 
 	//create the data groups for comet and range charts
 
-	let groups = d3.groups(graphic_data, (d) => d.series);
+	let groups = d3.groups(graphicData, (d) => d.series);
 
 	//functions to draw the charts according to chart type (bar, comet, dot or range)
 
@@ -50,7 +50,7 @@ function drawGraphic() {
 		.append('div')
 		.attr('class', 'legend--item--here')
 		.append('div').attr('class', 'legend--icon--circle')
-		.style('background-color', config.colour_palette[0])
+		.style('background-color', config.colourPalette[0])
 
 	d3.select(".legend--item--here")
 		.append('div')
@@ -70,16 +70,16 @@ function drawGraphic() {
 		.append('p').attr('class', 'legend--text')
 		.html(config.legendLabels[1])
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nestedData = d3.group(graphicData, (d) => d.series);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
-	let namesArray = [...nested_data][0][1].map(d => d.name);
+	let namesArray = [...nestedData][0][1].map(d => d.name);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
@@ -98,7 +98,7 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -140,7 +140,7 @@ function drawGraphic() {
 		//create svg for chart
 		svg = container
 			.append('svg')
-			.attr('width', chart_width + margin.left + margin.right)
+			.attr('width', chartWidth + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
 			.attr('class', 'chart')
 			.style('background-color', '#fff')
@@ -178,7 +178,7 @@ function drawGraphic() {
 			.attr('y', (d) => y(d.name))
 			.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette[0]);
+			.attr('fill', config.colourPalette[0]);
 
 
 		svg
@@ -196,7 +196,7 @@ function drawGraphic() {
 			addDataLabels({
 				svgContainer: svg,
 				data: data,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				labelPositionFactor: 7,
 				xScaleFunction: x,
 				yScaleFunction: y
@@ -208,19 +208,19 @@ function drawGraphic() {
 		addChartTitleLabel({
 			svgContainer: svg,
 			text: d => d[0],
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 
 		
 		// This does the x-axis label
-		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nested_data].length - 1) {
+		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nestedData].length - 1) {
 			//This does the x-axis label
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 			
 		}
@@ -245,7 +245,7 @@ function drawGraphic() {
 
 		
 	
-		let chart_width =
+		let chartWidth =
 			parseInt(graphic.style('width')) - margin.left - margin.right;
 
 	
@@ -253,7 +253,7 @@ function drawGraphic() {
 
 		const colour = d3
 			.scaleOrdinal()
-			.range(config.colour_palette)
+			.range(config.colourPalette)
 			.domain(Object.keys(cometLegendLabels));
 	
 		// create the y scale in groups
@@ -285,7 +285,7 @@ function drawGraphic() {
 			.append('svg')
 			.attr('class', 'chart')
 			.attr('height', (d) => d[2] + margin.top + margin.bottom)
-			.attr('width', chart_width + margin.left + margin.right);
+			.attr('width', chartWidth + margin.left + margin.right);
 	
 		charts = svgs
 			.append('g')
@@ -326,10 +326,10 @@ function drawGraphic() {
 			.attr('y2', (d, i) => groups.filter((e) => e[0] == d.series)[0][3](d.name))
 			.attr('stroke', (d) =>
 				+d.value > +d.ref
-					? config.colour_palette[1]//increase
+					? config.colourPalette[1]//increase
 					: +d.value < +d.ref
-					? config.colour_palette[0]//decrease
-					: config.colour_palette[2]//same
+					? config.colourPalette[0]//decrease
+					: config.colourPalette[2]//same
 			)
 			.attr('stroke-width', '3px');
 	
@@ -344,10 +344,10 @@ function drawGraphic() {
 			.attr('r', config.dotsize)
 			.attr('fill', (d) =>
 				+d.value > +d.ref
-					? config.colour_palette[1]//increase
+					? config.colourPalette[1]//increase
 					: +d.value < +d.ref
-					? config.colour_palette[0]//decrease
-					: config.colour_palette[2]//same
+					? config.colourPalette[0]//decrease
+					: config.colourPalette[2]//same
 			);
 
 	
@@ -362,9 +362,9 @@ function drawGraphic() {
 				.text((d) => d3.format(config.dataLabels.numberFormat)(d.value))
 				.attr('fill', (d) =>
 					+d.value > +d.ref
-						? config.colour_palette[1]//increase
+						? config.colourPalette[1]//increase
 						: +d.value < +d.ref
-						? config.colour_palette[0]//decrease
+						? config.colourPalette[0]//decrease
 						: 'none'
 				)
 				.attr('dy', 6)
@@ -381,10 +381,10 @@ function drawGraphic() {
 				.text((d) => d3.format(config.dataLabels.numberFormat)(d.ref))
 				.attr('fill', (d) =>
 					+d.value > +d.ref
-						? config.colour_palette[1]//increase
+						? config.colourPalette[1]//increase
 						: +d.value < +d.ref
-						? config.colour_palette[0]//decrease
-						: config.colour_palette[2]//same
+						? config.colourPalette[0]//decrease
+						: config.colourPalette[2]//same
 				)
 				.attr('dy', 6)
 				.attr('dx', (d) =>
@@ -400,7 +400,7 @@ function drawGraphic() {
 			if (i == groups.length - 1) {
 				d3.select(this)
 					.append('text')
-					.attr('x', chart_width)
+					.attr('x', chartWidth)
 					.attr('y', (d) => d[2] + 35)
 					.attr('class', 'axis--label')
 					.text(config.xAxisLabel)
@@ -421,19 +421,19 @@ function drawGraphic() {
 		drawLegend();
 	
 		function drawLegend() {
-			let var_group = d3
+			let varGroup = d3
 				.select('#legend')
 				.selectAll('div.legend--item.Inc')
 				.append('svg')
 				.attr('height', config.legendHeight[size])
 				.attr('width', config.legendItemWidth);
-			let var_group2 = d3
+			let varGroup2 = d3
 				.select('#legend')
 				.selectAll('div.legend--item.Dec')
 				.append('svg')
 				.attr('height', config.legendHeight[size])
 				.attr('width', config.legendItemWidth);
-			let var_group3 = d3
+			let varGroup3 = d3
 				.select('#legend')
 				.selectAll('div.legend--item.No')
 				.append('svg')
@@ -441,35 +441,35 @@ function drawGraphic() {
 				.attr('width', config.legendItemWidth);
 	
 			//Increase legend item
-			var_group
+			varGroup
 				.append('text')
 				.attr('y', 30)
 				.attr('x', 0)
 				.attr('text-anchor', 'start')
 				.attr('class', 'mintext legendLabel')
-				.attr('fill', config.colour_palette[0])
+				.attr('fill', config.colourPalette[0])
 				.text(config.legendLabels[0]);
 	
 			//this measures how wide the "min" value is so that we can place the legend items responsively
 			let minTextWidth = d3.select('text.mintext').node().getBBox().width + 5;
 	
-			var_group
+			varGroup
 				.append('line')
-				.attr('stroke', config.colour_palette[0])
+				.attr('stroke', config.colourPalette[0])
 				.attr('stroke-width', '3px')
 				.attr('y1', 26)
 				.attr('y2', 26)
 				.attr('x1', minTextWidth)
 				.attr('x2', minTextWidth + config.legendLineLength);
 	
-			var_group
+			varGroup
 				.append('circle')
 				.attr('r', config.dotsize)
-				.attr('fill', config.colour_palette[0])
+				.attr('fill', config.colourPalette[0])
 				.attr('cx', minTextWidth + config.legendLineLength)
 				.attr('cy', 26);
 	
-			var_group
+			varGroup
 				.append('text')
 				.attr('y', 30)
 				.attr(
@@ -481,14 +481,14 @@ function drawGraphic() {
 				)
 				.attr('text-anchor', 'start')
 				.attr('class', 'maxtext legendLabel')
-				.attr('fill', config.colour_palette[0])
+				.attr('fill', config.colourPalette[0])
 				.text(cometLegendLabels.max);
 	
 			//this measures how wide the "max" value is so that we can place the legend items responsively
 			let maxTextWidth = d3.select('text.maxtext').node().getBBox().width + 5;
 	
 			//increase legend item text
-			var_group
+			varGroup
 				.append('text')
 				.attr('y', 15)
 				.attr(
@@ -501,13 +501,13 @@ function drawGraphic() {
 				)
 				.attr('text-anchor', 'middle')
 				.attr('class', 'legendLabel')
-				.attr('fill', config.colour_palette[0])
+				.attr('fill', config.colourPalette[0])
 				.text('Increase');
 	
 			//Decrease legend item
-			var_group2
+			varGroup2
 				.append('line')
-				.attr('stroke', config.colour_palette[1])
+				.attr('stroke', config.colourPalette[1])
 				.attr('stroke-width', '3px')
 				.attr('y1', 26)
 				.attr('y2', 26)
@@ -519,23 +519,23 @@ function drawGraphic() {
 						config.legendLineLength
 				);
 	
-			var_group2
+			varGroup2
 				.append('circle')
 				.attr('r', config.dotsize)
-				.attr('fill', config.colour_palette[1])
+				.attr('fill', config.colourPalette[1])
 				.attr('cx', maxTextWidth + config.dotsize)
 				.attr('cy', 26);
 	
-			var_group2
+			varGroup2
 				.append('text')
 				.attr('y', 30)
 				.attr('x', 0)
 				.attr('text-anchor', 'start')
 				.attr('class', 'legendLabel')
-				.attr('fill', config.colour_palette[1])
+				.attr('fill', config.colourPalette[1])
 				.text(cometLegendLabels.max);
 	
-			var_group2
+			varGroup2
 				.append('text')
 				.attr('y', 30)
 				.attr(
@@ -547,10 +547,10 @@ function drawGraphic() {
 				)
 				.attr('text-anchor', 'start')
 				.attr('class', 'legendLabel')
-				.attr('fill', config.colour_palette[1])
+				.attr('fill', config.colourPalette[1])
 				.text(cometLegendLabels.min);
 	
-			var_group2
+			varGroup2
 				.append('text')
 				.attr('y', 15)
 				.attr(
@@ -563,24 +563,24 @@ function drawGraphic() {
 				)
 				.attr('text-anchor', 'middle')
 				.attr('class', 'legendLabel')
-				.attr('fill', config.colour_palette[1])
+				.attr('fill', config.colourPalette[1])
 				.text('Decrease');
 	
 			//No change legend item
-			var_group3
+			varGroup3
 				.append('circle')
 				.attr('r', config.dotsize)
-				.attr('fill', config.colour_palette[2])
+				.attr('fill', config.colourPalette[2])
 				.attr('cx', 10)
 				.attr('cy', 26);
 	
-			var_group3
+			varGroup3
 				.append('text')
 				.attr('y', 30)
 				.attr('x', config.dotsize + 15)
 				.attr('text-anchor', 'start')
 				.attr('class', 'legendLabel')
-				.attr('fill', config.colour_palette[2])
+				.attr('fill', config.colourPalette[2])
 				.text('No change');
 		} //End drawLegend
 	
@@ -591,19 +591,19 @@ function drawGraphic() {
 	
 	function drawDot() {
 
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height
-	let height = config.seriesHeight[size] * graphic_data.length;
+	let height = config.seriesHeight[size] * graphicData.length;
 
 	
 	let y = d3.scalePoint().padding(0.5).range([0, height]);
 
 	//use the data to find unique entries in the name column
-	y.domain(graphic_data.map((d) => d.name));
+	y.domain(graphicData.map((d) => d.name));
 
 	//set up yAxis generator
-	let yAxis = d3.axisLeft(y).tickSize(-chart_width).tickPadding(10);
+	let yAxis = d3.axisLeft(y).tickSize(-chartWidth).tickPadding(10);
 
 	//set up xAxis generator
 	let xAxis = d3
@@ -617,7 +617,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(config.legendLabels, config.colour_palette)
+			d3.zip(config.legendLabels, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -642,7 +642,7 @@ function drawGraphic() {
 	svg = d3
 		.select('#graphic')
 		.append('svg')
-		.attr('width', chart_width + margin.left + margin.right)
+		.attr('width', chartWidth + margin.left + margin.right)
 		.attr('height', height + margin.top + margin.bottom)
 		.attr('class', 'chart')
 		.style('background-color', '#fff')
@@ -672,12 +672,12 @@ function drawGraphic() {
 
 	svg
 		.selectAll('circle.min')
-		.data(graphic_data)
+		.data(graphicData)
 		.enter()
 		.append('circle')
 		.attr('class', 'min')
 		.attr('r', 6)
-		.attr('fill', config.colour_palette[0])
+		.attr('fill', config.colourPalette[0])
 		.attr('cx', function (d) {
 			return x(d.value);
 		})
@@ -687,12 +687,12 @@ function drawGraphic() {
 
 	svg
 		.selectAll('circle.max')
-		.data(graphic_data)
+		.data(graphicData)
 		.enter()
 		.append('circle')
 		.attr('class', 'max')
 		.attr('r', 6)
-		.attr('fill', config.colour_palette[1])
+		.attr('fill', config.colourPalette[1])
 		.attr('cx', function (d) {
 			return x(d.ref);
 		})
@@ -712,7 +712,7 @@ function drawGraphic() {
 			.data(
 				d3.zip(
 					Object.values(config.legendLabels),
-					config.colour_palette
+					config.colourPalette
 				)
 			)
 			.enter()
@@ -736,7 +736,7 @@ function drawGraphic() {
 		
 		const colour = d3
 			.scaleOrdinal()
-			.range(config.colour_palette)
+			.range(config.colourPalette)
 			.domain(Object.keys(config.legendLabels));
 	
 		// create the y scale in groups
@@ -770,7 +770,7 @@ function drawGraphic() {
 			.append('svg')
 			.attr('class', 'chart')
 			.attr('height', (d) => d[2] + margin.top + margin.bottom)
-			.attr('width', chart_width + margin.left + margin.right);
+			.attr('width', chartWidth + margin.left + margin.right);
 	
 		charts = svgs
 			.append('g')
@@ -822,7 +822,7 @@ function drawGraphic() {
 			.attr('cx', (d) => x(d.value))
 			.attr('cy', (d) => groups.filter((f) => f[0] == d.series)[0][3](d.name))
 			.attr('r', 6)
-			.attr('fill', config.colour_palette[0]);
+			.attr('fill', config.colourPalette[0]);
 	
 		charts
 			.selectAll('circle.max')
@@ -832,7 +832,7 @@ function drawGraphic() {
 			.attr('cx', (d) => x(d.ref))
 			.attr('cy', (d) => groups.filter((f) => f[0] == d.series)[0][3](d.name))
 			.attr('r', 6)
-			.attr('fill', config.colour_palette[1]);
+			.attr('fill', config.colourPalette[1]);
 	
 		if (config.dataLabels.show) {
 			charts
@@ -843,7 +843,7 @@ function drawGraphic() {
 				.attr('x', (d) => x(d.value))
 				.attr('y', (d) => groups.filter((f) => f[0] == d.series)[0][3](d.name))
 				.text((d) => d3.format(config.dataLabels.numberFormat)(d.value))
-				.attr('fill', config.colour_palette[0])
+				.attr('fill', config.colourPalette[0])
 				.attr('dy', 6)
 				.attr('dx', (d) => (+d.value < +d.ref ? -8 : 8))
 				.attr('text-anchor', (d) => (+d.value < +d.ref ? 'end' : 'start'));
@@ -856,7 +856,7 @@ function drawGraphic() {
 				.attr('x', (d) => x(d.ref))
 				.attr('y', (d) => groups.filter((f) => f[0] == d.series)[0][3](d.name))
 				.text((d) => d3.format(config.dataLabels.numberFormat)(d.ref))
-				.attr('fill', config.colour_palette[1])
+				.attr('fill', config.colourPalette[1])
 				.attr('dy', 6)
 				.attr('dx', (d) => (+d.value > +d.ref ? -8 : 8))
 				.attr('text-anchor', (d) => (+d.value > +d.ref ? 'end' : 'start'));
@@ -868,7 +868,7 @@ function drawGraphic() {
 			if (i == groups.length - 1) {
 				d3.select(this)
 					.append('text')
-					.attr('x', chart_width)
+					.attr('x', chartWidth)
 					.attr('y', (d) => d[2] + 35)
 					.attr('class', 'axis--label')
 					.text(config.xAxisLabel)
@@ -895,9 +895,9 @@ function drawGraphic() {
 //create link to source
 addSource('source', config.sourceText);
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic

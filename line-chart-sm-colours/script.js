@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, chart_width;
+let graphicData, size, chartWidth;
 
 function drawGraphic() {
 	
@@ -11,24 +11,24 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== 'series');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 	// console.log(categories)
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.group(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nested_data))
+	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chart_every[size];
-		const chartsPerRow = config.chart_every[size];
+		const chartEvery = config.chartEvery[size];
+		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -38,7 +38,7 @@ function drawGraphic() {
 		// If the chart is not in the first position in the row, reduce the left margin
 		if (config.dropYAxis && !config.freeYAxisScales) {
 
-			chart_width = calculateChartWidth({
+			chartWidth = calculateChartWidth({
 				screenWidth: parseInt(graphic.style('width')),
 				chartEvery: chartsPerRow,
 				chartMargin: margin,
@@ -48,7 +48,7 @@ function drawGraphic() {
 				margin.left = chartGap;
 			}
 		} else {
-			chart_width = ((parseInt(graphic.style('width')) / chartEvery) - margin.left - margin.right);
+			chartWidth = ((parseInt(graphic.style('width')) / chartEvery) - margin.left - margin.right);
 		}
 		// }
 
@@ -56,20 +56,20 @@ function drawGraphic() {
 
 		//height is set by the aspect ratio
 		var height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => d.date))
+			.range([0, chartWidth]);
 
 
 		const y = d3
 			.scaleLinear()
 			.domain([
 				0, //This should be a calculated rather than 0 to allow for negativ values
-				d3.max(config.freeYAxisScales ? data : graphic_data, (d) => Math.max(...categories.map((c) => d[c])))
+				d3.max(config.freeYAxisScales ? data : graphicData, (d) => Math.max(...categories.map((c) => d[c])))
 			])
 			.nice()
 			.range([height, 0]);
@@ -78,7 +78,7 @@ function drawGraphic() {
 		// Create an SVG element
 		const svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -101,8 +101,8 @@ function drawGraphic() {
 				.attr('fill', 'none')
 				.attr(
 					'stroke', /*() => (categories.indexOf(category) == chartIndex) ? "#206095" : "#dadada"*/
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
+					config.colourPalette[
+					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
 				.attr('stroke-width', 2.5)
@@ -121,7 +121,7 @@ function drawGraphic() {
 				d3
 					.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			)
 			.lower();
@@ -141,7 +141,7 @@ console.log(data)
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues([...new Set(graphic_data
+					.tickValues([...new Set(graphicData
 						.map(function (d) {
 							return d.date.getTime()
 						}))] //just get unique dates as seconds past unix epoch
@@ -178,7 +178,7 @@ console.log(data)
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: (chart_width + margin.right)
+			wrapWidth: (chartWidth + margin.right)
 		})
 
 
@@ -191,7 +191,7 @@ console.log(data)
 				chartIndex % chartEvery == 0 ?
 					config.yAxisLabel : "", //May need to make the y-axis label an array in the config?
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 
@@ -207,7 +207,7 @@ console.log(data)
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(categories, config.colour_palette)
+			d3.zip(categories, config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -239,8 +239,8 @@ console.log(data)
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
+	graphicData = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),
 			...Object.entries(d)

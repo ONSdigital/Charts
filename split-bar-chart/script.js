@@ -3,7 +3,7 @@ import { initialise, addSource} from "../lib/helpers.js";
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, colour, plots, chart, headers, rows, splitBar, splitBarInner, finalrow;
+let graphicData, size, colour, plots, chart, headers, rows, splitBar, splitBarInner, finalrow;
 
 function drawGraphic() {
 	// Remove any existing chart elements
@@ -22,24 +22,24 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([0, 100])
 		.domain([
-			d3.min([0, d3.min(graphic_data, (d) => +d.value)]),
-			d3.max(graphic_data, (d) => +d.value)
+			d3.min([0, d3.min(graphicData, (d) => +d.value)]),
+			d3.max(graphicData, (d) => +d.value)
 		]);
 
 	// nest data
 	let groupedData = d3.groups(
-		graphic_data,
+		graphicData,
 		(d) => d.plot,
 		(d) => d.ycategory
 	);
 
 	// unique columns
-	let xcategories = [...new Set(graphic_data.map((d) => d.xcategory))];
+	let xcategories = [...new Set(graphicData.map((d) => d.xcategory))];
 
-	if (config.colour_palette_type == 'categorical') {
+	if (config.colourPaletteType == 'categorical') {
 		colour = d3
 			.scaleOrdinal()
-			.range(config.colour_palette_colours)
+			.range(config.colourPalette)
 			.domain(xcategories);
 
 		if (size == 'sm') {
@@ -47,7 +47,7 @@ function drawGraphic() {
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(d3.zip(xcategories, config.colour_palette_colours))
+				.data(d3.zip(xcategories, config.colourPalette))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -163,13 +163,13 @@ function drawGraphic() {
 			+d.value > 0 ? 100 - x(+d.value) + '%' : 100 - x(0) + '%'
 		)
 		.style('background', function (d) {
-			if (config.colour_palette_type == 'mono') {
-				return config.colour_palette_colours[0];
-			} else if (config.colour_palette_type == 'divergent') {
+			if (config.colourPaletteType == 'mono') {
+				return config.colourPalette[0];
+			} else if (config.colourPaletteType == 'divergent') {
 				return +d.value > 0
-					? config.colour_palette_colours[0]
-					: config.colour_palette_colours[1];
-			} else if (config.colour_palette_type == 'categorical') {
+					? config.colourPalette[0]
+					: config.colourPalette[1];
+			} else if (config.colourPaletteType == 'categorical') {
 				return colour(d.xcategory);
 			}
 		})
@@ -236,9 +236,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

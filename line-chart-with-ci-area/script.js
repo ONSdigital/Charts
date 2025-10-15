@@ -7,7 +7,7 @@ let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
 let pymChild = null;
 
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -16,24 +16,24 @@ function drawGraphic() {
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width
-	// console.log(`Margin, chart_width, and height set: ${margin}, ${chart_width}, ${height}`);
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth
+	// console.log(`Margin, chartWidth, and height set: ${margin}, ${chartWidth}, ${height}`);
 
 
 
 	// Get categories from the keys used in the stack generator
-	// const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
-	const categories = Object.keys(graphic_data[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
+	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
 	// console.log(categories);
 
-	const fulldataKeys = Object.keys(graphic_data[0]).slice(1)
+	const fulldataKeys = Object.keys(graphicData[0]).slice(1)
 
 	// Define the x and y scales
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -43,16 +43,16 @@ function drawGraphic() {
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => d.date))
+			.range([0, chartWidth]);
 	} else if (config.xDomain == "auto") {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => +d.date))
+			.range([0, chartWidth]);
 	} else {
 		x = d3.scaleLinear()
 			.domain(config.xDomain)
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	}
 
 	const y = d3
@@ -61,8 +61,8 @@ function drawGraphic() {
 
 	if (config.yDomain == "auto") {
 		y.domain(
-			[d3.min(graphic_data, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-			d3.max(graphic_data, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
+			[d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
+			d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
 		)
 	} else {
 		y.domain(config.yDomain)
@@ -72,22 +72,22 @@ function drawGraphic() {
 	let tickValues = x.ticks(config.xAxisTicks[size]);
 
 	// Add the first and last dates to the ticks array, and use a Set to remove any duplicates
-	// tickValues = Array.from(new Set([graphic_data[0].date, ...tickValues, graphic_data[graphic_data.length - 1].date]));
+	// tickValues = Array.from(new Set([graphicData[0].date, ...tickValues, graphicData[graphicData.length - 1].date]));
 
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -120,7 +120,7 @@ function drawGraphic() {
 			d3
 				.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickSize(-chart_width)
+				.tickSize(-chartWidth)
 				.tickFormat('')
 		);
 
@@ -144,12 +144,12 @@ function drawGraphic() {
 
 		svg
 			.append('path')
-			.datum(graphic_data)
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -158,7 +158,7 @@ function drawGraphic() {
 			.style('stroke-linecap', 'round');
 		//console.log(`Path appended for category: ${category}`);
 
-		const lastDatum = graphic_data[graphic_data.length - 1];
+		const lastDatum = graphicData[graphicData.length - 1];
 
 		const areaGenerator = d3.area()
 			.x(d => x(d.date))
@@ -168,9 +168,9 @@ function drawGraphic() {
 
 		svg.append('path')
 			.attr('class', 'shaded')
-			.attr('d', areaGenerator(graphic_data))
-			.attr('fill', config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+			.attr('d', areaGenerator(graphicData))
+			.attr('fill', config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 			])
 			.attr('opacity', 0.15)
 
@@ -179,7 +179,7 @@ function drawGraphic() {
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+				.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -205,7 +205,7 @@ function drawGraphic() {
 	if (!config.drawLegend && size !== 'sm') {
 		createDirectLabels({
 			categories: categories,
-			data: graphic_data,
+			data: graphicData,
 			svg: svg,
 			xScale: x,
 			yScale: y,
@@ -222,7 +222,7 @@ function drawGraphic() {
 		});
 	}
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 		const ciSvg = d3.select('#legend')
 			.append('div')
 			.attr('class', 'legend--item')
@@ -254,7 +254,7 @@ function drawGraphic() {
 			37,                    // endY
 			"vertical-first",     // bendDirection
 			"start",                // arrowAnchor
-			config.CI_legend_interval_text, // thisText
+			config.legendIntervalText, // thisText
 			150,                  // wrapWidth
 			25,                   // textAdjustY
 			"top",               // wrapVerticalAlign
@@ -276,7 +276,7 @@ function drawGraphic() {
 			//alignment - left or right for vertical arrows, above or below for horizontal arrows
 			'right',
 			//annotation text
-			config.CI_legend_text,
+			config.legendEstimateText,
 			//wrap width
 			1500,
 			//text adjust y
@@ -294,7 +294,7 @@ function drawGraphic() {
 		yPosition: -10,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -309,9 +309,9 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then(data => {
+d3.csv(config.graphicDataURL).then(data => {
 
-	graphic_data = data.map((d) => {
+	graphicData = data.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),

@@ -1,6 +1,6 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": "YlGnBu",
+	"graphicDataURL": "data.csv",
+	"colourPalette": "YlGnBu",
 	// must be a colour brewer palette
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",
@@ -10,7 +10,6 @@ config = {
 	"breaks": "jenks",
 	// either "jenks","equal" or an array with custom breaks
 	// if using custom breaks, it needs to be an object with keys the same as the columns and then an array of the value as the value of the key
-
 	"margin": {
 		"sm": {
 			"top": 15,

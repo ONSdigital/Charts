@@ -1,7 +1,7 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ONSlinePalette,
-	"text_colour_palette": ONStextPalette,
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSlinePalette,
+	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",
@@ -15,10 +15,8 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"yDomainMax": "auto", // either "auto", "autoAll" or a value
 	"yDomainMin": 0, // either "auto", "autoAll" or a value
-
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%y",
@@ -31,7 +29,6 @@ config = {
 	"xAxisLabel": "",
 	"defaultOption": "option1",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],

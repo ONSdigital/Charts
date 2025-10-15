@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -12,11 +12,11 @@ function drawGraphic() {
 
 	const aspectRatio = config.aspectRatio[size];
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by the aspect ratio
 	let height =
-		aspectRatio[1] / aspectRatio[0] * chart_width;
+		aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 	//set up scales
 	const y = d3.scaleLinear().range([height, 0]);
@@ -25,22 +25,22 @@ function drawGraphic() {
 		.scaleBand()
 		.paddingOuter(0.0)
 		.paddingInner(0.1)
-		.range([0, chart_width])
+		.range([0, chartWidth])
 		.round(false);
 
 	//use the data to find unique entries in the date column
-	x.domain([...new Set(graphic_data.map((d) => d.date))]);
+	x.domain([...new Set(graphicData.map((d) => d.date))]);
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y)
-		.tickSize(-chart_width)
+		.tickSize(-chartWidth)
 		.tickPadding(10)
 		.ticks(config.yAxisTicks[size])
 		.tickFormat(d3.format(config.yAxisTickFormat));
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -56,12 +56,12 @@ function drawGraphic() {
 
 	//Labelling the first and/or last bar if needed
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
 
@@ -76,17 +76,17 @@ function drawGraphic() {
 
 	const stack = d3
 		.stack()
-		.keys(graphic_data.columns.slice(1).filter(d => (d) !== config.line_series))
+		.keys(graphicData.columns.slice(1).filter(d => (d) !== config.lineSeries))
 		.offset(d3[config.stackOffset])
 		.order(d3[config.stackOrder]);
 
-	let series = stack(graphic_data);
+	let series = stack(graphicData);
 
 	//gets array of arrays for individual lines
 	let lines = [];
-	for (let column in graphic_data[0]) {
+	for (let column in graphicData[0]) {
 		if (column == 'date') continue;
-		lines[column] = graphic_data.map(function (d) {
+		lines[column] = graphicData.map(function (d) {
 			return {
 				'name': d.date,
 				'amt': d[column]
@@ -121,7 +121,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphic_data.columns.slice(1).filter(d => (d) !== config.line_series), config.colour_palette)
+			d3.zip(graphicData.columns.slice(1).filter(d => (d) !== config.lineSeries), config.colourPalette)
 		)
 		.enter()
 		.append('div')
@@ -147,18 +147,18 @@ function drawGraphic() {
 		.attr('class', 'legend--item line')
 		.append('div')
 		.attr('class', 'legend--icon--refline')
-		.style('background-color', config.line_colour);
+		.style('background-color', config.lineColour);
 
 	d3.select('.legend--item.line')
 		.append('div')
 		.attr('class', 'legend--text')
-		.text(config.line_series)
+		.text(config.lineSeries)
 
 
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -166,7 +166,7 @@ function drawGraphic() {
 	if (config.yDomain == 'auto') {
 		// y.domain([
 		// 	0,
-		// 	d3.max(graphic_data, (d) => d3.max(keys, (c) => d[c]))])
+		// 	d3.max(graphicData, (d) => d3.max(keys, (c) => d[c]))])
 		y.domain(d3.extent(series.flat(2)));
 	} else {
 		y.domain(config.yDomain);
@@ -196,7 +196,7 @@ function drawGraphic() {
 		.selectAll('g')
 		.data(series)
 		.join('g')
-		.attr('fill', (d, i) => config.colour_palette[i])
+		.attr('fill', (d, i) => config.colourPalette[i])
 		.selectAll('rect')
 		.data((d) => d)
 		.join('rect')
@@ -204,7 +204,7 @@ function drawGraphic() {
 		.attr('x', (d) => x(d.data.date))
 		.attr('height', (d) => Math.abs(y(d[0]) - y(d[1])))
 		.attr('width', x.bandwidth())
-	// .attr('fill', config.colour_palette[0]);
+	// .attr('fill', config.colourPalette[0]);
 
 
 	let thisCurve = d3.curveLinear
@@ -216,18 +216,18 @@ function drawGraphic() {
 		.y((d) => y(d.amt));
 	// //     //opposite sex
 
-	let line_values = Object.entries(lines).filter(d => d[0] == config.line_series)
+	let lineValues = Object.entries(lines).filter(d => d[0] == config.lineSeries)
 
 	// console.log("lines: ", lines)
 	// console.log("Object.entries(lines)", Object.entries(lines))
-	// console.log("filtered lines: ", Object.entries(lines).filter(d => d[0] == config.line_series))
+	// console.log("filtered lines: ", Object.entries(lines).filter(d => d[0] == config.lineSeries))
 
 	svg.append('g')
 		.selectAll('path')
-		.data(line_values)
+		.data(lineValues)
 		.enter()
 		.append('path')
-		.attr("stroke", (d, i) => config.line_colour)
+		.attr("stroke", (d, i) => config.lineColour)
 		.attr("class", "dataLine")
 		.attr('d', (d) =>
 			line(d[1]))
@@ -240,7 +240,7 @@ function drawGraphic() {
 		yPosition: -10,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -252,9 +252,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	let parseTime = d3.timeParse(config.dateFormat);
 

@@ -1,7 +1,7 @@
 config = {
-	"graphic_data_url": "datanumeric.csv",
-	"colour_palette": ONSlinePalette,
-	"text_colour_palette": ONStextPalette,
+	"graphicDataURL": "datanumeric.csv",
+	"colourPalette": ONSlinePalette,
+	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",
@@ -26,11 +26,10 @@ config = {
 	"xAxisNumberFormat": ".0f",
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
-	"CI_legend": true,
-	"CI_legend_interval_text": "Likely range (95% confidence interval)",
-	"CI_legend_text": "Estimated value",
+	"ciLegend": true,
+	"legendIntervalText": "Likely range (95% confidence interval)",
+	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [4, 3],

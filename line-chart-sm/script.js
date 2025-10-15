@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, keys, counter;
+let graphicData, size, keys, counter;
 
 function drawGraphic() {
 
@@ -11,16 +11,16 @@ function drawGraphic() {
 	size = initialise(size);
 
 	const aspectRatio = config.aspectRatio[size];
-	const chartsPerRow = config.chart_every[size];
+	const chartsPerRow = config.chartEvery[size];
 
-	const reference = config.reference_category;
+	const reference = config.referenceCategory;
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== reference);
-	const categoriesToPlot = Object.keys(graphic_data[0]).filter((k) => k !== 'date')
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== reference);
+	const categoriesToPlot = Object.keys(graphicData[0]).filter((k) => k !== 'date')
 
 	//This template works differently from the other small multiple templates in that we plot all the data on every chart,
-	//so we don't need to slice the data up - we use graphic_data every time. 
+	//so we don't need to slice the data up - we use graphicData every time. 
 	//This step shapes the input for the data join to be consistent with the other templates.
 	const categoriesWithNullData = categories.map(d => [d, null])
 
@@ -40,7 +40,7 @@ function drawGraphic() {
 
 		let chartGap = config.optional?.chartGap || 10;
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -56,13 +56,13 @@ function drawGraphic() {
 
 		//height is set by the aspect ratio
 		let height =
-			aspectRatio[1] / aspectRatio[0] * chart_width;
+			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
 
 		let xDataType;
 
-		if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+		if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 			xDataType = 'date';
 		} else {
 			xDataType = 'numeric';
@@ -74,12 +74,12 @@ function drawGraphic() {
 
 		if (xDataType == 'date') {
 			x = d3.scaleTime()
-				.domain(d3.extent(graphic_data, (d) => d.date))
-				.range([0, chart_width]);
+				.domain(d3.extent(graphicData, (d) => d.date))
+				.range([0, chartWidth]);
 		} else {
 			x = d3.scaleLinear()
-				.domain(d3.extent(graphic_data, (d) => +d.date))
-				.range([0, chart_width]);
+				.domain(d3.extent(graphicData, (d) => +d.date))
+				.range([0, chartWidth]);
 		}
 
 
@@ -88,8 +88,8 @@ function drawGraphic() {
 			.range([height, 0]);
 
 		if (config.yDomain == "auto") {
-			let minY = d3.min(graphic_data, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
-			let maxY = d3.max(graphic_data, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
+			let minY = d3.min(graphicData, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
+			let maxY = d3.max(graphicData, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
 			y.domain([minY, maxY])
 			// console.log(minY, maxY)
 		} else {
@@ -99,7 +99,7 @@ function drawGraphic() {
 		// Create an SVG element
 		const svg = addSvg({
 			svgParent: graphic,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -117,9 +117,9 @@ function drawGraphic() {
 				.context(null);
 
 			var lines = {};
-			for (var column in graphic_data[0]) {
+			for (var column in graphicData[0]) {
 				if (column == 'date') continue;
-				lines[column] = graphic_data.map(function (d) {
+				lines[column] = graphicData.map(function (d) {
 					return {
 						'date': d.date,
 						'amt': d[column]
@@ -150,10 +150,10 @@ function drawGraphic() {
 				.datum(Object.entries(lines))
 				.attr('fill', 'none')
 				.attr(
-					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colour_palette[0] :
-						category == reference ? config.colour_palette[1] : config.colour_palette[2]
-					// config.colour_palette[
-					// categories.indexOf(category) % config.colour_palette.length
+					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colourPalette[0] :
+						category == reference ? config.colourPalette[1] : config.colourPalette[2]
+					// config.colourPalette[
+					// categories.indexOf(category) % config.colourPalette.length
 					// ]
 				)
 				.attr('stroke-width', 2)
@@ -166,7 +166,7 @@ function drawGraphic() {
 
 			svg.selectAll('.line' + chartIndex).attr('stroke-width', 2.5).raise()
 
-			const lastDatum = graphic_data[graphic_data.length - 1];
+			const lastDatum = graphicData[graphicData.length - 1];
 
 			//Labelling the final data point on each chart if option selected in the config
 			if (config.labelFinalPoint == true) {
@@ -183,9 +183,9 @@ function drawGraphic() {
 						.attr('y', 4)
 						.attr('text-anchor', 'start')
 						.attr(
-							'fill', config.colour_palette[0]
-							// config.colour_palette[
-							// categories.indexOf(category) % config.colour_palette.length
+							'fill', config.colourPalette[0]
+							// config.colourPalette[
+							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						)
 						.text(d3.format(",.0f")(lastDatum[category]))
@@ -199,9 +199,9 @@ function drawGraphic() {
 						.attr('cy', y(lastDatum[category]))
 						.attr('r', 3)
 						.attr(
-							'fill', config.colour_palette[0]
-							// config.colour_palette[
-							// categories.indexOf(category) % config.colour_palette.length
+							'fill', config.colourPalette[0]
+							// config.colourPalette[
+							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						);
 
@@ -218,7 +218,7 @@ function drawGraphic() {
 				d3
 					.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			)
 			.lower();
@@ -238,7 +238,7 @@ function drawGraphic() {
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues(graphic_data
+					.tickValues(graphicData
 						.map((d) => xDataType == 'date' ?
 							d.date.getTime() : d.date
 						) //just get dates as seconds past unix epoch
@@ -252,7 +252,7 @@ function drawGraphic() {
 							return a - b
 						})
 						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == graphic_data.length - 1 //Rob's fussy comment about labelling the last date
+							return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == graphicData.length - 1 //Rob's fussy comment about labelling the last date
 						})
 					)
 					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
@@ -283,7 +283,7 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: (chart_width + margin.right)
+			wrapWidth: (chartWidth + margin.right)
 		})
 
 
@@ -295,7 +295,7 @@ function drawGraphic() {
 				yPosition: 0,
 				text: config.yAxisLabel,
 				textAnchor: "start",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 
@@ -303,11 +303,11 @@ function drawGraphic() {
 		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...chartContainers].length - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	}
@@ -321,7 +321,7 @@ function drawGraphic() {
 	// Set up the legend
 	let legenditem = legend
 		.selectAll('div.legend--item')
-		.data([[config.legendLabel, config.colour_palette[0]], [reference, config.colour_palette[1]], [config.allLabel, config.colour_palette[2]]])
+		.data([[config.legendLabel, config.colourPalette[0]], [reference, config.colourPalette[1]], [config.allLabel, config.colourPalette[2]]])
 		.enter()
 		.append('div')
 		.attr('class','legend--item');
@@ -354,8 +354,8 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),

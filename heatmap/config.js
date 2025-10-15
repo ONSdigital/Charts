@@ -1,7 +1,7 @@
 config = {
 	// Added a dataNumeric.csv to the folder to demonstrate a numeric x axis
-	"graphic_data_url": "dataNumeric.csv",
-	"colour_palette": "YlGnBu",
+	"graphicDataURL": "dataNumeric.csv",
+	"colourPalette": "YlGnBu",
 	// colour brewer palette or custom array of colours
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",

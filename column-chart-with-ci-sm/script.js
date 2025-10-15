@@ -3,14 +3,14 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let pymChild = null;
 let legend = d3.select('#legend');
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-  let colour = d3.scaleOrdinal(config.colour_palette);
+  let colour = d3.scaleOrdinal(config.colourPalette);
 
   const chartEvery = config.chartEvery[size];
 
@@ -36,11 +36,11 @@ function drawGraphic() {
 
 
   //lets also try a new smallmultiple version here which will group data on the basis of plot
-  let grouped_data = d3.group(graphic_data, d => d.plot)
+  let groupedData = d3.group(graphicData, d => d.plot)
 
   let xDataType;
 
-  if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+  if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
     xDataType = 'date';
   } else {
     xDataType = 'numeric';
@@ -48,12 +48,12 @@ function drawGraphic() {
 
   // console.log(xDataType)
 
-  // console.log(Array.from(grouped_data))
+  // console.log(Array.from(groupedData))
 
   // Create a container div for each small multiple
   var chartContainers = graphic
     .selectAll('.chart-container')
-    .data(Array.from(grouped_data))
+    .data(Array.from(groupedData))
     .join('div')
     .attr('class', 'chart-container');
 
@@ -66,7 +66,7 @@ function drawGraphic() {
 
     let chartGap = config.optional?.chartGap || 10;
 
-    let chart_width = calculateChartWidth({
+    let chartWidth = calculateChartWidth({
       screenWidth: parseInt(graphic.style('width')),
       chartEvery: chartsPerRow,
       chartMargin: margin,
@@ -80,19 +80,19 @@ function drawGraphic() {
       }
     }
     let aspectRatio = config.aspectRatio[size];
-    let height = (aspectRatio[0]*chart_width/aspectRatio[1] )- margin.top - margin.bottom;
+    let height = (aspectRatio[0]*chartWidth/aspectRatio[1] )- margin.top - margin.bottom;
 
     const x = d3
       .scaleBand()
       .paddingOuter(0.0)
       .paddingInner(0.1)
-      .range([0, chart_width])
+      .range([0, chartWidth])
       .round(false);
 
     //use the data to find unique entries in the date column
-    x.domain([...new Set(graphic_data.map((d) => d.date))]);
+    x.domain([...new Set(graphicData.map((d) => d.date))]);
 
-    // console.log("x", d3.extent(graphic_data, (d) => +d.date))
+    // console.log("x", d3.extent(graphicData, (d) => +d.date))
 
     const y = d3.scaleLinear()
       .range([height, 0])
@@ -100,21 +100,21 @@ function drawGraphic() {
     //create svg for chart
     svg = addSvg({
       svgParent: container,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       height: height + margin.top + margin.bottom,
       margin: margin
     })
 
-    // console.log(grouped_data)
+    // console.log(groupedData)
 
     // both of these are need to be looked at.
     if (config.yDomain == "auto") {
-      if (d3.min(graphic_data.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
+      if (d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
         y.domain([
           0,
-          d3.max(graphic_data.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
+          d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
       } else {
-        y.domain([d3.min(graphic_data, function (d) { return d.lowerCI }), d3.max(graphic_data, function (d) { return d.upperCI })])
+        y.domain([d3.min(graphicData, function (d) { return d.lowerCI }), d3.max(graphicData, function (d) { return d.upperCI })])
       }
 
     } else {
@@ -145,7 +145,7 @@ function drawGraphic() {
       .call(
         d3.axisLeft(y)
           .ticks(config.yAxisTicks[size])
-          .tickSize(-chart_width)
+          .tickSize(-chartWidth)
           .tickPadding(10)
           .tickFormat((d) => config.dropYAxis !== true ? d3.format(config.yAxisTickFormat)(d) :
             chartPosition == 0 ? d3.format(config.yAxisTickFormat)(d) : "")
@@ -215,18 +215,18 @@ function drawGraphic() {
       svgContainer: svg,
       yPosition: -margin.top / 2,
       text: seriesName,
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     })
 
     // This does the x-axis label
     addAxisLabel({
       svgContainer: svg,
-      xPosition: chart_width,
+      xPosition: chartWidth,
       yPosition: height + margin.bottom,
       text: chartIndex % chartEvery == chartEvery - 1 ?
         config.xAxisLabel : "",
       textAnchor: "end",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
     // This does the y-axis label
@@ -236,7 +236,7 @@ function drawGraphic() {
       yPosition: -10,
       text: chartPosition == 0 ? config.yAxisLabel : "",
       textAnchor: "start",
-      wrapWidth: chart_width
+      wrapWidth: chartWidth
     });
 
 
@@ -263,12 +263,12 @@ function drawGraphic() {
 }
 
 //load data 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then((data) => {
 
     let parseTime = d3.timeParse(config.dateFormat);
     //load chart data
-    graphic_data = data;
+    graphicData = data;
 
     data.forEach((d, i) => {
 

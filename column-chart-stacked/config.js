@@ -1,6 +1,6 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ONSpalette,
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"xAxisTickFormat": {
@@ -67,6 +67,5 @@ config = {
 	"legendColumns": 4,
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

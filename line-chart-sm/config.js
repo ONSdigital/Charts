@@ -1,12 +1,12 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": [
+	"graphicDataURL": "data.csv",
+	"colourPalette": [
 		ONScolours.oceanBlue,
 		ONScolours.skyBlue,
 		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
-	"reference_category": "England",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off
+	"referenceCategory": "England",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off
 	"legendLabel": "selected group",
 	"allLabel": "all other groups",
 	"sourceText": "Office for National Statistics",
@@ -21,7 +21,6 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"yDomain": "auto",
 	// either "auto" or an array for the y domain e.g. [0,2000]
 	"xAxisTickFormat": {
@@ -35,9 +34,7 @@ config = {
 	"xAxisLabel": "x axis label",
 	"zeroLine": "0",
 	"interpolateGaps": true,
-
-
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 3

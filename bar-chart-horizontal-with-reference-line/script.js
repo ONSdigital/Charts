@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource } from
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -11,12 +11,12 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
-		config.seriesHeight[size] * graphic_data.length +
-		10 * (graphic_data.length - 1) +
+		config.seriesHeight[size] * graphicData.length +
+		10 * (graphicData.length - 1) +
 		12;
 
 	//Set up the legend
@@ -30,7 +30,7 @@ function drawGraphic() {
 		.attr('cx',13)
 		.attr('cy',8)
 		.attr('r',6)
-		.attr('fill', config.colour_palette)
+		.attr('fill', config.colourPalette)
 		.attr('class','legendCircle');
 	
 
@@ -58,17 +58,17 @@ function drawGraphic() {
 		.html("Reference value")
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]);
+	const x = d3.scaleLinear().range([0, chartWidth]);
 
 	const y = d3
 		.scaleBand()
 		.paddingOuter(0.2)
-		.paddingInner(((graphic_data.length - 1) * 10) / (graphic_data.length * 30))
+		.paddingInner(((graphicData.length - 1) * 10) / (graphicData.length * 30))
 		.range([0, height])
 		.round(true);
 
 	//use the data to find unique entries in the name column
-	y.domain([...new Set(graphic_data.map((d) => d.name))]);
+	y.domain([...new Set(graphicData.map((d) => d.name))]);
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
@@ -83,7 +83,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -91,11 +91,11 @@ function drawGraphic() {
 
 	if (config.xDomain == 'auto') {
 		x.domain([
-			Math.min(0, d3.min(graphic_data.map(({ value }) => Number(value))),
-			d3.min(graphic_data.map(({ ref }) => Number(ref)))),
+			Math.min(0, d3.min(graphicData.map(({ value }) => Number(value))),
+			d3.min(graphicData.map(({ ref }) => Number(ref)))),
 			//x domain is the maximum out of the value and the reference value
-			Math.max(d3.max(graphic_data.map(({ value }) => Number(value))),
-			d3.max(graphic_data.map(({ ref }) => Number(ref))))
+			Math.max(d3.max(graphicData.map(({ value }) => Number(value))),
+			d3.max(graphicData.map(({ ref }) => Number(ref))))
 		])
 	} else {
 		x.domain(config.xDomain);
@@ -122,17 +122,17 @@ function drawGraphic() {
 
 	svg
 		.selectAll('rect')
-		.data(graphic_data)
+		.data(graphicData)
 		.join('rect')
 		.attr('x', d => d.value < 0 ? x(d.value) : x(0))
 		.attr('y', (d) => y(d.name))
 		.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 		.attr('height', y.bandwidth())
-		.attr('fill', config.colour_palette);
+		.attr('fill', config.colourPalette);
 
 		svg
 		.selectAll('line.refline')
-		.data(graphic_data)
+		.data(graphicData)
 		.join('line')
 		.attr('class', 'refline')
 		.attr('x1', (d) => x(d.ref))
@@ -143,8 +143,8 @@ function drawGraphic() {
 	if (config.dataLabels.show == true) {
 		addDataLabels({
 			svgContainer: svg,
-			data: graphic_data,
-			chart_width: chart_width,
+			data: graphicData,
+			chartWidth: chartWidth,
 			labelPositionFactor: 7,
 			xScaleFunction: x,
 			yScaleFunction: y
@@ -154,11 +154,11 @@ function drawGraphic() {
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 		});
 
 	//create link to source
@@ -170,9 +170,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
