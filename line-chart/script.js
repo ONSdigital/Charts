@@ -203,13 +203,13 @@ function drawGraphic() {
 	if (config.addEndMarkers) {
 		const circleData = categories.map((category, index) => {
 			// Find last valid datum for this category
-			const lastDatum = [...graphic_data].reverse().find(d => d[category] != null && d[category] !== "");
+			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 			return lastDatum ? {
 				category: category,
 				index: index,
 				x: x(lastDatum.date),
 				y: y(lastDatum[category]),
-				color: config.colour_palette[index % config.colour_palette.length]
+				color: config.colourPalette[index % config.colourPalette.length]
 			} : null;
 		}).filter(d => d); // Remove null entries
 
@@ -232,7 +232,7 @@ function drawGraphic() {
 		// Set up the legend
 		let legenditem = legend
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
@@ -254,7 +254,7 @@ function drawGraphic() {
 	} else {
 		createDirectLabels({
 			categories: categories,
-			data: graphic_data,
+			data: graphicData,
 			svg: svg,
 			xScale: x,
 			yScale: y,

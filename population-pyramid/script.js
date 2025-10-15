@@ -308,7 +308,6 @@ function processComplexData() {
 }
 
 function createChart(margin) {
-    console.log(margin)
     // Set up dimensions
     width = parseInt(graphic.style('width'));
     chartWidth = (width - margin.centre - margin.left - margin.right) / 2;
