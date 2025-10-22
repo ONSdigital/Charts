@@ -1,9 +1,13 @@
 import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource } from "../lib/helpers.js";
 
+
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, chartWidth;
+
+// Stroke width for chart lines and legend
+const strokeWidth = 2.5;
 
 function drawGraphic() {
 	
@@ -33,7 +37,7 @@ function drawGraphic() {
 
 		let margin = { ...config.margin[size] };
 
-		let chartGap = config.optional?.chartGap || 10;
+		let chartGap = config.chartGap || 10;
 
 		// If the chart is not in the first position in the row, reduce the left margin
 		if (config.dropYAxis && !config.freeYAxisScales) {
@@ -105,7 +109,7 @@ function drawGraphic() {
 					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
-				.attr('stroke-width', 2.5)
+				   .attr('stroke-width', strokeWidth)
 				.attr('d', lineGenerator)
 				.style('stroke-linejoin', 'round')
 				.style('stroke-linecap', 'round')
@@ -132,7 +136,6 @@ function drawGraphic() {
 					d3.select(this).attr('class', 'zero-line');
 				}
 			})
-console.log(data)
 		// Add the x-axis
 		svg
 			.append('g')
@@ -203,30 +206,38 @@ console.log(data)
 
 
 	// Set up the legend
-	var legenditem = d3
-		.select('#legend')
-		.selectAll('div.legend--item')
-		.data(
-			d3.zip(categories, config.colourPalette)
-		)
-		.enter()
-		.append('div')
-		.attr('class', 'legend--item');
 
-	legenditem
-		.append('div')
-		.attr('class', 'legend--icon--circle')
-		.style('background-color', function (d) {
-			return d[1];
-		});
+       var legenditem = d3
+	       .select('#legend')
+	       .selectAll('div.legend--item')
+	       .data(
+		       d3.zip(categories, config.colourPalette)
+	       )
+	       .enter()
+	       .append('div')
+	       .attr('class', 'legend--item');
 
-	legenditem
-		.append('div')
-		.append('p')
-		.attr('class', 'legend--text')
-		.html(function (d) {
-			return d[0];
-		});
+       // Add line icon using SVG
+       legenditem
+	       .append('svg')
+	       .attr('width', 32)
+	       .attr('height', 12)
+	       .append('line')
+	       .attr('x1', 2)
+	       .attr('y1', 6)
+	       .attr('x2', 30)
+	       .attr('y2', 6)
+	       .attr('stroke', function (d) { return d[1]; })
+	       .attr('stroke-width', strokeWidth)
+	       .attr('class', 'legend--icon--line');
+
+       legenditem
+	       .append('div')
+	       .append('p')
+	       .attr('class', 'legend--text')
+	       .html(function (d) {
+		       return d[0];
+	       });
 
 	//create link to source
 	addSource('source', config.sourceText);
