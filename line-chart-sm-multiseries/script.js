@@ -1,12 +1,13 @@
 import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource } from "../lib/helpers.js";
 
+
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, chartWidth;
 
 function drawGraphic() {
-	
+
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
@@ -33,7 +34,7 @@ function drawGraphic() {
 
 		let margin = { ...config.margin[size] };
 
-		let chartGap = config.optional?.chartGap || 10;
+		let chartGap = config.chartGap || 10;
 
 		// If the chart is not in the first position in the row, reduce the left margin
 		if (config.dropYAxis && !config.freeYAxisScales) {
@@ -105,10 +106,10 @@ function drawGraphic() {
 					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
-				.attr('stroke-width', 2.5)
+				.attr('stroke-width', 3)
 				.attr('d', lineGenerator)
-				.style('stroke-linejoin', 'round')
-				.style('stroke-linecap', 'round')
+				.attr('stroke-linejoin', 'round')
+				.attr('stroke-linecap', 'round')
 				.attr('class', 'line' + categories.indexOf(category));
 
 		});
@@ -132,7 +133,6 @@ function drawGraphic() {
 					d3.select(this).attr('class', 'zero-line');
 				}
 			})
-console.log(data)
 		// Add the x-axis
 		svg
 			.append('g')
@@ -167,7 +167,8 @@ console.log(data)
 				.ticks(config.yAxisTicks[size])
 				.tickFormat((d) => config.freeYAxisScales ? d3.format(config.yAxisFormat)(d) :
 					config.dropYAxis ? (chartPosition == 0 ? d3.format(config.yAxisFormat)(d) : "") :
-						d3.format(config.yAxisFormat)(d)))
+						d3.format(config.yAxisFormat)(d)).tickSize(0))
+
 			.selectAll('.tick text')
 			.call(wrap, margin.left - 10);
 
@@ -176,7 +177,7 @@ console.log(data)
 		// This does the chart title label
 		addChartTitleLabel({
 			svgContainer: svg,
-			yPosition: -margin.top / 2,
+			yPosition: -margin.top / 1.5,
 			text: seriesName,
 			wrapWidth: (chartWidth + margin.right)
 		})
@@ -203,6 +204,7 @@ console.log(data)
 
 
 	// Set up the legend
+
 	var legenditem = d3
 		.select('#legend')
 		.selectAll('div.legend--item')
@@ -213,12 +215,20 @@ console.log(data)
 		.append('div')
 		.attr('class', 'legend--item');
 
+	// Add line icon using SVG
 	legenditem
-		.append('div')
-		.attr('class', 'legend--icon--circle')
-		.style('background-color', function (d) {
-			return d[1];
-		});
+		.append('svg')
+		.attr('width', 24)
+		.attr('height', 12)
+		.append('line')
+		.attr('x1', 2)
+		.attr('y1', 6)
+		.attr('x2', 22)
+		.attr('y2', 6)
+		.attr('stroke', function (d) { return d[1]; })
+		.attr('stroke-linecap', 'round')
+		.attr('stroke-width', 3)
+		.attr('class', 'legend--icon--line');
 
 	legenditem
 		.append('div')
