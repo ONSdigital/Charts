@@ -6,11 +6,6 @@
   /* Changes the color of the axis lines */
 }
 
-.dataLabel {
-  font-weight: 600;
-  font-size: 14px;
-}
-
 #legend {
   margin-top: 10px;
   margin-bottom: 10px;

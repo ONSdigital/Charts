@@ -170,7 +170,7 @@ function drawGraphic() {
 				if (categories.indexOf(category) == chartIndex) {
 					svg
 						.append('text')
-						.attr('class', 'dataLabel')
+						.attr('class', 'dataLabels')
 						.attr(
 							'transform',
 							`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`

@@ -6,11 +6,6 @@
   /* Changes the color of the axis lines */
 }
 
-.dataLabel {
-  font-weight: 600;
-  font-size: 14px;
-}
-
 @media (forced-colors: active) {
   .other {
     stroke: grey
