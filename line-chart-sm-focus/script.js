@@ -6,9 +6,6 @@ let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, keys, counter;
 
-// Global stroke width for chart lines and legend
-const strokeWidth = 3;
-
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
@@ -132,9 +129,7 @@ function drawGraphic() {
 			}
 
 			//This interpolates points when a cell contains no data (draws a line where there are no data points)
-
 			if (config.interpolateGaps) {
-
 				keys = Object.keys(lines)
 				for (let i = 0; i < keys.length; i++) {
 					lines[keys[i]].forEach(function (d, j) {
@@ -146,7 +141,6 @@ function drawGraphic() {
 						}
 					})
 				}
-
 			}
 
 
@@ -158,7 +152,7 @@ function drawGraphic() {
 					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colourPalette[0] :
 						category == reference ? config.colourPalette[1] : config.colourPalette[2]
 				)
-				.attr('stroke-width', strokeWidth)
+				.attr('stroke-width', () => (categoriesToPlot.indexOf(category) == chartIndex) || category == reference ? 2.5 : 2)
 				.attr('d', (d, i) => lineGenerator(d[categoriesToPlot.indexOf(category)][1]))
 				.style('stroke-linejoin', 'round')
 				.style('stroke-linecap', 'round')
@@ -166,7 +160,7 @@ function drawGraphic() {
 				((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
 				category == reference ? " reference" : " other"));
 
-			svg.selectAll('.line' + chartIndex).attr('stroke-width', 2.5).raise()
+			svg.selectAll('.line' + chartIndex).raise()
 
 			const lastDatum = graphicData[graphicData.length - 1];
 
@@ -272,7 +266,7 @@ function drawGraphic() {
 			svg
 				.append('g')
 				.attr('class', 'y axis numeric')
-				.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]))
+				.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickSize(0))
 				.selectAll('.tick text')
 				.call(wrap, margin.left - 10);
 		} else {
@@ -332,15 +326,16 @@ function drawGraphic() {
 	// Add line icon using SVG
 	legenditem
 		.append('svg')
-		.attr('width', 32)
+		.attr('width', 24)
 		.attr('height', 12)
 		.append('line')
 		.attr('x1', 2)
 		.attr('y1', 6)
-		.attr('x2', 30)
+		.attr('x2', 22)
 		.attr('y2', 6)
 		.attr('stroke', function (d) { return d[1]; })
-		.attr('stroke-width', strokeWidth)
+		.attr('stroke-width', 3)
+		.attr('stroke-linecap',"round")
 		.attr('class', 'legend--icon--line');
 
 	legenditem

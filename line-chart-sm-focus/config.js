@@ -35,7 +35,7 @@ config = {
 	"zeroLine": "0",
 	"interpolateGaps": true,
 	"chartEvery": {
-		"sm": 1,
+		"sm": 2,
 		"md": 2,
 		"lg": 3
 	},
@@ -66,7 +66,7 @@ config = {
 	},
 	"chartGap": 20,
 	"xAxisTicksEvery": { // this is the interval of ticks on the x axis - always including the first and last date
-		"sm": 4,
+		"sm": 12,
 		"md": 4,
 		"lg": 5
 	},
