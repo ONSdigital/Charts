@@ -65,8 +65,6 @@ config = {
 		"md": 5,
 		"lg":8
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }

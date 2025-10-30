@@ -10,7 +10,7 @@ function drawGraphic() {
 	d3.select('#slider-simple').selectAll('*').remove();
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size,{mobileBreakpoint: config.mobileBreakpoint, mediumBreakpoint: config.mediumBreakpoint});
 
 	let margin = config.margin[size];
 	let chartWidth =
