@@ -166,8 +166,28 @@ const chartConfig = [
       ]
     },
     {
-      name: "Line chart small multiple",
-      url: "https://onsdigital.github.io/Charts/line-chart-sm/",
+      name: "Line chart",
+      url: "https://onsdigital.github.io/Charts/line-chart/",
+      tags: {
+        "change-over-time": true
+      },
+      dataFiles: [
+        { name: "data.csv", path: "data.csv" }
+      ]
+    },
+    {
+      name: "Line chart small multiple focus",
+      url: "https://onsdigital.github.io/Charts/line-chart-sm-focus/",
+      tags: {
+        "change-over-time": true
+      },
+      dataFiles: [
+        { name: "data.csv", path: "data.csv" }
+      ]
+    },
+    {
+      name: "Line chart small multiple multiseries",
+      url: "https://onsdigital.github.io/Charts/line-chart-sm-multiseries/",
       tags: {
         "change-over-time": true
       },
