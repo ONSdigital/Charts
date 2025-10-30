@@ -6,11 +6,8 @@ let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, chartWidth;
 
-// Stroke width for chart lines and legend
-const strokeWidth = 2.5;
-
 function drawGraphic() {
-	
+
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
@@ -109,10 +106,10 @@ function drawGraphic() {
 					categories.indexOf(category) % config.colourPalette.length
 					]
 				)
-				   .attr('stroke-width', strokeWidth)
+				.attr('stroke-width', 3)
 				.attr('d', lineGenerator)
-				.style('stroke-linejoin', 'round')
-				.style('stroke-linecap', 'round')
+				.attr('stroke-linejoin', 'round')
+				.attr('stroke-linecap', 'round')
 				.attr('class', 'line' + categories.indexOf(category));
 
 		});
@@ -170,7 +167,8 @@ function drawGraphic() {
 				.ticks(config.yAxisTicks[size])
 				.tickFormat((d) => config.freeYAxisScales ? d3.format(config.yAxisFormat)(d) :
 					config.dropYAxis ? (chartPosition == 0 ? d3.format(config.yAxisFormat)(d) : "") :
-						d3.format(config.yAxisFormat)(d)))
+						d3.format(config.yAxisFormat)(d)).tickSize(0))
+
 			.selectAll('.tick text')
 			.call(wrap, margin.left - 10);
 
@@ -179,7 +177,7 @@ function drawGraphic() {
 		// This does the chart title label
 		addChartTitleLabel({
 			svgContainer: svg,
-			yPosition: -margin.top / 2,
+			yPosition: -margin.top / 1.5,
 			text: seriesName,
 			wrapWidth: (chartWidth + margin.right)
 		})
@@ -207,37 +205,38 @@ function drawGraphic() {
 
 	// Set up the legend
 
-       var legenditem = d3
-	       .select('#legend')
-	       .selectAll('div.legend--item')
-	       .data(
-		       d3.zip(categories, config.colourPalette)
-	       )
-	       .enter()
-	       .append('div')
-	       .attr('class', 'legend--item');
+	var legenditem = d3
+		.select('#legend')
+		.selectAll('div.legend--item')
+		.data(
+			d3.zip(categories, config.colourPalette)
+		)
+		.enter()
+		.append('div')
+		.attr('class', 'legend--item');
 
-       // Add line icon using SVG
-       legenditem
-	       .append('svg')
-	       .attr('width', 32)
-	       .attr('height', 12)
-	       .append('line')
-	       .attr('x1', 2)
-	       .attr('y1', 6)
-	       .attr('x2', 30)
-	       .attr('y2', 6)
-	       .attr('stroke', function (d) { return d[1]; })
-	       .attr('stroke-width', strokeWidth)
-	       .attr('class', 'legend--icon--line');
+	// Add line icon using SVG
+	legenditem
+		.append('svg')
+		.attr('width', 24)
+		.attr('height', 12)
+		.append('line')
+		.attr('x1', 2)
+		.attr('y1', 6)
+		.attr('x2', 22)
+		.attr('y2', 6)
+		.attr('stroke', function (d) { return d[1]; })
+		.attr('stroke-linecap', 'round')
+		.attr('stroke-width', 3)
+		.attr('class', 'legend--icon--line');
 
-       legenditem
-	       .append('div')
-	       .append('p')
-	       .attr('class', 'legend--text')
-	       .html(function (d) {
-		       return d[0];
-	       });
+	legenditem
+		.append('div')
+		.append('p')
+		.attr('class', 'legend--text')
+		.html(function (d) {
+			return d[0];
+		});
 
 	//create link to source
 	addSource('source', config.sourceText);
