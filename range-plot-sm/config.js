@@ -47,6 +47,4 @@ config = {
 		"md": 5,
 		"lg": 5
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600
 };
