@@ -1,0 +1,26 @@
+.dataLabels {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.chart-container {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.chart-container:last-child {
+  margin-right: 0;
+}
+
+.diamondStyle {
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  fill: white;
+}
+
+.dataLine {
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}

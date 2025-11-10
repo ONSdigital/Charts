@@ -1,4 +1,4 @@
-date,value1,value2,value3,value4,value5
+date,Total,Retail,Manufacturing,Transport,Other
 Jan-20,0.089,0.008,0.033,0.054,-0.073
 Feb-20,0.064,-0.06,-0.083,0.084,-0.087
 Mar-20,0.007,-0.007,-0.088,0.009,0.011
