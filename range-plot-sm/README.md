@@ -1,1 +1,0 @@
-# Range chart (small multiple)
