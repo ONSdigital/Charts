@@ -1,1 +1,0 @@
-# Horizontal stacked bar chart with tooltip
