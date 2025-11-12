@@ -1,7 +1,7 @@
 config = {
 
-	"graphic_data_url": "data.csv",
-	"colour_palette": "#27A0CC",
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is your accessibility summary, dvcXXXX",
 	"xDomain": "auto", //auto for auto domain or array [0,50] to define your own
@@ -20,7 +20,6 @@ config = {
 	"yAxisLabel": "Median hourly pay (£)",
 	"drawSliderButtons": true,
 	"highlight": true, //if you want to adjust where the highlight label goes, input top/bottom/middle for the relevant groups in the label_y column of the data file or start/middle/end to alter the text anchor in the label_anchor column
-
 	"margin": {
 		"sm": {
 			"top": 140,

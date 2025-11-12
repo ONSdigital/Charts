@@ -1,13 +1,13 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
 
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
 let legend = d3.selectAll('#legend')
 let pymChild = null;
 
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -16,49 +16,44 @@ function drawGraphic() {
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width
-	// console.log(`Margin, chart_width, and height set: ${margin}, ${chart_width}, ${height}`);
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth
+	// console.log(`Margin, chartWidth, and height set: ${margin}, ${chartWidth}, ${height}`);
 
 
 
 	// Get categories from the keys used in the stack generator
-	// const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
-	const categories = Object.keys(graphic_data[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
+	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
 	// console.log(categories);
 
-	const fulldataKeys = Object.keys(graphic_data[0]).slice(1)
+	const fulldataKeys = Object.keys(graphicData[0]).slice(1)
 
 	// Define the x and y scales
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
 	}
 
-	// console.log(xDataType)
-
 	let x;
-
-
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => d.date))
+			.range([0, chartWidth]);
 	} else if (config.xDomain == "auto") {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => +d.date))
+			.range([0, chartWidth]);
 	} else {
 		x = d3.scaleLinear()
 			.domain(config.xDomain)
-			.range([0, chart_width]);
+			.range([0, chartWidth]);
 	}
-	//console.log(`x defined`);
 
 	const y = d3
 		.scaleLinear()
@@ -66,41 +61,36 @@ function drawGraphic() {
 
 	if (config.yDomain == "auto") {
 		y.domain(
-			[d3.min(graphic_data, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-			d3.max(graphic_data, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
+			[d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
+			d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
 		)
 	} else {
 		y.domain(config.yDomain)
 	}
-	//console.log(`yAxis defined`);
-
 
 	// This function generates an array of approximately count + 1 uniformly-spaced, rounded values in the range of the given start and end dates (or numbers).
 	let tickValues = x.ticks(config.xAxisTicks[size]);
 
 	// Add the first and last dates to the ticks array, and use a Set to remove any duplicates
-	// tickValues = Array.from(new Set([graphic_data[0].date, ...tickValues, graphic_data[graphic_data.length - 1].date]));
+	// tickValues = Array.from(new Set([graphicData[0].date, ...tickValues, graphicData[graphicData.length - 1].date]));
 
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
+		tickValues.push(graphicData[0].date)
 		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
+		tickValues.push(graphicData[graphicData.length - 1].date)
 		console.log("Last date added")
 	}
-
 
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
-	//console.log(`SVG element created`);
-
 
 	// Add the x-axis
 	svg
@@ -130,7 +120,7 @@ function drawGraphic() {
 			d3
 				.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickSize(-chart_width)
+				.tickSize(-chartWidth)
 				.tickFormat('')
 		);
 
@@ -154,12 +144,12 @@ function drawGraphic() {
 
 		svg
 			.append('path')
-			.datum(graphic_data)
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -168,7 +158,7 @@ function drawGraphic() {
 			.style('stroke-linecap', 'round');
 		//console.log(`Path appended for category: ${category}`);
 
-		const lastDatum = graphic_data[graphic_data.length - 1];
+		const lastDatum = graphicData[graphicData.length - 1];
 
 		const areaGenerator = d3.area()
 			.x(d => x(d.date))
@@ -178,23 +168,18 @@ function drawGraphic() {
 
 		svg.append('path')
 			.attr('class', 'shaded')
-			.attr('d', areaGenerator(graphic_data))
-			.attr('fill', config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+			.attr('d', areaGenerator(graphicData))
+			.attr('fill', config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 			])
 			.attr('opacity', 0.15)
 
-		// console.log(`drawLegend: ${size}`);
-		// size === 'sm'
-
 		if (config.drawLegend || size === 'sm') {
-
-
 			// Set up the legend
 			let legenditem = d3
 				.select('#legend')
 				.selectAll('div.legend--item')
-				.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+				.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 				.enter()
 				.append('div')
 				.attr('class', 'legend--item');
@@ -214,132 +199,92 @@ function drawGraphic() {
 					return d[0];
 				});
 
-		} else {
-
-			// Add text labels to the right of the circles
-			svg
-				.append('text')
-				.attr(
-					'transform',
-					`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`
-				)
-				.attr('x', 10)
-				.attr('dy', '.35em')
-				.attr('text-anchor', 'start')
-				.attr(
-					'fill', //Colours adjusted for text where needed
-					config.text_colour_palette[
-					categories.indexOf(category) % config.text_colour_palette.length
-					]
-				)
-				.text(category)
-				.attr("class", "directLineLabel")
-				.call(wrap, margin.right - 10); //wrap function for the direct labelling.
-
-			svg
-				.append('circle')
-				.attr('cx', x(lastDatum.date))
-				.attr('cy', y(lastDatum[category]))
-				.attr('r', 4)
-				.attr(
-					'fill',
-					config.colour_palette[
-					categories.indexOf(category) % config.colour_palette.length
-					]
-				);
-			// console.log(`Circle appended for category: ${category}`);
-
-		};
-
-
+		}
 	});
 
-	if (config.CI_legend) {
-	const ciSvg = d3.select('#legend')
-		.append('div')
-		.attr('class', 'legend--item')
-		.append('svg')
-		.attr('width', 205)
-		.attr('height', 70);
+	if (!config.drawLegend && size !== 'sm') {
+		createDirectLabels({
+			categories: categories,
+			data: graphicData,
+			svg: svg,
+			xScale: x,
+			yScale: y,
+			margin: margin,
+			chartHeight: height,
+			config: config,
+			options: {
+				minSpacing: 0,
+				useLeaderLines: true,
+				leaderLineStyle: 'dashed',
+				labelStrategy: 'lastValid',
+				minLabelOffset: 5
+			}
+		});
+	}
 
-	ciSvg.append('rect')
-		.attr('x', 0)
-		.attr('y', 0)
-		.attr('width', 50)
-		.attr('height', 25)
-		.attr('fill', "#959495")
-		.attr('fill-opacity', 0.3);
+	if (config.ciLegend) {
+		const ciSvg = d3.select('#legend')
+			.append('div')
+			.attr('class', 'legend--item')
+			.append('svg')
+			.attr('width', 205)
+			.attr('height', 70);
 
-	ciSvg.append('line')
-		.attr('x1', 0)
-		.attr('y1', 12.5)
-		.attr('x2', 50)
-		.attr('y2', 12.5)
-		.attr('stroke', "#666666")
-		.attr('stroke-width', 2);
+		ciSvg.append('rect')
+			.attr('x', 0)
+			.attr('y', 0)
+			.attr('width', 50)
+			.attr('height', 25)
+			.attr('fill', "#959495")
+			.attr('fill-opacity', 0.3);
 
-	// addDirectionArrow(
-	// 	//name of your svg, normally just SVG
-	// 	ciSvg,
-	// 	//direction of arrow: left, right, up or down
-	// 	'up',
-	// 	//anchor end or start (end points the arrow towards your x value, start points away)
-	// 	'end',
-	// 	//x value
-	// 	20,
-	// 	//y value
-	// 	18,
-	// 	//alignment - left or right for vertical arrows, above or below for horizontal arrows
-	// 	'below',
-	// 	//annotation text
-	// 	config.CI_legend_interval_text,
-	// 	//wrap width
-	// 	150,
-	// 	//text adjust y
-	// 	15,
-	// 	//Text vertical align: top, middle or bottom (default is middle)
-	// 	'left'
-	// )
+		ciSvg.append('line')
+			.attr('x1', 0)
+			.attr('y1', 12.5)
+			.attr('x2', 50)
+			.attr('y2', 12.5)
+			.attr('stroke', "#666666")
+			.attr('stroke-width', 2);
 
-	addElbowArrow(
-		ciSvg,                // svgName
-		25,                   // startX
-		25,                   // startY
-		68,                   // endX
-		37,                    // endY
-		"vertical-first",     // bendDirection
-		"start",                // arrowAnchor
-		config.CI_legend_interval_text, // thisText
-		150,                  // wrapWidth
-		25,                   // textAdjustY
-		"top",               // wrapVerticalAlign
-		"#414042",            // arrowColour
-		"end"              // textAlignment
-	)
+		addElbowArrow(
+			ciSvg,                // svgName
+			25,                   // startX
+			25,                   // startY
+			68,                   // endX
+			37,                    // endY
+			"vertical-first",     // bendDirection
+			"start",                // arrowAnchor
+			config.legendIntervalText, // thisText
+			150,                  // wrapWidth
+			25,                   // textAdjustY
+			"top",               // wrapVerticalAlign
+			"#414042",            // arrowColour
+			"end"              // textAlignment
+		)
 
-	addDirectionArrow(
-		//name of your svg, normally just SVG
-		ciSvg,
-		//direction of arrow: left, right, up or down
-		'left',
-		//anchor end or start (end points the arrow towards your x value, start points away)
-		'end',
-		//x value
-		50,
-		//y value
-		7,
-		//alignment - left or right for vertical arrows, above or below for horizontal arrows
-		'right',
-		//annotation text
-		config.CI_legend_text,
-		//wrap width
-		1500,
-		//text adjust y
-		0,
-		//Text vertical align: top, middle or bottom (default is middle)
-		'bottom'
-	)
-}
+		addDirectionArrow(
+			//name of your svg, normally just SVG
+			ciSvg,
+			//direction of arrow: left, right, up or down
+			'left',
+			//anchor end or start (end points the arrow towards your x value, start points away)
+			'end',
+			//x value
+			50,
+			//y value
+			7,
+			//alignment - left or right for vertical arrows, above or below for horizontal arrows
+			'right',
+			//annotation text
+			config.legendEstimateText,
+			//wrap width
+			1500,
+			//text adjust y
+			0,
+			//Text vertical align: top, middle or bottom (default is middle)
+			'bottom'
+		)
+	}
 
 
 	// This does the y-axis label
@@ -349,7 +294,7 @@ function drawGraphic() {
 		yPosition: -10,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -364,9 +309,9 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url).then(data => {
+d3.csv(config.graphicDataURL).then(data => {
 
-	graphic_data = data.map((d) => {
+	graphicData = data.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),

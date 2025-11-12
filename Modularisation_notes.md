@@ -12,7 +12,7 @@ Import the functions that you need at the start of each script file, e.g.
 
 As script.js is now a module it is interpreted in strict mode. We need to fix some of the common errors in our scripts that are overlooked when not in strict mode. The most common error is using undeclared variables, which will likely throw a ReferenceError. Fix these by declaring them at the start of the script e.g. 
 
-`let graphic_data, size, svg; `
+`let graphicData, size, svg; `
 
 
 Replace any code that is covered by a function in helpers.js, e.g. 
@@ -21,7 +21,7 @@ Replace any code that is covered by a function in helpers.js, e.g.
     .append('g') 
     .attr('transform', `translate(0, ${height})`) 
     .append('text') 
-    .attr('x', chart_width) 
+    .attr('x', chartWidth) 
     .attr('y', 35) 
     .attr('class', 'axis--label') 
     .text(config.xAxisLabel) 
@@ -31,10 +31,10 @@ Becomes:
 
     addXAxisLabel({ 
     svgContainer: svg, 
-    xPosition: chart_width, 
+    xPosition: chartWidth, 
     yPosition: height + 35, 
     text: config.xAxisLabel, 
-    wrapWidth: chart_width 
+    wrapWidth: chartWidth 
     }); 
 
 ## General notes

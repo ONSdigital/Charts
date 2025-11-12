@@ -1,7 +1,7 @@
 config = {
-    "graphic_data_url": "data.csv",
-    "colour_palette": "#206095",
-    "line_colour": "#003C57",
+    "graphicDataURL": "data.csv",
+    "colourPalette": ONScolours.oceanBlue,
+    "lineColour": ONScolours.nightBlue,
     "sourceText": "Office for National Statistics",
     "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title, and the data is available to download below.",
     "xAxisTickFormat": {
@@ -11,15 +11,14 @@ config = {
     },
     "yAxisTickFormat": ".1f",
     "xAxisNumberFormat": ".0f",
-    //the format your date data has in data.csv:
+    //the format your date data has in data.csv
     "dateFormat": "%d/%m/%Y",
     // either "auto" or an array for the y domain e.g. [0,100]
     "yDomain": ["auto"],
     "yAxisLabel": "y axis label",
     "xAxisLabel": "x axis label",
-    "CI_legend_text": "95% confidence interval",
-    "est_text": 'Estimate',
-
+    "legendIntervalText": "Likely range (95% confidence interval)",
+    "legendEstimateText": 'Estimate',
     "margin": {
         "sm": {
             "top": 45,
@@ -57,6 +56,5 @@ config = {
     },
     "mobileBreakpoint": 510,
     "mediumBreakpoint": 600,
-    "elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-    "chart_build": {}
+    "elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

@@ -3,7 +3,9 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, xDomain, circleDist, radius;
+let graphicData, size, xDomain, circleDist, radius;
+// let overlay; 
+// let positionedOverlayData; 
 
 function positionCircles(data, x, y, radius, layoutMethod = "binned", circleDist) {
   if (layoutMethod === "force") {
@@ -118,8 +120,8 @@ function drawGraphic() {
   size = initialise(size);
 
   let margin = config.margin[size]
-  let groups = d3.groups(graphic_data, (d) => d.group)
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let groups = d3.groups(graphicData, (d) => d.group)
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
   let height = config.seriesHeight[size] * groups.length
 
   // Set up the legend
@@ -147,8 +149,10 @@ function drawGraphic() {
     });
 
     // set up dropdown
-  const dropdownData = graphic_data.sort((a,b)=>a.areanm.localeCompare(b.areanm)).map((point, index) => ({
-    id: index,
+  const dropdownData = graphicData
+  .map((point, index) => ({ ...point, originalId: index })) // Add originalId first
+  .sort((a,b)=>a.areanm.localeCompare(b.areanm)).map((point, index) => ({
+    id: point.originalId,  // Use originalId instead of sorted index,
     label: point.areanm || `Point ${index + 1}`,
     group: point.group
   }));
@@ -164,15 +168,16 @@ function drawGraphic() {
     groupKey:'group',
     onChange: (selectedValue) => {
       if (selectedValue) {
-        overlay.highlightPoint(selectedValue.id);
+        const renderIndex = positionedOverlayData.findIndex(d => d.originalId === selectedValue.id);
+        overlay.highlightPoint(renderIndex);
       } else {
         overlay.clearHighlight();
       }
     }
   });
 
-  const min = d3.min(graphic_data, (d) => +d["value"])
-  const max = d3.max(graphic_data, (d) => +d["value"])
+  const min = d3.min(graphicData, (d) => +d["value"])
+  const max = d3.max(graphicData, (d) => +d["value"])
 
   if (config.xDomain == "auto") {
     xDomain = [min, max]
@@ -183,7 +188,7 @@ function drawGraphic() {
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width])
+    .range([0, chartWidth])
     .domain(xDomain);
 
   const y = d3.scaleBand()
@@ -204,7 +209,7 @@ function drawGraphic() {
   }
 
   if (config.circleDist == "auto") {
-    circleDist = (y.bandwidth() * 0.95 - radius) / d3.max(graphic_data, d => d.value);
+    circleDist = (y.bandwidth() * 0.95 - radius) / d3.max(graphicData, d => d.value);
   } else {
     circleDist = config.circleDist * radius
   }
@@ -212,7 +217,7 @@ function drawGraphic() {
 
   let chart = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   })
@@ -255,7 +260,7 @@ function drawGraphic() {
 
     // Position circles based on selected method
   const positionedData = positionCircles(
-    [...graphic_data],
+    [...graphicData],
     x,
     y,
     radius,
@@ -265,7 +270,7 @@ function drawGraphic() {
 
   // Draw circles with positioned data
   chart.append("g")
-    .attr("fill", config.colour_palette)
+    .attr("fill", config.colourPalette)
     .attr("stroke", "white")
     .attr("stroke-width", 0.6)
     .selectAll("circle")
@@ -277,18 +282,21 @@ function drawGraphic() {
     .append("title")
     .text(d => d.areanm + ' ' + d.value);
 
+  const positionedOverlayData = positionedData.map((d, index) => ({
+    xvalue: d.x,
+    yvalue: d.y,
+    name: d.areanm,
+    group: d.group,
+    value: d.value,
+    formattedValue: d3.format(".1f")(d.value),
+    originalId: graphicData.findIndex(orig => orig === graphicData.find(g => g.areanm === d.areanm && g.group === d.group))
+  })).sort((a,b)=>a.name.localeCompare(b.name));  
+
   // Add Delaunay overlay
   const overlay = createDelaunayOverlay({
     svgContainer: chart,
-    data: positionedData.map(d => ({
-      xvalue: d.x,
-      yvalue: d.y,
-      name: d.areanm,
-      group: d.group,
-      value: d.value,
-      formattedValue: d3.format(".1f")(d.value)
-    })).sort((a,b)=>a.name.localeCompare(b.name)),
-    chart_width: chart_width,
+    data: positionedOverlayData,
+    chartWidth: chartWidth,
     height: height - margin.top - margin.bottom,
     xScale: (d)=>d,
     yScale: d3.scaleLinear().domain([0, height - margin.top - margin.bottom]).range([0, height - margin.top - margin.bottom]),
@@ -296,10 +304,14 @@ function drawGraphic() {
       xLabel: config.xAxisLabel || 'Value',
       xValueFormat: d3.format(".1f"),
       showYValue: false,
+      showSize:false,
       backgroundColor:"#fff"
     },
     shape: () => 'circle',
     circleSize: Math.PI * (radius / 2) * (radius / 2),
+    getSymbolSize: () => Math.PI * (radius / 2) * (radius / 2), // Add this
+    sizeScale: null,  // Add this
+    sizeField: null,  // Add this
     radius: 25,
     margin: margin
   });
@@ -341,11 +353,11 @@ function drawGraphic() {
 
   addAxisLabel({
     svgContainer: chart,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height - margin.top - margin.bottom + 40,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   //create link to source
@@ -359,16 +371,17 @@ function drawGraphic() {
 
 
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     // First convert string values to numbers if needed
-    data.forEach(d => {
+    data.forEach((d,index) => {
       d.value = +d.value;  // Convert to number if it's a string
+      d.originalId = index;  // Add stable ID
     });
 
 
 
-    graphic_data = data;
+    graphicData = data;
 
     // Create visualization using pym
     pymChild = new pym.Child({

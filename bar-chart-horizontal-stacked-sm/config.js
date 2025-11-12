@@ -1,6 +1,6 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": [ONScolours.oceanBlue, ONScolours.skyBlue, "#871A5B", "#AB5F8C", ONScolours.grey50],
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSdivPlatte,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"xAxisTickFormat": {
@@ -47,7 +47,7 @@ config = {
 		}
 	},
 	"chartGap": 20,
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2
@@ -66,6 +66,5 @@ config = {
 	"dropYAxis": true,
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

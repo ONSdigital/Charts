@@ -4,7 +4,7 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 const circleSize = 105; // Define size for circles in pixels
 const squareSize = 90; // Define size for squares in pixels
@@ -25,27 +25,78 @@ function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
   size = initialise(size);
 
-  let colour = d3.scaleOrdinal(config.colour_palette);
+  let colour = d3.scaleOrdinal(config.colourPalette);
 
   let margin = config.margin[size];
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
-  let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth;
 
-  const x = d3.scaleLinear().range([0, chart_width]);
+  const x = d3.scaleLinear().range([0, chartWidth]);
   const y = d3.scaleLinear().range([height, 0]);
+
+  // Create size scale for circles
+  let sizeScale = null;
+  if (config.sizeConfig.enabled && graphicData.some(d => d[config.sizeConfig.sizeField] !== undefined)) {
+    const sizeExtent = d3.extent(graphicData, d => +d[config.sizeConfig.sizeField]);
+    sizeScale = d3.scaleSqrt()
+      .domain(sizeExtent)
+      .range([config.sizeConfig.minSize, config.sizeConfig.maxSize]);
+  }
 
   svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   });
 
-  let groups = [...new Set(graphic_data.map(item => item.group))].sort();
+  let groups = [...new Set(graphicData.map(item => item.group))].sort();
 
   let shape = d3.scaleOrdinal()
     .domain(groups)
     .range(['circle', 'square', 'triangle', 'diamond']);
+
+  // Add size legend if size scaling is enabled
+  if (sizeScale) {
+    const sizeLegend = legend.append('div')
+      .attr('class', 'size-legend')
+      .style('margin-top', '20px');
+
+    sizeLegend.append('h4')
+      .text('Size Scale')
+      .style('margin', '0 0 10px 0')
+      .style('font-size', '14px')
+      .style('font-weight', '600');
+
+    const sizeExtent = sizeScale.domain();
+    const sizeLegendData = [sizeExtent[0], sizeExtent[1]];
+
+    const sizeLegendItems = sizeLegend.selectAll('div.size-legend-item')
+      .data(sizeLegendData)
+      .enter()
+      .append('div')
+      .attr('class', 'size-legend-item')
+      .style('display', 'flex')
+      .style('align-items', 'center')
+      .style('margin-bottom', '5px');
+
+    sizeLegendItems.append('svg')
+      .attr('width', 30)
+      .attr('height', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)*2))
+      .append('circle')
+      .attr('cx', 15)
+      .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)))
+      .attr('r', d => Math.sqrt(sizeScale(d) / Math.PI))
+      .attr('fill', config.colourPalette[0])
+      .attr('stroke', 'white')
+      .attr('stroke-width', 1);
+
+    sizeLegendItems.append('span')
+      .style('margin-left', '5px')
+      .style('font-size', '12px')
+      .text(d => d3.format(config.sizeLabelFormat)(d));
+  }else{
+    
 
   let legenditem = legend.selectAll('div.legend-item')
     .data(groups)
@@ -76,11 +127,15 @@ function drawGraphic() {
     .attr('class', 'legend--text')
     .style('margin-left', '5px')
     .text(d => d);
+  }
 
   // set up dropdown
-  const dropdownData = graphic_data.map((point, index) => ({
-    id: index,
-    label: point.name || `Point ${index + 1}`,
+  const dropdownData = graphicData
+  .slice() // Create copy to avoid mutating original
+  .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+  .map((point) => ({
+    id: point.originalId,  // Use stable ID
+    label: point.name || `Point ${point.originalId + 1}`,
     group: point.group
   }));
 
@@ -88,14 +143,15 @@ function drawGraphic() {
     containerId: 'select',
     options: dropdownData,
     label: 'Choose a point',
-    placeholder:"Select a data point",
+    placeholder: "Select a data point",
     mode: 'default',
     idKey: 'id',
     labelKey: 'label',
-    groupKey:'group',
+    groupKey: 'group',
     onChange: (selectedValue) => {
       if (selectedValue) {
-        overlayCleanup.highlightPoint(selectedValue.id);
+        const renderIndex = graphicData.findIndex(d => d.originalId === selectedValue.id);
+        overlayCleanup.highlightPoint(renderIndex);
       } else {
         overlayCleanup.clearHighlight();
       }
@@ -105,14 +161,14 @@ function drawGraphic() {
 
 
   if (config.xDomain == "auto") {
-    x.domain([d3.min(graphic_data, d => d.xvalue), d3.max(graphic_data, d => d.xvalue)]);
+    x.domain([d3.min(graphicData, d => d.xvalue), d3.max(graphicData, d => d.xvalue)]);
   } else {
     x.domain(config.xDomain);
   }
 
 
   if (config.yDomain == "auto") {
-    y.domain([d3.min(graphic_data, d => d.yvalue), d3.max(graphic_data, d => d.yvalue)]);
+    y.domain([d3.min(graphicData, d => d.yvalue), d3.max(graphicData, d => d.yvalue)]);
   } else {
     y.domain(config.yDomain);
   }
@@ -140,7 +196,7 @@ function drawGraphic() {
     .call(
       d3.axisLeft(y)
         .ticks(config.yAxisTicks[size])
-        .tickSize(-chart_width)
+        .tickSize(-chartWidth)
         .tickPadding(10)
         .tickFormat(d3.format(config.yAxisFormat))
     ).selectAll('line')
@@ -150,21 +206,44 @@ function drawGraphic() {
       }
     });
 
+  // Function to get symbol size based on data point
+  function getSymbolSize(d) {
+    if (shape(d.group) === 'circle' && sizeScale && d[config.sizeConfig.sizeField] !== undefined) {
+      return sizeScale(+d[config.sizeConfig.sizeField]);
+    }
+    // Return default sizes for other shapes or when size scaling is disabled
+    switch (shape(d.group)) {
+      case 'circle': return circleSize;
+      case 'square': return squareSize;
+      case 'triangle': return triangleSize;
+      case 'diamond': return diamondSize;
+      default: return circleSize;
+    }
+  }
+
   svg.append('g').selectAll('path')
-    .data(graphic_data)
+    .data(graphicData.sort((a, b) => { 
+      if (sizeScale) { 
+        return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
+      } else {
+        return 0
+      }
+    }))
     .join('path')
     .attr('d', d => {
+      const symbolSize = getSymbolSize(d);
+
       switch (shape(d.group)) {
-        case 'circle': return d3.symbol().type(d3.symbolCircle).size(circleSize)();
-        case 'square': return d3.symbol().type(d3.symbolSquare).size(squareSize)();
-        case 'triangle': return d3.symbol().type(d3.symbolTriangle).size(triangleSize)();
-        case 'diamond': return diamondShape(diamondSize / 10); // Use the custom diamond shape
+        case 'circle': return d3.symbol().type(d3.symbolCircle).size(symbolSize)();
+        case 'square': return d3.symbol().type(d3.symbolSquare).size(symbolSize)();
+        case 'triangle': return d3.symbol().type(d3.symbolTriangle).size(symbolSize)();
+        case 'diamond': return diamondShape(symbolSize / 10); // Use the custom diamond shape
       }
     })
     .attr('transform', d => `translate(${x(d.xvalue)},${y(d.yvalue)})`)
     .attr('fill', d => colour(d.group))
     .attr('fill-opacity', config.fillOpacity)
-    .attr('stroke', d => d.highlight === 'y' ? '#222' : "#fff")
+    .attr('stroke', d => d.highlight === 'y' ? '#222' : config.sizeConfig.enabled ? ONScolours.oceanBlue : "#fff")
     .attr('stroke-width', d => d.highlight === 'y' ? '1.5px' : '1px')
     .attr('stroke-linejoin', 'round')
     .attr('stroke-opacity', config.strokeOpacity);
@@ -177,21 +256,28 @@ function drawGraphic() {
   // Create Delaunay overlay for tooltips (Basic version)
   overlayCleanup = createDelaunayOverlay({
     svgContainer: svg,
-    data: graphic_data,
-    chart_width: chart_width,
+    data: graphicData.sort((a, b) => { 
+      if (sizeScale) { 
+        return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
+      } else {
+        return 0
+      }
+    }),
+    chartWidth: chartWidth,
     height: height,
     xScale: x,
     yScale: y,
     shape: shape,
-    circleSize: circleSize,
-    squareSize: squareSize,
-    triangleSize: triangleSize,
-    diamondSize: diamondSize,
+    sizeScale: sizeScale,
+    sizeField: config.sizeConfig.sizeField,
+    getSymbolSize: getSymbolSize,
     tooltipConfig: {
       xValueFormat: d3.format(config.xAxisFormat),
       yValueFormat: d3.format(config.yAxisFormat),
+      sizeValueFormat: d3.format(config.sizeLabelFormat),
       xLabel: config.xAxisLabel || 'X Value',
       yLabel: config.yAxisLabel || 'Y Value',
+      sizeLabel: config.sizeLabel || 'Size',
       groupLabel: config.groupLabel || 'Group',
       width: "250px",
       offset: { x: 3, y: 3 }
@@ -200,27 +286,32 @@ function drawGraphic() {
   });
 
   svg.selectAll('text.label')
-    .data(graphic_data.filter(d => d.highlight === 'y'))
+    .data(graphicData.filter(d => d.highlight === 'y'))
     .join('text')
     .attr('class', 'dataLabels')
     .attr('x', d => x(d.xvalue))
     .attr('y', d => y(d.yvalue))
-    .attr('dy', '-1em')
     .attr('text-anchor', 'middle')
     .attr('font-size', '14px')
     .attr('fill', '#404142')
     .text(d => d.name)
     .style('font-weight', '600')
-    .call(wrap2, 100, 1.5, 1, 1.05, 1, true, 'middle');
+    .each(function(d){
+      if(sizeScale){
+        wrap2(d3.select(this),100,Math.round(Math.sqrt(sizeScale(d[config.sizeConfig.sizeField]) / Math.PI))/14+1,1,1.05,1,true,'middle')
+      } else {
+        wrap2(d3.select(this),100,1.5,1,1.05,1,true,'middle')
+      }
+    });
 
   // This does the x-axis label
   addAxisLabel({
     svgContainer: svg,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height + 40,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   // This does the y-axis label
@@ -230,12 +321,13 @@ function drawGraphic() {
     yPosition: -10,
     text: config.yAxisLabel,
     textAnchor: "start",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
 
   //create link to source
-    addSource('source', config.sourceText)
+
+  addSource('source', config.sourceText)
 
 
 
@@ -245,10 +337,19 @@ function drawGraphic() {
   }
 }
 
-d3.csv(config.graphic_data_url)
+
+d3.csv(config.graphicDataURL,d3.autoType)
   .then(data => {
-    //load chart data
-    graphic_data = data
+    // Add unique IDs based on original data order
+    graphicData = data.map((d, index) => ({
+      ...d,
+      originalId: index  // Add stable unique ID
+    }));
+
+    // Sort for rendering (largest circles first)
+    if (config.sizeConfig.enabled) {
+      graphicData.sort((a, b) => (+b[config.sizeConfig.sizeField]) - (+a[config.sizeConfig.sizeField]));
+    }
 
     //use pym to create iframed chart dependent on specified variables
     pymChild = new pym.Child({
