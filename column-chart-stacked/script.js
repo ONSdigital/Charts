@@ -18,7 +18,6 @@ function drawGraphic() {
 	let height =
 		aspectRatio[1] / aspectRatio[0] * chartWidth;
 
-
 	//set up scales
 	const y = d3.scaleLinear().range([height, 0]);
 
@@ -28,11 +27,6 @@ function drawGraphic() {
 		.paddingInner(0.1)
 		.range([0, chartWidth])
 		.round(false);
-
-	const colour = d3
-		.scaleOrdinal()
-		.domain(graphicData.columns.slice(1))
-		.range(config.colourPalette);
 
 	//use the data to find unique entries in the date column
 	x.domain([...new Set(graphicData.map((d) => d.date))]);
@@ -110,7 +104,7 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(graphicData.columns.slice(1).reverse(), colours.reverse())
+			d3.zip(graphicData.columns.slice(1), colours)
 		)
 		.enter()
 		.append('div')
