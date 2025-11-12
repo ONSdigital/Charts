@@ -1,1 +1,0 @@
-# Horizontal stacked, clustered bar chart

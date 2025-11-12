@@ -12,33 +12,11 @@ const chartConfig = [
       ]
     },
     {
-      name: "Bar chart Split",
-      url: "https://onsdigital.github.io/Charts/split-bar-chart/",
-      tags: {
-        comparison: true,
-        distribution: true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
       name: "Bar chart small multiple",
       url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-sm/",
       tags: {
         comparison: true,
         rank: true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
-      name: "Bar chart horizontal with reference small multiple",
-      url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-with-reference-sm/",
-      tags: {
-        comparison: true,
-        "change-over-time": true
       },
       dataFiles: [
         { name: "data.csv", path: "data.csv" }
@@ -87,40 +65,6 @@ const chartConfig = [
         ]
     },
     {
-      name: "Comet plot",
-      url: "https://onsdigital.github.io/Charts/comet-plot/",
-      tags: {
-        comparison: true,
-        "change-over-time": true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
-      name: "Column small multiple",
-      url: "https://onsdigital.github.io/Charts/column-chart-sm/",
-      tags: {
-        comparison: true,
-        "change-over-time": true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
-      name: "Column chart stacked small multiple",
-      url: "https://onsdigital.github.io/Charts/column-chart-stacked-sm/",
-      tags: {
-        comparison: true,
-        "part-to-whole": true,
-        "change-over-time": true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
       name: "Column chart with confidence bands",
       url: "https://onsdigital.github.io/Charts/column-chart-ci-bands/",
       tags: {
@@ -133,30 +77,8 @@ const chartConfig = [
       ]
     },
     {
-      name: "Dotplot",
-      url: "https://onsdigital.github.io/Charts/dot-plot/",
-      tags: {
-        comparison: true,
-        distribution: true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
       name: "Heatmap",
       url: "https://onsdigital.github.io/Charts/heatmap/",
-      tags: {
-        comparison: true,
-        correlation: true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
-      name: "Heatmap by column",
-      url: "https://onsdigital.github.io/Charts/heatmap-per-column/",
       tags: {
         comparison: true,
         correlation: true
@@ -223,17 +145,6 @@ const chartConfig = [
       ]
     },
     {
-      name: "Range plot",
-      url: "https://onsdigital.github.io/Charts/range-plot/",
-      tags: {
-        comparison: true,
-        distribution: true
-      },
-      dataFiles: [
-        { name: "data.csv", path: "data.csv" }
-      ]
-    },
-    {
       name: "Confidence interval range plot",
       url: "https://onsdigital.github.io/Charts/range-ci-area-grouped/",
       tags: {
@@ -244,33 +155,11 @@ const chartConfig = [
         { name: "data.csv", path: "data.csv" }
       ]
     },
-    {
-        name: "Range plot small multiple",
-        url: "https://onsdigital.github.io/Charts/range-plot-sm/",
-        tags: {
-          comparison: true,
-          distribution: true
-        },
-        dataFiles: [
-          { name: "data.csv", path: "data.csv" }
-        ]
-      },
       {
         name: "Scatter plot",
         url: "https://onsdigital.github.io/Charts/scatter-plot/",
         tags: {
           correlation: true
-        },
-        dataFiles: [
-          { name: "data.csv", path: "data.csv" }
-        ]
-      },
-      {
-        name: "Scatter plot small multiple",
-        url: "https://onsdigital.github.io/Charts/scatter-plot-sm/",
-        tags: {
-          correlation: true,
-          comparison: true
         },
         dataFiles: [
           { name: "data.csv", path: "data.csv" }

@@ -1,1 +1,0 @@
-# Dot plot with confidence intervals (small multiple)
