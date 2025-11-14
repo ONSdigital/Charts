@@ -55,18 +55,19 @@ config = {
 		}
 	},
 	// New tick config
-	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickMethod": "interval", // "interval" or "total" 
 	"xAxisTickCount": { // for "total" method
 		"sm": 2,
 		"md": 2,
 		"lg": 6
 	},
+	"labelTicksOrSpans": "spans",// "ticks or spans"
 	"xAxisTickInterval": { // for "interval" method
 		"unit": "year", // "year", "month", "quarter", "day"
 		"step": { // every x "units"
 			"sm": 2,
-			"md": 2,
-			"lg": 2
+			"md": 1,
+			"lg": 1
 		}
 	},
 	"yAxisTicks": {
@@ -75,7 +76,7 @@ config = {
 		"lg": 8
 	},
 	"addFirstDate": false,
-	"addFinalDate": true,
+	"addFinalDate": false,
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }

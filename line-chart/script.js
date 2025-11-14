@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -6,79 +6,84 @@ let graphicData, size;
 
 let pymChild = null;
 
-function getXAxisTicks({
-	data,
-	xDataType,
+function getXAxisTickFormat({ xDataType, size, config }) {
+	if (xDataType == 'date') {
+		if (config.labelTicksOrSpans == 'spans') {
+			return (d) => "";
+		} else {
+			return (d) => d3.timeFormat(config.xAxisTickFormat[size])(d);
+		}
+	} else {
+		return (d) => d3.format(config.xAxisNumberFormat)(d);
+	}
+}
+
+function placeTimespanLabels({
+	svg,
+	x,
+	ticks,
+	height,
 	size,
 	config
 }) {
-	let ticks = [];
-	const method = config.xAxisTickMethod || "interval";
-	if (xDataType === 'date') {
-		const start = data[0].date;
-		const end = data[data.length - 1].date;
-		if (method === "total") {
-			const count = config.xAxisTickCount ? config.xAxisTickCount[size] : 5;
-			ticks = d3.scaleTime().domain([start, end]).ticks(count);
-		} else if (method === "interval") {
-			const interval = config.xAxisTickInterval || { unit: "year", step: { sm: 1, md: 1, lg: 1 } };
-			const step = typeof interval.step === 'object' ? interval.step[size] : interval.step;
-			let d3Interval;
-			switch (interval.unit) {
-				case "year":
-					d3Interval = d3.timeYear.every(step);
-					break;
-				case "month":
-					d3Interval = d3.timeMonth.every(step);
-					break;
-				case "quarter":
-					d3Interval = d3.timeMonth.every(step * 3);
-					break;
-				case "day":
-					d3Interval = d3.timeDay.every(step);
-					break;
-				default:
-					d3Interval = d3.timeYear.every(1);
-			}
-			ticks = d3Interval.range(start, d3.timeDay.offset(end, 1));
-		}
-		if (!Array.isArray(ticks)) ticks = [];
-		if (config.addFirstDate && !ticks.some(t => +t === +start)) {
-			ticks.unshift(start);
-		}
-		if (config.addFinalDate && !ticks.some(t => +t === +end)) {
-			ticks.push(end);
-		}
+	// Calculate the domain span in milliseconds
+	const [domainStart, domainEnd] = x.domain();
+	const domainSpanMs = domainEnd - domainStart;
+
+	// Convert milliseconds to months for easier comparison
+	const domainSpanMonths = domainSpanMs / (1000 * 60 * 60 * 24 * 30.44); // average month length
+
+
+	// Determine the appropriate tick and format functions
+	let tickFunction, formatFunction, timePeriodMs;
+
+	if (domainSpanMonths <= 12) {
+		// For up to 1 years, use months
+		tickFunction = d3.timeMonth;
+		formatFunction = d3.utcFormat("%b %Y");
+		timePeriodMs = 1000 * 60 * 60 * 24 * 30.44; // approximate month in ms
 	} else {
-		// Numeric axis
-		if (method === "total") {
-			const count = config.xAxisTickCount[size] || 5;
-			const extent = d3.extent(data, d => d.date);
-			ticks = d3.ticks(extent[0], extent[1], count);
-		} else if (method === "interval") {
-			const interval = config.xAxisTickInterval || { unit: "number", step: { sm: 1, md: 1, lg: 1 } };
-			const step = typeof interval.step === 'object' ? interval.step[size] : interval.step;
-			const extent = d3.extent(data, d => d.date);
-			let current = extent[0];
-			while (current <= extent[1]) {
-				ticks.push(current);
-				current += step;
-			}
-		}
-		if (!Array.isArray(ticks)) ticks = [];
-		if (config.addFirstDate && !ticks.some(t => t === data[0].date)) {
-			ticks.unshift(data[0].date);
-		}
-		if (config.addFinalDate && !ticks.some(t => t === data[data.length - 1].date)) {
-			ticks.push(data[data.length - 1].date);
-		}
+		// For more than 1 years, use years
+		tickFunction = d3.timeYear;
+		formatFunction = d3.utcFormat("%Y");
+		timePeriodMs = 1000 * 60 * 60 * 24 * 365.25; // approximate year in ms
 	}
-	// Remove duplicates and sort
-	ticks = Array.from(new Set(ticks.map(t => +t))).sort((a, b) => a - b).map(t => xDataType === 'date' ? new Date(t) : t);
-	return ticks;
+
+	// Prepare label values
+	let xLabelValues = [];
+
+	// Before first tick midpoint
+	if (ticks.length > 0 &&
+		(ticks[0].getTime() - domainStart.getTime()) > timePeriodMs / 2) {
+		xLabelValues.push(new Date(ticks[0].getTime() - timePeriodMs / 2));
+	}
+
+	// Midpoints between ticks
+	xLabelValues.push(...ticks
+		.slice(0, -1)
+		.map(
+			(d, i) => new Date((d.getTime() + ticks[i + 1].getTime()) / 2)
+		));
+
+	// After last tick midpoint
+	if (ticks.length > 0 &&
+		(domainEnd.getTime() - ticks[ticks.length - 1].getTime()) > timePeriodMs / 2) {
+		xLabelValues.push(new Date(ticks[ticks.length - 1].getTime() + timePeriodMs / 2));
+	}
+
+	// ----- Render text-only axis at midpoints -----
+	svg.append("g")
+		.attr('class', "x axis label")
+		.attr("transform", `translate(0, ${height+4})`)
+		.call(
+			d3.axisBottom(x)
+				.tickValues(xLabelValues)
+				.tickSize(0)
+				.tickFormat((d) => d3.timeFormat(config.xAxisTickFormat[size])(d))
+		)
+		.selectAll("line,path")
+		.style("display", "none"); // hide axis lines
 }
-
-
 
 function drawGraphic() {
 
@@ -284,14 +289,13 @@ function drawGraphic() {
 		)
 		.lower();
 
-	d3.selectAll('g.tick line')
-		.each(function (e) {
-			if (e == config.zeroLine) {
-				d3.select(this).attr('class', 'zero-line');
-			}
-		})
+	const ticks = getXAxisTicks({
+		data: graphicData,
+		xDataType,
+		size,
+		config
+	})
 
-	// Add the x-axis
 	svg
 		.append('g')
 		.attr('class', 'x axis')
@@ -299,15 +303,13 @@ function drawGraphic() {
 		.call(
 			d3
 				.axisBottom(x)
-				.tickValues(getXAxisTicks({
-					data: graphicData,
-					xDataType,
-					size,
-					config
-				}))
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
+				.tickValues(ticks)
+				.tickFormat(getXAxisTickFormat({ xDataType, size, config }))
 		);
+
+	if (config.labelTicksOrSpans === "spans") {
+		placeTimespanLabels({ svg, x, ticks, height, size, config })
+	}
 
 	// Add the y-axis
 	svg
