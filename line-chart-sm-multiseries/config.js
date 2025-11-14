@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "datanumeric.csv",
 	"colourPalette": ONSlinePalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",
@@ -20,8 +20,10 @@ config = {
 		"md": "%b %y",
 		"lg": "%b %y"
 	},
-	"yAxisFormat": ",.0f",
 	"dateFormat": "%d/%m/%Y",
+	"xAxisNumberFormat": ".0f",
+	"yAxisNumberFormat": ".0f",
+	"xAxisLabel": "x axis label",
 	"yAxisLabel": "y axis label",
 	"zeroLine": "0",
 	"chartEvery": {
@@ -55,10 +57,19 @@ config = {
 		}
 	},
 	"chartGap": 20,
-	"xAxisTicksEvery": { // this is the interval of ticks on the x axis but it will always show the first and last date.
-		"sm": 4,
-		"md": 4,
-		"lg": 4
+	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickCount": { // for "total" method
+		"sm": 2,
+		"md": 2,
+		"lg": 6
+	},
+	"xAxisTickInterval": { // for "interval" method
+		"unit": "year", // "year", "month", "quarter", "day"
+		"step": { // every x "units"
+			"sm": 2,
+			"md": 2,
+			"lg": 2
+		}
 	},
 	"yAxisTicks": {
 		"sm": 7,
