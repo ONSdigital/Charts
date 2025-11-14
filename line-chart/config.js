@@ -71,6 +71,7 @@ config = {
 			"lg": 2
 		}
 	},
+	"labelSpans":true,
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
