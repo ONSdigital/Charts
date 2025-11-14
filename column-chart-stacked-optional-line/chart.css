@@ -1,0 +1,17 @@
+.dataLabels {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.dataLine {
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.diamondStyle{
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  fill:white;
+}

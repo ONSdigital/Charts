@@ -1,1 +1,0 @@
-# Horizontal bar chart with reference line (small multiple)
