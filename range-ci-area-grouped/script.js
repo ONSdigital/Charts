@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArro
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, groups, xDomain, divs, svgs, charts;
+let graphicData, size, groups, xDomain, divs, svgs, charts;
 
 function drawGraphic() {
 
@@ -11,22 +11,22 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 
-	groups = d3.groups(graphic_data, (d) => d.group);
+	groups = d3.groups(graphicData, (d) => d.group);
 
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphic_data.columns.length; i++) {
+		for (i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
-				d3.min(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 			max = d3.max([
 				max,
-				d3.max(graphic_data, (d) => +d[graphic_data.columns[i]])
+				d3.max(graphicData, (d) => +d[graphicData.columns[i]])
 			]);
 		}
 		xDomain = [min, max];
@@ -35,12 +35,12 @@ function drawGraphic() {
 	}
 
 	//set up scales
-	const x = d3.scaleLinear().range([0, chart_width]).domain(xDomain);
+	const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
-	const series = [...new Set(graphic_data.map(d => d.series))]
+	const series = [...new Set(graphicData.map(d => d.series))]
 	const colour = d3
 		.scaleOrdinal()
-		.range(config.colour_palette)
+		.range(config.colourPalette)
 		.domain(series);
 
 	// create the y scale in groups
@@ -69,7 +69,7 @@ function drawGraphic() {
 
 	charts = addSvg({
 		svgParent: divs,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: (d) => d[2] + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -94,7 +94,7 @@ function drawGraphic() {
 						.append('line')
 						.attr('class', 'y-tick-line')
 						.attr('x1', 0)
-						.attr('x2', chart_width)
+						.attr('x2', chartWidth)
 						.attr('y1', y)
 						.attr('y2', y)
 						.attr('stroke', '#ccc')
@@ -150,7 +150,7 @@ function drawGraphic() {
 			const baseY = groups.filter((f) => f[0] == d.group)[0][3](d.name) - 5;
 			// if clustered is true, move series 0 up 10, series 1 down 10 only 
 			if (config.clustered === true) {
-				const series = [...new Set(graphic_data.map(d => d.series))];
+				const series = [...new Set(graphicData.map(d => d.series))];
 				if (d.series === series[0]) return baseY - 10;
 				if (d.series === series[1]) return baseY + 10;
 			}
@@ -162,7 +162,7 @@ function drawGraphic() {
 			const baseY = groups.filter((f) => f[0] == d.group)[0][3](d.name);
 			let y = baseY;
 			if (config.clustered === true) {
-				const series = [...new Set(graphic_data.map(d => d.series))];
+				const series = [...new Set(graphicData.map(d => d.series))];
 				if (d.series === series[0]) y = baseY - 10;
 				if (d.series === series[1]) y = baseY + 10;
 			}
@@ -180,11 +180,11 @@ function drawGraphic() {
 		if (i == groups.length - 1) {
 			addAxisLabel({
 				svgContainer: d3.select(this),
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: d[2] + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 	});
@@ -198,7 +198,7 @@ function drawGraphic() {
 		.data(
 			d3.zip(
 				series,
-				config.colour_palette
+				config.colourPalette
 			)
 		)
 		.enter()
@@ -220,7 +220,7 @@ function drawGraphic() {
 			return d[0];
 		});
 
-	if (config.CI_legend) {
+	if (config.ciLegend) {
 
 
 		const ciSvg = legend
@@ -260,7 +260,7 @@ function drawGraphic() {
 			47,                    // endY
 			"vertical-first",     // bendDirection
 			"start",                // arrowAnchor
-			config.CI_legend_text, // thisText
+			config.legendEstimateText, // thisText
 			150,                  // wrapWidth
 			10,                   // textAdjustY
 			"top",               // wrapVerticalAlign
@@ -282,7 +282,7 @@ function drawGraphic() {
 			//alignment - left or right for vertical arrows, above or below for horizontal arrows
 			'right',
 			//annotation text
-			config.CI_legend_interval_text,
+			config.legendIntervalText,
 			//wrap width
 			150,
 			//text adjust y
@@ -302,9 +302,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

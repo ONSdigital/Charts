@@ -1,1 +1,0 @@
-# Scatter plot (small multiple)

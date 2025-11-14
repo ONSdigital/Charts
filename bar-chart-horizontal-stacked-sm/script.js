@@ -3,25 +3,25 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
     //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
     size = initialise(size);
 
     const aspectRatio = config.aspectRatio[size];
-    const chartsPerRow = config.chart_every[size];
+    const chartsPerRow = config.chartEvery[size];
 
     // Get categories from the keys used in the stack generator
-    const categories = graphic_data.columns.slice(2);
+    const categories = graphicData.columns.slice(2);
 
-    // Nest the graphic_data by the 'series' column
-    let nested_data = d3.group(graphic_data, (d) => d.series);
+    // Nest the graphicData by the 'series' column
+    let nestedData = d3.group(graphicData, (d) => d.series);
 
     // Create a container div for each small multiple
     let chartContainers = graphic
         .selectAll('.chart-container')
-        .data(Array.from(nested_data))
+        .data(Array.from(nestedData))
         .join('div')
         .attr('class', 'chart-container');
 
@@ -29,7 +29,7 @@ function drawGraphic() {
         let chartPosition = chartIndex % chartsPerRow;
         let margin = { ...config.margin[size] };
         let chartGap = config?.chartGap || 10;
-        let chart_width = calculateChartWidth({
+        let chartWidth = calculateChartWidth({
             screenWidth: parseInt(graphic.style('width')),
             chartEvery: chartsPerRow,
             chartMargin: margin,
@@ -42,13 +42,13 @@ function drawGraphic() {
             }
         }
 
-        let height = aspectRatio[1] / aspectRatio[0] * chart_width;
+        let height = aspectRatio[1] / aspectRatio[0] * chartWidth;
 
         // Flip axes: x is value, y is category
-        const x = d3.scaleLinear().range([0, chart_width]);
+        const x = d3.scaleLinear().range([0, chartWidth]);
         const y = d3.scaleBand().paddingOuter(0.0).paddingInner(0.1).range([0, height]).round(true);
 
-        y.domain([...new Set(graphic_data.map((d) => d.date))]);
+        y.domain([...new Set(graphicData.map((d) => d.date))]);
 
         const stack = d3.stack()
             .keys(categories)
@@ -56,7 +56,7 @@ function drawGraphic() {
             .order(d3[config.stackOrder]);
 
         const series = stack(data);
-        const seriesAll = stack(graphic_data);
+        const seriesAll = stack(graphicData);
 
         if (config.yDomain == 'auto') {
             x.domain(d3.extent(seriesAll.flat(2)));
@@ -67,7 +67,7 @@ function drawGraphic() {
         // Create an SVG element
         const svg = addSvg({
             svgParent: container,
-            chart_width: chart_width,
+            chartWidth: chartWidth,
             height: height + margin.top + margin.bottom,
             margin: margin
         });
@@ -77,7 +77,7 @@ function drawGraphic() {
             .selectAll('g')
             .data(series)
             .join('g')
-            .attr('fill', (d, i) => config.colour_palette[i])
+            .attr('fill', (d, i) => config.colourPalette[i])
             .selectAll('rect')
             .data((d) => d)
             .join('rect')
@@ -145,7 +145,7 @@ function drawGraphic() {
             svgContainer: svg,
             yPosition: -margin.top / 2,
             text: seriesName,
-            wrapWidth: (chart_width + margin.right)
+            wrapWidth: (chartWidth + margin.right)
         });
 
         // This does the y-axis label
@@ -156,7 +156,7 @@ function drawGraphic() {
                 yPosition: 0,
                 text: config.yAxisLabel,
                 textAnchor: "start",
-                wrapWidth: chart_width
+                wrapWidth: chartWidth
             });
         }
 
@@ -164,11 +164,11 @@ function drawGraphic() {
         if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...chartContainers].length - 1) {
             addAxisLabel({
                 svgContainer: svg,
-                xPosition: chart_width,
+                xPosition: chartWidth,
                 yPosition: height + 35,
                 text: config.xAxisLabel,
                 textAnchor: "end",
-                wrapWidth: chart_width
+                wrapWidth: chartWidth
             });
         }
 
@@ -176,7 +176,7 @@ function drawGraphic() {
     //     if (chartIndex !== 0) {
     //         addAnnotationRangeHorizontal(
     //             svg,
-    //             chart_width,
+    //             chartWidth,
     //             y("two years") + (4 - chartIndex) * y.step(),
     //             y("five years") + y.bandwidth(),
     //             chartIndex == 1 ? 'N/A' : "",
@@ -196,7 +196,7 @@ function drawGraphic() {
     // Set up the legend
     let legenditem = legend
         .selectAll('div.legend--item')
-        .data(categories.map((cat, i) => [cat, config.colour_palette[i]]))
+        .data(categories.map((cat, i) => [cat, config.colourPalette[i]]))
         .enter()
         .append('div')
         .attr('class', 'legend--item');
@@ -233,8 +233,8 @@ function drawGraphic() {
 
 // Load the data
 
-d3.csv(config.graphic_data_url).then((data) => {
-    graphic_data = data;
+d3.csv(config.graphicDataURL).then((data) => {
+    graphicData = data;
 
     pymChild = new pym.Child({
         renderCallback: drawGraphic

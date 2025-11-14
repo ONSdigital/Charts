@@ -1,1 +1,0 @@
-# Animated scatter plot

@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels }
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
 let legend = d3.select('#legend');
-let graphic_data, size;
+let graphicData, size;
 
 let pymChild = null;
 
@@ -34,18 +34,18 @@ function drawGraphic() {
 	size = initialise(size);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
 	// Create an SVG element at the top so all functions can use it
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	});
 
-	let uniqueOptions = [...new Set(graphic_data.map((d) => d.option))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
 
 	const optns = select
 		.append('div')
@@ -125,9 +125,9 @@ function drawGraphic() {
 		// Clear existing legend
 		d3.select('#legend').selectAll('div.legend--item').remove();
 
-		// Filter data for the selected option
-		let filteredData = graphic_data.filter((d) => d.option === selectedOption);
-		if (filteredData.length === 0) return;
+	// Filter data for the selected option
+	let filteredData = graphicData.filter((d) => d.option === selectedOption);
+	if (filteredData.length === 0) return;
 
 		// Get categories (series) for this option
 		const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
@@ -139,7 +139,7 @@ function drawGraphic() {
 		const [minY, maxY] = getYDomainMinMax({
 			minType: yDomainMin,
 			maxType: yDomainMax,
-			allData: graphic_data,
+			allData: graphicData,
 			filteredData: filteredData,
 			categories
 		});
@@ -158,7 +158,7 @@ function drawGraphic() {
 			.call(
 				d3.axisLeft(y)
 					.ticks(config.yAxisTicks[size])
-					.tickSize(-chart_width)
+					.tickSize(-chartWidth)
 					.tickFormat('')
 			);
 	}
@@ -168,7 +168,7 @@ function drawGraphic() {
         category: category,
         index: index,
         data: filteredData,
-        color: config.colour_palette[index % config.colour_palette.length]
+        color: config.colourPalette[index % config.colourPalette.length]
     }));
     
     // Create line generator
@@ -225,7 +225,7 @@ function drawGraphic() {
             index: index,
             x: x(lastDatum.date),
             y: y(lastDatum[category]),
-            color: config.colour_palette[index % config.colour_palette.length]
+            color: config.colourPalette[index % config.colourPalette.length]
         };
     });
     
@@ -280,7 +280,7 @@ function drawGraphic() {
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colour_palette[i % config.colour_palette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
@@ -323,11 +323,11 @@ function drawGraphic() {
 	
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== 'option');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -337,12 +337,12 @@ function drawGraphic() {
 	let x;
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => d.date))
+			.range([0, chartWidth]);
 	} else {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => +d.date))
+			.range([0, chartWidth]);
 	}
 
 	const y = d3
@@ -359,8 +359,8 @@ function drawGraphic() {
 		const [minY, maxY] = getYDomainMinMax({
 			minType: yDomainMin,
 			maxType: yDomainMax,
-			allData: graphic_data,
-			filteredData: graphic_data,
+			allData: graphicData,
+			filteredData: graphicData,
 			categories: categories
 		});
 		y.domain([minY, maxY]);
@@ -449,7 +449,7 @@ function drawGraphic() {
 			d3
 				.axisBottom(x)
 				.tickValues(getXAxisTicks({
-					data: graphic_data,
+					data: graphicData,
 					xDataType,
 					size,
 					config
@@ -474,17 +474,17 @@ function drawGraphic() {
 		yPosition: -15,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + margin.bottom - 25,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -508,7 +508,7 @@ function drawGraphic() {
 		.call(
 			d3.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickSize(-chart_width)
+				.tickSize(-chartWidth)
 				.tickFormat('')
 		)
 		.lower();
@@ -521,8 +521,8 @@ function drawGraphic() {
 
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),
