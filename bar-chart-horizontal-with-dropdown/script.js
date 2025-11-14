@@ -16,8 +16,6 @@ function drawGraphic() {
 
 	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
 
-	console.log(`dropdownData contains: ${JSON.stringify(uniqueOptions)}`);
-
 	const optns = select
 		.append('div')
 		.attr('id', 'sel')
@@ -51,7 +49,6 @@ function drawGraphic() {
 
 	$('#optionsSelect').chosen().change(function () {
 		const selectedOption = $(this).val();
-		console.log(`Selected option: ${selectedOption}`);
 
 		if (selectedOption) {
 			changeData(selectedOption);
@@ -84,8 +81,6 @@ function drawGraphic() {
 
 			// Sort the data 
 			.sort((a, b) => y.domain().indexOf(a.name) - y.domain().indexOf(b.name));
-
-		console.log('Filtered data:', filteredData);
 
 
 		// Update the y scale domain based on the filtered data

@@ -70,12 +70,10 @@ function drawGraphic() {
 
 	if (config.addFirstDate == true) {
 		tickValues.push(graphicData[0].date)
-		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
 		tickValues.push(graphicData[graphicData.length - 1].date)
-		console.log("Last date added")
 	}
 
 	const y = d3
@@ -92,8 +90,6 @@ function drawGraphic() {
 
 	// Generate the stacked data
 	const stackedData = stack(graphicData);
-
-	// console.log("stackedData:", stackedData);
 
 	// Define the area generator
 	const area = d3
@@ -173,8 +169,6 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 				.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 		};
 	});
-
-	// console.log('Final data structure:',graphicData);
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({

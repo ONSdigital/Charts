@@ -1,0 +1,15 @@
+name,xvalue,yvalue,group,highlight
+Construction,0.681288045,0.5,Category 3,
+Manufacturing,0.983661406,0.86,Category 1,
+Construction,0.681288045,0.4,Category 2,
+Arts,0.481757214,0.2,Category 2,
+Administrative,0.209665614,0.6,Category 1,
+Wholesale trade,0.176396639,0.4,Category 1,
+Administrative and supportive service activities,0.047910167,0.15,Category 1,y
+Other services,0.207848719,0.2,Category 2,y
+Manufacturing,0.603661406,0.6,Category 4,
+Construction,0.21288045,-0.05,Category 4,
+Arts,0.281757214,0.4,Category 4,
+Administrative,0.409665614,0.8,Category 3,
+Wholesale trade,0.276396639,0.5,Category 3,
+Administrative and supportive service activities,0.147910167,0.25,Category 2,

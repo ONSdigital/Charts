@@ -48,7 +48,6 @@ function dataURLtoFile(dataurl, filename) {
 }
 
 function downloadImage(el) {
-  console.log(el);
   let content = el.contentWindow.document.body;
   // let heading=document.createElement("h3")
   //console.log(text, body);

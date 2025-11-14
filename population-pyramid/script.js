@@ -655,7 +655,6 @@ function changeDataFromDropdown(areacd) {
         );
 
     if (config.hasInteractiveComparison && tidydataComparisonPercentage) {
-        console.log("interactive comparison", tidydataComparisonPercentage)
         d3.select('#comparisonLineLeft')
             .attr('opacity', 1)
             .transition()
@@ -678,7 +677,6 @@ function changeDataFromDropdown(areacd) {
                 ) + 'l 0 ' + -y.bandwidth()
             );
     } else {
-        console.log("static comparison")
         if (config.hasComparison) {
             addComparisonLines();
         }
