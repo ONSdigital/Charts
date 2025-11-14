@@ -4,9 +4,10 @@ let graphic = d3.select("#graphic");
 let pymChild = null;
 let graphicData, size, svg;
 
-function drawGraphic() {
 
-  //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
+function drawGraphic() {
+  // Set up some of the basics and return the size value ('sm', 'md' or 'lg')
+  // To override breakpoints, pass as: initialise(size, { mediumBreakpoint: 500 })
   size = initialise(size);
 
   let margin = config.margin[size];

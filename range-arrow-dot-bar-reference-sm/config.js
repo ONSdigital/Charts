@@ -57,8 +57,6 @@ config = {
     md: 2,
     lg: 4,
   },
-  mobileBreakpoint: 510,
-  mediumBreakpoint: 600,
   dropYAxis: true,
   elements: { select: 0, nav: 0, legend: 0, titles: 0 },
   chartBuild: {},
