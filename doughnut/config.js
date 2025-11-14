@@ -1,6 +1,6 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ONSpalette,
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "",
 	"dataLabels": {
@@ -8,7 +8,6 @@ config = {
 		"numberFormat": ".1%"
 	},
 	"centreLabel": "Sikh identity",
-
 	"chartHeight": {
 		"sm": 400,
 		"md": 400,
@@ -36,6 +35,5 @@ config = {
 	},
 	"mobileBreakpoint": 510,
 	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

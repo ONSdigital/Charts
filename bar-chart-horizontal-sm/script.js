@@ -2,23 +2,23 @@ import { initialise, wrap, addSvg, calculateChartWidth, addDataLabels, addChartT
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	// Nest the graphic_data by the 'series' column
-	let nested_data = d3.groups(graphic_data, (d) => d.series);
+	// Nest the graphicData by the 'series' column
+	let nestedData = d3.groups(graphicData, (d) => d.series);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
-	let namesArray = [...nested_data][0][1].map(d => d.name);
+	let namesArray = [...nestedData][0][1].map(d => d.name);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
@@ -36,13 +36,13 @@ function drawGraphic() {
 			12;
 
 
-		let chartsPerRow = config.chart_every[size];
+		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
 		let chartGap = config.optional?.chartGap || 10;
 
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -57,7 +57,7 @@ function drawGraphic() {
 		}
 
 		//set up scales
-		const x = d3.scaleLinear().range([0, chart_width]);
+		const x = d3.scaleLinear().range([0, chartWidth]);
 
 		const y = d3
 			.scaleBand()
@@ -86,18 +86,18 @@ function drawGraphic() {
 		//create svg for chart
 		svg = addSvg({
 			svgParent: container,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
 
 		if (config.xDomain == 'auto') {
-			if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
+			if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
 				x.domain([
 					0,
-					d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+					d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
 			} else {
-				x.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
+				x.domain(d3.extent(graphicData.map(({ value }) => Number(value))))
 			}
 		} else {
 			x.domain(config.xDomain);
@@ -133,13 +133,13 @@ function drawGraphic() {
 			.attr('y', (d) => y(d.name))
 			.attr('width', (d) => Math.abs(x(d.value) - x(0)))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette);
+			.attr('fill', config.colourPalette);
 
 		if (config.dataLabels.show == true) {
 			addDataLabels({
 				svgContainer: svg,
 				data: data,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				labelPositionFactor: 7,
 				xScaleFunction: x,
 				yScaleFunction: y
@@ -151,18 +151,18 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -15,
 			text: seriesName,
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		})
 
 		// This does the x-axis label
-		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nested_data].length - 1) {
+		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...nestedData].length - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 				});
 		}
 	}
@@ -181,9 +181,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic

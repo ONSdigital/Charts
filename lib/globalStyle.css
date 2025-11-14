@@ -382,6 +382,11 @@ h5#source {
   margin: 0;
 }
 
+.dataLabels {
+  font-weight: 600;
+  font-size: 14px;
+}
+
 @media (max-width: 400px) {
   #legend {
     flex-flow: column;

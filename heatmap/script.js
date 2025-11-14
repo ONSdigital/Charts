@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addSource } from "../lib/helpers.js";
 const graphic = d3.select('#graphic');
 const legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg, columnNames, numbers, dataPivoted, breaks, colour, key, legendx;
+let graphicData, size, svg, columnNames, numbers, dataPivoted, breaks, colour, key, legendx;
 
 function drawGraphic() {
 
@@ -11,16 +11,16 @@ function drawGraphic() {
 	size = initialise(size);
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 	let height =
-		config.seriesHeight[size] * graphic_data.length +
-		3 * (graphic_data.length - 1);
+		config.seriesHeight[size] * graphicData.length +
+		3 * (graphicData.length - 1);
 
-	columnNames = graphic_data.columns.slice(1);
+	columnNames = graphicData.columns.slice(1);
 
-	numbers = graphic_data
+	numbers = graphicData
 		.flatMap(function (d) {
 			return Object.values(d)
 				.map(Number)
@@ -29,7 +29,7 @@ function drawGraphic() {
 		.sort(d3.ascending);
 
 	dataPivoted = Array.from(
-		pivot(graphic_data, graphic_data.columns.slice(1), 'region', 'value')
+		pivot(graphicData, graphicData.columns.slice(1), 'region', 'value')
 	);
 
 	if (config.breaks == 'jenks') {
@@ -59,16 +59,16 @@ function drawGraphic() {
 		.paddingOuter(0)
 		.paddingInner(
 			((columnNames.length - 1) * 3) /
-				(chart_width - (columnNames.length - 1) * 3)
+				(chartWidth - (columnNames.length - 1) * 3)
 		)
-		.range([0, chart_width])
+		.range([0, chartWidth])
 		.round(true)
 		.domain(columnNames);
 
 	const y = d3
 		.scaleBand()
 		.paddingOuter(0)
-		.paddingInner(((graphic_data.length - 1) * 3) / (graphic_data.length * 30))
+		.paddingInner(((graphicData.length - 1) * 3) / (graphicData.length * 30))
 		.range([0, height])
 		.round(true);
 
@@ -76,10 +76,10 @@ function drawGraphic() {
 		.scaleThreshold()
 		.domain(breaks.slice(1, 6))
 		.range(
-			Array.isArray(config.colour_palette)
-				? config.colour_palette
+			Array.isArray(config.colourPalette)
+				? config.colourPalette
 				: chroma
-					.scale(chroma.brewer[config.colour_palette])
+					.scale(chroma.brewer[config.colourPalette])
 					.colors(config.numberOfBreaks)
 		);
 
@@ -89,7 +89,7 @@ function drawGraphic() {
 		.append('svg')
 		.attr('id', 'key')
 		.attr('aria-hidden', true)
-		.attr('width', chart_width + margin.left + margin.right)
+		.attr('width', chartWidth + margin.left + margin.right)
 		.attr('height', 75)
 		.append('g')
 		.attr('transform', 'translate(' + margin.left + ',35)');
@@ -97,7 +97,7 @@ function drawGraphic() {
 	legendx = d3
 		.scaleLinear()
 		.domain([breaks[0], breaks[config.numberOfBreaks]])
-		.range([0, chart_width]);
+		.range([0, chartWidth]);
 
 	key
 		.append('g')
@@ -146,7 +146,7 @@ function drawGraphic() {
 		.attr('opacity', 0);
 
 	//use the data to find unique entries in the name column
-	y.domain([...new Set(graphic_data.map((d) => d.name))]);
+	y.domain([...new Set(graphicData.map((d) => d.name))]);
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
@@ -157,7 +157,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -230,30 +230,15 @@ function drawGraphic() {
 		.selectAll('rect')
 		.data(dataPivoted)
 		.join('rect')
+		.attr('class', (d) => {
+			return 'dataRect ' + d.region.toLowerCase().replace(/ /g, '') + '-Xrect ' + d.name.toLowerCase().replace(/ /g, '') + '-Yrect';
+		})
 		.attr('fill', (d) => colour(+d.value))
 		.attr('x', (d) => x(d.region))
 		.attr('y', (d) => y(d.name))
 		.attr('width', x.bandwidth())
 		.attr('height', y.bandwidth())
-		.on('mouseover', function (d) {
-			d3.select('#keytext')
-				.text(
-					d3.format(config.dataLabelsNumberFormat)(
-						d3.select(this).data()[0].value
-					)
-				)
-				.transition()
-				.attr('x', legendx(+d3.select(this).data()[0].value));
-
-			d3.select('#keysymbol path').attr('opacity', 1);
-
-			d3.select('#keysymbol')
-				.transition()
-				.attr(
-					'transform',
-					'translate(' + legendx(+d3.select(this).data()[0].value) + ',0)'
-				);
-		})
+		.on('mouseover', mouseover)
 		.on('mouseout', mouseout);
 
 	svg
@@ -261,7 +246,9 @@ function drawGraphic() {
 		.selectAll('text')
 		.data(dataPivoted)
 		.join('text')
-		.attr('class', 'dataLabels')
+		.attr('class', (d) => {
+			return 'dataLabels ' + d.region.toLowerCase().replace(/ /g, '') + '-Xlabel ' + d.name.toLowerCase().replace(/ /g, '') + '-Ylabel';
+		})
 		.attr('fill', (d) => {
 			// Calculate contrast ratio and decide text color
 			const rectColor = colour(+d.value);
@@ -288,6 +275,59 @@ function drawGraphic() {
 function mouseout() {
 	d3.select('#keytext').text('');
 	d3.select('#keysymbol path').attr('opacity', 0);
+	d3.selectAll('.dataRect').classed('hovered', false);
+	d3.selectAll('.dataRect').classed('opaque', false);
+	d3.selectAll('.dataLabels').classed('opaque', false);
+}
+
+function mouseover() {
+	const hoveredY = d3.select(this).data()[0].name.toLowerCase().replace(/ /g, '');
+	const hoveredX = d3.select(this).data()[0].region.toLowerCase().replace(/ /g, '');
+	highlightrows(hoveredX, hoveredY);
+
+	d3.select('#keytext')
+		.text(
+			d3.format(config.dataLabelsNumberFormat)(
+				d3.select(this).data()[0].value
+			)
+		)
+		.transition()
+		.attr('x', legendx(+d3.select(this).data()[0].value));
+
+	d3.select('#keysymbol path').attr('opacity', 1);
+
+	d3.select(this).classed('hovered', true);
+
+	d3.select('#keysymbol')
+		.transition()
+		.attr(
+			'transform',
+			'translate(' + legendx(+d3.select(this).data()[0].value) + ',0)'
+		);
+}
+
+function highlightrows(hoveredX, hoveredY) {
+	d3.selectAll('.dataRect').each(function (d) {
+		if (
+			d3.select(this).attr('class').includes(hoveredY + '-Yrect') ||
+			d3.select(this).attr('class').includes(hoveredX + '-Xrect')
+		) {
+			d3.select(this).classed('opaque', false);
+		} else {
+			d3.select(this).classed('opaque', true);
+		}
+	});
+
+	d3.selectAll('.dataLabels').each(function (d) {
+		if (
+			d3.select(this).attr('class').includes(hoveredY + '-Ylabel') ||
+			d3.select(this).attr('class').includes(hoveredX + '-Xlabel')
+		) {
+			d3.select(this).classed('opaque', false);
+		} else {
+			d3.select(this).classed('opaque', true);
+		}
+	});
 }
 
 
@@ -311,9 +351,9 @@ function* pivot(data, columns, name, value, opts) {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({
