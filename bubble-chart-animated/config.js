@@ -3,7 +3,7 @@ config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is your accessibility summary, dvcXXXX",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"xDomain": "auto", //auto for auto domain or array [0,50] to define your own
 	"yDomain": "auto", //auto for auto domain or array [0,50] to define your own
 	"rDomain": [25, 2700], //input the domain for the circles
