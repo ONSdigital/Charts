@@ -62,8 +62,6 @@ config = {
 		"md": 5,
 		"lg": 4
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"legendColumns": 4,
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
