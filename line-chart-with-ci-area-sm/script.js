@@ -13,16 +13,11 @@ function drawGraphic() {
 	// Get categories from the keys used in the stack generator
 	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1).filter((k) => k !== 'series')
-	//  console.log(categories);
-
 	const fulldataKeys = Object.keys(graphicData[0]).slice(1).filter((k) => k !== 'series')
-
-	// console.log(fulldataKeys);
 
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -92,8 +87,6 @@ function drawGraphic() {
 				.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
 				.context(null)
 				.defined(d => d[category] !== null) // Only plot lines where we have values
-
-			// console.log(data)
 
 			svg
 				.append('path')
@@ -318,7 +311,6 @@ function drawGraphic() {
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data
