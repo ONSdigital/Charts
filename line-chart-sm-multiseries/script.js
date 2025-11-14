@@ -6,6 +6,79 @@ let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, chartWidth;
 
+function getXAxisTicks({
+	data,
+	xDataType,
+	size,
+	config
+}) {
+	let ticks = [];
+	const method = config.xAxisTickMethod || "interval";
+	if (xDataType === 'date') {
+		const start = data[0].date;
+		const end = data[data.length - 1].date;
+		if (method === "total") {
+			const count = config.xAxisTickCount ? config.xAxisTickCount[size] : 5;
+			ticks = d3.scaleTime().domain([start, end]).ticks(count);
+		} else if (method === "interval") {
+			const interval = config.xAxisTickInterval || { unit: "year", step: { sm: 1, md: 1, lg: 1 } };
+			const step = typeof interval.step === 'object' ? interval.step[size] : interval.step;
+			let d3Interval;
+			switch (interval.unit) {
+				case "year":
+					d3Interval = d3.timeYear.every(step);
+					break;
+				case "month":
+					d3Interval = d3.timeMonth.every(step);
+					break;
+				case "quarter":
+					d3Interval = d3.timeMonth.every(step * 3);
+					break;
+				case "day":
+					d3Interval = d3.timeDay.every(step);
+					break;
+				default:
+					d3Interval = d3.timeYear.every(1);
+			}
+			ticks = d3Interval.range(start, d3.timeDay.offset(end, 1));
+		}
+		if (!Array.isArray(ticks)) ticks = [];
+		if (config.addFirstDate && !ticks.some(t => +t === +start)) {
+			ticks.unshift(start);
+		}
+		if (config.addFinalDate && !ticks.some(t => +t === +end)) {
+			ticks.push(end);
+		}
+	} else {
+		// Numeric axis
+		if (method === "total") {
+			const count = config.xAxisTickCount[size] || 5;
+			const extent = d3.extent(data, d => d.date);
+			ticks = d3.ticks(extent[0], extent[1], count);
+		} else if (method === "interval") {
+			const interval = config.xAxisTickInterval || { unit: "number", step: { sm: 1, md: 1, lg: 1 } };
+			const step = typeof interval.step === 'object' ? interval.step[size] : interval.step;
+			const extent = d3.extent(data, d => d.date);
+			let current = extent[0];
+			while (current <= extent[1]) {
+				ticks.push(current);
+				current += step;
+			}
+		}
+		if (!Array.isArray(ticks)) ticks = [];
+		if (config.addFirstDate && !ticks.some(t => t === data[0].date)) {
+			ticks.unshift(data[0].date);
+		}
+		if (config.addFinalDate && !ticks.some(t => t === data[data.length - 1].date)) {
+			ticks.push(data[data.length - 1].date);
+		}
+	}
+	// Remove duplicates and sort
+	ticks = Array.from(new Set(ticks.map(t => +t))).sort((a, b) => a - b).map(t => xDataType === 'date' ? new Date(t) : t);
+	return ticks;
+}
+
+
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
@@ -13,7 +86,6 @@ function drawGraphic() {
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
-	// console.log(categories)
 
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
@@ -25,6 +97,13 @@ function drawGraphic() {
 		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
+
+	let xDataType;
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
+		xDataType = 'date';
+	} else {
+		xDataType = 'numeric';
+	}
 
 	function drawChart(container, seriesName, data, chartIndex) {
 
@@ -60,11 +139,17 @@ function drawGraphic() {
 			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
-		const x = d3
-			.scaleTime()
-			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chartWidth]);
+		let x;
 
+		if (xDataType == 'date') {
+			x = d3.scaleTime()
+				.domain(d3.extent(graphicData, (d) => d.date))
+				.range([0, chartWidth]);
+		} else {
+			x = d3.scaleLinear()
+				.domain(d3.extent(graphicData, (d) => +d.date))
+				.range([0, chartWidth]);
+		}
 
 		const y = d3
 			.scaleLinear()
@@ -141,21 +226,14 @@ function drawGraphic() {
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues([...new Set(graphicData
-						.map(function (d) {
-							return d.date.getTime()
-						}))] //just get unique dates as seconds past unix epoch
-						.map(function (d) {
-							return new Date(d)
-						}) //map back to dates
-						.sort(function (a, b) {
-							return a - b
-						})
-						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= data.length - config.xAxisTicksEvery[size] || i == data.length - 1 //Rob's fussy comment about labelling the last date
-						})
-					)
-					.tickFormat(d3.timeFormat(config.xAxisTickFormat[size]))
+					.tickValues(getXAxisTicks({
+					data: graphicData,
+					xDataType,
+					size,
+					config
+					}))
+					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
+					: d3.format(config.xAxisNumberFormat)(d))
 			);
 
 
@@ -165,9 +243,9 @@ function drawGraphic() {
 			.attr('class', 'y axis numeric')
 			.call(d3.axisLeft(y)
 				.ticks(config.yAxisTicks[size])
-				.tickFormat((d) => config.freeYAxisScales ? d3.format(config.yAxisFormat)(d) :
-					config.dropYAxis ? (chartPosition == 0 ? d3.format(config.yAxisFormat)(d) : "") :
-						d3.format(config.yAxisFormat)(d)).tickSize(0))
+				.tickFormat((d) => config.freeYAxisScales ? d3.format(config.yAxisNumberFormat)(d) :
+					config.dropYAxis ? (chartPosition == 0 ? d3.format(config.yAxisNumberFormat)(d) : "") :
+						d3.format(config.yAxisNumberFormat)(d)).tickSize(0))
 
 			.selectAll('.tick text')
 			.call(wrap, margin.left - 10);
@@ -180,7 +258,9 @@ function drawGraphic() {
 			yPosition: -margin.top / 1.5,
 			text: seriesName,
 			wrapWidth: (chartWidth + margin.right)
-		})
+		});
+
+		console.log("hello")
 
 
 		// This does the y-axis label
@@ -251,13 +331,23 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		return {
-			date: d3.timeParse(config.dateFormat)(d.date),
-			...Object.entries(d)
-				.filter(([key]) => key !== 'date')
-				.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
-				.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-		};
+		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+			return {
+				date: d3.timeParse(config.dateFormat)(d.date),
+				...Object.entries(d)
+					.filter(([key]) => key !== 'date')
+					.map(([key, value])  => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+			}
+		} else {
+			return {
+				date: (+d.date),
+				...Object.entries(d)
+					.filter(([key]) => key !== 'date')
+					.map(([key, value])  => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+			}
+		}
 	});
 
 	// Use pym to create an iframed chart dependent on specified variables
