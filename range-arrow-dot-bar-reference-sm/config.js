@@ -8,7 +8,7 @@ config = {
   colourPaletteArrows: [ONScolours.oceanBlue, ONScolours.coralPink],
   colourPaletteBar: [ONScolours.skyBlue],
   sourceText: "Office for National Statistics",
-  accessibleSummary: "Here is the screen reader text describing the chart.",
+  accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   dataLabels: {
     show: false,
     numberFormat: ".0%",
