@@ -1,9 +1,8 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ["#206095", "#F66068 ", "#A09FA0"],
-	"sourceText": "Population estimates from the Office for National Statistics",
-	"accessibleSummary":
-		"This chart has been hidden from screen readers. The main message is summarised in the chart title and data is available to download below.",
+	"graphicDataURL": "data.csv",
+	"colourPalette": [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50],
+	"sourceText": "Office for National Statistics",
+	"accessibleSummary": "This chart has been hidden from screen readers. The main message is summarised in the chart title and data is available to download below.",
 	// options are "ascending", "descending", "auto" (to order based on whether total is ascending or descending), or "none"
 	"yAxisSort": "none",
 	"showXAxis": false,
@@ -136,8 +135,6 @@ config = {
 		"sm": 160,
 		"md": 160,
 		"lg": 160
-	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600
+	}
 }
 

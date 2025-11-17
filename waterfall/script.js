@@ -305,7 +305,7 @@ function drawGraphic() {
     .attr("x2", (d) => chart_width)
     .attr("y1", (d) => d.y)
     .attr("y2", (d) => d.y)
-    .attr("stroke", "#d9d9d9")
+    .attr("stroke", ONScolours.grey20)
     .attr("stroke-width", "1px");
 
   // Add option for zero line at x = 0
@@ -331,7 +331,7 @@ function drawGraphic() {
     .attr("x2", (d) => d.x)
     .attr("y1", (d,i) => i == 0 ? d.y + bandwidth/2 : d.y - bandwidth/2)
     .attr("y2", (d,i) => i == 0 ? d.y - flagOffset : d.y + flagOffset)
-    .attr('stroke', "#a7a7a7")
+    .attr('stroke', ONScolours.grey50)
     .attr("stroke-width", "2px")
 
   charts
@@ -345,9 +345,9 @@ function drawGraphic() {
     .attr("y", (d,i) => i == 0 ? d.y-flagOffset : d.y+flagOffset-11)
     .attr("width", 11)
     .attr("height", 11)
-    .attr("stroke", "#a7a7a7")
+    .attr("stroke", ONScolours.grey50)
     .attr("stroke-width", 1.5)
-    .attr("fill", (d,i) => i == 0 ? "white" : "#a7a7a7")
+    .attr("fill", (d,i) => i == 0 ? "white" : ONScolours.grey50)
    	.attr('transform', (d, i) => i == 0 ? `rotate(45 ${d.x} ${d.y-flagOffset+11/2})` : `rotate(45 ${d.x} ${d.y+flagOffset-11/2})`) 
 
   charts
@@ -391,7 +391,7 @@ function drawGraphic() {
         .attr("x1", (d) => d[7][0].x)
         .attr("x2", (d) => d[7][0].x)
         .attr("y1", (d) => d[2] + flagOffset + 10)
-        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? "#003C57" : "#871A5B")
+        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? ONScolours.nightBlue : ONScolours.beetrootPurple)
 
       netChangeG
         .append("line")
@@ -399,7 +399,7 @@ function drawGraphic() {
         .attr("x1", (d) => d[7][1].x)
         .attr("x2", (d) => d[7][1].x)
         .attr("y1", (d) => d[2] + flagOffset + 10)
-        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? "#003C57" : "#871A5B")
+        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? ONScolours.nightBlue : ONScolours.beetrootPurple)
 
       netChangeG
         .append("text")
@@ -407,7 +407,7 @@ function drawGraphic() {
         .attr("class","dataLabels")
         .attr("x", (d) => Math.min(d[7][0].x, d[7][1].x) + Math.abs(d[7][0].x - d[7][1].x)/2)
         .attr("y", (d) => d[2] + flagOffset + 35)
-        .attr("fill", "#414042")
+        .attr("fill", ONScolours.grey100)
         .text((d) => config.netChange.title + config.netChange.prefix + locale.format(config.netChange.format)(d[7][1].value - d[7][0].value) + config.netChange.suffix)
      
       // calculate height of wrapped text within net change bars and set height of accompanying bar  
@@ -433,7 +433,7 @@ function drawGraphic() {
       .attr("x2", (d) => d.x1)
       .attr("y1", (d) => d.y)
       .attr("y2",(d) => -bandwidth + d.y)
-      .attr("stroke", "#C6C6C6")
+      .attr("stroke", ONScolours.grey30)
       .attr("stroke-width", "1.5px")
       .style("stroke-dasharray", "4 4")
       .attr("display", (d, i) => (i === 0 ? "none" : "block"));
@@ -450,8 +450,8 @@ function drawGraphic() {
       .attr("y2", (d) => d.y)
       .attr("stroke", (d) =>
         d.start > d.end
-          ? config.colour_palette[1]
-          : config.colour_palette[0]
+          ? config.colourPalette[1]
+          : config.colourPalette[0]
       )
       .attr("stroke-width", "3px")
       .attr("marker-end", (d) =>
@@ -470,7 +470,7 @@ function drawGraphic() {
       .attr("cx", (d) => d.x2)
       .attr("cy", (d) => d.y)
       .attr("r", config.dotSize)
-      .attr("fill", config.colour_palette[2]);
+      .attr("fill", config.colourPalette[2]);
 
     charts
       .selectAll("nochangeline.line")
@@ -481,7 +481,7 @@ function drawGraphic() {
       .attr("x2", (d) => d.x2)
       .attr("y1", (d) => d.y)
       .attr("y2", (d) => d.y)
-      .attr("stroke", config.colour_palette[2])
+      .attr("stroke", config.colourPalette[2])
       .attr("stroke-width", "3px")
 
     //add change data labels
@@ -515,7 +515,7 @@ function drawGraphic() {
             return "end"
           }
         })
-        .attr("fill", (datum) => datum.x1 < datum.x2 ? config.colour_palette[0] : config.colour_palette[1])
+        .attr("fill", (datum) => datum.x1 < datum.x2 ? config.colourPalette[0] : config.colourPalette[1])
         .attr("stroke", "rgba(255,255,255,0.7)")
         .attr("stroke-width", 4)
         .attr("paint-order", "stroke")
@@ -532,7 +532,7 @@ function drawGraphic() {
         .attr("y", (d) => d.y)
         .attr("dy", 6)
         .attr("text-anchor", (d) => d.labelOffset > 0 ? "start" : "end")
-        .attr("fill", config.colour_palette[2])
+        .attr("fill", config.colourPalette[2])
         .attr("stroke", "rgba(255,255,255,0.7)")
         .attr("stroke-width", 4)
         .attr("paint-order", "stroke")
@@ -599,7 +599,7 @@ function drawGraphic() {
         .attr("x", 0)
         .attr("text-anchor", "start")
         .attr("class", "mintext legendLabel")
-        .attr("fill", config.colour_palette[0])
+        .attr("fill", config.colourPalette[0])
         .text(config.legendLabels.min);
 
       //this measures how wide the "min" value is so that we can place the legend items responsively
@@ -607,7 +607,7 @@ function drawGraphic() {
 
       var_group
         .append("line")
-        .attr("stroke", config.colour_palette[0])
+        .attr("stroke", config.colourPalette[0])
         .attr("stroke-width", "3px")
         .attr("y1", 26)
         .attr("y2", 26)
@@ -627,7 +627,7 @@ function drawGraphic() {
         )
         .attr("text-anchor", "start")
         .attr("class", "maxtext legendLabel")
-        .attr("fill", config.colour_palette[0])
+        .attr("fill", config.colourPalette[0])
         .text(config.legendLabels.max);
 
       //this measures how wide the "max" value is so that we can place the legend items responsively
@@ -646,13 +646,13 @@ function drawGraphic() {
         )
         .attr("text-anchor", "middle")
         .attr("class", "legendLabel")
-        .attr("fill", config.colour_palette[0])
+        .attr("fill", config.colourPalette[0])
       .text(config.legendText[0]);
 
     //Decrease legend item
     var_group2
       .append("line")
-      .attr("stroke", config.colour_palette[1])
+      .attr("stroke", config.colourPalette[1])
       .attr("stroke-width", "3px")
       .attr("y1", 26)
       .attr("y2", 26)
@@ -671,7 +671,7 @@ function drawGraphic() {
       .attr("x", 0)
       .attr("text-anchor", "start")
       .attr("class", "legendLabel")
-      .attr("fill", config.colour_palette[1])
+      .attr("fill", config.colourPalette[1])
       .text(config.legendLabels.max);
 
     var_group2
@@ -686,7 +686,7 @@ function drawGraphic() {
       )
       .attr("text-anchor", "start")
       .attr("class", "legendLabel")
-      .attr("fill", config.colour_palette[1])
+      .attr("fill", config.colourPalette[1])
       .text(config.legendLabels.min);
 
     var_group2
@@ -702,7 +702,7 @@ function drawGraphic() {
       )
       .attr("text-anchor", "middle")
       .attr("class", "legendLabel")
-      .attr("fill", config.colour_palette[1])
+      .attr("fill", config.colourPalette[1])
       .text(config.legendText[1]);
 
     //No contribution to change legend item
@@ -710,7 +710,7 @@ function drawGraphic() {
       .append("circle")
       .attr("id","noChangeLegendCircle")
       .attr("r", config.dotSize)
-      .attr("fill", config.colour_palette[2])
+      .attr("fill", config.colourPalette[2])
       .attr("cx", config.legendItemWidth/2)
       .attr("cy", 26);
 
@@ -721,7 +721,7 @@ function drawGraphic() {
       .attr("text-anchor", "middle")
       .attr("class", "legendLabel")
       .attr("id","noChangeLegendText")
-      .attr("fill", config.colour_palette[2])
+      .attr("fill", config.colourPalette[2])
       .text(config.legendText[2])
       .call(wrap,config.legendItemWidth)
 
@@ -747,7 +747,7 @@ function drawGraphic() {
   }
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
   //load chart data
   graphic_data = data;
 
