@@ -5,9 +5,9 @@ config = {
   lineSeries: "Total",
   //line will only be shown if the markers are also shown
   colourPalette: ONSpalette,
-  lineColour: "#222222",
+  lineColour: ONScolours.black,
   sourceText: "Office for National Statistics",
-  accessibleSummary: "Here is the screenreader text describing the chart.",
+  accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   xAxisTickFormat: {
     sm: "%b %Y",
     md: "%b %Y",

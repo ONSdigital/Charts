@@ -37,12 +37,10 @@ function drawGraphic() {
 	//Labelling the first and/or last bar if needed
 	if (config.addFirstDate == true) {
 		tickValues.push(graphicData[0].date)
-		console.log("First date added")
 	}
 
 	if (config.addFinalDate == true) {
 		tickValues.push(graphicData[graphicData.length - 1].date)
-		console.log("Last date added")
 	}
 
 	//set up yAxis generator
@@ -59,8 +57,6 @@ function drawGraphic() {
 	} else {
 		xDataType = 'numeric';
 	}
-
-	// console.log(xDataType)
 
 	let xTime = d3.timeFormat(config.xAxisTickFormat[size])
 

@@ -2,7 +2,7 @@ config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": true,
 		"numberFormat": ".1%"
