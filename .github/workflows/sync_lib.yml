@@ -1,0 +1,83 @@
+name: Sync lib folder
+
+on:
+  push:
+    branches: ['main']
+    paths: ['lib/**']
+  workflow_dispatch:
+
+jobs:
+  sync-repos:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout source repository for lib
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        path: source-repo
+    
+    - name: Checkout target repository for charts-lib
+      uses: actions/checkout@v4
+      with:
+        repository: ONSdigital/charts-lib
+        token: ${{ secrets.SYNC_LIB }}
+        fetch-depth: 0
+        path: charts-lib
+
+    - name: Checkout target repository for otherCharts
+      uses: actions/checkout@v4
+      with:
+        repository: ONSdigital/otherCharts
+        token: ${{ secrets.SYNC_LIB }}
+        fetch-depth: 0
+        path: otherCharts
+    
+    - name: Clear existing lib folders in target repo
+      run: |
+        # Clear lib folder
+        find charts-lib -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+
+        rm -rf otherCharts/lib
+        mkdir -p otherCharts/lib
+    
+    - name: Copy files to target repo (excluding GitHub Actions)
+      run: |
+        # Copy
+        rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ charts-lib/
+        rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ otherCharts/lib/
+    
+    - name: Commit and push changes to charts-lib
+      run: |
+        cd charts-lib
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add all changes
+        git add --all
+        
+        # Only commit if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit to charts-lib"
+        else
+          git commit -m "Sync from lib: ${{ github.sha }}"
+          git push
+        fi
+
+    - name: Commit and push changes to otherCharts
+      run: |
+        cd otherCharts
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add all changes
+        git add lib/
+        
+        # Only commit if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit to otherCharts"
+        else
+          git commit -m "Sync from lib: ${{ github.sha }}"
+          git push
+        fi
+    

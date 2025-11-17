@@ -1,0 +1,29 @@
+.arrowheadMarker {
+  /* stroke-linecap: round; */
+  stroke-linejoin: round;
+}
+
+.arrowLegend {
+  fill: #414042;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.diamondStyle {
+  stroke-linejoin: round;
+}
+
+.dataLabels {
+  /* font-weight: 600; */
+  font-size: 14px;
+}
+
+.legendConnector {
+  stroke-width: 0.5px;
+  stroke: gray;
+}
+
+.legend--item {
+  display: flex;
+  align-items: center;
+}

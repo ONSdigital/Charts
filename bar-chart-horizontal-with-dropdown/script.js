@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource } from
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
 let pymChild = null;
-let x, y, graphic_data, size, svg;
+let x, y, graphicData, size, svg;
 
 
 function drawGraphic() {
@@ -14,9 +14,7 @@ function drawGraphic() {
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	let uniqueOptions = [...new Set(graphic_data.map((d) => d.option))];
-
-	console.log(`dropdownData contains: ${JSON.stringify(uniqueOptions)}`);
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
 
 	const optns = select
 		.append('div')
@@ -51,7 +49,6 @@ function drawGraphic() {
 
 	$('#optionsSelect').chosen().change(function () {
 		const selectedOption = $(this).val();
-		console.log(`Selected option: ${selectedOption}`);
 
 		if (selectedOption) {
 			changeData(selectedOption);
@@ -78,14 +75,12 @@ function drawGraphic() {
 
 	function changeData(selectedOption) {
 
-		let filteredData = graphic_data.filter(
+		let filteredData = graphicData.filter(
 			(d) => d.option === selectedOption
 		)
 
 			// Sort the data 
 			.sort((a, b) => y.domain().indexOf(a.name) - y.domain().indexOf(b.name));
-
-		console.log('Filtered data:', filteredData);
 
 
 		// Update the y scale domain based on the filtered data
@@ -121,7 +116,7 @@ function drawGraphic() {
 			// .attr('width', 0)
 			.attr('width', d => d.value < 0 ? Math.abs(x(d.value) - x(0)) : x(d.value) - x(0))
 			.attr('height', y.bandwidth())
-			.attr('fill', config.colour_palette)
+			.attr('fill', config.colourPalette)
 			.merge(bars)
 			.transition()
 			.duration(1250)
@@ -136,7 +131,7 @@ function drawGraphic() {
 			addDataLabels({
 				svgContainer: svg,
 				data: filteredData,
-				chart_width: chart_width,
+				chartWidth: chartWidth,
 				labelPositionFactor: 7,
 				xScaleFunction: x,
 				yScaleFunction: y
@@ -155,7 +150,7 @@ function drawGraphic() {
 					const i = d3.interpolate(startValue, d.value);
 
 					// Create a position interpolator
-					const xi = d3.interpolate(labelPositions.get(d.name) || x(0), x(d.value) - (x(d.value) - x(0) < chart_width / 10 ? -3 : 3));
+					const xi = d3.interpolate(labelPositions.get(d.name) || x(0), x(d.value) - (x(d.value) - x(0) < chartWidth / 10 ? -3 : 3));
 
 					return function (t) {
 						// Calculate the interpolated value
@@ -173,28 +168,28 @@ function drawGraphic() {
 	}
 
 	let margin = config.margin[size];
-	let chart_width =
+	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
 
-	let uniqueNames = [...new Set(graphic_data.map((d) => d.name))];
+	let uniqueNames = [...new Set(graphicData.map((d) => d.name))];
 	let height =
 		config.seriesHeight[size] * uniqueNames.length +
 		10 * (uniqueNames.length - 1) +
 		12;
 
 	//set up scales
-	x = d3.scaleLinear().range([0, chart_width]);
+	x = d3.scaleLinear().range([0, chartWidth]);
 
 	y = d3
 		.scaleBand()
 		.paddingOuter(0.2)
-		.paddingInner(((graphic_data.length - 1) * 10) / (graphic_data.length * 30))
+		.paddingInner(((graphicData.length - 1) * 10) / (graphicData.length * 30))
 		.range([0, height])
 		.round(true);
 
 	//use the data to find unique entries in the name column
-	y.domain([...new Set(graphic_data.map((d) => d.name))]);
+	y.domain([...new Set(graphicData.map((d) => d.name))]);
 
 	//set up yAxis generator
 	let yAxis = d3.axisLeft(y).tickSize(0).tickPadding(10);
@@ -209,7 +204,7 @@ function drawGraphic() {
 	//create svg for chart
 	svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -223,12 +218,12 @@ function drawGraphic() {
 		.call(wrap, margin.left - 10);
 
 	if (config.xDomain == 'auto') {
-		if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
+		if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
 			x.domain([
 				0,
-				d3.max(graphic_data.map(({ value }) => Number(value)))]); //modified so it converts string to number
+				d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
 		} else {
-			x.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
+			x.domain(d3.extent(graphicData.map(({ value }) => Number(value))))
 		}
 	} else {
 		x.domain(config.xDomain);
@@ -247,17 +242,17 @@ function drawGraphic() {
 			}
 		});
 
-	console.log(`Length of graphic_data: ${graphic_data.length}`);
+	console.log(`Length of graphicData: ${graphicData.length}`);
 
 
 	// This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -273,9 +268,9 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
-	graphic_data = data;
+	graphicData = data;
 
 	//use pym to create iframed chart dependent on specified variables
 	pymChild = new pym.Child({

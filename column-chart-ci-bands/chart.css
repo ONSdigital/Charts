@@ -1,16 +1,5 @@
-.dataLabels{
-  font-weight: 600;
-  font-size: 14px;
-}
 
-.chart-container {
-  display: inline-block;
-  vertical-align: top;
-}
 
-.chart-container:last-child {
-  margin-right: 0;
-}
 
 .legend--icon--rect {
   height: 14px;

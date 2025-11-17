@@ -1,0 +1,73 @@
+div.chartLabel>p {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+div#titles {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+/* buttons */
+fieldset {
+    border: none;
+    padding: 0 0 0 0;
+    forced-color-adjust: none;
+}
+
+input[type="radio"] {
+    opacity: 0;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+}
+
+.grid-cell {
+    display: block;
+    border: 2px solid #206095;
+}
+
+.grid-cell label {
+    font-size: 16px;
+    padding-right: 17px;
+    padding-left: 17px;
+    display: block;
+    max-width: 240px;
+    min-height: 100%;
+    padding-top: 3px;
+    padding-bottom: 4px;
+    margin-right:-1px;
+    color: #206095;
+    background: white;
+}
+
+input[type="radio"]:checked+label {
+    color: white;
+    background: #206095;
+}
+
+input[type='radio']:not(:checked)+label:hover {
+    background-color: rgba(31, 95, 147, 0.2);
+    cursor: pointer;
+}
+
+input[type='radio']:focus-visible+label {
+    position: relative;
+    box-shadow: 0 0 0px 3pt orange;
+    outline: 2px dotted transparent;
+    z-index: 10;
+}
+
+.legend--icon--circle{
+    margin-right: 8px;
+}

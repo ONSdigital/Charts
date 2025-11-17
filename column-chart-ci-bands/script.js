@@ -2,7 +2,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -11,11 +11,11 @@ function drawGraphic() {
 
     const aspectRatio = config.aspectRatio[size];
     let margin = config.margin[size];
-    let chart_width =
+    let chartWidth =
         parseInt(graphic.style('width')) - margin.left - margin.right;
     //height is set by the aspect ratio
     let height =
-        aspectRatio[1] / aspectRatio[0] * chart_width;
+        aspectRatio[1] / aspectRatio[0] * chartWidth;
 
     //set up scales
     const y = d3.scaleLinear().range([height, 0]);
@@ -24,18 +24,18 @@ function drawGraphic() {
         .scaleBand()
         .paddingOuter(0.0)
         .paddingInner(0.1)
-        .range([0, chart_width])
+        .range([0, chartWidth])
         .round(false);
 
     //use the data to find unique entries in the xvalue column
-    x.domain([...new Set(graphic_data.map((d) => d.xvalue))]);
+    x.domain([...new Set(graphicData.map((d) => d.xvalue))]);
 
     // determine what type of variable xvalue is
     let xDataType;
 
-    if (Object.prototype.toString.call(graphic_data[0].xvalue) === '[object Date]') {
+    if (Object.prototype.toString.call(graphicData[0].xvalue) === '[object Date]') {
         xDataType = 'date';
-    } else if (!isNaN(Number(graphic_data[0].xvalue))) {
+    } else if (!isNaN(Number(graphicData[0].xvalue))) {
         xDataType = 'numeric';
     } else {
         xDataType = 'categorical';
@@ -55,18 +55,16 @@ function drawGraphic() {
 
     //Labelling the first and/or last bar if needed
     if (config.addFirstDate == true) {
-        tickValues.push(graphic_data[0].xvalue)
-        console.log("First date added")
+        tickValues.push(graphicData[0].xvalue)
     }
 
     if (config.addFinalDate == true) {
-        tickValues.push(graphic_data[graphic_data.length - 1].xvalue)
-        console.log("Last date added")
+        tickValues.push(graphicData[graphicData.length - 1].xvalue)
     }
 
     //set up yAxis generator
     let yAxis = d3.axisLeft(y)
-        .tickSize(-chart_width)
+        .tickSize(-chartWidth)
         .tickPadding(10)
         .ticks(config.yAxisTicks[size])
         .tickFormat(d3.format(config.yAxisTickFormat));
@@ -89,21 +87,21 @@ function drawGraphic() {
     //create svg for chart
     svg = addSvg({
         svgParent: graphic,
-        chart_width: chart_width,
+        chartWidth: chartWidth,
         height: height + margin.top + margin.bottom,
         margin: margin
     })
 
     // set ydomain based on max upperCI and min lowerCI
     if (config.yDomain == 'auto') {
-        if (d3.min(graphic_data.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
+        if (d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
             y.domain([
                 0,
-                d3.max(graphic_data.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
+                d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
         } else {
             y.domain([
-                d3.min(graphic_data.map(({ lowerCI }) => Number(lowerCI))),
-                d3.max(graphic_data.map(({ upperCI }) => Number(upperCI)))
+                d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))),
+                d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))
             ])
         }
     } else {
@@ -131,18 +129,18 @@ function drawGraphic() {
 
     svg
         .selectAll('rect')
-        .data(graphic_data)
+        .data(graphicData)
         .join('rect')
         .attr('y', (d) => y(d.upperCI))
         .attr('x', (d) => x(d.xvalue))
         .attr('height', (d) => Math.abs(y(d.upperCI) - y(d.lowerCI)))
         .attr('width', x.bandwidth())
-        .attr('fill', config.colour_palette)
+        .attr('fill', config.colourPalette)
         .attr("opacity", 0.65);
 
     svg
         .selectAll('estLine')
-        .data(graphic_data)
+        .data(graphicData)
         .attr("class", "estLine")
         .join('line')
         .attr('x1', (d) => x(d.xvalue))
@@ -151,17 +149,17 @@ function drawGraphic() {
         .attr('y2', (d) => y((d.yvalue)))
         .attr('stroke-width', 3)
         .attr('stroke-linecap', 'butt')
-        .attr('stroke', config.line_colour)
+        .attr('stroke', config.lineColour)
         .attr('fill', 'none');
 
     // This does the x-axis label
     addAxisLabel({
         svgContainer: svg,
-        xPosition: chart_width,
+        xPosition: chartWidth,
         yPosition: height + 55,
         text: config.xAxisLabel,
         textAnchor: "end",
-        wrapWidth: chart_width
+        wrapWidth: chartWidth
     });
 
     // This does the y-axis label
@@ -171,7 +169,7 @@ function drawGraphic() {
         yPosition: -20,
         text: config.yAxisLabel,
         textAnchor: "start",
-        wrapWidth: chart_width
+        wrapWidth: chartWidth
     });
 
     // Set up the legend
@@ -186,13 +184,13 @@ function drawGraphic() {
 
     legenditemCI.append('div')
         .attr('class', 'legend--icon--rect')
-        .style('background-color', config.colour_palette);
+        .style('background-color', config.colourPalette);
 
 
     legenditemCI.append('div')
         .append('p')
         .attr('class', 'legend--text')
-        .html(config.CI_legend_text);
+        .html(config.legendIntervalText);
 
     var legenditem = d3
         .select('#legend')
@@ -205,13 +203,13 @@ function drawGraphic() {
     legenditem
         .append('div')
         .attr('class', 'legend--icon--estline')
-        .style('background-color', config.line_colour)
+        .style('background-color', config.lineColour)
 
     legenditem
         .append('div')
         .append('p')
         .attr('class', 'legend--text')
-        .html(config.est_text);
+        .html(config.legendEstimateText);
 
 
     //create link to source
@@ -223,11 +221,11 @@ function drawGraphic() {
     }
 }
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
     .then((data) => {
         let parseTime = d3.timeParse(config.dateFormat);
         //load chart data
-        graphic_data = data;
+        graphicData = data;
 
         data.forEach((d, i) => {
 

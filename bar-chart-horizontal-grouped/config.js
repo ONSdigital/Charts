@@ -1,10 +1,10 @@
 config={
-  "graphic_data_url": "data.csv",
+  "graphicDataURL": "data.csv",
   "legendLabels": {"min":"2015-2019", "max":"2020"},
   //the keys match the column names
-  "colour_palette": "#206095",
+  "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
-  "accessibleSummary":"This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title.",
+  "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "dataLabels":{
     "show":true,
     "numberFormat":".0%"
@@ -42,7 +42,5 @@ config={
     "sm":3,
     "md":8,
     "lg":10
-  },
-  "mobileBreakpoint": 510,
-  "mediumBreakpoint": 600
+  }
 };

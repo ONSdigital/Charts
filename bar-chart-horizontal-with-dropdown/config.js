@@ -1,9 +1,9 @@
 config = {
 
-	"graphic_data_url": "data.csv",
-	"colour_palette": "#27A0CC",
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screenreader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": true,
 		"numberFormat": ".0%"
@@ -12,7 +12,6 @@ config = {
 	// either "auto" or an array for the x domain e.g. [0,100]
 	"xAxisLabel": "x axis label",
 	"defaultOption": "option1",
-
 	"margin": {
 		"sm": {
 			"top": 15,
@@ -43,8 +42,5 @@ config = {
 		"md": 8,
 		"lg": 10
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

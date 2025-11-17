@@ -1,14 +1,13 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": ["#206095", "#27A0CC", "#871A5B", "#A8BD3A", "#F66068", "#003C57"],
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": true,
 		"numberFormat": ".1%"
 	},
 	"centreLabel": "Sikh identity",
-
 	"chartHeight": {
 		"sm": 400,
 		"md": 400,
@@ -34,8 +33,5 @@ config = {
 			"left": 60
 		}
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
-	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 },
-	"chart_build": {}
+	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

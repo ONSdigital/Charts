@@ -1,0 +1,11 @@
+name,xvalue,yvalue,group,size,highlight
+"Point A",0.10,0.20,"Group 1",50,"n"
+"Point B",0.15,0.20,"Group 1",75,"n"
+"Point C",0.18,0.18,"Group 1",25,"y"
+"Point D",0.18,0.22,"Group 1",60,"n"
+"Point E",0.18,-0.08,"Group 1",100,"y"
+"Point F",0.60,0.60,"Group 1",55,"n"
+"Point G",0.75,0.70,"Group 1",78,"n"
+"Point H",0.88,0.88,"Group 1",45,"y"
+"Point I",0.98,0.92,"Group 1",90,"n"
+"Point J",0.78,-0.02,"Group 1",30,"y"

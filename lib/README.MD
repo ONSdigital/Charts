@@ -40,13 +40,13 @@ const chartWidth = calculateChartWidth({
 const svgParent = d3.select('#graphic');
 const svg = addSvg({
   svgParent: svgParent,
-  chart_width: chartWidth,
+  chartWidth: chartWidth,
   height: 400,
   margin: { top: 30, right: 20, bottom: 50, left: 50 }
 });
 
 // 4. Add data labels (requires d3.format and a 'config' object, not provided in this example)
-// addDataLabels({ svgContainer: svg, data: someData, chart_width: chartWidth, xScaleFunction: yourXScale, yScaleFunction: yourYScale });
+// addDataLabels({ svgContainer: svg, data: someData, chartWidth: chartWidth, xScaleFunction: yourXScale, yScaleFunction: yourYScale });
 
 // 5. Setup arrowhead for annotations
 setupArrowhead(svg);
@@ -73,7 +73,7 @@ addAnnotationArrow(
 ```
 
 ## Note on `config` and `d3`:
-Several helper functions (e.g., initialise, addDataLabels) expect a global config object to be available, and many rely on the d3 library. Ensure d3 is installed in your project and passed into your chart files as needed, and that a config object is structured according to your project's needs (e.g., config.accessibleSummary, config.dataLabels.numberFormat).
+Several helper functions (e.g., initialise, addDataLabels) expect a global config object to be available, and many rely on the d3 library. Ensure d3 is installed in your project and passed into your chart files as needed, and that a config object is structured according to your project's needs (e.g., config.essential.accessibleSummary, config.essential.dataLabels.numberFormat).
 
 ## Importing Global CSS
 

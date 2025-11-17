@@ -2,11 +2,6 @@ svg{
   font-family:"Open Sans"
 }
 
-.dataLabels{
-  font-weight: 600;
-  font-size: 16px;
-  forced-color-adjust: revert;
-}
 
 svg.chart g.x g.tick text{
   font-weight: 700;
@@ -27,4 +22,84 @@ g.y g.tick text{
 
 #keysymbol path{
   transform: rotate(180deg) ;
+}
+
+
+.hovered{
+  stroke: orange;
+  stroke-width: 3px;
+  opacity: 1;
+}
+
+.opaque{
+  opacity: 0.4;
+}
+
+.opaque-text{
+  fill: '#ffffff';
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
+}
+
+.blankrow
+{
+    height: 64px !important; /* overwrites any other rules */
+    background-color: #FFFFFF;
+}
+
+.info{
+  background-color: #F5F5F6;
+  padding: 6px 20px;
+  margin: 0px 0px 20px 0px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.icon{
+  width: 40px;
+  margin: 0 20px 0 0;
+}
+
+.bold{
+  font-weight: 600;
+}
+
+.hidden{
+  display: none;
+}
+
+#tableheader{
+  font-weight: 600;
+}
+
+.deselect{
+  margin: auto 12px;
+  height: 36px;
+  padding: 0 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+table{
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr{
+  border-spacing: 0;
+}
+
+th{
+  text-align: left;
+  padding: .5rem 0 .5rem 1rem;
+  border-bottom: 2px solid #707071;
+}
+
+td{
+  height: 64px !important; /* overwrites any other rules */
+  padding: .5rem 0 .5rem 1rem;
+  border-top: 1px solid #707071;
 }

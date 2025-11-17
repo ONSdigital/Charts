@@ -1,9 +1,10 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": "YlGnBu",
+	// Added a dataNumeric.csv to the folder to demonstrate a numeric x axis
+	"graphicDataURL": "data.csv",
+	"colourPalette": "YlGnBu",
 	// colour brewer palette or custom array of colours
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screenreader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabelsNumberFormat": ".0f",
 	"xAxisLabel": "x axis label",
 	"numberOfBreaks": 5,
@@ -12,7 +13,15 @@ config = {
 	"cascadeX": true,
 	//turns on or off cascading xaxis label
 	"legendFormat": ".0f",
-
+	// If you have categorical x axis, set to true to show all ticks
+	"xTicksAll": true,
+	// If you have numeric data on the x axis:
+	"xAxisTicks": [], // leave empty to use automatic ticks instead, specify n below
+	"xAxisTicksAuto": {
+		"sm": 3,
+		"md": 3,
+		"lg": 4
+	},
 	"margin": {
 		"sm": {
 			"top": 180,
@@ -38,7 +47,5 @@ config = {
 		"md": 40,
 		"lg": 40
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

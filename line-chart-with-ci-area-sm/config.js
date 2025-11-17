@@ -1,15 +1,8 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": [
-		"#206095",
-		"#871A5B",
-		"#27A0CC",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
-	"sourceText": "Annual Population Survey from the Office for National Statistics ",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSlinePalette,
+	"sourceText": "Office for National Statistics ",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -20,7 +13,6 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"xDomain": [-13, 25],
 	// either "auto" or an array for the x domain e.g. [0,2000] - DOES NOT WORK
 	"xAxisTickFormat": {
@@ -31,12 +23,11 @@ config = {
 	"yAxisFormat": ",.0%",
 	"dateFormat": "%Y",
 	"yAxisLabel": "Pay Gap",
-	"CI_legend": true,
-	"CI_legend_interval_text": "Likely range (95% confidence interval)",
-	"CI_legend_text": "Estimated value",
+	"ciLegend": true,
+	"legendIntervalText": "Likely range (95% confidence interval)",
+	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
-
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 2,
 		"lg": 2
@@ -77,8 +68,6 @@ config = {
 		"md": 5,
 		"lg": 8
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

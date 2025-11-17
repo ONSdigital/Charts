@@ -1,24 +1,10 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": [
-		"#206095",
-		"#27A0CC",
-		"#871A5B",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
-	"text_colour_palette": [
-		"#206095",
-		"#1F80A3",
-		"#871A5B",
-		"#6E7E26",
-		"#F66068",
-		"#118C7B"
-	],
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSlinePalette,
+	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -29,10 +15,8 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-
 	"yDomainMax": "auto", // either "auto", "autoAll" or a value
 	"yDomainMin": 0, // either "auto", "autoAll" or a value
-
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%y",
@@ -45,7 +29,6 @@ config = {
 	"xAxisLabel": "",
 	"defaultOption": "option1",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],
@@ -93,7 +76,5 @@ config = {
 	},
 	"addFirstDate": true,
 	"addFinalDate": true,
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

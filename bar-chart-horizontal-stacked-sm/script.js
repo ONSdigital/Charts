@@ -1,263 +1,242 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, addAnnotationRangeHorizontal } from "../lib/helpers.js";
 
-let pymChild = null;
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
-let size, graphic_data;
-
-
+let pymChild = null;
+let graphicData, size;
 
 function drawGraphic() {
+    //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
+    size = initialise(size);
 
-	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+    const aspectRatio = config.aspectRatio[size];
+    const chartsPerRow = config.chartEvery[size];
 
-	// Group the data by the 'series' column
-	const nested_data = d3.groups(graphic_data, (d) => d.series);
+    // Get categories from the keys used in the stack generator
+    const categories = graphicData.columns.slice(2);
 
-	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
-	let namesArray = [...nested_data][0][1].map(d => d.name);
+    // Nest the graphicData by the 'series' column
+    let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// Create a container div for each small multiple
-	let chartContainers = graphic
-		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
-		.join('div')
-		.attr('class', 'chart-container');
+    // Create a container div for each small multiple
+    let chartContainers = graphic
+        .selectAll('.chart-container')
+        .data(Array.from(nestedData))
+        .join('div')
+        .attr('class', 'chart-container');
 
-	function drawChart(container, seriesName, data, chartIndex) {
-		//Sort the data so that the bars in each chart are in the same order
-		data.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
+    function drawChart(container, data, seriesName, chartIndex) {
+        let chartPosition = chartIndex % chartsPerRow;
+        let margin = { ...config.margin[size] };
+        let chartGap = config?.chartGap || 10;
+        let chartWidth = calculateChartWidth({
+            screenWidth: parseInt(graphic.style('width')),
+            chartEvery: chartsPerRow,
+            chartMargin: margin,
+            chartGap: chartGap
+        });
 
-		const chartsPerRow = config.chart_every[size];
-		const chartPosition = chartIndex % chartsPerRow;
+        if (config.dropYAxis) {
+            if (chartPosition !== 0) {
+                margin.left = chartGap;
+            }
+        }
 
-		// Set dimensions
-		let margin = { ...config.margin[size] };
-		let chartGap = config.optional?.chartGap || 10;
+        let height = aspectRatio[1] / aspectRatio[0] * chartWidth;
 
-		let chart_width = calculateChartWidth({
-			screenWidth: parseInt(graphic.style('width')),
-			chartEvery: chartsPerRow,
-			chartMargin: margin,
-			chartGap: chartGap
-		})
+        // Flip axes: x is value, y is category
+        const x = d3.scaleLinear().range([0, chartWidth]);
+        const y = d3.scaleBand().paddingOuter(0.0).paddingInner(0.1).range([0, height]).round(true);
 
-		// If the chart is not in the first position in the row, reduce the left margin
-		if (config.dropYAxis) {
-			if (chartPosition !== 0) {
-				margin.left = chartGap;
-			}
-		}
+        y.domain([...new Set(graphicData.map((d) => d.date))]);
 
+        const stack = d3.stack()
+            .keys(categories)
+            .offset(d3[config.stackOffset])
+            .order(d3[config.stackOrder]);
 
-		//console.log(`The value of chart_width is ${chart_width}.`);
+        const series = stack(data);
+        const seriesAll = stack(graphicData);
 
-		//height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
+        if (config.yDomain == 'auto') {
+            x.domain(d3.extent(seriesAll.flat(2)));
+        } else {
+            x.domain(config.yDomain);
+        }
 
-		let height =
-			config.seriesHeight[size] * data.length +
-			10 * (data.length - 1) +
-			12;
+        // Create an SVG element
+        const svg = addSvg({
+            svgParent: container,
+            chartWidth: chartWidth,
+            height: height + margin.top + margin.bottom,
+            margin: margin
+        });
 
-		// Define scales
-		const x = d3.scaleLinear().range([0, chart_width]);
+        // Draw bars
+        svg.append('g')
+            .selectAll('g')
+            .data(series)
+            .join('g')
+            .attr('fill', (d, i) => config.colourPalette[i])
+            .selectAll('rect')
+            .data((d) => d)
+            .join('rect')
+            .attr('x', (d) => x(d[0]))
+            .attr('y', (d) => y(d.data.date))
+            .attr('width', (d) => Math.abs(x(d[1]) - x(d[0])))
+            .attr('height', y.bandwidth());
 
-		// This is a different version
-		// const y = d3.scaleBand().rangeRound([0, height]).padding(0.1);
+        const xAxisTickFormat = config.xAxisTickFormat[size];
+        const isDateScale = x.tickFormat && typeof x.domain()[0] !== 'number';
 
-		const y = d3
-			.scaleBand()
-			.paddingOuter(0.2)
-			.paddingInner(((data.length - 1) * 10) / (data.length * 30))
-			.range([0, height])
-			.round(true);
+        // Add grid lines to x axis
+        const gridG = svg.append('g')
+            .attr('class', 'grid')
+            .call(
+                d3.axisBottom(x)
+                .ticks(config.xAxisTicks[size])
+                .tickSize(-height)
+                .tickFormat('')
 
-		// Define axes
-		let xAxis = d3
-			.axisBottom(x)
-			.tickSize(-height)
-			.tickFormat(d3.format(config.xAxisTickFormat))
-			.ticks(config.xAxisTicks[size]);
+            )
+            .attr('transform', `translate(0,${height})`)
+            .lower();
 
-		let yAxis = d3.axisLeft(y)
-			.tickSize(0)
-			.tickPadding(10)
-			.tickFormat((d) => config.dropYAxis !== true ? (d) :
-				chartPosition == 0 ? (d) : "");
+        // Ensure grid tick lines have zero-line class for correct styling
+        gridG.selectAll('.tick line')
+            .attr('class', function(d) {
+                return d === 0 ? 'zero-line' : null;
+            });
 
-		// Define stack layout
-		let stack = d3
-			.stack()
-			.offset(d3[config.stackOffset])
-			.order(d3[config.stackOrder])
-			.keys(graphic_data.columns.slice(1, -1));
+        // Add the x-axis
+        svg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom(x)
+                .ticks(config.xAxisTicks[size])
+                .tickFormat(isDateScale ? d3.timeFormat(xAxisTickFormat) : d3.format(xAxisTickFormat))
+            );
 
-		// Process data ! This needs review
+        // Ensure tick lines and zero line use correct CSS classes for x axis
+        svg.selectAll('g.x.axis .tick line')
+            .attr('class', function(d) {
+                return d === 0 ? 'zero-line' : null;
+            });
 
-		const series = stack(data);
+        // Only draw the y axis tick labels on the first chart in each row, or always if chartsPerRow is 1 or dropYAxis is false
+        if (!config.dropYAxis || chartsPerRow === 1 || chartIndex % chartsPerRow === 0) {
+            svg.append('g')
+                .attr('class', 'y axis category')
+                .call(d3.axisLeft(y).tickValues(y.domain()))
+                .selectAll('.tick text')
+                .call(wrap, margin.left - 10);
+        } else {
+            svg.append('g').attr('class', 'y axis category').call(d3.axisLeft(y).tickValues([]));
+        }
 
-		// console.table(series);
+        // Ensure tick lines and zero line use correct CSS classes for y axis
+        svg.selectAll('g.y.axis.category .tick line')
+            .attr('class', function(d) {
+                return d === 0 ? 'zero-line' : null;
+            });
 
-		if (config.xDomain === 'auto') {
-			x.domain([Math.min(0, d3.min(stack(graphic_data), (d) => d3.min(d, (d) => d[1]))), d3.max(stack(graphic_data), (d) => d3.max(d, (d) => d[1]))]); //removed.nice()
-		} else {
-			x.domain(config.xDomain);
-		}
+        // This does the chart title label
+        addChartTitleLabel({
+            svgContainer: svg,
+            yPosition: -margin.top / 2,
+            text: seriesName,
+            wrapWidth: (chartWidth + margin.right)
+        });
 
-		y.domain(data.map((d) => d.name));
+        // This does the y-axis label
+        if (chartIndex % chartsPerRow === 0) {
+            addAxisLabel({
+                svgContainer: svg,
+                xPosition: 5 - margin.left,
+                yPosition: 0,
+                text: config.yAxisLabel,
+                textAnchor: "start",
+                wrapWidth: chartWidth
+            });
+        }
 
-		// Set up the legend
-		let legenditem = legend
-			.selectAll('div.legend--item')
-			.data(
-				d3.zip(graphic_data.columns.slice(1), config.colour_palette)
-			)
-			.enter()
-			.append('div')
-			.attr('class', 'legend--item');
+        // This does the x-axis label
+        if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === [...chartContainers].length - 1) {
+            addAxisLabel({
+                svgContainer: svg,
+                xPosition: chartWidth,
+                yPosition: height + 35,
+                text: config.xAxisLabel,
+                textAnchor: "end",
+                wrapWidth: chartWidth
+            });
+        }
 
-		legenditem
-			.append('div')
-			.attr('class', 'legend--icon--circle')
-			.style('background-color', function (d) {
-				return d[1];
-			});
+        // Add annotation range if needed
+    //     if (chartIndex !== 0) {
+    //         addAnnotationRangeHorizontal(
+    //             svg,
+    //             chartWidth,
+    //             y("two years") + (4 - chartIndex) * y.step(),
+    //             y("five years") + y.bandwidth(),
+    //             chartIndex == 1 ? 'N/A' : "",
+    //             'above',
+    //             'inside',
+    //             x(5),
+    //             50
+    //         );
+    //     }
+    }
 
-		legenditem
-			.append('div')
-			.append('p')
-			.attr('class', 'legend--text')
-			.html(function (d) {
-				return d[0];
-			});
+    // Draw the charts for each small multiple
+    chartContainers.each(function ([key, value], i) {
+        drawChart(d3.select(this), value, key, i);
+    });
 
-		//End of legend code
+    // Set up the legend
+    let legenditem = legend
+        .selectAll('div.legend--item')
+        .data(categories.map((cat, i) => [cat, config.colourPalette[i]]))
+        .enter()
+        .append('div')
+        .attr('class', 'legend--item');
 
-		// console.log('Chart width:', chart_width);
-		// console.log('Height:', height);
-		// console.log('X domain:', x.domain());
-		// console.log('Y domain:', y.domain());
+    legenditem
+        .append('div')
+        .attr('class', 'legend--icon--circle')
+        .style('background-color', function (d) {
+            return d[1];
+        });
 
-		// Create SVG
-		let svg = addSvg({
-			svgParent: graphic,
-			chart_width: chart_width,
-			height: height + margin.top + margin.bottom,
-			margin: margin
-		})
+    legenditem
+        .append('div')
+        .append('p')
+        .attr('class', 'legend--text')
+        .html(function (d) {
+            return d[0];
+        });
 
+    // Set legend columns if config.legendColumns is defined
+    if (config.legendColumns) {
+        legend.style('display', 'grid')
+              .style('grid-template-columns', `repeat(${config.legendColumns}, 1fr)`);
+    }
 
-		// Add axes
-		svg
-			.append('g')
-			.attr('transform', 'translate(0,' + height + ')')
-			.attr('class', 'x axis')
-			.call(xAxis)
-			.selectAll('line')
-			.each(function (d) {
-				if (d == 0) {
-					d3.select(this).attr('class', 'zero-line');
-				}
-			});
+    //create source text
+    addSource('source', config.sourceText);
 
-		// console.log(`The value of margin.left - (your value) is ${margin.left - 30}.`);
-
-		// if (chartIndex % chartsPerRow === 0) {
-		svg
-			.append('g')
-			.attr('class', 'y axis')
-			.call(yAxis)
-			.selectAll('.tick text')
-			.call(wrap, margin.left - 10);
-		// } else {
-		// 	svg.append('g').attr('class', 'y axis').call(yAxis.tickValues([]));
-		// }
-
-		// Add a bold text label to the top left corner of the chart SVG
-		svg
-			.append('text')
-			.attr('class', 'title')
-			.attr('x', 0)
-			.attr('y', -margin.top / 2)
-			.text(seriesName);
-
-		// Draw chart
-		svg
-			.append('g')
-			.selectAll('g')
-			.data(series)
-			.enter()
-			.append('g')
-			.style('fill', (_, i) => config.colour_palette[i])
-			.selectAll('rect')
-			.data((d) => d)
-			.join('rect')
-			.attr('x', (d) => x(d[0]))
-			.attr('y', (d, i) => y(data[i].name))
-			.attr('width', (d) => x(d[1]) - x(d[0]))
-			.attr('height', y.bandwidth());
-
-		// This does the x-axis label
-		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === nested_data.length - 1) {
-			addAxisLabel({
-				svgContainer: svg,
-				xPosition: chart_width,
-				yPosition: height + 35,
-				text: config.xAxisLabel,
-				textAnchor: "end",
-				wrapWidth: chart_width
-			});
-		}
-	}
-	// Draw the charts for each small multiple
-	chartContainers.each(function ([key, value], i) {
-		drawChart(d3.select(this), key, value, i);
-	});
-
-	//create link to source
-	addSource('source', config.sourceText);
-
-	//use pym to calculate chart dimensions
-	if (pymChild) {
-		pymChild.sendHeight();
-	}
+    //use pym to calculate chart dimensions
+    if (pymChild) {
+        pymChild.sendHeight();
+    }
 }
 
-
 // Load the data
-d3.csv(config.graphic_data_url)
-	.then((data) => {
-		// console.log('Original data:', data);
 
-		// // clear out existing graphics
-		// graphic.selectAll('*').remove();
-		// legend.selectAll('*').remove();
+d3.csv(config.graphicDataURL).then((data) => {
+    graphicData = data;
 
-		graphic_data = data;
-		// // Group the data by the 'series' column
-		// const groupedData = d3.groups(fullData, (d) => d.series);
-		// // console.log('Grouped data:', groupedData[0][1]);
-
-		// //Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
-		// let namesArray = [...groupedData][0][1].map(d => d.name);
-
-
-		// groupedData.forEach((group, i) => {
-		// 	const seriesName = group[0];
-		// 	const graphic_data = group[1];
-
-		// 	//Sort the data so that the bars in each chart are in the same order
-		// 	graphic_data.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
-
-		// 	graphic_data.columns = data.columns;
-
-		// 	pymChild = new pym.Child({ renderCallback: drawGraphic(seriesName, graphic_data, i, groupedData.length, fullData) });
-		// });
-
-		//use pym to create iframed chart dependent on specified variables
-		pymChild = new pym.Child({
-			renderCallback: drawGraphic
-		});
-	})
-	.catch((error) => console.error(error));
+    pymChild = new pym.Child({
+        renderCallback: drawGraphic
+    });
+});

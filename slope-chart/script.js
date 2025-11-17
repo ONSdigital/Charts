@@ -4,7 +4,7 @@ let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
 
 let pymChild = null;
-let graphic_data, size;
+let graphicData, size;
 
 function drawGraphic() {
 
@@ -20,12 +20,12 @@ function drawGraphic() {
 	// console.log(`Margin, width, and height set: ${margin}, ${width}, ${height}`);
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 	// console.log(`Categories retrieved: ${categories}`);
 
 	let xDataType;
 
-	if (Object.prototype.toString.call(graphic_data[0].date) === '[object Date]') {
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
 	} else {
 		xDataType = 'numeric';
@@ -39,11 +39,11 @@ function drawGraphic() {
 
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
+			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, width]);
 	} else {
 		x = d3.scaleLinear()
-			.domain(d3.extent(graphic_data, (d) => +d.date))
+			.domain(d3.extent(graphicData, (d) => +d.date))
 			.range([0, width]);
 	}
 	//console.log(`x defined`);
@@ -53,10 +53,9 @@ function drawGraphic() {
 		.range([height, 0]);
 
 	if (config.yDomain == "auto") {
-		let minY = d3.min(graphic_data, (d) => Math.min(...categories.map((c) => d[c])))
-		let maxY = d3.max(graphic_data, (d) => Math.max(...categories.map((c) => d[c])))
+		let minY = d3.min(graphicData, (d) => Math.min(...categories.map((c) => d[c])))
+		let maxY = d3.max(graphicData, (d) => Math.max(...categories.map((c) => d[c])))
 		y.domain([minY, maxY])
-		console.log(minY, maxY)
 	} else {
 		y.domain(config.yDomain)
 	}
@@ -65,14 +64,13 @@ function drawGraphic() {
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: parseInt(graphic.style('width')) - margin.left - margin.right,
+		chartWidth: parseInt(graphic.style('width')) - margin.left - margin.right,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
-	//console.log(`SVG element created`);
 
-	const lastDatum = graphic_data[graphic_data.length - 1];
-	const firstDatum = graphic_data[0];
+	const lastDatum = graphicData[graphicData.length - 1];
+	const firstDatum = graphicData[0];
 
 	// Add the x-axis
 	svg
@@ -91,13 +89,13 @@ function drawGraphic() {
 
 	// Add text labels to the right of the circles
 	let xOffset = 8;
-	let text_length;
+	let textLength;
 	let rightWrapWidth = parseInt(graphic.style('width')) - margin.left - width - xOffset - 75;
 
 	//Calculating where to place the category label
-	function textLength(thing) {
-		// text_length = thing._groups[0][0].clientWidth + xOffset; <-- this has some issues once in Florence/live - better method below
-		text_length = thing.node().getComputedTextLength() + xOffset;
+	function getTextLength(thing) {
+		// textLength = thing._groups[0][0].clientWidth + xOffset; <-- this has some issues once in Florence/live - better method below
+		textLength = thing.node().getComputedTextLength() + xOffset;
 
 	}
 
@@ -109,16 +107,15 @@ function drawGraphic() {
 			.y((d) => y(d[category]))
 			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
 			.context(null);
-		// console.log(`Line generator created for category: ${category}`);
 
 		svg
 			.append('path')
-			.datum(graphic_data)
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			)
 			.attr('stroke-width', 3)
@@ -139,22 +136,22 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.colour_palette_text[
-				categories.indexOf(category) % config.colour_palette_text.length
+				config.textColourPalette[
+				categories.indexOf(category) % config.textColourPalette.length
 				]
 			)
 			.text(d3.format(config.yAxisNumberFormat)((lastDatum[category]))) /* (Math.round((lastDatum[category]) / 100) * 100) */
 			.attr('id', 'lastDateLabel')
 			.attr("class", "directLineLabelBold")
-			.call(textLength, this) //Work out the width of this bit of text for positioning the next bit
+			.call(getTextLength, this) //Work out the width of this bit of text for positioning the next bit
 			.append('tspan')
-			.attr('x', xOffset + text_length)
+			.attr('x', xOffset + textLength)
 			.attr('dy', '.35em')
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.colour_palette_text[
-				categories.indexOf(category) % config.colour_palette_text.length
+				config.textColourPalette[
+				categories.indexOf(category) % config.textColourPalette.length
 				]
 			)
 			.text(category)
@@ -173,8 +170,8 @@ function drawGraphic() {
 			.attr('text-anchor', 'end')
 			.attr(
 				'fill',
-				config.colour_palette_text[
-				categories.indexOf(category) % config.colour_palette_text.length
+				config.textColourPalette[
+				categories.indexOf(category) % config.textColourPalette.length
 				]
 			)
 			.text(d3.format(config.yAxisNumberFormat)(firstDatum[category]))
@@ -188,8 +185,8 @@ function drawGraphic() {
 			.attr('r', 4)
 			.attr(
 				'fill',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			);
 		svg
@@ -199,8 +196,8 @@ function drawGraphic() {
 			.attr('r', 4)
 			.attr(
 				'fill',
-				config.colour_palette[
-				categories.indexOf(category) % config.colour_palette.length
+				config.colourPalette[
+				categories.indexOf(category) % config.colourPalette.length
 				]
 			);
 		// console.log(`Circle appended for category: ${category}`);
@@ -249,8 +246,8 @@ function drawGraphic() {
 
 
 // Load the data
-d3.csv(config.graphic_data_url).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
+	graphicData = rawData.map((d) => {
 		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.timeParse(config.dateFormat)(d.date),
@@ -270,12 +267,12 @@ d3.csv(config.graphic_data_url).then((rawData) => {
 		}
 	});
 
-	// console.log(graphic_data);
+	// console.log(graphicData);
 
 	// console.log(`Data from CSV processed`);
 
 	// console.log('Final data structure:');
-	// console.log(graphic_data);
+	// console.log(graphicData);
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({

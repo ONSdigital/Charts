@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helper
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -13,16 +13,16 @@ function drawGraphic() {
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
 	let aspectRatio = config.aspectRatio[size];
-	let chart_width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = (aspectRatio[1] / aspectRatio[0]) * chart_width;
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 
 	const colorScale = d3
 		.scaleOrdinal()
 		.domain(categories)
-		.range(config.colour_palette);
+		.range(config.colourPalette);
 
 	// Set up the legend
 	const legenditem = d3
@@ -51,7 +51,7 @@ function drawGraphic() {
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chart_width: chart_width,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
@@ -59,23 +59,21 @@ function drawGraphic() {
 	// Define the x and y scales
 	const x = d3
 		.scaleTime()
-		.domain(d3.extent(graphic_data, (d) => d.date))
-		.range([0, chart_width]);
+		.domain(d3.extent(graphicData, (d) => d.date))
+		.range([0, chartWidth]);
 
 	// This function generates an array of approximately count + 1 uniformly-spaced, rounded values in the range of the given start and end dates (or numbers).
 	let tickValues = x.ticks(config.xAxisTicks[size]);
 
 	// Add the first and last dates to the ticks array, and use a Set to remove any duplicates
-	// tickValues = Array.from(new Set([graphic_data[0].date, ...tickValues, graphic_data[graphic_data.length - 1].date]));
+	// tickValues = Array.from(new Set([graphicData[0].date, ...tickValues, graphicData[graphicData.length - 1].date]));
 
 	if (config.addFirstDate == true) {
-		tickValues.push(graphic_data[0].date)
-		console.log("First date added")
+		tickValues.push(graphicData[0].date)
 	}
 
 	if (config.addFinalDate == true) {
-		tickValues.push(graphic_data[graphic_data.length - 1].date)
-		console.log("Last date added")
+		tickValues.push(graphicData[graphicData.length - 1].date)
 	}
 
 	const y = d3
@@ -91,9 +89,7 @@ function drawGraphic() {
 		.offset(d3[config.stackOffset]); // Convert to percentage values
 
 	// Generate the stacked data
-	const stackedData = stack(graphic_data);
-
-	// console.log("stackedData:", stackedData);
+	const stackedData = stack(graphicData);
 
 	// Define the area generator
 	const area = d3
@@ -137,11 +133,11 @@ function drawGraphic() {
 	//This does the x-axis label
 	addAxisLabel({
 		svgContainer: svg,
-		xPosition: chart_width,
+		xPosition: chartWidth,
 		yPosition: height + 35,
 		text: config.xAxisLabel,
 		textAnchor: "end",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	// This does the y-axis label
@@ -151,7 +147,7 @@ function drawGraphic() {
 		yPosition: -15,
 		text: config.yAxisLabel,
 		textAnchor: "start",
-		wrapWidth: chart_width
+		wrapWidth: chartWidth
 	});
 
 	//create link to source
@@ -163,8 +159,8 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.graphic_data_url).then((rawData) => {
-	graphic_data = rawData.map((d) => {
+d3.csv(config.graphicDataURL).then((rawData) => {
+	graphicData = rawData.map((d) => {
 		return {
 			date: d3.timeParse(config.dateFormat)(d.date),
 			...Object.entries(d)
@@ -173,8 +169,6 @@ d3.csv(config.graphic_data_url).then((rawData) => {
 				.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 		};
 	});
-
-	// console.log('Final data structure:',graphic_data);
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({

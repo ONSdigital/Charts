@@ -1,0 +1,285 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+html {
+  -webkit-text-size-adjust: none;
+  /* prevent font scaling in landscape */
+}
+
+body
+/* required */
+  {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  max-width: 700px;
+  margin: 0px auto;
+}
+
+text
+/* required */
+  {
+
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+/* chart */
+#graphic
+/* required */
+  {
+  width: 100%;
+}
+
+.timeControlButtons {
+  background: none;
+  border: none;
+  color: #206095;
+  font-size: 27px;
+}
+
+.glyphicon {
+  color: #206095;
+  font-size: 27px;
+}
+
+.parameter-value text {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+
+/* axis tick labels */
+svg.chart g.axis text
+/* sets all tick text as grey 100 */
+  {
+  font-size: 14px;
+  fill: #414042;
+}
+
+/* overwrites x-axis as grey 75 */
+svg.chart g.x.axis text
+{
+  fill:#707071;
+}
+
+/* this sets the labels for the axis */
+.axis--label{
+  font-size: 14px;
+  fill: #707071;
+}
+
+
+/* do not show the line that runs the domain of the axis */
+svg.chart g.axis path.domain
+/* required */
+{
+  display:none;
+}
+
+/* this sets the ticks */
+svg.chart .axis line
+{
+  stroke: #d9d9d9;
+  shape-rendering: crispEdges;
+}
+
+/* this sets zero line */
+
+g.tick line.zero-line
+{
+  stroke: #B3B3B3;
+  stroke-width: 1.5px;
+  shape-rendering: crispEdges;
+}
+
+
+/* source */
+#source {
+  font-size: 16px;
+  margin: 16px 0 8px 0;
+  font-weight: 400;
+  color: #707071;
+}
+
+/* legend div */
+#legend{
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.legend--item {
+  display:flex;
+  padding-right:40px;
+  padding-bottom: 12px;
+}
+
+.legend--icon {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  align-self: center;
+
+}
+
+.legend--text{
+  color:#707070;
+  line-height: 14px;
+  font-size: 14px;
+  padding-left: 12px
+}
+
+@media (max-width: 450px) {
+  #legend{
+    flex-flow:column;
+  }
+
+  .legend--item{
+    padding-bottom: 8px;
+  }
+
+  div.tooltip {	
+    position: absolute;			
+    text-align: start;			
+    font-weight: 600;
+    font-size: 14px;
+    color: #414042;
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;
+    background-color: #FFF;
+    border: orange 2px solid;
+    padding: 5px;
+    max-width: 50%;
+    font-family: 'Open Sans', sans-serif;
+  }
+}
+
+
+/* for content that needs to be visible to a screenreader but invisible and take no space for users viewing the chart */
+.visuallyhidden{
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+ 	clip: rect(0,0,0,0);
+	border: 0;
+}
+
+
+
+
+.annotations{
+  font-size: 14px;
+  color: #414042;
+}
+
+.ticky11 text{
+  font-weight: 700;
+}
+
+h6 {
+  font-size: 16px;
+  margin: 16px 0 8px 0;
+  font-weight: 700;
+  color:#323132;
+}
+
+div.tooltip {	
+  position: absolute;			
+  text-align: start;			
+  font-weight: 600;
+  font-size: 14px;
+  color: #414042;
+  border: 0px;		
+  border-radius: 8px;			
+  pointer-events: none;
+  background-color: #FFF;
+  border: orange 2px solid;
+  padding: 5px;
+  font-family: 'Open Sans', sans-serif;
+  max-width: 250px;
+}
+
+
+.zero-line
+{
+  stroke: #B3B3B3;
+  stroke-width: 1.5px;
+  shape-rendering: crispEdges;
+}
+
+hr {
+  border:none;
+  border-top:1px dashed #414042;
+  color:#fff;
+  background-color:#fff;
+  height:1px;
+  /* width:50%; */
+  }
+
+  br {
+    /* display: block;
+    margin-bottom: 2px;
+    font-size:2px; */
+    line-height: 20;
+  }
+
+
+  .legend{
+    width: 50%;
+    height: 110px;
+    margin-top: 10px;
+  }
+  
+  .legendcircle{
+    fill: none;
+    stroke: #222222;
+    stroke-width: 1.5;
+  }
+  
+  .legendline{
+    stroke: #222222;
+    stroke-width: 1.5;
+    stroke-dasharray: 5 2;
+  }
+  
+  .legendtext{
+    font-size: 14px;
+  }
+
+  .parameter-value path{
+    fill:#003C57;
+    stroke:white;
+    stroke-width:1.5px;
+  }
+  .parameter-value path:focus{
+    fill:#003C57;
+    stroke:orange;
+    stroke-width:3px;
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: row;
+  }
+

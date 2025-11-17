@@ -1,15 +1,8 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": [
-		"#206095",
-		"#27A0CC",
-		"#871A5B",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]
 	"xAxisTickFormat": {
@@ -33,7 +26,7 @@ config = {
 	// stackOrderAscending the smallest series (according to the sum of values) is at the bottom
 	// stackOrderDescending the largest series (according to the sum of values) is at the bottom
 	// stackOrderReverse reverse the order as set from the data file
-	"chart_every": {
+	"chartEvery": {
 		"sm": 1,
 		"md": 1,
 		"lg": 2
@@ -69,8 +62,6 @@ config = {
 		"md": 5,
 		"lg": 4
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"legendColumns": 4,
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }

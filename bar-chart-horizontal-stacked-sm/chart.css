@@ -1,5 +1,5 @@
-.dataLabels{
-  font-weight: 600;
-  font-size: 14px;
+.legend--text {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
-
