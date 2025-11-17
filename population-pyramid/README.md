@@ -14,20 +14,6 @@ The unified population pyramid visualization supports multiple interaction types
 6. [HTML Requirements](#html-requirements)
 7. [Dependencies](#dependencies)
 
-## Configuration Structure
-
-The configuration object has two main sections:
-
-```javascript
-config = {
-  essential: {
-    // Core settings that define behavior and appearance
-  },
-  optional: {
-    // Responsive design and styling settings
-  },
-};
-```
 
 ## Configuration Options
 
@@ -35,7 +21,7 @@ config = {
 
 | Property               | Type   | Options                     | Description                                                                                       |
 | ---------------------- | ------ | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| `graphic_data_url`     | string | -                           | Path to main population data CSV file                                                             |
+| `graphicData_url`     | string | -                           | Path to main population data CSV file                                                             |
 | `comparison_data`      | string | -                           | Path to comparison data CSV file (optional)                                                       |
 | `comparison_time_data` | string | -                           | Path to second comparison dataset for toggle mode (optional)                                      |
 | `dataType`             | string | `"counts"`, `"percentages"` | Whether data contains raw counts (to be converted to percentages) or already contains percentages |
@@ -53,7 +39,7 @@ config = {
 ### Display Settings
 
 | Property            | Type   | Description                                                       |
-| ------------------- | ------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ------------------- | ------ | ----------------------------------------------------------------- | 
 | `displayType`       | string | `"percentages"`, `"counts"`. Whether to display data as percentages or raw numbers (only applies when `dataType: "counts"`) |
 | `xAxisLabel`        | string | Label for x-axis (percentage axis)                                |
 | `yAxisLabel`        | string | Label for y-axis (age axis)                                       |
@@ -155,7 +141,7 @@ E06000002,Middlesbrough,male,1934,2045,2156,2267,2378,2489
 
 ```javascript
 const config = {
-  graphic_data_url: "data/population-2021.csv",
+  graphicData_url: "data/population-2021.csv",
   comparison_data: "data/population-2011.csv",
   dataType: "counts",
   dataStructure: "simple",
@@ -182,7 +168,7 @@ const config = {
 
 ```javascript
 const config = {
-  graphic_data_url: "data/population-current.csv",
+  graphicData_url: "data/population-current.csv",
   comparison_data: "data/population-2011.csv",
   comparison_time_data: "data/population-2001.csv",
   dataType: "counts",
@@ -212,7 +198,7 @@ const config = {
 
 ```javascript
 const config = {
-  graphic_data_url: "data/local-authorities.csv",
+  graphicData_url: "data/local-authorities.csv",
   comparison_data: "data/national-average.csv",
   dataType: "counts",
   dataStructure: "complex",
@@ -239,7 +225,7 @@ const config = {
 
 ```javascript
 const config = {
-  graphic_data_url: "data/local-authorities.csv",
+  graphicData_url: "data/local-authorities.csv",
   comparison_data: "data/uk-national.csv",
   dataType: "counts",
   dataStructure: "complex",
@@ -266,7 +252,7 @@ const config = {
 
 ```javascript
 const config = {
-    graphic_data_url: "data/population-simple.csv",
+    graphicData_url: "data/population-simple.csv",
     dataType: "percentages",
     dataStructure: "simple",
     interactionType: "static",
@@ -290,7 +276,7 @@ const config = {
 
 ```javascript
 const config = {
-    graphic_data_url: "data/population-counts.csv",
+    graphicData_url: "data/population-counts.csv",
     comparison_data: "data/comparison-counts.csv",
     dataType: "counts",
     displayType: "counts",

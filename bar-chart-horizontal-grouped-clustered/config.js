@@ -1,7 +1,7 @@
 config = {
-	"graphic_data_url": "data.csv",
+	"graphicDataURL": "data.csv",
 	"legendLabels": ["Category 1 goes here", "Category 2 goes here"],
-	"colour_palette": ["#206095","#27A0CC","#871A5B","#A8BD3A","#F66068"],
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screenreader text describing the chart.",
 	"dataLabels": {
@@ -41,7 +41,5 @@ config = {
 		"md": 8,
 		"lg": 10
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

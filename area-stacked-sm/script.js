@@ -3,7 +3,7 @@ import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addA
 let pymChild = null;
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
-let size, graphic_data;
+let size, graphicData;
 
 function drawGraphic() {
 
@@ -11,17 +11,17 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Group the data by the 'series' column
-	const nested_data = d3.groups(graphic_data, (d) => d.series);
+	const nestedData = d3.groups(graphicData, (d) => d.series);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
-		.data(Array.from(nested_data))
+		.data(Array.from(nestedData))
 		.join('div')
 		.attr('class', 'chart-container');
 
 	function drawChart(container, seriesName, data, chartIndex) {
-		const chartsPerRow = config.chart_every[size];
+		const chartsPerRow = config.chartEvery[size];
 		const chartPosition = chartIndex % chartsPerRow;
 
 		// Set dimensions
@@ -29,7 +29,7 @@ function drawGraphic() {
 		let chartGap = config.optional?.chartGap || 10;
 
 		// Calculate chart width here
-		let chart_width = calculateChartWidth({
+		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
 			chartEvery: chartsPerRow,
 			chartMargin: margin,
@@ -44,15 +44,15 @@ function drawGraphic() {
 		}
 
 		// Get categories from the keys used in the stack generator
-		const categories = Object.keys(graphic_data[0]).filter((k) => k !== 'date' && k !== 'series');
+		const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 
 		const colorScale = d3
 			.scaleOrdinal()
 			.domain(categories)
-			.range(config.colour_palette);
+			.range(config.colourPalette);
 
 		//Getting the list of colours used in this visualisation
-		let colours = [...config.colour_palette].slice(0, categories.length)
+		let colours = [...config.colourPalette].slice(0, categories.length)
 
 		// Set up the legend
 		const legenditem = legend
@@ -87,17 +87,17 @@ function drawGraphic() {
 
 
 		let height =
-			chart_width * (config.aspectRatio[size][1] / config.aspectRatio[size][0]) - margin.top - margin.bottom;
+			chartWidth * (config.aspectRatio[size][1] / config.aspectRatio[size][0]) - margin.top - margin.bottom;
 
 		// Define the x and y scales
 		const x = d3
 			.scaleTime()
-			.domain(d3.extent(graphic_data, (d) => d.date))
-			.range([0, chart_width]);
+			.domain(d3.extent(graphicData, (d) => d.date))
+			.range([0, chartWidth]);
 
 		const y = d3
 			.scaleLinear()
-			.domain([0, d3.max(graphic_data, (d) => d3.sum(categories, (c) => d[c]))])
+			.domain([0, d3.max(graphicData, (d) => d3.sum(categories, (c) => d[c]))])
 			.range([height, 0]);
 
 		// Define the stack generator
@@ -109,7 +109,7 @@ function drawGraphic() {
 		// Create an SVG for this chart
 		const svg = addSvg({
 			svgParent: graphic,
-			chart_width: chart_width,
+			chartWidth: chartWidth,
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
@@ -153,7 +153,7 @@ function drawGraphic() {
 							return a - b
 						})
 						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= graphic_data.length - config.xAxisTicksEvery[size] || i == graphic_data.length - 1 //Rob's fussy comment about labelling the last date
+							return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == graphicData.length - 1 //Rob's fussy comment about labelling the last date
 						})
 					)
 					.tickFormat(d3.timeFormat(config.xAxisTickFormat[size]))
@@ -186,18 +186,18 @@ function drawGraphic() {
 			svgContainer: svg,
 			yPosition: -margin.top / 2,
 			text: seriesName,
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		})
 
 		// This does the x-axis label
 		if (chartIndex % chartsPerRow === chartsPerRow - 1) {
 			addAxisLabel({
 				svgContainer: svg,
-				xPosition: chart_width,
+				xPosition: chartWidth,
 				yPosition: height + 35,
 				text: config.xAxisLabel,
 				textAnchor: "end",
-				wrapWidth: chart_width
+				wrapWidth: chartWidth
 			});
 		}
 
@@ -208,7 +208,7 @@ function drawGraphic() {
 			yPosition: -10,
 			text: chartPosition == 0 ? config.yAxisLabel : "",
 			textAnchor: "start",
-			wrapWidth: chart_width
+			wrapWidth: chartWidth
 		});
 	}
 	// Draw the charts for each small multiple
@@ -226,15 +226,15 @@ function drawGraphic() {
 }
 
 // Load the data
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
 	.then((data) => {
 		// console.log("Original data:", data);
 
 
-		graphic_data = data;
+		graphicData = data;
 
 		// 	);
-		graphic_data.forEach((d) => {
+		graphicData.forEach((d) => {
 			d.date = d3.timeParse(config.dateFormat)(d.date);
 		});
 

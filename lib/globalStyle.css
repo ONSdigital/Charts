@@ -12,10 +12,20 @@
   --ons-color-grey-10: #efeff0;
   --ons-color-grey-5: #f5f5f6;
   --ons-color-white: #fff;
-  --ons-color-night-blue: #003c57;
-  --ons-color-spring-green: #a8bd3a;
   --ons-color-ocean-blue: #206095;
   --ons-color-sky-blue: #27a0cc;
+  --ons-color-night-blue: #003c57;
+  --ons-color-emerald-green: #118c7b;
+  --ons-color-spring-green: #a8bd3a;
+  --ons-color-spring-green-dark: #8a9b2e;
+  --ons-color-beetroot-purple: #871A5B;
+  --ons-color-coral-pink: #F66068;
+  --ons-color-lavendar-purple: #746cb1;
+  --ons-color-mint-green: #22d0b6;
+  --ons-color-mint-green-dark: #1aa590;
+  --ons-color-highlight-orange: #f39431;
+  --ons-color-highlight-orange-dark: #f56927;
+  --ons-color-dark-leaf-green: #005253;
   --ons-color-aqua-teal: #00a3a6;
   --ons-color-navy-blue: #194766;
   --ons-color-pale-blue: #e7eff4;
@@ -26,20 +36,6 @@
   --ons-color-jaffa-orange: #fa6401;
   --ons-color-sun-yellow: #fbc900;
   --ons-color-neon-yellow: #f0f762;
-  --ons-color-light-orange: #e8bb9b;
-  --ons-color-ocean-blue-tint: #e9eff4;
-  --ons-color-ocean-blue-vibrant: #1f8fd8;
-  --ons-color-spring-green-tint: #c3c5b8;
-  --ons-color-leaf-green-tint: #e7f3ec;
-  --ons-color-leaf-green-vibrant: #10ca64;
-  --ons-color-leaf-green-dark-10: #073d20;
-  --ons-color-leaf-green-dark-5: #0c6b37;
-  --ons-color-ruby-red-tint: #fae6e8;
-  --ons-color-ruby-red-vibrant: #fd112d;
-  --ons-color-jaffa-orange-tint: #fff0e6;
-  --ons-color-jaffa-orange-vibrant: #ff7b24;
-  --ons-color-sun-yellow-dark: #e2b500;
-  --ons-color-navy-blue-light: #153b55;
   --ons-color-branded: var(--ons-color-ocean-blue);
   --ons-color-branded-text: var(--ons-color-ocean-blue);
   --ons-color-branded-tint: var(--ons-color-ocean-blue-tint);
@@ -384,6 +380,11 @@ h5#source {
   font-size: 14px;
   padding-left: 6px;
   margin: 0;
+}
+
+.dataLabels {
+  font-weight: 600;
+  font-size: 14px;
 }
 
 @media (max-width: 400px) {

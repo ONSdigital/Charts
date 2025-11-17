@@ -1,13 +1,6 @@
 config = {
-	"graphic_data_url": "data.csv",
-	"colour_palette": [
-		"#206095",
-		"#27A0CC",
-		"#871A5B",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
+	"graphicDataURL": "data.csv",
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",
 	"xDomain": "auto",
@@ -65,7 +58,5 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

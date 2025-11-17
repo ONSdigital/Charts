@@ -1,6 +1,6 @@
 config = {
-  "graphic_data_url": "data.csv",
-  "colour_palette": "#206095",
+  "graphicDataURL": "data.csv",
+  "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
   "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title.",
   "xAxisFormat": ".0f",
@@ -20,10 +20,10 @@ config = {
   "averages": {
     "show": true,  // Whether to show average lines
     "showLabels": false,  // Whether to show labels for the average lines
-    "colour": "#444",  // Color of the average lines
+    "colour": ONScolours.grey100,  // Color of the average lines
     "strokeWidth": 3,  // Width of the average lines
     "strokeDash": "",  // Dash pattern for the lines
-    "labelColour": "#444",  // Color of the labels
+    "labelColour": ONScolours.grey100,  // Color of the labels
     "labelFormat": ".1f",  // Format for the label numbers
     "labelPrefix": "Mean: ",  // Text to show before the value
     "labelOffset": {  // Offset for label positioning
@@ -68,6 +68,4 @@ config = {
     "md": 8,
     "lg": 10
   },
-  "mobileBreakpoint": 510,
-  "mediumBreakpoint": 600
 };

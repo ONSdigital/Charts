@@ -1,21 +1,7 @@
 config = {
-	"graphic_data_url": "datanumeric.csv",
-	"colour_palette": [
-		"#206095",
-		"#27A0CC",
-		"#871A5B",
-		"#A8BD3A",
-		"#F66068",
-		"#118C7B"
-	],
-	"text_colour_palette": [
-		"#206095",
-		"#1F80A3",
-		"#871A5B",
-		"#6E7E26",
-		"#F66068",
-		"#118C7B"
-	],
+	"graphicDataURL": "datanumeric.csv",
+	"colourPalette": ONSlinePalette,
+	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "Here is the screen reader text describing the chart.",
@@ -40,11 +26,10 @@ config = {
 	"xAxisNumberFormat": ".0f",
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
-	"CI_legend": true,
-	"CI_legend_interval_text": "Likely range (95% confidence interval)",
-	"CI_legend_text": "Estimated value",
+	"ciLegend": true,
+	"legendIntervalText": "Likely range (95% confidence interval)",
+	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
-
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [4, 3],
@@ -65,7 +50,7 @@ config = {
 		},
 		"lg": {
 			"top": 30,
-			"right": 100,
+			"right": 150,
 			"bottom": 50,
 			"left": 30
 		}
@@ -82,7 +67,5 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

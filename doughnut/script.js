@@ -3,7 +3,7 @@ import { initialise, wrap, addSource } from "../lib/helpers.js";
 var graphic = d3.select('#graphic');
 var legend = d3.select('#legend');
 var pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 function drawGraphic() {
 
@@ -11,12 +11,12 @@ function drawGraphic() {
 	size = initialise(size);
 
     var margin = config.margin[size];
-    var chart_width =
+    var chartWidth =
         parseInt(graphic.style('width')) - margin.left - margin.right;
     //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
     var height = config.chartHeight[size];
 
-    const radius = Math.min(chart_width, height) / 2
+    const radius = Math.min(chartWidth, height) / 2
     const outerRadius = radius * 1.1
 
     const arc = d3.arc()
@@ -40,7 +40,7 @@ function drawGraphic() {
     svg = d3
         .select('#graphic')
         .append('svg')
-        .attr('width', chart_width + margin.left + margin.right)
+        .attr('width', chartWidth + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .attr('class', 'chart')
         .append('g')
@@ -49,25 +49,25 @@ function drawGraphic() {
 
     //Drawing the pie
     svg.append('g')
-        .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+        .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
         .selectAll()
-        .data(pie(graphic_data))
+        .data(pie(graphicData))
         .join('path')
         .attr('class', (d, i) => 'path' + i)
-        .attr('fill', (d, i) => config.colour_palette[i])
+        .attr('fill', (d, i) => config.colourPalette[i])
         .attr('d', arc)
 
     if (config.dataLabels.show && size !== "sm") {
 
         //Adding layers for lines and labels
         let labels = svg.append("g")
-            .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+            .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
             .attr("class", "dataLabels")
 
         //Adding text for category and values
         labels
             .selectAll('text')
-            .data(pie(graphic_data))
+            .data(pie(graphicData))
             .join('text')
             .attr('transform', d => {
                 var pos = labelArc.centroid(d);
@@ -86,7 +86,7 @@ function drawGraphic() {
 
         labels
             .selectAll('text')
-            .data(pie(graphic_data))
+            .data(pie(graphicData))
             .join('text')
             .append('tspan')
             .attr('x', 0)
@@ -96,10 +96,10 @@ function drawGraphic() {
 
         //Adding connecting lines
         svg.append("g")
-            .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+            .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
             .attr("class", "lines")
             .selectAll('polyline')
-            .data(pie(graphic_data))
+            .data(pie(graphicData))
             .join('polyline')
             .attr('points', d => {
                 var pos = labelArc.centroid(d);
@@ -152,9 +152,9 @@ function drawGraphic() {
         // Set up the legend
         var legenditemPie = d3.select('#legend')
             .selectAll('div.legend--item')
-            .data(d3.zip(graphic_data.map(item => (item.category)),
-                graphic_data.map(item => d3.format(config.dataLabels.numberFormat)(item.value)),
-                config.colour_palette))
+            .data(d3.zip(graphicData.map(item => (item.category)),
+                graphicData.map(item => d3.format(config.dataLabels.numberFormat)(item.value)),
+                config.colourPalette))
             .enter()
             .append('div')
             .attr('class', 'container'); // Add float-right class here
@@ -182,7 +182,7 @@ function drawGraphic() {
     // This does the centre label
     svg
         .append('g')
-        .attr('transform', 'translate(' + (margin.left + chart_width / 2) + ',' + (margin.top + height / 2) + ')')
+        .attr('transform', 'translate(' + (margin.left + chartWidth / 2) + ',' + (margin.top + height / 2) + ')')
         .append('text')
         .attr('fill', '#414042')
         .attr('x', 0)
@@ -202,9 +202,9 @@ function drawGraphic() {
     }
 }
 
-d3.csv(config.graphic_data_url).then((data) => {
+d3.csv(config.graphicDataURL).then((data) => {
     //load chart data
-    graphic_data = data.sort(function (a, b) {
+    graphicData = data.sort(function (a, b) {
         return b.value - a.value //  Sorting the categories by value, may prefer to sort alphabetically (a.category - b.category) or not at all
     });
 

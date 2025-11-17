@@ -4,7 +4,7 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
-let graphic_data, size, svg;
+let graphicData, size, svg;
 
 const circleSize = 105; // Define size for circles in pixels
 const squareSize = 90; // Define size for squares in pixels
@@ -25,19 +25,19 @@ function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
   size = initialise(size);
 
-  let colour = d3.scaleOrdinal(config.colour_palette);
+  let colour = d3.scaleOrdinal(config.colourPalette);
 
   let margin = config.margin[size];
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
-  let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chart_width;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth;
 
-  const x = d3.scaleLinear().range([0, chart_width]);
+  const x = d3.scaleLinear().range([0, chartWidth]);
   const y = d3.scaleLinear().range([height, 0]);
 
   // Create size scale for circles
   let sizeScale = null;
-  if (config.sizeConfig.enabled && graphic_data.some(d => d[config.sizeConfig.sizeField] !== undefined)) {
-    const sizeExtent = d3.extent(graphic_data, d => +d[config.sizeConfig.sizeField]);
+  if (config.sizeConfig.enabled && graphicData.some(d => d[config.sizeConfig.sizeField] !== undefined)) {
+    const sizeExtent = d3.extent(graphicData, d => +d[config.sizeConfig.sizeField]);
     sizeScale = d3.scaleSqrt()
       .domain(sizeExtent)
       .range([config.sizeConfig.minSize, config.sizeConfig.maxSize]);
@@ -45,12 +45,12 @@ function drawGraphic() {
 
   svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   });
 
-  let groups = [...new Set(graphic_data.map(item => item.group))].sort();
+  let groups = [...new Set(graphicData.map(item => item.group))].sort();
 
   let shape = d3.scaleOrdinal()
     .domain(groups)
@@ -88,9 +88,9 @@ function drawGraphic() {
       .attr('cx', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI))+0.5)
       .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI))+0.5)
       .attr('r', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)))
-      .attr('fill', config.colour_palette[0])
+      .attr('fill', config.colourPalette[0])
       .attr('fill-opacity', 0.75)
-      .attr('stroke', config.colour_palette[0])
+      .attr('stroke', config.colourPalette[0])
       .attr('stroke-width', 1);
 
     sizeLegendItems.append('span')
@@ -133,7 +133,7 @@ function drawGraphic() {
   }
 
   // set up dropdown
-  const dropdownData = graphic_data
+  const dropdownData = graphicData
   .slice() // Create copy to avoid mutating original
   .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
   .map((point) => ({
@@ -153,7 +153,7 @@ function drawGraphic() {
     groupKey: 'group',
     onChange: (selectedValue) => {
       if (selectedValue) {
-        const renderIndex = graphic_data.findIndex(d => d.originalId === selectedValue.id);
+        const renderIndex = graphicData.findIndex(d => d.originalId === selectedValue.id);
         overlayCleanup.highlightPoint(renderIndex);
       } else {
         overlayCleanup.clearHighlight();
@@ -164,14 +164,14 @@ function drawGraphic() {
 
 
   if (config.xDomain == "auto") {
-    x.domain([d3.min(graphic_data, d => d.xvalue), d3.max(graphic_data, d => d.xvalue)]);
+    x.domain([d3.min(graphicData, d => d.xvalue), d3.max(graphicData, d => d.xvalue)]);
   } else {
     x.domain(config.xDomain);
   }
 
 
   if (config.yDomain == "auto") {
-    y.domain([d3.min(graphic_data, d => d.yvalue), d3.max(graphic_data, d => d.yvalue)]);
+    y.domain([d3.min(graphicData, d => d.yvalue), d3.max(graphicData, d => d.yvalue)]);
   } else {
     y.domain(config.yDomain);
   }
@@ -199,7 +199,7 @@ function drawGraphic() {
     .call(
       d3.axisLeft(y)
         .ticks(config.yAxisTicks[size])
-        .tickSize(-chart_width)
+        .tickSize(-chartWidth)
         .tickPadding(10)
         .tickFormat(d3.format(config.yAxisFormat))
     ).selectAll('line')
@@ -225,7 +225,7 @@ function drawGraphic() {
   }
 
   svg.append('g').selectAll('path')
-    .data(graphic_data.sort((a, b) => { 
+    .data(graphicData.sort((a, b) => { 
       if (sizeScale) { 
         return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
       } else {
@@ -259,14 +259,14 @@ function drawGraphic() {
   // Create Delaunay overlay for tooltips (Basic version)
   overlayCleanup = createDelaunayOverlay({
     svgContainer: svg,
-    data: graphic_data.sort((a, b) => { 
+    data: graphicData.sort((a, b) => { 
       if (sizeScale) { 
         return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
       } else {
         return 0
       }
     }),
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height,
     xScale: x,
     yScale: y,
@@ -289,7 +289,7 @@ function drawGraphic() {
   });
 
   svg.selectAll('text.label')
-    .data(graphic_data.filter(d => d.highlight === 'y'))
+    .data(graphicData.filter(d => d.highlight === 'y'))
     .join('text')
     .attr('class', 'dataLabels')
     .attr('x', d => x(d.xvalue))
@@ -310,11 +310,11 @@ function drawGraphic() {
   // This does the x-axis label
   addAxisLabel({
     svgContainer: svg,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height + 40,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   // This does the y-axis label
@@ -324,7 +324,7 @@ function drawGraphic() {
     yPosition: -10,
     text: config.yAxisLabel,
     textAnchor: "start",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
 
@@ -341,17 +341,17 @@ function drawGraphic() {
 }
 
 
-d3.csv(config.graphic_data_url,d3.autoType)
+d3.csv(config.graphicDataURL,d3.autoType)
   .then(data => {
     // Add unique IDs based on original data order
-    graphic_data = data.map((d, index) => ({
+    graphicData = data.map((d, index) => ({
       ...d,
       originalId: index  // Add stable unique ID
     }));
 
     // Sort for rendering (largest circles first)
     if (config.sizeConfig.enabled) {
-      graphic_data.sort((a, b) => (+b[config.sizeConfig.sizeField]) - (+a[config.sizeConfig.sizeField]));
+      graphicData.sort((a, b) => (+b[config.sizeConfig.sizeField]) - (+a[config.sizeConfig.sizeField]));
     }
 
     //use pym to create iframed chart dependent on specified variables

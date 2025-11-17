@@ -9,13 +9,13 @@
     "visualisation"
   ],
   "type": "module",
-  "homepage": "https://github.com/ONSvisual/charts-lib#readme",
+  "homepage": "https://github.com/ONSdigital/charts-lib#readme",
   "bugs": {
-    "url": "https://github.com/ONSvisual/charts-lib/issues"
+    "url": "https://github.com/ONSdigital/charts-lib/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ONSvisual/charts-lib.git"
+    "url": "git+https://github.com/ONSdigital/charts-lib.git"
   },
   "license": "MIT",
   "author": "ONS Data visualisation team",
