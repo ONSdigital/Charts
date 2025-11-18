@@ -370,8 +370,20 @@ function drawGraphic() {
             config.flagLabels.end.prefix + locale.format(config.flagLabels.end.format)(d.value) + config.flagLabels.end.suffix )
     .call(wrap,200)
 
-    //create net change bars
-    if(config.netChange.show){
+    //create net change text on small screen sizes
+    if(config.netChange.show && size == "sm"){
+      charts.append("text")
+        .attr("class", "flagText")
+        .attr("x", (d) => d[7][1].x)
+        .attr("dx", (d) => d[7][1].x < chart_width/2 ? 14 : -14)
+        .attr("text-anchor", (d) => d[7][1].x < chart_width/2 ? "start" : "end")
+        .attr("font-size", "14px")
+        .attr("y", (d) => d[7][1].y + flagOffset + 18)
+        .text((d) => config.netChange.title + config.netChange.prefix + locale.format(config.netChange.format)(d[7][1].value - d[7][0].value) + config.netChange.suffix)
+    }
+
+    //create net change bars pn larger screen sizes
+    if(config.netChange.show && size != "sm"){
 
       let netChangeG = charts.append("g").attr("id","netChange").attr("class","netChange")
 
@@ -383,7 +395,8 @@ function drawGraphic() {
         .attr("y", (d) => d[2] + flagOffset + 10)
         .attr("width", (d) => Math.abs(d[7][0].x - d[7][1].x))
         .attr("height", 27)
-        .attr("fill", (d) => d[7][0].value > d[7][1].value ? "#F99095" : "#c6d6e5" )
+        .attr("opacity", 0.4)
+        .attr("fill", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPalette[0] : config.colourPalette[1])
 
       netChangeG
         .append("line")
@@ -391,7 +404,7 @@ function drawGraphic() {
         .attr("x1", (d) => d[7][0].x)
         .attr("x2", (d) => d[7][0].x)
         .attr("y1", (d) => d[2] + flagOffset + 10)
-        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? ONScolours.nightBlue : ONScolours.beetrootPurple)
+        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPaletteText[0] : config.colourPaletteText[1])
 
       netChangeG
         .append("line")
@@ -399,7 +412,7 @@ function drawGraphic() {
         .attr("x1", (d) => d[7][1].x)
         .attr("x2", (d) => d[7][1].x)
         .attr("y1", (d) => d[2] + flagOffset + 10)
-        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? ONScolours.nightBlue : ONScolours.beetrootPurple)
+        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPaletteText[0] : config.colourPaletteText[1])
 
       netChangeG
         .append("text")
@@ -407,7 +420,7 @@ function drawGraphic() {
         .attr("class","dataLabels")
         .attr("x", (d) => Math.min(d[7][0].x, d[7][1].x) + Math.abs(d[7][0].x - d[7][1].x)/2)
         .attr("y", (d) => d[2] + flagOffset + 35)
-        .attr("fill", ONScolours.grey100)
+        .attr("fill", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPaletteText[0] : config.colourPaletteText[1])
         .text((d) => config.netChange.title + config.netChange.prefix + locale.format(config.netChange.format)(d[7][1].value - d[7][0].value) + config.netChange.suffix)
      
       // calculate height of wrapped text within net change bars and set height of accompanying bar  

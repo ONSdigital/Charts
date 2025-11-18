@@ -1,6 +1,7 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": [ONScolours.oceanBlue, ONScolours.coralPink, ONScolours.grey50],
+	"colourPaletteText": [ONScolours.nightBlue, ONScolours.beetrootPurple, ONScolours.grey100],
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "This chart has been hidden from screen readers. The main message is summarised in the chart title and data is available to download below.",
 	// options are "ascending", "descending", "auto" (to order based on whether total is ascending or descending), or "none"
@@ -78,19 +79,11 @@ config = {
 	"showZeroLine": false,
 	// toggle Net Change bar and set options
 	"netChange": {
-		"sm": {
-			"show": false,
-		},
-		"md": {
-			"show": false,
-		},
-		"lg": {
 			"show": true,
-			"title": "Total change: ",
+			"title": "Net change: ",
 			"prefix": "",
 			"suffix": "",
 			"format": ",.0f"	
-		},
 	},
 	//the threshold at which values are categorised as "little change" - this can be set as a consistent number across all groups (e.g. 1000), or as a percentage change from the start value or each group (e.g. "1%")
 	"noChangeThreshold": "0.01%",
