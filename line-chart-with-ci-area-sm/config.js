@@ -58,10 +58,20 @@ config = {
 		}
 	},
 	"chartGap": 20,
-	"xAxisTicksEvery": { // this is the interval of ticks on the x axis but it will always show the first and last date.
+	// New tick config
+	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickCount": { // for "total" method
 		"sm": 2,
 		"md": 2,
-		"lg": 2
+		"lg": 6
+	},
+	"xAxisTickInterval": { // for "interval" method
+		"unit": "year", // "year", "month", "quarter", "day"
+		"step": { // every x "units"
+			"sm": 2,
+			"md": 2,
+			"lg": 2
+		}
 	},
 	"yAxisTicks": {
 		"sm": 7,

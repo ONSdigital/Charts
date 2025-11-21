@@ -1,6 +1,6 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
 
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
@@ -68,21 +68,13 @@ function drawGraphic() {
 		y.domain(config.yDomain)
 	}
 
-	// This function generates an array of approximately count + 1 uniformly-spaced, rounded values in the range of the given start and end dates (or numbers).
-	let tickValues = x.ticks(config.xAxisTicks[size]);
-
-	// Add the first and last dates to the ticks array, and use a Set to remove any duplicates
-	// tickValues = Array.from(new Set([graphicData[0].date, ...tickValues, graphicData[graphicData.length - 1].date]));
-
-	if (config.addFirstDate == true) {
-		tickValues.push(graphicData[0].date)
-		console.log("First date added")
-	}
-
-	if (config.addFinalDate == true) {
-		tickValues.push(graphicData[graphicData.length - 1].date)
-		console.log("Last date added")
-	}
+	// Use new getXAxisTicks function for tick values
+	let tickValues = getXAxisTicks({
+		data: graphicData,
+		xDataType,
+		size,
+		config
+	});
 
 	// Create an SVG element
 	const svg = addSvg({
@@ -101,10 +93,10 @@ function drawGraphic() {
 			d3
 				.axisBottom(x)
 				.tickValues(tickValues)
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
+				.tickFormat((d) => xDataType === 'date'
+					? d3.timeFormat(config.xAxisTickFormat[size])(d)
 					: d3.format(config.xAxisNumberFormat)(d))
 		);
-
 
 	// Add the y-axis
 	svg

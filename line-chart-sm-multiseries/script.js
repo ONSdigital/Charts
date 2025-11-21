@@ -1,83 +1,10 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, chartWidth;
-
-function getXAxisTicks({
-	data,
-	xDataType,
-	size,
-	config
-}) {
-	let ticks = [];
-	const method = config.xAxisTickMethod || "interval";
-	if (xDataType === 'date') {
-		const start = data[0].date;
-		const end = data[data.length - 1].date;
-		if (method === "total") {
-			const count = config.xAxisTickCount ? config.xAxisTickCount[size] : 5;
-			ticks = d3.scaleTime().domain([start, end]).ticks(count);
-		} else if (method === "interval") {
-			const interval = config.xAxisTickInterval || { unit: "year", step: { sm: 1, md: 1, lg: 1 } };
-			const step = typeof interval.step === 'object' ? interval.step[size] : interval.step;
-			let d3Interval;
-			switch (interval.unit) {
-				case "year":
-					d3Interval = d3.timeYear.every(step);
-					break;
-				case "month":
-					d3Interval = d3.timeMonth.every(step);
-					break;
-				case "quarter":
-					d3Interval = d3.timeMonth.every(step * 3);
-					break;
-				case "day":
-					d3Interval = d3.timeDay.every(step);
-					break;
-				default:
-					d3Interval = d3.timeYear.every(1);
-			}
-			ticks = d3Interval.range(start, d3.timeDay.offset(end, 1));
-		}
-		if (!Array.isArray(ticks)) ticks = [];
-		if (config.addFirstDate && !ticks.some(t => +t === +start)) {
-			ticks.unshift(start);
-		}
-		if (config.addFinalDate && !ticks.some(t => +t === +end)) {
-			ticks.push(end);
-		}
-	} else {
-		// Numeric axis
-		if (method === "total") {
-			const count = config.xAxisTickCount[size] || 5;
-			const extent = d3.extent(data, d => d.date);
-			ticks = d3.ticks(extent[0], extent[1], count);
-		} else if (method === "interval") {
-			const interval = config.xAxisTickInterval || { unit: "number", step: { sm: 1, md: 1, lg: 1 } };
-			const step = typeof interval.step === 'object' ? interval.step[size] : interval.step;
-			const extent = d3.extent(data, d => d.date);
-			let current = extent[0];
-			while (current <= extent[1]) {
-				ticks.push(current);
-				current += step;
-			}
-		}
-		if (!Array.isArray(ticks)) ticks = [];
-		if (config.addFirstDate && !ticks.some(t => t === data[0].date)) {
-			ticks.unshift(data[0].date);
-		}
-		if (config.addFinalDate && !ticks.some(t => t === data[data.length - 1].date)) {
-			ticks.push(data[data.length - 1].date);
-		}
-	}
-	// Remove duplicates and sort
-	ticks = Array.from(new Set(ticks.map(t => +t))).sort((a, b) => a - b).map(t => xDataType === 'date' ? new Date(t) : t);
-	return ticks;
-}
-
 
 function drawGraphic() {
 
@@ -227,13 +154,13 @@ function drawGraphic() {
 				d3
 					.axisBottom(x)
 					.tickValues(getXAxisTicks({
-					data: graphicData,
-					xDataType,
-					size,
-					config
+						data: graphicData,
+						xDataType,
+						size,
+						config
 					}))
 					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
+						: d3.format(config.xAxisNumberFormat)(d))
 			);
 
 
@@ -336,7 +263,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 				date: d3.timeParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
-					.map(([key, value])  => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		} else {
@@ -344,7 +271,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 				date: (+d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
-					.map(([key, value])  => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		}

@@ -55,10 +55,20 @@ config = {
 			"left": 30
 		}
 	},
-	"xAxisTicks": { // this is the number of ticks on the x axis - add the first and last date with the options below
-		"sm": 3,
-		"md": 5,
-		"lg": 7
+	// New tick config
+	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickCount": { // for "total" method
+		"sm": 2,
+		"md": 2,
+		"lg": 6
+	},
+	"xAxisTickInterval": { // for "interval" method
+		"unit": "year", // "year", "month", "quarter", "day"
+		"step": { // every x "units"
+			"sm": 2,
+			"md": 2,
+			"lg": 2
+		}
 	},
 	"yAxisTicks": {
 		"sm": 7,
