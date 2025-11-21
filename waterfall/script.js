@@ -2,7 +2,8 @@ import {
   initialise,
   wrap,
   addSvg,
-  addAxisLabel
+  addAxisLabel,
+  getTextColorFromBackground
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -183,6 +184,19 @@ function drawGraphic() {
     d[7].forEach((datum, i) => {
       datum.x = d[5](datum.value)
       datum.y = i == 0 ? 0 : d[2]
+      if (i > 0 && config.netChangeColours){
+        if(d[7][1].value - d[7][0].value >= 0){
+          datum.colour = config.netChangeColours[0]
+        } else{
+          datum.colour = config.netChangeColours[1]
+        }
+      } else if(i > 0){
+        if(d[7][1].value - d[7][0].value >= 0){
+          datum.colour = config.colourPalette[0]
+        } else{
+          datum.colour = config.colourPalette[1]
+        }
+      }
     })
 
     //set no change threshold
@@ -282,6 +296,7 @@ function drawGraphic() {
     .attr("orient", "auto");
   arrowheadMarker.append("path")
     .attr("stroke", "context-stroke")
+    .attr("fill","none")
     .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731")
 
   const arrowheadMarker2 = svgDefs.append("svg:marker")
@@ -293,7 +308,8 @@ function drawGraphic() {
     .attr("markerHeight", 20)
     .attr("orient", "auto");
   arrowheadMarker2.append("path")
-      .attr("stroke", "context-stroke")
+    .attr("stroke", "context-stroke")
+    .attr("fill","none")
     .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731") 
 
   charts
@@ -395,8 +411,7 @@ function drawGraphic() {
         .attr("y", (d) => d[2] + flagOffset + 10)
         .attr("width", (d) => Math.abs(d[7][0].x - d[7][1].x))
         .attr("height", 27)
-        .attr("opacity", 0.4)
-        .attr("fill", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPalette[0] : config.colourPalette[1])
+        .attr("fill", (d) => d[7][1].colour)
 
       netChangeG
         .append("line")
@@ -404,7 +419,7 @@ function drawGraphic() {
         .attr("x1", (d) => d[7][0].x)
         .attr("x2", (d) => d[7][0].x)
         .attr("y1", (d) => d[2] + flagOffset + 10)
-        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPaletteText[0] : config.colourPaletteText[1])
+        .attr("stroke", (d) => getTextColorFromBackground(d[7][1].colour, 4.5))
 
       netChangeG
         .append("line")
@@ -412,7 +427,7 @@ function drawGraphic() {
         .attr("x1", (d) => d[7][1].x)
         .attr("x2", (d) => d[7][1].x)
         .attr("y1", (d) => d[2] + flagOffset + 10)
-        .attr("stroke", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPaletteText[0] : config.colourPaletteText[1])
+        .attr("stroke", (d) => getTextColorFromBackground(d[7][1].colour, 4.5))
 
       netChangeG
         .append("text")
@@ -420,7 +435,7 @@ function drawGraphic() {
         .attr("class","dataLabels")
         .attr("x", (d) => Math.min(d[7][0].x, d[7][1].x) + Math.abs(d[7][0].x - d[7][1].x)/2)
         .attr("y", (d) => d[2] + flagOffset + 35)
-        .attr("fill", (d) => d[7][1].value - d[7][0].value >= 0 ? config.colourPaletteText[0] : config.colourPaletteText[1])
+        .attr("fill", (d) => getTextColorFromBackground(d[7][1].colour, 4.5))
         .text((d) => config.netChange.title + config.netChange.prefix + locale.format(config.netChange.format)(d[7][1].value - d[7][0].value) + config.netChange.suffix)
      
       // calculate height of wrapped text within net change bars and set height of accompanying bar  
