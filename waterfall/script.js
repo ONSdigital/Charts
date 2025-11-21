@@ -113,7 +113,7 @@ function drawGraphic() {
         value: d[1][d[1].length-1].end
       })
     } else{
-      d[7][1].customValue = d[7][1].value
+      d[7][1].customValue = d[7][1].customValue ? d[7][1].customValue : d[7][1].value
       d[7][1].value = d[1][d[1].length-1].end
     }
 
