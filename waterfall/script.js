@@ -11,15 +11,8 @@ let legend = d3.select("#legend");
 let pymChild = null;
 let graphic_data,
   size,
-  svgs,
   xDomain,
-  divs,
-  charts,
-  var_group,
-  var_group2,
-  var_group3,
-  svg;
-
+  divs;
 
 //set presets for d3.format (this should probably end up in our helpers folder and be consistent across templates)
 const locale = d3.formatLocale({
@@ -612,7 +605,7 @@ function drawGraphic() {
     // ---------------------------------------------------------
     // Create each legend item container using a D3 data join
     // ---------------------------------------------------------
-    const items = d3.select("#legend")
+    const items = legend
       .selectAll("div.legend--item")
       .data(types)
       .join("div")
