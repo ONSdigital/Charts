@@ -211,7 +211,7 @@ const chartConfig = [
     ]
   },
   {
-    name: "Scatter plot",
+    name: "Scatter or bubble plot",
     url: "https://onsdigital.github.io/Charts/scatter-bubble-plot/",
     tags: {
       correlation: true
