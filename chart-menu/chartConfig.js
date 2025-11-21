@@ -229,6 +229,17 @@ const chartConfig = [
     dataFiles: [
       { name: "Map data", path: "data/data.csv" }
     ]
+  },
+  {
+    name: "Waterfall",
+    url: "https://onsdigital.github.io/Charts/waterfall/",
+    tags: {
+      comparision: true,
+      "part-to-whole": true
+    },
+    dataFiles: [
+      { name: "data.csv", path: "data.csv" }
+    ]
   }
 ];
 
