@@ -18,12 +18,12 @@ config = {
 			"start": {
 				"prefix": "2023: ",
 				"suffix": "",
-				"format": ",.3s"
+				"format": ",.0f"
 			},
 			"end": {
 				"prefix": "2024: ",
 				"suffix": "",
-				"format": ",.3s"
+				"format": ",.0f"
 			}
 		},
 		"md": {
@@ -57,24 +57,10 @@ config = {
 	"legendItems": ["Dec","Inc","No"],
 	"legendText": ["Decrease", "Increase", "Less than 0.01% change"],
 	"dataLabels": {
-		"sm": {
-			"show": true,
-			"prefix": "",
-			"suffix": "",
-			"format": ",.3s"
-		},
-		"md": {
-			"show": true,
-			"prefix": "",
-			"suffix": "",
-			"format": ",.0f"
-		},
-		"lg": {
-			"show": true,
-			"prefix": "",
-			"suffix": "",
-			"format": ",.0f"
-		},
+		"show": true,
+		"prefix": "",
+		"suffix": "",
+		"format": ",.0f"
 	},
 	"showZeroLine": false,
 	// toggle Net Change bar and set options
