@@ -53,7 +53,6 @@ config = {
 	// Start and end values for your legend lines E.g. 2011 --> 2021
 	"legendLabels": {"min": "2023", "max": "2024"},
 	// Choose which items to include in the legend, and the order that they appear
-	"legendItems": ["Dec","Inc","No"],
 	"legendText": ["Decrease", "Increase", "Less than 0.01% change"],
 	"dataLabels": {
 		"show": true,
