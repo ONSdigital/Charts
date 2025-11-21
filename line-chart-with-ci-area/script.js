@@ -3,7 +3,6 @@
 import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
-//console.log(`Graphic selected: ${graphic}`);
 let legend = d3.selectAll('#legend')
 let pymChild = null;
 
@@ -18,19 +17,14 @@ function drawGraphic() {
 	let margin = config.margin[size];
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
 	let height = (config.aspectRatio[size][1] / config.aspectRatio[size][0]) * chartWidth
-	// console.log(`Margin, chartWidth, and height set: ${margin}, ${chartWidth}, ${height}`);
-
-
 
 	// Get categories from the keys used in the stack generator
 	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
-	// console.log(categories);
 
 	const fulldataKeys = Object.keys(graphicData[0]).slice(1)
 
 	// Define the x and y scales
-
 	let xDataType;
 
 	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
@@ -40,7 +34,6 @@ function drawGraphic() {
 	}
 
 	let x;
-
 	if (xDataType == 'date') {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
@@ -132,7 +125,6 @@ function drawGraphic() {
 			.defined(d => d[category] !== null) // Only plot lines where we have values
 			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
 			.context(null);
-		// console.log(`Line generator created for category: ${category}`);
 
 		svg
 			.append('path')
@@ -148,7 +140,6 @@ function drawGraphic() {
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
-		//console.log(`Path appended for category: ${category}`);
 
 		const lastDatum = graphicData[graphicData.length - 1];
 
@@ -291,13 +282,11 @@ function drawGraphic() {
 
 	//create link to source
 	addSource('source', config.sourceText);
-	// console.log(`Link to source created`);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data

@@ -56,7 +56,6 @@ function drawGraphic() {
 		let minY = d3.min(graphicData, (d) => Math.min(...categories.map((c) => d[c])))
 		let maxY = d3.max(graphicData, (d) => Math.max(...categories.map((c) => d[c])))
 		y.domain([minY, maxY])
-		console.log(minY, maxY)
 	} else {
 		y.domain(config.yDomain)
 	}
@@ -69,7 +68,6 @@ function drawGraphic() {
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
-	//console.log(`SVG element created`);
 
 	const lastDatum = graphicData[graphicData.length - 1];
 	const firstDatum = graphicData[0];
@@ -109,7 +107,6 @@ function drawGraphic() {
 			.y((d) => y(d[category]))
 			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
 			.context(null);
-		// console.log(`Line generator created for category: ${category}`);
 
 		svg
 			.append('path')

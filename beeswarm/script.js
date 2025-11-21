@@ -157,6 +157,9 @@ function drawGraphic() {
     group: point.group
   }));
 
+  //remove and then add dropdown again.
+  d3.select("#select").selectAll("*").remove()
+
   const select = new EnhancedSelect({
     containerId: 'select',
     options: dropdownData,

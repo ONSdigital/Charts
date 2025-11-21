@@ -56,12 +56,10 @@ function drawGraphic() {
     //Labelling the first and/or last bar if needed
     if (config.addFirstDate == true) {
         tickValues.push(graphicData[0].xvalue)
-        console.log("First date added")
     }
 
     if (config.addFinalDate == true) {
         tickValues.push(graphicData[graphicData.length - 1].xvalue)
-        console.log("Last date added")
     }
 
     //set up yAxis generator
