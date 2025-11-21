@@ -4,7 +4,7 @@ config = {
 	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -55,10 +55,20 @@ config = {
 			"left": 30
 		}
 	},
-	"xAxisTicks": { // this is the number of ticks on the x axis - add the first and last date with the options below
-		"sm": 3,
-		"md": 5,
-		"lg": 7
+	// New tick config
+	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickCount": { // for "total" method
+		"sm": 2,
+		"md": 2,
+		"lg": 6
+	},
+	"xAxisTickInterval": { // for "interval" method
+		"unit": "year", // "year", "month", "quarter", "day"
+		"step": { // every x "units"
+			"sm": 2,
+			"md": 2,
+			"lg": 2
+		}
 	},
 	"yAxisTicks": {
 		"sm": 7,
@@ -67,7 +77,5 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

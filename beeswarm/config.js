@@ -2,7 +2,7 @@ config = {
   "graphicDataURL": "data.csv",
   "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
-  "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title.",
+  "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "xAxisFormat": ".0f",
   "layoutMethod": "force",// 'binned' or 'force'
   "forceOptions": {
@@ -68,6 +68,4 @@ config = {
     "md": 8,
     "lg": 10
   },
-  "mobileBreakpoint": 510,
-  "mediumBreakpoint": 600
 };

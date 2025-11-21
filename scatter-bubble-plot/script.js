@@ -60,13 +60,14 @@ function drawGraphic() {
   if (sizeScale) {
     const sizeLegend = legend.append('div')
       .attr('class', 'size-legend')
-      .style('margin-top', '20px');
+      .style('margin-top', '20px')
+      .style('display', 'flex');
 
-    sizeLegend.append('h4')
-      .text('Size Scale')
-      .style('margin', '0 0 10px 0')
-      .style('font-size', '14px')
-      .style('font-weight', '600');
+    // sizeLegend.append('h4')
+    //   .text('Size Scale')
+    //   .style('margin', '0 0 10px 0')
+    //   .style('font-size', '14px')
+    //   .style('font-weight', '600');
 
     const sizeExtent = sizeScale.domain();
     const sizeLegendData = [sizeExtent[0], sizeExtent[1]];
@@ -81,20 +82,22 @@ function drawGraphic() {
       .style('margin-bottom', '5px');
 
     sizeLegendItems.append('svg')
-      .attr('width', 30)
-      .attr('height', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)*2))
+      .attr('width', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)*2)+2)
+      .attr('height', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)*2)+2)
       .append('circle')
-      .attr('cx', 15)
-      .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)))
-      .attr('r', d => Math.sqrt(sizeScale(d) / Math.PI))
+      .attr('cx', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI))+0.5)
+      .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI))+0.5)
+      .attr('r', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)))
       .attr('fill', config.colourPalette[0])
-      .attr('stroke', 'white')
+      .attr('fill-opacity', 0.75)
+      .attr('stroke', config.colourPalette[0])
       .attr('stroke-width', 1);
 
     sizeLegendItems.append('span')
       .style('margin-left', '5px')
+      .style('margin-right', '15px')
       .style('font-size', '12px')
-      .text(d => d3.format(config.sizeLabelFormat)(d));
+      .text(d => d3.format(config.sizeConfig.sizeLabelFormat)(d)+` ${config.sizeConfig.sizeLabel}`);
   }else{
     
 
@@ -242,11 +245,11 @@ function drawGraphic() {
     })
     .attr('transform', d => `translate(${x(d.xvalue)},${y(d.yvalue)})`)
     .attr('fill', d => colour(d.group))
-    .attr('fill-opacity', config.fillOpacity)
+    .attr('fill-opacity', config.sizeConfig.enabled ? 0.75 : 1)
     .attr('stroke', d => d.highlight === 'y' ? '#222' : config.sizeConfig.enabled ? ONScolours.oceanBlue : "#fff")
     .attr('stroke-width', d => d.highlight === 'y' ? '1.5px' : '1px')
     .attr('stroke-linejoin', 'round')
-    .attr('stroke-opacity', config.strokeOpacity);
+    .attr('stroke-opacity', 1);
 
   // Clean up previous overlay if it exists
   if (overlayCleanup) {
@@ -274,10 +277,10 @@ function drawGraphic() {
     tooltipConfig: {
       xValueFormat: d3.format(config.xAxisFormat),
       yValueFormat: d3.format(config.yAxisFormat),
-      sizeValueFormat: d3.format(config.sizeLabelFormat),
+      sizeValueFormat: d3.format(config.sizeConfig.sizeLabelFormat),
       xLabel: config.xAxisLabel || 'X Value',
       yLabel: config.yAxisLabel || 'Y Value',
-      sizeLabel: config.sizeLabel || 'Size',
+      sizeLabel: config.sizeConfig.sizeLabel || 'Size',
       groupLabel: config.groupLabel || 'Group',
       width: "250px",
       offset: { x: 3, y: 3 }

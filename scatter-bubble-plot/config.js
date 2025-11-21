@@ -2,7 +2,7 @@ config={
   "graphicDataURL": "bubbleplotdata.csv",
   "colourPalette": [ONScolours.oceanBlue,ONScolours.springGreen,ONScolours.coralPink,ONScolours.skyBlue],
   "sourceText": "Office for National Statistics",
-  "accessibleSummary":"Here is the screenreader text describing the chart.",
+  "accessibleSummary":"The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "xDomain":[0,1],
   "yDomain":[-0.14,1], // either "auto" or an array for the x/y domain e.g. [0,100]
   "xAxisLabel":"Change since last month",
@@ -10,14 +10,14 @@ config={
   "xAxisFormat":".0%",
   "yAxisFormat":".0%",
   "groupLabel":'Group',
-  "sizeLabel":"Size", // Label for size for tooltips
-  "sizeLabelFormat":".0f",
   // Size scaling configuration
   "sizeConfig":{
       "enabled": true, // Set to false to disable size scaling
       "minSize": 25,   // Minimum circle size in pixels
       "maxSize": 500,  // Maximum circle size in pixels
-      "sizeField": 'size' // Field name in data that contains size values
+      "sizeField": 'size', // Field name in data that contains size values
+      "sizeLabel":"Size", // Label for size for tooltips and legend
+      "sizeLabelFormat":".0f",
   },
   "aspectRatio": {
     "sm": [1, 1],
@@ -54,7 +54,5 @@ config={
     "md":4,
     "lg":10
   },
-  "mobileBreakpoint": 510,
-  "mediumBreakpoint": 600,
   "elements":{"select":0, "nav":0, "legend":0, "titles":0}
 };

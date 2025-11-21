@@ -474,5 +474,4 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic
 	});
-	// console.log(`PymChild created with renderCallback to drawGraphic`);
 });

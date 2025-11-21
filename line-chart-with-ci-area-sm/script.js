@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -13,16 +13,18 @@ function drawGraphic() {
 	// Get categories from the keys used in the stack generator
 	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
 	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1).filter((k) => k !== 'series')
-	//  console.log(categories);
-
 	const fulldataKeys = Object.keys(graphicData[0]).slice(1).filter((k) => k !== 'series')
 
-	// console.log(fulldataKeys);
+	let xDataType;
 
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
+		xDataType = 'date';
+	} else {
+		xDataType = 'numeric';
+	}
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -93,8 +95,6 @@ function drawGraphic() {
 				.context(null)
 				.defined(d => d[category] !== null) // Only plot lines where we have values
 
-			// console.log(data)
-
 			svg
 				.append('path')
 				.datum(data)
@@ -147,6 +147,14 @@ function drawGraphic() {
 				}
 			})
 
+		// Use new getXAxisTicks function for tick values
+		let tickValues = getXAxisTicks({
+			data: data,
+			xDataType,
+			size,
+			config
+		});
+
 		// Add the x-axis
 		svg
 			.append('g')
@@ -155,21 +163,10 @@ function drawGraphic() {
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues([...new Set(graphicData
-						.map(function (d) {
-							return d.date.getTime()
-						}))] //just get unique dates as seconds past unix epoch
-						.map(function (d) {
-							return new Date(d)
-						}) //map back to dates
-						.sort(function (a, b) {
-							return a - b
-						})
-						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= data.length - config.xAxisTicksEvery[size] || i == data.length - 1 //Rob's fussy comment about labelling the last date
-						})
-					)
-					.tickFormat(d3.timeFormat(config.xAxisTickFormat[size]))
+					.tickValues(tickValues)
+					.tickFormat((d) => xDataType === 'date'
+						? d3.timeFormat(config.xAxisTickFormat[size])(d)
+						: d3.format(config.xAxisNumberFormat)(d))
 			);
 
 
@@ -183,9 +180,6 @@ function drawGraphic() {
 					chartPosition == 0 ? d3.format(config.yAxisFormat)(d) : ""))
 			.selectAll('.tick text')
 			.call(wrap, margin.left - 10);
-
-
-
 
 
 		// This does the chart title label
@@ -246,29 +240,29 @@ function drawGraphic() {
 	if (config.ciLegend) {
 
 		const ciSvg = d3.select('#legend')
-		.append('div')
-		.attr('class', 'legend--item')
-		.append('svg')
-		.attr('width', 205)
-		.attr('height', 70);
+			.append('div')
+			.attr('class', 'legend--item')
+			.append('svg')
+			.attr('width', 205)
+			.attr('height', 70);
 
-	ciSvg.append('rect')
-		.attr('x', 0)
-		.attr('y', 0)
-		.attr('width', 50)
-		.attr('height', 25)
-		.attr('fill', "#959495")
-		.attr('fill-opacity', 0.3);
+		ciSvg.append('rect')
+			.attr('x', 0)
+			.attr('y', 0)
+			.attr('width', 50)
+			.attr('height', 25)
+			.attr('fill', "#959495")
+			.attr('fill-opacity', 0.3);
 
-	ciSvg.append('line')
-		.attr('x1', 0)
-		.attr('y1', 12.5)
-		.attr('x2', 50)
-		.attr('y2', 12.5)
-		.attr('stroke', "#666666")
-		.attr('stroke-width', 2);
+		ciSvg.append('line')
+			.attr('x1', 0)
+			.attr('y1', 12.5)
+			.attr('x2', 50)
+			.attr('y2', 12.5)
+			.attr('stroke', "#666666")
+			.attr('stroke-width', 2);
 
-	addElbowArrow(
+		addElbowArrow(
 			ciSvg,                // svgName
 			25,                   // startX
 			25,                   // startY
@@ -282,30 +276,30 @@ function drawGraphic() {
 			"top",               // wrapVerticalAlign
 			"#414042",            // arrowColour
 			"end"              // textAlignment
-	)
+		)
 
-	addDirectionArrow(
-		//name of your svg, normally just SVG
-		ciSvg,
-		//direction of arrow: left, right, up or down
-		'left',
-		//anchor end or start (end points the arrow towards your x value, start points away)
-		'end',
-		//x value
-		50,
-		//y value
-		7,
-		//alignment - left or right for vertical arrows, above or below for horizontal arrows
-		'right',
-		//annotation text
-		config.legendEstimateText,
-		//wrap width
-		1500,
-		//text adjust y
-		0,
-		//Text vertical align: top, middle or bottom (default is middle)
-		'bottom'
-	)
+		addDirectionArrow(
+			//name of your svg, normally just SVG
+			ciSvg,
+			//direction of arrow: left, right, up or down
+			'left',
+			//anchor end or start (end points the arrow towards your x value, start points away)
+			'end',
+			//x value
+			50,
+			//y value
+			7,
+			//alignment - left or right for vertical arrows, above or below for horizontal arrows
+			'right',
+			//annotation text
+			config.legendEstimateText,
+			//wrap width
+			1500,
+			//text adjust y
+			0,
+			//Text vertical align: top, middle or bottom (default is middle)
+			'bottom'
+		)
 
 
 	}
@@ -318,7 +312,6 @@ function drawGraphic() {
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data
