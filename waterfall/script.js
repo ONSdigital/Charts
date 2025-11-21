@@ -184,19 +184,7 @@ function drawGraphic() {
     d[7].forEach((datum, i) => {
       datum.x = d[5](datum.value)
       datum.y = i == 0 ? 0 : d[2]
-      if (i > 0 && config.netChangeColours){
-        if(d[7][1].value - d[7][0].value >= 0){
-          datum.colour = config.netChangeColours[0]
-        } else{
-          datum.colour = config.netChangeColours[1]
-        }
-      } else if(i > 0){
-        if(d[7][1].value - d[7][0].value >= 0){
-          datum.colour = config.colourPalette[0]
-        } else{
-          datum.colour = config.colourPalette[1]
-        }
-      }
+      datum.colour = d[7][1].value - d[7][0].value >= 0 ? config.colourPalette[0]+"65" : config.colourPalette[1]+"65"
     })
 
     //set no change threshold
