@@ -157,6 +157,7 @@ function drawGraphic() {
 				((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
 				category == reference ? " reference" : " other"));
 
+			svg.selectAll('.reference').raise()
 			svg.selectAll('.line' + chartIndex).raise()
 
 			const lastDatum = graphicData[graphicData.length - 1];
