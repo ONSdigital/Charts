@@ -378,6 +378,7 @@ function drawGraphic() {
     sizeField: null, 
     radius: 25,
     margin: margin,
+    multiHighlight: config.multiHighlight
   });
 
   // Add average lines if they're defined in config
