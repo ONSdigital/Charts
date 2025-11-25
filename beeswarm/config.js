@@ -1,10 +1,10 @@
 config = {
-  "graphicDataURL": "data.csv",
+  "graphicDataURL": "dataethnicity.csv",
   "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
   "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "xAxisFormat": ".0f",
-  "layoutMethod": "force",// 'binned' or 'force'
+  "layoutMethod": "binned",// 'binned' or 'force'
   "forceOptions": {
     "strength": 0.5,        // Collision force strength (0-1)
     "iterations": 120,      // Number of simulation iterations
@@ -14,11 +14,16 @@ config = {
   },
   "xAxisLabel": "Percentage",
   "radius": 'auto',//either auto which is x-range / number of bins
-  "xDomain": [5, 22.5],// either auto or a custom domain as an array e.g [0,100]
+  "xDomain": [0,80],// either auto or a custom domain as an array e.g [0,100]
   "circleDist": 'auto', //Vertical distance between centres of circles as a diameter of the radius or 'auto'
   "numBands": 75, //number of bins,
+  "legend":{
+    "show":false,
+    "label":"Country average"
+  },
+  "multiHighlight":true,
   "averages": {
-    "show": true,  // Whether to show average lines
+    "show": false,  // Whether to show average lines
     "showLabels": false,  // Whether to show labels for the average lines
     "colour": ONScolours.grey100,  // Color of the average lines
     "strokeWidth": 3,  // Width of the average lines
@@ -61,7 +66,7 @@ config = {
   "seriesHeight": {
     "sm": 100,
     "md": 100,
-    "lg": 80
+    "lg": 160
   },
   "xAxisTicks": {
     "sm": 3,
