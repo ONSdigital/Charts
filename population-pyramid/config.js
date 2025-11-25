@@ -1,15 +1,18 @@
 const config = {
     // Data settings
-    graphicDataURL: "population-complex.csv",
-    comparisonData: "population-comparison-complex.csv",
-    comparisonTimeData: "population-comparison-time.csv",
-    dataType: "counts", // "counts" or "percentages"
-    dataStructure: "complex", // "simple" (age, maleBar, femaleBar) or "complex" (pivot structure)
+    primaryData: "population-simple.csv",
+    primaryDataType: "counts", // "counts" or "percentages"
+    primaryDataStructure: "simple", // "simple" (age, maleBar, femaleBar) or "complex" (pivot structure)
+
+    secondaryData:["population-comparison-simple.csv"], // population-comparison-complex.csv, population-comparison-simple.csv
+    secondaryDataType: ["counts"], // "counts" or "percentages"
+    secondaryDataStructure: ["simple"], // "simple" (age, maleBar, femaleBar) or "complex" (pivot structure)
+
 
     // Interaction settings
-    interactionType: "dropdown", // "static", "toggle", "dropdown"
-    hasComparison: true,
-    hasInteractiveComparison: true, // For dropdown version with comparison lines
+    interactionType: "toggle", // "static", "toggle", "dropdown"
+    hasComparison: false,
+    hasInteractiveComparison: false, // For dropdown version with comparison lines
 
     // Button labels for toggle
     buttonLabels: ["2021 Census", "2011 Census"],
