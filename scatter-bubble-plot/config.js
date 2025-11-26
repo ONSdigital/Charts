@@ -1,5 +1,5 @@
 config={
-  "graphicDataURL": "bubbleplotdata.csv",
+  "graphicDataURL": "data.csv",
   "colourPalette": [ONScolours.oceanBlue,ONScolours.springGreen,ONScolours.coralPink,ONScolours.skyBlue],
   "sourceText": "Office for National Statistics",
   "accessibleSummary":"The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
@@ -12,7 +12,7 @@ config={
   "groupLabel":'Group',
   // Size scaling configuration
   "sizeConfig":{
-      "enabled": true, // Set to false to disable size scaling
+      "enabled": false, // Set to false to disable size scaling
       "minSize": 25,   // Minimum circle size in pixels
       "maxSize": 500,  // Maximum circle size in pixels
       "sizeField": 'size', // Field name in data that contains size values

@@ -1,0 +1,663 @@
+group,areanm,value,region
+One-person household,Hartlepool,33.3,North East
+All household members have the same ethnic group,Hartlepool,64.3,North East
+One-person household,Middlesbrough,33.1,North East
+All household members have the same ethnic group,Middlesbrough,61.3,North East
+One-person household,Redcar and Cleveland,33.5,North East
+All household members have the same ethnic group,Redcar and Cleveland,63.8,North East
+One-person household,Stockton-on-Tees,31,North East
+All household members have the same ethnic group,Stockton-on-Tees,64.8,North East
+One-person household,Darlington,34.2,North East
+All household members have the same ethnic group,Darlington,61.3,North East
+One-person household,Halton,31.6,North West
+All household members have the same ethnic group,Halton,64.1,North West
+One-person household,Warrington,30.2,North West
+All household members have the same ethnic group,Warrington,63.9,North West
+One-person household,Blackburn with Darwen,29.9,North West
+All household members have the same ethnic group,Blackburn with Darwen,64,North West
+One-person household,Blackpool,38,North West
+All household members have the same ethnic group,Blackpool,57.1,North West
+One-person household,"Kingston upon Hull, City of",34.2,Yorkshire and The Humber
+All household members have the same ethnic group,"Kingston upon Hull, City of",59.9,Yorkshire and The Humber
+One-person household,East Riding of Yorkshire,30,Yorkshire and The Humber
+All household members have the same ethnic group,East Riding of Yorkshire,66.2,Yorkshire and The Humber
+One-person household,North East Lincolnshire,32.5,Yorkshire and The Humber
+All household members have the same ethnic group,North East Lincolnshire,63.8,Yorkshire and The Humber
+One-person household,North Lincolnshire,29.2,Yorkshire and The Humber
+All household members have the same ethnic group,North Lincolnshire,66.2,Yorkshire and The Humber
+One-person household,York,31.2,Yorkshire and The Humber
+All household members have the same ethnic group,York,60.2,Yorkshire and The Humber
+One-person household,Derby,31.3,East Midlands
+All household members have the same ethnic group,Derby,58.5,East Midlands
+One-person household,Leicester,27.6,East Midlands
+All household members have the same ethnic group,Leicester,59.7,East Midlands
+One-person household,Rutland,28.7,East Midlands
+All household members have the same ethnic group,Rutland,64.8,East Midlands
+One-person household,Nottingham,33.6,East Midlands
+All household members have the same ethnic group,Nottingham,50.9,East Midlands
+One-person household,"Herefordshire, County of",30.7,West Midlands
+All household members have the same ethnic group,"Herefordshire, County of",63.7,West Midlands
+One-person household,Telford and Wrekin,27.7,West Midlands
+All household members have the same ethnic group,Telford and Wrekin,65,West Midlands
+One-person household,Stoke-on-Trent,32.8,West Midlands
+All household members have the same ethnic group,Stoke-on-Trent,61.2,West Midlands
+One-person household,Bath and North East Somerset,29.1,South West
+All household members have the same ethnic group,Bath and North East Somerset,59.7,South West
+One-person household,"Bristol, City of",30.2,South West
+All household members have the same ethnic group,"Bristol, City of",54.1,South West
+One-person household,North Somerset,30.7,South West
+All household members have the same ethnic group,North Somerset,62.4,South West
+One-person household,South Gloucestershire,26,South West
+All household members have the same ethnic group,South Gloucestershire,65.4,South West
+One-person household,Plymouth,32.6,South West
+All household members have the same ethnic group,Plymouth,61.1,South West
+One-person household,Torbay,34.7,South West
+All household members have the same ethnic group,Torbay,59.4,South West
+One-person household,Swindon,28.4,South West
+All household members have the same ethnic group,Swindon,61.6,South West
+One-person household,Peterborough,27.8,East of England
+All household members have the same ethnic group,Peterborough,59.4,East of England
+One-person household,Luton,26.7,East of England
+All household members have the same ethnic group,Luton,56.6,East of England
+One-person household,Southend-on-Sea,33.3,East of England
+All household members have the same ethnic group,Southend-on-Sea,56.9,East of England
+One-person household,Thurrock,24.4,East of England
+All household members have the same ethnic group,Thurrock,63.8,East of England
+One-person household,Medway,27.3,South East
+All household members have the same ethnic group,Medway,62.9,South East
+One-person household,Bracknell Forest,26.8,South East
+All household members have the same ethnic group,Bracknell Forest,60.6,South East
+One-person household,West Berkshire,27,South East
+All household members have the same ethnic group,West Berkshire,63,South East
+One-person household,Reading,28.5,South East
+All household members have the same ethnic group,Reading,53,South East
+One-person household,Slough,22.8,South East
+All household members have the same ethnic group,Slough,60.3,South East
+One-person household,Windsor and Maidenhead,27.4,South East
+All household members have the same ethnic group,Windsor and Maidenhead,56.8,South East
+One-person household,Wokingham,23.5,South East
+All household members have the same ethnic group,Wokingham,64,South East
+One-person household,Milton Keynes,26.3,South East
+All household members have the same ethnic group,Milton Keynes,59.5,South East
+One-person household,Brighton and Hove,34.7,South East
+All household members have the same ethnic group,Brighton and Hove,47.4,South East
+One-person household,Portsmouth,32,South East
+All household members have the same ethnic group,Portsmouth,57.5,South East
+One-person household,Southampton,33,South East
+All household members have the same ethnic group,Southampton,54.3,South East
+One-person household,Isle of Wight,34.7,South East
+All household members have the same ethnic group,Isle of Wight,60.2,South East
+One-person household,County Durham,33.9,North East
+All household members have the same ethnic group,County Durham,62.9,North East
+One-person household,Cheshire East,30.4,North West
+All household members have the same ethnic group,Cheshire East,63.3,North West
+One-person household,Cheshire West and Chester,30.2,North West
+All household members have the same ethnic group,Cheshire West and Chester,63.8,North West
+One-person household,Shropshire,29.7,West Midlands
+All household members have the same ethnic group,Shropshire,65.5,West Midlands
+One-person household,Cornwall,30.7,South West
+All household members have the same ethnic group,Cornwall,63.4,South West
+One-person household,Isles of Scilly,32.6,South West
+All household members have the same ethnic group,Isles of Scilly,61.8,South West
+One-person household,Wiltshire,28.2,South West
+All household members have the same ethnic group,Wiltshire,64.7,South West
+One-person household,Bedford,28.6,East of England
+All household members have the same ethnic group,Bedford,57,East of England
+One-person household,Central Bedfordshire,25.8,East of England
+All household members have the same ethnic group,Central Bedfordshire,63.4,East of England
+One-person household,Northumberland,32.8,North East
+All household members have the same ethnic group,Northumberland,64.2,North East
+One-person household,"Bournemouth, Christchurch and Poole",32.5,South West
+All household members have the same ethnic group,"Bournemouth, Christchurch and Poole",56.6,South West
+One-person household,Dorset,30.6,South West
+All household members have the same ethnic group,Dorset,63.9,South West
+One-person household,Buckinghamshire,26.3,South East
+All household members have the same ethnic group,Buckinghamshire,60.8,South East
+One-person household,North Northamptonshire,27.3,East Midlands
+All household members have the same ethnic group,North Northamptonshire,63.5,East Midlands
+One-person household,West Northamptonshire,26.9,East Midlands
+All household members have the same ethnic group,West Northamptonshire,62.2,East Midlands
+One-person household,Cambridge,31.7,East of England
+All household members have the same ethnic group,Cambridge,45.1,East of England
+One-person household,East Cambridgeshire,27.7,East of England
+All household members have the same ethnic group,East Cambridgeshire,62.7,East of England
+One-person household,Fenland,29,East of England
+All household members have the same ethnic group,Fenland,64,East of England
+One-person household,Huntingdonshire,28,East of England
+All household members have the same ethnic group,Huntingdonshire,62.8,East of England
+One-person household,South Cambridgeshire,26.2,East of England
+All household members have the same ethnic group,South Cambridgeshire,61.3,East of England
+One-person household,Allerdale,33.4,North West
+All household members have the same ethnic group,Allerdale,63.8,North West
+One-person household,Barrow-in-Furness,36.2,North West
+All household members have the same ethnic group,Barrow-in-Furness,61.2,North West
+One-person household,Carlisle,35.1,North West
+All household members have the same ethnic group,Carlisle,61,North West
+One-person household,Copeland,34.3,North West
+All household members have the same ethnic group,Copeland,63.1,North West
+One-person household,Eden,30.9,North West
+All household members have the same ethnic group,Eden,65,North West
+One-person household,South Lakeland,32.5,North West
+All household members have the same ethnic group,South Lakeland,62.6,North West
+One-person household,Amber Valley,30.5,East Midlands
+All household members have the same ethnic group,Amber Valley,65.4,East Midlands
+One-person household,Bolsover,29.9,East Midlands
+All household members have the same ethnic group,Bolsover,66.6,East Midlands
+One-person household,Chesterfield,35.5,East Midlands
+All household members have the same ethnic group,Chesterfield,60.2,East Midlands
+One-person household,Derbyshire Dales,30.6,East Midlands
+All household members have the same ethnic group,Derbyshire Dales,64.9,East Midlands
+One-person household,Erewash,30.9,East Midlands
+All household members have the same ethnic group,Erewash,63.8,East Midlands
+One-person household,High Peak,31.7,East Midlands
+All household members have the same ethnic group,High Peak,63,East Midlands
+One-person household,North East Derbyshire,31.1,East Midlands
+All household members have the same ethnic group,North East Derbyshire,65.3,East Midlands
+One-person household,South Derbyshire,27.1,East Midlands
+All household members have the same ethnic group,South Derbyshire,67.2,East Midlands
+One-person household,East Devon,30,South West
+All household members have the same ethnic group,East Devon,64.6,South West
+One-person household,Exeter,32.4,South West
+All household members have the same ethnic group,Exeter,56.6,South West
+One-person household,Mid Devon,28.7,South West
+All household members have the same ethnic group,Mid Devon,66.2,South West
+One-person household,North Devon,30.7,South West
+All household members have the same ethnic group,North Devon,64.7,South West
+One-person household,South Hams,29.5,South West
+All household members have the same ethnic group,South Hams,64.3,South West
+One-person household,Teignbridge,30.8,South West
+All household members have the same ethnic group,Teignbridge,64,South West
+One-person household,Torridge,30.6,South West
+All household members have the same ethnic group,Torridge,65.4,South West
+One-person household,West Devon,29.4,South West
+All household members have the same ethnic group,West Devon,65.5,South West
+One-person household,Eastbourne,35.5,South East
+All household members have the same ethnic group,Eastbourne,53.5,South East
+One-person household,Hastings,35.7,South East
+All household members have the same ethnic group,Hastings,54.7,South East
+One-person household,Lewes,31,South East
+All household members have the same ethnic group,Lewes,59.5,South East
+One-person household,Rother,32.6,South East
+All household members have the same ethnic group,Rother,60,South East
+One-person household,Wealden,27.5,South East
+All household members have the same ethnic group,Wealden,64.7,South East
+One-person household,Basildon,28.1,East of England
+All household members have the same ethnic group,Basildon,63,East of England
+One-person household,Braintree,27.4,East of England
+All household members have the same ethnic group,Braintree,65.2,East of England
+One-person household,Brentwood,29.1,East of England
+All household members have the same ethnic group,Brentwood,60.2,East of England
+One-person household,Castle Point,27.3,East of England
+All household members have the same ethnic group,Castle Point,67,East of England
+One-person household,Chelmsford,28.1,East of England
+All household members have the same ethnic group,Chelmsford,62.5,East of England
+One-person household,Colchester,28.9,East of England
+All household members have the same ethnic group,Colchester,60.5,East of England
+One-person household,Epping Forest,27.2,East of England
+All household members have the same ethnic group,Epping Forest,59.4,East of England
+One-person household,Harlow,28.8,East of England
+All household members have the same ethnic group,Harlow,59.6,East of England
+One-person household,Maldon,26.6,East of England
+All household members have the same ethnic group,Maldon,67.8,East of England
+One-person household,Rochford,26.3,East of England
+All household members have the same ethnic group,Rochford,68,East of England
+One-person household,Tendring,34.2,East of England
+All household members have the same ethnic group,Tendring,60.6,East of England
+One-person household,Uttlesford,25,East of England
+All household members have the same ethnic group,Uttlesford,65.1,East of England
+One-person household,Cheltenham,34.8,South West
+All household members have the same ethnic group,Cheltenham,55.4,South West
+One-person household,Cotswold,30.2,South West
+All household members have the same ethnic group,Cotswold,62.6,South West
+One-person household,Forest of Dean,28.4,South West
+All household members have the same ethnic group,Forest of Dean,66.9,South West
+One-person household,Gloucester,30.2,South West
+All household members have the same ethnic group,Gloucester,59.6,South West
+One-person household,Stroud,29.1,South West
+All household members have the same ethnic group,Stroud,63.8,South West
+One-person household,Tewkesbury,28.2,South West
+All household members have the same ethnic group,Tewkesbury,65.1,South West
+One-person household,Basingstoke and Deane,26.6,South East
+All household members have the same ethnic group,Basingstoke and Deane,63.1,South East
+One-person household,East Hampshire,26.4,South East
+All household members have the same ethnic group,East Hampshire,65.5,South East
+One-person household,Eastleigh,26.5,South East
+All household members have the same ethnic group,Eastleigh,65.7,South East
+One-person household,Fareham,26.7,South East
+All household members have the same ethnic group,Fareham,67,South East
+One-person household,Gosport,31.9,South East
+All household members have the same ethnic group,Gosport,62.6,South East
+One-person household,Hart,24.6,South East
+All household members have the same ethnic group,Hart,65.2,South East
+One-person household,Havant,29.8,South East
+All household members have the same ethnic group,Havant,64.9,South East
+One-person household,New Forest,29.3,South East
+All household members have the same ethnic group,New Forest,64.6,South East
+One-person household,Rushmoor,26.7,South East
+All household members have the same ethnic group,Rushmoor,61.9,South East
+One-person household,Test Valley,26.4,South East
+All household members have the same ethnic group,Test Valley,65.8,South East
+One-person household,Winchester,27.7,South East
+All household members have the same ethnic group,Winchester,62.6,South East
+One-person household,Broxbourne,27.5,East of England
+All household members have the same ethnic group,Broxbourne,57.7,East of England
+One-person household,Dacorum,28.2,East of England
+All household members have the same ethnic group,Dacorum,59.5,East of England
+One-person household,Hertsmere,27,East of England
+All household members have the same ethnic group,Hertsmere,56.7,East of England
+One-person household,North Hertfordshire,29.8,East of England
+All household members have the same ethnic group,North Hertfordshire,58.2,East of England
+One-person household,Three Rivers,26.3,East of England
+All household members have the same ethnic group,Three Rivers,59.5,East of England
+One-person household,Watford,28.1,East of England
+All household members have the same ethnic group,Watford,53.8,East of England
+One-person household,Ashford,25.9,South East
+All household members have the same ethnic group,Ashford,64.9,South East
+One-person household,Canterbury,29.9,South East
+All household members have the same ethnic group,Canterbury,58.7,South East
+One-person household,Dartford,25.9,South East
+All household members have the same ethnic group,Dartford,62.2,South East
+One-person household,Dover,31,South East
+All household members have the same ethnic group,Dover,62.3,South East
+One-person household,Gravesham,26.9,South East
+All household members have the same ethnic group,Gravesham,62.5,South East
+One-person household,Maidstone,26.4,South East
+All household members have the same ethnic group,Maidstone,64.3,South East
+One-person household,Sevenoaks,26.5,South East
+All household members have the same ethnic group,Sevenoaks,62.8,South East
+One-person household,Folkestone and Hythe,32.5,South East
+All household members have the same ethnic group,Folkestone and Hythe,59.8,South East
+One-person household,Swale,26.4,South East
+All household members have the same ethnic group,Swale,66.4,South East
+One-person household,Thanet,33.5,South East
+All household members have the same ethnic group,Thanet,58.4,South East
+One-person household,Tonbridge and Malling,25.6,South East
+All household members have the same ethnic group,Tonbridge and Malling,65.6,South East
+One-person household,Tunbridge Wells,29.4,South East
+All household members have the same ethnic group,Tunbridge Wells,59.4,South East
+One-person household,Burnley,32.9,North West
+All household members have the same ethnic group,Burnley,62.3,North West
+One-person household,Chorley,29.2,North West
+All household members have the same ethnic group,Chorley,65.9,North West
+One-person household,Fylde,34.2,North West
+All household members have the same ethnic group,Fylde,60.8,North West
+One-person household,Hyndburn,32.9,North West
+All household members have the same ethnic group,Hyndburn,62.6,North West
+One-person household,Lancaster,32.6,North West
+All household members have the same ethnic group,Lancaster,60.9,North West
+One-person household,Pendle,31.1,North West
+All household members have the same ethnic group,Pendle,64,North West
+One-person household,Preston,32.5,North West
+All household members have the same ethnic group,Preston,58.9,North West
+One-person household,Ribble Valley,29.2,North West
+All household members have the same ethnic group,Ribble Valley,66.3,North West
+One-person household,Rossendale,31.8,North West
+All household members have the same ethnic group,Rossendale,63.5,North West
+One-person household,South Ribble,29.8,North West
+All household members have the same ethnic group,South Ribble,65,North West
+One-person household,West Lancashire,28.8,North West
+All household members have the same ethnic group,West Lancashire,66.2,North West
+One-person household,Wyre,32.2,North West
+All household members have the same ethnic group,Wyre,64.3,North West
+One-person household,Blaby,26.1,East Midlands
+All household members have the same ethnic group,Blaby,66.2,East Midlands
+One-person household,Charnwood,28.3,East Midlands
+All household members have the same ethnic group,Charnwood,63.4,East Midlands
+One-person household,Harborough,26,East Midlands
+All household members have the same ethnic group,Harborough,66.8,East Midlands
+One-person household,Hinckley and Bosworth,28.3,East Midlands
+All household members have the same ethnic group,Hinckley and Bosworth,65.9,East Midlands
+One-person household,Melton,28.2,East Midlands
+All household members have the same ethnic group,Melton,66.5,East Midlands
+One-person household,North West Leicestershire,27.8,East Midlands
+All household members have the same ethnic group,North West Leicestershire,66.7,East Midlands
+One-person household,Oadby and Wigston,28.1,East Midlands
+All household members have the same ethnic group,Oadby and Wigston,62.8,East Midlands
+One-person household,Boston,27.5,East Midlands
+All household members have the same ethnic group,Boston,65.3,East Midlands
+One-person household,East Lindsey,30.6,East Midlands
+All household members have the same ethnic group,East Lindsey,65.8,East Midlands
+One-person household,Lincoln,33.3,East Midlands
+All household members have the same ethnic group,Lincoln,58.4,East Midlands
+One-person household,North Kesteven,27.4,East Midlands
+All household members have the same ethnic group,North Kesteven,67.8,East Midlands
+One-person household,South Holland,27.1,East Midlands
+All household members have the same ethnic group,South Holland,66,East Midlands
+One-person household,South Kesteven,29,East Midlands
+All household members have the same ethnic group,South Kesteven,65.1,East Midlands
+One-person household,West Lindsey,29.9,East Midlands
+All household members have the same ethnic group,West Lindsey,65.9,East Midlands
+One-person household,Breckland,27.4,East of England
+All household members have the same ethnic group,Breckland,66,East of England
+One-person household,Broadland,28.1,East of England
+All household members have the same ethnic group,Broadland,66.4,East of England
+One-person household,Great Yarmouth,32.5,East of England
+All household members have the same ethnic group,Great Yarmouth,62,East of England
+One-person household,King's Lynn and West Norfolk,29.4,East of England
+All household members have the same ethnic group,King's Lynn and West Norfolk,64.6,East of England
+One-person household,North Norfolk,33.7,East of England
+All household members have the same ethnic group,North Norfolk,62.2,East of England
+One-person household,Norwich,38.9,East of England
+All household members have the same ethnic group,Norwich,49.5,East of England
+One-person household,South Norfolk,27.7,East of England
+All household members have the same ethnic group,South Norfolk,66.1,East of England
+One-person household,Craven,32.4,Yorkshire and The Humber
+All household members have the same ethnic group,Craven,63.3,Yorkshire and The Humber
+One-person household,Hambleton,29.8,Yorkshire and The Humber
+All household members have the same ethnic group,Hambleton,66.4,Yorkshire and The Humber
+One-person household,Harrogate,30.7,Yorkshire and The Humber
+All household members have the same ethnic group,Harrogate,62.7,Yorkshire and The Humber
+One-person household,Richmondshire,29.2,Yorkshire and The Humber
+All household members have the same ethnic group,Richmondshire,66.7,Yorkshire and The Humber
+One-person household,Ryedale,30.5,Yorkshire and The Humber
+All household members have the same ethnic group,Ryedale,65.5,Yorkshire and The Humber
+One-person household,Scarborough,35.6,Yorkshire and The Humber
+All household members have the same ethnic group,Scarborough,60.5,Yorkshire and The Humber
+One-person household,Selby,26.7,Yorkshire and The Humber
+All household members have the same ethnic group,Selby,68.7,Yorkshire and The Humber
+One-person household,Ashfield,29.4,East Midlands
+All household members have the same ethnic group,Ashfield,65.9,East Midlands
+One-person household,Bassetlaw,30.1,East Midlands
+All household members have the same ethnic group,Bassetlaw,65.7,East Midlands
+One-person household,Broxtowe,30.2,East Midlands
+All household members have the same ethnic group,Broxtowe,61.8,East Midlands
+One-person household,Gedling,30.1,East Midlands
+All household members have the same ethnic group,Gedling,61.4,East Midlands
+One-person household,Mansfield,30.1,East Midlands
+All household members have the same ethnic group,Mansfield,64.8,East Midlands
+One-person household,Newark and Sherwood,29.5,East Midlands
+All household members have the same ethnic group,Newark and Sherwood,65.1,East Midlands
+One-person household,Rushcliffe,27.7,East Midlands
+All household members have the same ethnic group,Rushcliffe,63.6,East Midlands
+One-person household,Cherwell,26.3,South East
+All household members have the same ethnic group,Cherwell,61.7,South East
+One-person household,Oxford,29.1,South East
+All household members have the same ethnic group,Oxford,47.3,South East
+One-person household,South Oxfordshire,26.2,South East
+All household members have the same ethnic group,South Oxfordshire,62.8,South East
+One-person household,Vale of White Horse,26.8,South East
+All household members have the same ethnic group,Vale of White Horse,61.9,South East
+One-person household,West Oxfordshire,27.5,South East
+All household members have the same ethnic group,West Oxfordshire,63.3,South East
+One-person household,Mendip,30.1,South West
+All household members have the same ethnic group,Mendip,62.8,South West
+One-person household,Sedgemoor,29,South West
+All household members have the same ethnic group,Sedgemoor,65.7,South West
+One-person household,South Somerset,30.1,South West
+All household members have the same ethnic group,South Somerset,64.6,South West
+One-person household,Cannock Chase,28.9,West Midlands
+All household members have the same ethnic group,Cannock Chase,67.1,West Midlands
+One-person household,East Staffordshire,28.8,West Midlands
+All household members have the same ethnic group,East Staffordshire,64.3,West Midlands
+One-person household,Lichfield,27.7,West Midlands
+All household members have the same ethnic group,Lichfield,66.7,West Midlands
+One-person household,Newcastle-under-Lyme,31.1,West Midlands
+All household members have the same ethnic group,Newcastle-under-Lyme,63.7,West Midlands
+One-person household,South Staffordshire,27.2,West Midlands
+All household members have the same ethnic group,South Staffordshire,68.1,West Midlands
+One-person household,Stafford,29.6,West Midlands
+All household members have the same ethnic group,Stafford,64.8,West Midlands
+One-person household,Staffordshire Moorlands,29.6,West Midlands
+All household members have the same ethnic group,Staffordshire Moorlands,67.2,West Midlands
+One-person household,Tamworth,26.7,West Midlands
+All household members have the same ethnic group,Tamworth,67.5,West Midlands
+One-person household,Babergh,28.3,East of England
+All household members have the same ethnic group,Babergh,65.9,East of England
+One-person household,Ipswich,32.4,East of England
+All household members have the same ethnic group,Ipswich,56.3,East of England
+One-person household,Mid Suffolk,27,East of England
+All household members have the same ethnic group,Mid Suffolk,67.5,East of England
+One-person household,Elmbridge,26.9,South East
+All household members have the same ethnic group,Elmbridge,55,South East
+One-person household,Epsom and Ewell,24.3,South East
+All household members have the same ethnic group,Epsom and Ewell,58.1,South East
+One-person household,Guildford,26.6,South East
+All household members have the same ethnic group,Guildford,58.7,South East
+One-person household,Mole Valley,29.8,South East
+All household members have the same ethnic group,Mole Valley,58.6,South East
+One-person household,Reigate and Banstead,26.4,South East
+All household members have the same ethnic group,Reigate and Banstead,59.5,South East
+One-person household,Runnymede,28.5,South East
+All household members have the same ethnic group,Runnymede,55.8,South East
+One-person household,Spelthorne,27.9,South East
+All household members have the same ethnic group,Spelthorne,58,South East
+One-person household,Surrey Heath,25.2,South East
+All household members have the same ethnic group,Surrey Heath,62.3,South East
+One-person household,Tandridge,27.2,South East
+All household members have the same ethnic group,Tandridge,59.9,South East
+One-person household,Waverley,27.9,South East
+All household members have the same ethnic group,Waverley,60.7,South East
+One-person household,Woking,26.8,South East
+All household members have the same ethnic group,Woking,57.6,South East
+One-person household,North Warwickshire,27.7,West Midlands
+All household members have the same ethnic group,North Warwickshire,66.8,West Midlands
+One-person household,Nuneaton and Bedworth,28.9,West Midlands
+All household members have the same ethnic group,Nuneaton and Bedworth,64.7,West Midlands
+One-person household,Rugby,27.2,West Midlands
+All household members have the same ethnic group,Rugby,62.3,West Midlands
+One-person household,Stratford-on-Avon,29.1,West Midlands
+All household members have the same ethnic group,Stratford-on-Avon,63.2,West Midlands
+One-person household,Warwick,30.3,West Midlands
+All household members have the same ethnic group,Warwick,57.5,West Midlands
+One-person household,Adur,30.4,South East
+All household members have the same ethnic group,Adur,61,South East
+One-person household,Arun,31.3,South East
+All household members have the same ethnic group,Arun,61.5,South East
+One-person household,Chichester,31.1,South East
+All household members have the same ethnic group,Chichester,60.9,South East
+One-person household,Crawley,25.3,South East
+All household members have the same ethnic group,Crawley,59.6,South East
+One-person household,Horsham,28.1,South East
+All household members have the same ethnic group,Horsham,62.7,South East
+One-person household,Mid Sussex,27.5,South East
+All household members have the same ethnic group,Mid Sussex,61.6,South East
+One-person household,Worthing,33.8,South East
+All household members have the same ethnic group,Worthing,56.5,South East
+One-person household,Bromsgrove,27.4,West Midlands
+All household members have the same ethnic group,Bromsgrove,65.8,West Midlands
+One-person household,Malvern Hills,29.5,West Midlands
+All household members have the same ethnic group,Malvern Hills,64.8,West Midlands
+One-person household,Redditch,27.8,West Midlands
+All household members have the same ethnic group,Redditch,64.4,West Midlands
+One-person household,Worcester,31.7,West Midlands
+All household members have the same ethnic group,Worcester,60.1,West Midlands
+One-person household,Wychavon,27.6,West Midlands
+All household members have the same ethnic group,Wychavon,66.4,West Midlands
+One-person household,Wyre Forest,31.7,West Midlands
+All household members have the same ethnic group,Wyre Forest,63.2,West Midlands
+One-person household,St Albans,26.3,East of England
+All household members have the same ethnic group,St Albans,57.1,East of England
+One-person household,Welwyn Hatfield,28,East of England
+All household members have the same ethnic group,Welwyn Hatfield,56.4,East of England
+One-person household,East Hertfordshire,27.3,East of England
+All household members have the same ethnic group,East Hertfordshire,61.5,East of England
+One-person household,Stevenage,28.9,East of England
+All household members have the same ethnic group,Stevenage,59.1,East of England
+One-person household,East Suffolk,32.3,East of England
+All household members have the same ethnic group,East Suffolk,62.4,East of England
+One-person household,West Suffolk,32.4,East of England
+All household members have the same ethnic group,West Suffolk,58.6,East of England
+One-person household,Somerset West and Taunton,32,South West
+All household members have the same ethnic group,Somerset West and Taunton,62.2,South West
+One-person household,Bolton,30.7,North West
+All household members have the same ethnic group,Bolton,62.6,North West
+One-person household,Bury,30.8,North West
+All household members have the same ethnic group,Bury,60.9,North West
+One-person household,Manchester,33.3,North West
+All household members have the same ethnic group,Manchester,50.7,North West
+One-person household,Oldham,29.4,North West
+All household members have the same ethnic group,Oldham,63.5,North West
+One-person household,Rochdale,30.6,North West
+All household members have the same ethnic group,Rochdale,62.1,North West
+One-person household,Salford,34,North West
+All household members have the same ethnic group,Salford,55.6,North West
+One-person household,Stockport,31.1,North West
+All household members have the same ethnic group,Stockport,60.6,North West
+One-person household,Tameside,32.5,North West
+All household members have the same ethnic group,Tameside,61.4,North West
+One-person household,Trafford,29.5,North West
+All household members have the same ethnic group,Trafford,59,North West
+One-person household,Wigan,30.7,North West
+All household members have the same ethnic group,Wigan,65,North West
+One-person household,Knowsley,31.2,North West
+All household members have the same ethnic group,Knowsley,64.4,North West
+One-person household,Liverpool,36.8,North West
+All household members have the same ethnic group,Liverpool,54.1,North West
+One-person household,St. Helens,31.6,North West
+All household members have the same ethnic group,St. Helens,64.7,North West
+One-person household,Sefton,33.7,North West
+All household members have the same ethnic group,Sefton,61.1,North West
+One-person household,Wirral,34.7,North West
+All household members have the same ethnic group,Wirral,60.3,North West
+One-person household,Barnsley,30.8,Yorkshire and The Humber
+All household members have the same ethnic group,Barnsley,65.6,Yorkshire and The Humber
+One-person household,Doncaster,31.2,Yorkshire and The Humber
+All household members have the same ethnic group,Doncaster,63.7,Yorkshire and The Humber
+One-person household,Rotherham,30,Yorkshire and The Humber
+All household members have the same ethnic group,Rotherham,65.7,Yorkshire and The Humber
+One-person household,Sheffield,32.7,Yorkshire and The Humber
+All household members have the same ethnic group,Sheffield,58.1,Yorkshire and The Humber
+One-person household,Newcastle upon Tyne,34.2,North East
+All household members have the same ethnic group,Newcastle upon Tyne,57.1,North East
+One-person household,North Tyneside,34.9,North East
+All household members have the same ethnic group,North Tyneside,60.7,North East
+One-person household,South Tyneside,36,North East
+All household members have the same ethnic group,South Tyneside,60.7,North East
+One-person household,Sunderland,33,North East
+All household members have the same ethnic group,Sunderland,64.1,North East
+One-person household,Birmingham,31.5,West Midlands
+All household members have the same ethnic group,Birmingham,55,West Midlands
+One-person household,Coventry,30.4,West Midlands
+All household members have the same ethnic group,Coventry,57.1,West Midlands
+One-person household,Dudley,30.4,West Midlands
+All household members have the same ethnic group,Dudley,63.3,West Midlands
+One-person household,Sandwell,29.2,West Midlands
+All household members have the same ethnic group,Sandwell,60.2,West Midlands
+One-person household,Solihull,28.9,West Midlands
+All household members have the same ethnic group,Solihull,61.9,West Midlands
+One-person household,Walsall,28.6,West Midlands
+All household members have the same ethnic group,Walsall,63.6,West Midlands
+One-person household,Wolverhampton,30.9,West Midlands
+All household members have the same ethnic group,Wolverhampton,57.8,West Midlands
+One-person household,Bradford,30.8,Yorkshire and The Humber
+All household members have the same ethnic group,Bradford,61.5,Yorkshire and The Humber
+One-person household,Calderdale,33.5,Yorkshire and The Humber
+All household members have the same ethnic group,Calderdale,60.6,Yorkshire and The Humber
+One-person household,Kirklees,31,Yorkshire and The Humber
+All household members have the same ethnic group,Kirklees,61.4,Yorkshire and The Humber
+One-person household,Leeds,32.6,Yorkshire and The Humber
+All household members have the same ethnic group,Leeds,57.6,Yorkshire and The Humber
+One-person household,Wakefield,30.3,Yorkshire and The Humber
+All household members have the same ethnic group,Wakefield,64.8,Yorkshire and The Humber
+One-person household,Gateshead,34.6,North East
+All household members have the same ethnic group,Gateshead,61.1,North East
+One-person household,City of London,51,London
+All household members have the same ethnic group,City of London,29.8,London
+One-person household,Barking and Dagenham,23.7,London
+All household members have the same ethnic group,Barking and Dagenham,58.6,London
+One-person household,Barnet,28,London
+All household members have the same ethnic group,Barnet,48.8,London
+One-person household,Bexley,26,London
+All household members have the same ethnic group,Bexley,60.4,London
+One-person household,Brent,27,London
+All household members have the same ethnic group,Brent,50.4,London
+One-person household,Bromley,28.5,London
+All household members have the same ethnic group,Bromley,54,London
+One-person household,Camden,38.7,London
+All household members have the same ethnic group,Camden,37,London
+One-person household,Croydon,28.2,London
+All household members have the same ethnic group,Croydon,49.4,London
+One-person household,Ealing,26.7,London
+All household members have the same ethnic group,Ealing,50.2,London
+One-person household,Enfield,25.8,London
+All household members have the same ethnic group,Enfield,51.1,London
+One-person household,Greenwich,29.9,London
+All household members have the same ethnic group,Greenwich,48.1,London
+One-person household,Hackney,32.9,London
+All household members have the same ethnic group,Hackney,39.9,London
+One-person household,Hammersmith and Fulham,36.1,London
+All household members have the same ethnic group,Hammersmith and Fulham,38.7,London
+One-person household,Haringey,30.7,London
+All household members have the same ethnic group,Haringey,42.7,London
+One-person household,Harrow,22.1,London
+All household members have the same ethnic group,Harrow,59.9,London
+One-person household,Havering,25.8,London
+All household members have the same ethnic group,Havering,61,London
+One-person household,Hillingdon,24.4,London
+All household members have the same ethnic group,Hillingdon,57.5,London
+One-person household,Hounslow,25.5,London
+All household members have the same ethnic group,Hounslow,54,London
+One-person household,Islington,36.1,London
+All household members have the same ethnic group,Islington,37.9,London
+One-person household,Kensington and Chelsea,43.7,London
+All household members have the same ethnic group,Kensington and Chelsea,33.8,London
+One-person household,Kingston upon Thames,27,London
+All household members have the same ethnic group,Kingston upon Thames,51.3,London
+One-person household,Lambeth,32,London
+All household members have the same ethnic group,Lambeth,40.9,London
+One-person household,Lewisham,30.4,London
+All household members have the same ethnic group,Lewisham,43.8,London
+One-person household,Merton,25,London
+All household members have the same ethnic group,Merton,49.8,London
+One-person household,Newham,23.4,London
+All household members have the same ethnic group,Newham,54.8,London
+One-person household,Redbridge,23,London
+All household members have the same ethnic group,Redbridge,58.9,London
+One-person household,Richmond upon Thames,29.6,London
+All household members have the same ethnic group,Richmond upon Thames,48.1,London
+One-person household,Southwark,33.1,London
+All household members have the same ethnic group,Southwark,41,London
+One-person household,Sutton,27,London
+All household members have the same ethnic group,Sutton,55.8,London
+One-person household,Tower Hamlets,32,London
+All household members have the same ethnic group,Tower Hamlets,46.1,London
+One-person household,Waltham Forest,25.9,London
+All household members have the same ethnic group,Waltham Forest,48.8,London
+One-person household,Wandsworth,29.9,London
+All household members have the same ethnic group,Wandsworth,44.5,London
+One-person household,Westminster,42.7,London
+All household members have the same ethnic group,Westminster,34.9,London
+One-person household,Isle of Anglesey,33.1,Wales
+All household members have the same ethnic group,Isle of Anglesey,63.5,Wales
+One-person household,Gwynedd,34.6,Wales
+All household members have the same ethnic group,Gwynedd,60.8,Wales
+One-person household,Conwy,34.3,Wales
+All household members have the same ethnic group,Conwy,61.2,Wales
+One-person household,Denbighshire,33.3,Wales
+All household members have the same ethnic group,Denbighshire,62.8,Wales
+One-person household,Flintshire,29.1,Wales
+All household members have the same ethnic group,Flintshire,66.5,Wales
+One-person household,Wrexham,30.5,Wales
+All household members have the same ethnic group,Wrexham,65.1,Wales
+One-person household,Ceredigion,33,Wales
+All household members have the same ethnic group,Ceredigion,61.1,Wales
+One-person household,Pembrokeshire,33.4,Wales
+All household members have the same ethnic group,Pembrokeshire,62.2,Wales
+One-person household,Carmarthenshire,31,Wales
+All household members have the same ethnic group,Carmarthenshire,65,Wales
+One-person household,Swansea,34.4,Wales
+All household members have the same ethnic group,Swansea,59.4,Wales
+One-person household,Neath Port Talbot,32.7,Wales
+All household members have the same ethnic group,Neath Port Talbot,63.9,Wales
+One-person household,Bridgend,29.9,Wales
+All household members have the same ethnic group,Bridgend,66.3,Wales
+One-person household,Vale of Glamorgan,31.1,Wales
+All household members have the same ethnic group,Vale of Glamorgan,62.5,Wales
+One-person household,Cardiff,32.2,Wales
+All household members have the same ethnic group,Cardiff,56.2,Wales
+One-person household,Rhondda Cynon Taf,31.1,Wales
+All household members have the same ethnic group,Rhondda Cynon Taf,65.4,Wales
+One-person household,Caerphilly,30.1,Wales
+All household members have the same ethnic group,Caerphilly,66.7,Wales
+One-person household,Blaenau Gwent,33.5,Wales
+All household members have the same ethnic group,Blaenau Gwent,63.9,Wales
+One-person household,Torfaen,30.6,Wales
+All household members have the same ethnic group,Torfaen,65.8,Wales
+One-person household,Monmouthshire,30,Wales
+All household members have the same ethnic group,Monmouthshire,64.8,Wales
+One-person household,Newport,30.3,Wales
+All household members have the same ethnic group,Newport,62,Wales
+One-person household,Powys,33,Wales
+All household members have the same ethnic group,Powys,63,Wales
+One-person household,Merthyr Tydfil,32,Wales
+All household members have the same ethnic group,Merthyr Tydfil,64.8,Wales
