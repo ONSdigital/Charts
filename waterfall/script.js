@@ -3,9 +3,9 @@ import {
   wrap,
   addSvg,
   addAxisLabel,
-  getTextColorFromBackground,
   adjustColorForContrast,
   diamondShape,
+  setupArrowhead,
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -283,37 +283,8 @@ function drawGraphic() {
     }
   });
 
-  //set up left arrowhead
-  const svgDefs = d3.select("svg").append("svg:defs");
-  const arrowheadMarker = svgDefs
-    .append("svg:marker")
-    .attr("id", "annotation_arrowhead_left")
-    .attr("class", "annotation_arrow_left")
-    .attr("refX", 3.27)
-    .attr("refY", 3.86)
-    .attr("markerWidth", 20)
-    .attr("markerHeight", 20)
-    .attr("orient", "auto");
-  arrowheadMarker
-    .append("path")
-    .attr("stroke", "context-stroke")
-    .attr("fill", "none")
-    .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
-
-  const arrowheadMarker2 = svgDefs
-    .append("svg:marker")
-    .attr("id", "annotation_arrowhead_right")
-    .attr("class", "annotation_arrow_right")
-    .attr("refX", 3.27)
-    .attr("refY", 3.86)
-    .attr("markerWidth", 20)
-    .attr("markerHeight", 20)
-    .attr("orient", "auto");
-  arrowheadMarker2
-    .append("path")
-    .attr("stroke", "context-stroke")
-    .attr("fill", "none")
-    .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+  //set up arrowheads
+  setupArrowhead(charts)  
 
   charts
     .selectAll("line.guide")
@@ -426,8 +397,6 @@ function drawGraphic() {
       .attr("id", "netChange")
       .attr("class", "netChange");
 
-    console.log(groups);
-
     netChangeG
       .append("rect")
       .attr("id", (d, i) => "netChangeRect" + i)
@@ -437,22 +406,6 @@ function drawGraphic() {
       .attr("width", (d) => Math.abs(d[7][0].x - d[7][1].x))
       .attr("height", 27)
       .attr("fill", (d) => d[7][1].colour);
-
-    // netChangeG
-    //   .append("line")
-    //   .attr("class", (d, i) => "netChangeLine" + i)
-    //   .attr("x1", (d) => d[7][0].x)
-    //   .attr("x2", (d) => d[7][0].x)
-    //   .attr("y1", (d) => d[2] + flagOffset + 10)
-    //   .attr("stroke", (d) => getTextColorFromBackground(d[7][1].colour, 4.5));
-
-    // netChangeG
-    //   .append("line")
-    //   .attr("class", (d, i) => "netChangeLine" + i)
-    //   .attr("x1", (d) => d[7][1].x)
-    //   .attr("x2", (d) => d[7][1].x)
-    //   .attr("y1", (d) => d[2] + flagOffset + 10)
-    //   .attr("stroke", (d) => getTextColorFromBackground(d[7][1].colour, 4.5));
 
     netChangeG
       .append("text")
@@ -790,15 +743,6 @@ function drawGraphic() {
 
     function drawNoChange(g, color) {
       const cx = legendItemWidth / 2;
-
-      // charts
-      // .selectAll("path.nochangemarker") // Use "path" since you're appending paths
-      // .data((d) => d[1].filter((data) => Math.abs(data.value) < d[8]))
-      // .join("path")
-      // .attr("class", "nochangemarker diamond")
-      // .attr("d", diamondShape(config.dotSize)) // Add the diamond path
-      // .attr("fill", "color")
-      // .attr("transform", (d) => `translate(${d.x2}, ${d.y})`);
 
       // For the legend diamond
       g.append("path")
