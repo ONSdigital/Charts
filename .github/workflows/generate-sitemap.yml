@@ -6,12 +6,17 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write   # <-- Required to allow commits back to the repo
+
 jobs:
   generate-sitemap:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Needed so git diff works correctly
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -27,8 +32,17 @@ jobs:
         run: |
           python .github/scripts/generate_sitemap.py
 
-      - name: Upload sitemap.xml as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sitemap
-          path: sitemap.xml
+      - name: Commit and Push sitemap.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Check if sitemap.xml was modified
+          if git diff --quiet sitemap.xml; then
+            echo "No changes to sitemap.xml. Skipping commit."
+          else
+            echo "Changes detected. Committing..."
+            git add sitemap.xml
+            git commit -m "🤖 Chore: Update sitemap.xml [skip ci]"
+            git push
+          fi
