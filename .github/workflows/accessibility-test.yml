@@ -1,4 +1,4 @@
-name: Full Accessibility Test (WCAG 2.2)
+name: Accessibility Test (Axe WCAG 2.2)
 
 on:
   workflow_dispatch:
@@ -14,14 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Install Chromium
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -29,83 +25,126 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install puppeteer axe-core pa11y lighthouse chrome-launcher
+        run: |
+          npm install puppeteer axe-core
 
       - name: Extract URLs from sitemap
+        id: extract
         run: |
-          # ... same python script as before to produce urls.txt ...
+          python3 << 'EOF'
+          import xml.etree.ElementTree as ET
 
-      - name: Run Accessibility Tests
+          tree = ET.parse('sitemap.xml')
+          root = tree.getroot()
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+
+          urls = [elem.text for elem in root.findall('sm:url/sm:loc', ns)]
+
+          with open("urls.txt", "w") as f:
+              for u in urls:
+                  f.write(u + "\n")
+
+          print(f"Found {len(urls)} URLs")
+          EOF
+
+      - name: Run Axe WCAG 2.2 tests
         run: |
-          mkdir -p reports/raw
+          mkdir -p reports
+
           node << 'EOF'
           const fs = require('fs');
           const puppeteer = require('puppeteer');
           const axe = require('axe-core');
-          const pa11y = require('pa11y');
-          const lighthouse = require('lighthouse');
-          const chromeLauncher = require('chrome-launcher');
 
           (async () => {
-            const urls = fs.readFileSync('urls.txt', 'utf8').trim().split('\n');
-            const browser = await puppeteer.launch({
-              headless: true,
-              executablePath: '/usr/bin/chromium-browser',
-              args: ['--no-sandbox','--disable-setuid-sandbox']
-            });
+            const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
             const page = await browser.newPage();
 
-            let html = `<html> ... same html header ...`;
+            const urls = fs.readFileSync('urls.txt', 'utf8').trim().split('\n');
+            let allResults = [];
 
             for (const url of urls) {
-              console.log("Processing:", url);
-              html += `<h2>${url}</h2>`;
-              try {
-                // AXE
-                await page.goto(url, { waitUntil: 'networkidle2' });
-                await page.addScriptTag({ content: axe.source });
-                const axeResults = await page.evaluate(async () =>
-                  await axe.run({ runOnly: { type: 'tag', values: ['wcag22'] } })
-                );
-                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-axe.json`, JSON.stringify(axeResults,null,2));
-                const axeCount = axeResults.violations.length;
+              console.log("Testing:", url);
+              await page.goto(url, { waitUntil: 'networkidle2' });
 
-                // Pa11y
-                const pa11yResults = await pa11y(url, { standard: 'WCAG2AA', runners: ['axe'] });
-                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-pa11y.json`, JSON.stringify(pa11yResults,null,2));
-                const pa11yCount = pa11yResults.issues.length;
+              // Inject Axe
+              await page.addScriptTag({ content: axe.source });
 
-                // Lighthouse
-                const chrome = await chromeLauncher.launch({
-                  chromePath: '/usr/bin/chromium-browser',
-                  chromeFlags: ['--headless','--no-sandbox','--disable-setuid-sandbox']
+              // WCAG 2.2-only scan
+              const results = await page.evaluate(async () => {
+                return await axe.run({
+                  runOnly: {
+                    type: 'tag',
+                    values: ['wcag22']  // ← WCAG 2.2 here
+                  }
                 });
-                const lhOptions = { logLevel: 'error', output: 'json', port: chrome.port };
-                const lhResult = await lighthouse(url, lhOptions);
-                const score = Math.round(lhResult.lhr.categories.accessibility.score * 100);
-                await chrome.kill();
-                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-lighthouse.json`, JSON.stringify(lhResult.lhr,null,2));
+              });
 
-                html += `... table with results ...`;
-              } catch (err) {
-                console.error("Error processing URL:", url, err);
-                html += `<p style="color:red;">Error processing this URL: ${err.message}</p>`;
+              allResults.push({ url, results });
+            }
+
+            // Build HTML report
+            let html = `
+              <html>
+              <head>
+                <title>Axe Accessibility Report (WCAG 2.2)</title>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 40px; }
+                  h1 { color: #222; }
+                  h2 { margin-top: 40px; }
+                  .issue { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+                  .impact { font-weight: bold; }
+                </style>
+              </head>
+              <body>
+                <h1>Axe Accessibility Report (WCAG 2.2)</h1>
+                <p>Generated on ${new Date().toISOString()}</p>
+            `;
+
+            for (const entry of allResults) {
+              html += `<h2>${entry.url}</h2>`;
+
+              if (entry.results.violations.length === 0) {
+                html += `<p>✔ No WCAG 2.2 violations found.</p>`;
+                continue;
               }
+
+              entry.results.violations.forEach(v => {
+                html += `
+                  <div class="issue">
+                    <div class="impact">Impact: ${v.impact}</div>
+                    <div><strong>${v.help}</strong></div>
+                    <div>${v.description}</div>
+                    <div><a href="${v.helpUrl}" target="_blank">More info</a></div>
+                  </div>
+                `;
+              });
             }
 
             html += `</body></html>`;
             fs.writeFileSync('reports/a11y-report.html', html);
+
             await browser.close();
           })();
           EOF
 
-      - name: Commit Reports
+      - name: Commit HTML report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/
-          if git diff --cached --quiet; then
-            echo "No report changes."
-          else
-            git commit -m "♿ Update Accessibility Report (Axe + Pa11y WCAG2.2 + Lighthouse) [skip ci]"
+
+          REPORT=reports/a11y-report.html
+
+          if ! git ls-files --error-unmatch "$REPORT" > /dev/null 2>&1; then
+            git add "$REPORT"
+            git commit -m "🧪 Add Axe WCAG 2.2 accessibility report [skip ci]"
             git push
+          else
+            if git diff --quiet "$REPORT"; then
+              echo "No changes in accessibility report."
+            else
+              git add "$REPORT"
+              git commit -m "🧪 Update Axe WCAG 2.2 accessibility report [skip ci]"
+              git push
+            fi
+          fi
