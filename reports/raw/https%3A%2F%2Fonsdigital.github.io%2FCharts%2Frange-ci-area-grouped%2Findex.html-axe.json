@@ -1,0 +1,31 @@
+{
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.11.0"
+  },
+  "testRunner": {
+    "name": "axe"
+  },
+  "testEnvironment": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.0.0 Safari/537.36",
+    "windowWidth": 800,
+    "windowHeight": 600,
+    "orientationAngle": 0,
+    "orientationType": "portrait-primary"
+  },
+  "timestamp": "2025-12-05T12:40:24.516Z",
+  "url": "https://onsdigital.github.io/Charts/range-ci-area-grouped/index.html",
+  "toolOptions": {
+    "runOnly": {
+      "type": "tag",
+      "values": [
+        "wcag22"
+      ]
+    },
+    "reporter": "v1"
+  },
+  "inapplicable": [],
+  "passes": [],
+  "incomplete": [],
+  "violations": []
+}
