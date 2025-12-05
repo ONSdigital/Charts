@@ -28,7 +28,7 @@ jobs:
           python .github/scripts/generate_sitemap.py
 
       - name: Upload sitemap.xml as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sitemap
           path: sitemap.xml
