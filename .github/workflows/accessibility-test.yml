@@ -14,68 +14,98 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      ########################################
-      # Checkout code
-      ########################################
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      ########################################
-      # Install Chrome dependencies
-      ########################################
-      - name: Install Chrome dependencies
+      - name: Install Chromium
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            gconf-service libasound2 libatk1.0-0 libc6 \
-            libcairo2 libcups2 libdbus-1-3 libexpat1 \
-            libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 \
-            libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 \
-            libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 \
-            libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 \
-            libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
-            ca-certificates fonts-liberation libnss3 lsb-release xdg-utils wget
+          sudo apt-get install -y chromium-browser
 
-      ########################################
-      # Set up Node.js
-      ########################################
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      ########################################
-      # Install dependencies
-      ########################################
-      - name: Install Node dependencies
-        run: |
-          npm install puppeteer axe-core pa11y lighthouse chrome-launcher
+      - name: Install dependencies
+        run: npm install puppeteer axe-core pa11y lighthouse chrome-launcher
 
-      ########################################
-      # Extract URLs from sitemap
-      ########################################
       - name: Extract URLs from sitemap
         run: |
-          python3 << 'EOF'
-          import xml.etree.ElementTree as ET
+          # ... same python script as before to produce urls.txt ...
 
-          tree = ET.parse('sitemap.xml')
-          root = tree.getroot()
-          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+      - name: Run Accessibility Tests
+        run: |
+          mkdir -p reports/raw
+          node << 'EOF'
+          const fs = require('fs');
+          const puppeteer = require('puppeteer');
+          const axe = require('axe-core');
+          const pa11y = require('pa11y');
+          const lighthouse = require('lighthouse');
+          const chromeLauncher = require('chrome-launcher');
 
-          urls = [elem.text for elem in root.findall('sm:url/sm:loc', ns)]
+          (async () => {
+            const urls = fs.readFileSync('urls.txt', 'utf8').trim().split('\n');
+            const browser = await puppeteer.launch({
+              headless: true,
+              executablePath: '/usr/bin/chromium-browser',
+              args: ['--no-sandbox','--disable-setuid-sandbox']
+            });
+            const page = await browser.newPage();
 
-          with open("urls.txt", "w") as f:
-              for u in urls:
-                  f.write(u + "\n")
+            let html = `<html> ... same html header ...`;
 
-          print(f"Found {len(urls)} URLs")
+            for (const url of urls) {
+              console.log("Processing:", url);
+              html += `<h2>${url}</h2>`;
+              try {
+                // AXE
+                await page.goto(url, { waitUntil: 'networkidle2' });
+                await page.addScriptTag({ content: axe.source });
+                const axeResults = await page.evaluate(async () =>
+                  await axe.run({ runOnly: { type: 'tag', values: ['wcag22'] } })
+                );
+                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-axe.json`, JSON.stringify(axeResults,null,2));
+                const axeCount = axeResults.violations.length;
+
+                // Pa11y
+                const pa11yResults = await pa11y(url, { standard: 'WCAG2AA', runners: ['axe'] });
+                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-pa11y.json`, JSON.stringify(pa11yResults,null,2));
+                const pa11yCount = pa11yResults.issues.length;
+
+                // Lighthouse
+                const chrome = await chromeLauncher.launch({
+                  chromePath: '/usr/bin/chromium-browser',
+                  chromeFlags: ['--headless','--no-sandbox','--disable-setuid-sandbox']
+                });
+                const lhOptions = { logLevel: 'error', output: 'json', port: chrome.port };
+                const lhResult = await lighthouse(url, lhOptions);
+                const score = Math.round(lhResult.lhr.categories.accessibility.score * 100);
+                await chrome.kill();
+                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-lighthouse.json`, JSON.stringify(lhResult.lhr,null,2));
+
+                html += `... table with results ...`;
+              } catch (err) {
+                console.error("Error processing URL:", url, err);
+                html += `<p style="color:red;">Error processing this URL: ${err.message}</p>`;
+              }
+            }
+
+            html += `</body></html>`;
+            fs.writeFileSync('reports/a11y-report.html', html);
+            await browser.close();
+          })();
           EOF
 
-      ########################################
-      # Run Accessibility Tests & Generate Combined HTML Report
-      ########################################
-      - name: Run Accessibility Tests
-        run:
+      - name: Commit Reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          if git diff --cached --quiet; then
+            echo "No report changes."
+          else
+            git commit -m "♿ Update Accessibility Report (Axe + Pa11y WCAG2.2 + Lighthouse) [skip ci]"
+            git push
