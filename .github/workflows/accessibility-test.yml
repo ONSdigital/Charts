@@ -14,22 +14,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      ########################################
+      # Checkout code
+      ########################################
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      ########################################
+      # Install Chrome dependencies
+      ########################################
+      - name: Install Chrome dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gconf-service libasound2 libatk1.0-0 libc6 \
+            libcairo2 libcups2 libdbus-1-3 libexpat1 \
+            libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 \
+            libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 \
+            libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 \
+            libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 \
+            libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
+            ca-certificates fonts-liberation libnss3 lsb-release xdg-utils wget
+
+      ########################################
+      # Set up Node.js
+      ########################################
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Install dependencies
+      ########################################
+      # Install dependencies
+      ########################################
+      - name: Install Node dependencies
         run: |
           npm install puppeteer axe-core pa11y lighthouse chrome-launcher
 
       ########################################
-      # Extract URLs from sitemap.xml
+      # Extract URLs from sitemap
       ########################################
       - name: Extract URLs from sitemap
         run: |
@@ -53,104 +78,4 @@ jobs:
       # Run Accessibility Tests & Generate Combined HTML Report
       ########################################
       - name: Run Accessibility Tests
-        run: |
-          mkdir -p reports/raw
-
-          node << 'EOF'
-          const fs = require('fs');
-          const puppeteer = require('puppeteer');
-          const axe = require('axe-core');
-          const pa11y = require('pa11y');
-          const lighthouse = require('lighthouse');
-          const chromeLauncher = require('chrome-launcher');
-
-          (async () => {
-            const urls = fs.readFileSync('urls.txt','utf8').trim().split('\n');
-
-            const browser = await puppeteer.launch({
-              headless: true,
-              args: ['--no-sandbox','--disable-setuid-sandbox']
-            });
-            const page = await browser.newPage();
-
-            let html = `
-            <html>
-              <head>
-                <title>Accessibility Report (WCAG 2.2)</title>
-                <style>
-                  body {font-family: Arial; margin: 40px;}
-                  h1 {margin-top: 0;}
-                  h2 {margin-top: 40px;}
-                  table {border-collapse: collapse; width: 100%; margin-bottom: 20px;}
-                  th, td {border: 1px solid #ccc; padding: 8px;}
-                  th {background: #f2f2f2;}
-                  .good {color: green; font-weight: bold;}
-                  .bad {color: red; font-weight: bold;}
-                </style>
-              </head>
-              <body>
-                <h1>Accessibility Report (WCAG 2.2)</h1>
-                <p>Generated on ${new Date().toISOString()}</p>
-            `;
-
-            for (const url of urls) {
-              console.log("Processing:", url);
-              html += `<h2>${url}</h2>`;
-
-              try {
-                // AXE
-                await page.goto(url, {waitUntil: 'networkidle2'});
-                await page.addScriptTag({content: axe.source});
-                const axeResults = await page.evaluate(async () => await axe.run({runOnly: {type:'tag', values:['wcag22']}}));
-                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-axe.json`, JSON.stringify(axeResults, null, 2));
-                const axeCount = axeResults.violations.length;
-
-                // Pa11y
-                const pa11yResults = await pa11y(url, {standard:'WCAG2AA', runners:['axe']});
-                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-pa11y.json`, JSON.stringify(pa11yResults, null, 2));
-                const pa11yCount = pa11yResults.issues.length;
-
-                // Lighthouse
-                const chrome = await chromeLauncher.launch({chromeFlags:['--headless','--no-sandbox']});
-                const lhOptions = {logLevel:'error', output:'json', port: chrome.port};
-                const lhResult = await lighthouse(url, lhOptions);
-                const score = Math.round(lhResult.lhr.categories.accessibility.score * 100);
-                await chrome.kill();
-                fs.writeFileSync(`reports/raw/${encodeURIComponent(url)}-lighthouse.json`, JSON.stringify(lhResult.lhr, null, 2));
-
-                // Combine into HTML
-                html += `
-                  <table>
-                    <tr><th>Test</th><th>Result</th></tr>
-                    <tr><td>Axe (WCAG 2.2)</td><td>${axeCount === 0 ? '<span class="good">0 issues</span>' : '<span class="bad">'+axeCount+' issues</span>'}</td></tr>
-                    <tr><td>Pa11y (WCAG2.2 Equivalent)</td><td>${pa11yCount === 0 ? '<span class="good">0 issues</span>' : '<span class="bad">'+pa11yCount+' issues</span>'}</td></tr>
-                    <tr><td>Lighthouse Score</td><td>${score}/100</td></tr>
-                  </table>
-                `;
-              } catch(err) {
-                console.error("Error processing URL:", url, err);
-                html += `<p style="color:red;">Error processing this URL: ${err.message}</p>`;
-              }
-            }
-
-            html += "</body></html>";
-            fs.writeFileSync('reports/a11y-report.html', html);
-
-            await browser.close();
-          })();
-          EOF
-
-      ########################################
-      # Commit Reports Back to Repo
-      ########################################
-      - name: Commit Reports
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/
-          if git diff --cached --quiet; then
-            echo "No report changes."
-          else
-            git commit -m "♿ Update Accessibility Report (Axe + Pa11y WCAG2.2 + Lighthouse) [skip ci]"
-            git push
-          fi
+        run:
