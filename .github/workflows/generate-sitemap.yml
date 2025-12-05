@@ -37,7 +37,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Check if sitemap.xml was modified
+          # If sitemap.xml is untracked (new file), git ls-files returns nothing
+          if ! git ls-files --error-unmatch sitemap.xml > /dev/null 2>&1; then
+            echo "sitemap.xml is new. Committing..."
+            git add sitemap.xml
+            git commit -m "🤖 Chore: Add sitemap.xml [skip ci]"
+            git push
+            exit 0
+          fi
+
+          # If the file *is tracked*, check for changes
           if git diff --quiet sitemap.xml; then
             echo "No changes to sitemap.xml. Skipping commit."
           else
@@ -46,3 +55,4 @@ jobs:
             git commit -m "🤖 Chore: Update sitemap.xml [skip ci]"
             git push
           fi
+
