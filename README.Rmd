@@ -44,7 +44,7 @@ Please raise an [issue](https://github.com/ONSdigital/Charts/issues) and the tea
 
 
 ```{r}
-to_exclude <- c("lib", "chart-menu", "Modularisation_notes.md", "README.md", "README.rmarkdown", "refresh.bat", "schema.JSON", "ONSCharts.Rproj", "README.Rmd")
+to_exclude <- c("lib", "chart-menu", "ONS charts cheat sheet.svg", "Modularisation_notes.md", "README.md", "README.rmarkdown", "refresh.bat", "schema.JSON", "ONSCharts.Rproj", "README.Rmd")
 folders <- dir()
 folders <- folders[!(folders %in% to_exclude)]
 chart_names <- .simpleCap(gsub("-", " ", folders))
