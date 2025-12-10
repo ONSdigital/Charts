@@ -1,29 +1,40 @@
 const config = {
     // Data settings
-    primaryData: "population-simple.csv",
-    primaryDataType: "counts", // "counts" or "percentages"
-    primaryDataStructure: "simple", // "simple" (age, maleBar, femaleBar) or "complex" (pivot structure)
+    // pyramidData: string (single file), array of strings (toggle/dropdown), or string (tidydata file for complex/dropdown)
+    pyramidData: "population-complex.csv", // e.g. "population-simple.csv" | ["pop-2021.csv", "pop-2011.csv"] | "population-tidydata.csv"
+    pyramidDataType: "counts", // "counts" or "percentages" or array if multiple datasets
+    pyramidDataStructure: "complex", // "simple" or "complex" or array if multiple datasets
 
-    secondaryData:["population-comparison-simple.csv"], // population-comparison-complex.csv, population-comparison-simple.csv
-    secondaryDataType: ["counts"], // "counts" or "percentages"
-    secondaryDataStructure: ["simple"], // "simple" (age, maleBar, femaleBar) or "complex" (pivot structure)
+    // comparisonData: optional, same structure as pyramidData (string, array, or tidydata file link)
+    comparisonData: "population-comparison-complex.csv", // or "population-comparison-complex.csv"
+    comparisonDataType: "counts", // "counts" or "percentages" or array
+    comparisonDataStructure: "complex", // "simple" or "complex" or array
 
+    // Scenario detection:
+    // - If pyramidData is string: simple pyramid
+    // - If pyramidData is array: toggle or dropdown
+    // - If pyramidData is a tidydata file link: dropdown with tidy/complex data
+    // - If comparisonData present: comparison line
+    // - If both dropdown and comparisonData: dropdown updates both
+    // - If dropdown and single comparisonData: dropdown pyramid, static comparison
 
     // Interaction settings
-    interactionType: "toggle", // "static", "toggle", "dropdown"
-    hasComparison: false,
-    hasInteractiveComparison: false, // For dropdown version with comparison lines
+    // sets interaction for changing pyramid data
+    pyramidInteractionType: "dropdown", // "static", "toggle", "dropdown"
+    // Comparison interaction flag: determines how comparison line behaves
+    // "static" (single comparison), "toggle" (matches pyramid toggle), "dropdown" (updates with pyramid dropdown), etc.
+    comparisonInteractionType: "dropdown", // default is static; set to "toggle" or "dropdown" as needed
 
-    // Button labels for toggle
-    buttonLabels: ["2021 Census", "2011 Census"],
+    // labels for toggle or dropdown
+    datasetLabels: ["2021 Census", "2011 Census", "Another label"],
 
     // Display settings
-    xDomain: "auto",//"auto", "auto-each" or a range in an array e.g [0,100]
+    xDomain: "auto-each",//"auto", "auto-each" or a range in an array e.g [0,100]
     xAxisLabel: "Percentage of population",
     yAxisLabel: "Age",
     xAxisNumberFormat: ".1%",
     yAxisTicksEvery: 10,
-    displayType: "counts", // "counts" or "percentages"
+    displayType: "percentages", // "counts" or "percentages"
     // Colors
     colourPalette: [ONScolours.femaleLight, ONScolours.male],
     comparisonColourPalette: [ONScolours.grey100, ONScolours.grey100], // Comparison Female, Male
@@ -38,9 +49,9 @@ const config = {
     accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 
     margin: {
-        sm: { top: 15, right: 20, bottom: 50, left: 20 },
-        md: { top: 20, right: 30, bottom: 60, left: 30 },
-        lg: { top: 40, right: 40, bottom: 70, left: 40 },
+        sm: { top: 25, right: 20, bottom: 50, left: 20 },
+        md: { top: 25, right: 30, bottom: 60, left: 30 },
+        lg: { top: 25, right: 40, bottom: 70, left: 40 },
         centre: 50 // Gap between male/female sides
     },
     seriesHeight: {
@@ -52,5 +63,5 @@ const config = {
         sm: 4,
         md: 6,
         lg: 4
-    }
+    },
 }
