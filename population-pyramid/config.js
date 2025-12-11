@@ -1,32 +1,32 @@
 const config = {
     // Data settings
-    // pyramidData: string (single file), array of strings (toggle/dropdown), or string (tidydata file for complex/dropdown)
-    pyramidData: "population-simple.csv", // e.g. "population-simple.csv" | ["pop-2021.csv", "pop-2011.csv"] | "population-tidydata.csv"
+    // pyramidData: string (single file), array of strings (toggle), or string (tidydata file for complex/dropdown)
+    pyramidData: ["population-simple.csv","population-simple-two.csv", "population-comparison-simple.csv", "population-comparison-simple-two.csv"], // e.g. "population-simple.csv" | ["pop-2021.csv", "pop-2011.csv"] | "population-tidydata.csv"
     pyramidDataType: "counts", // "counts" or "percentages" or array if multiple datasets
     pyramidDataStructure: "simple", // "simple" or "complex" or array if multiple datasets
 
     // comparisonData: optional, same structure as pyramidData (string, array, or tidydata file link)
-    comparisonData: "population-comparison-simple.csv", // or "population-comparison-complex.csv"
+    comparisonData: ["population-comparison-simple.csv", "population-comparison-simple-two.csv"], // or "population-comparison-complex.csv"
     comparisonDataType: "counts", // "counts" or "percentages" or array
     comparisonDataStructure: "simple", // "simple" or "complex" or array
 
     // Scenario detection:
     // - If pyramidData is string: simple pyramid
-    // - If pyramidData is array: toggle or dropdown
+    // - If pyramidData is array: toggle interaction
     // - If pyramidData is a tidydata file link: dropdown with tidy/complex data
     // - If comparisonData present: comparison line
     // - If both dropdown and comparisonData: dropdown updates both
-    // - If dropdown and single comparisonData: dropdown pyramid, static comparison
+    // - If dropdown and static comparisonData: dropdown pyramid, static comparison
 
     // Interaction settings
     // sets interaction for changing pyramid data
-    pyramidInteractionType: "static", // "static", "toggle", "dropdown"
+    pyramidInteractionType: "toggle", // "static", "toggle", "dropdown"
     // Comparison interaction flag: determines how comparison line behaves
     // "static" (single comparison), "toggle" (matches pyramid toggle), "dropdown" (updates with pyramid dropdown), etc.
-    comparisonInteractionType: "static", // default is static; set to "toggle" or "dropdown" as needed
+    comparisonInteractionType: "toggle", // default is static; set to "toggle" or "dropdown" as needed
 
     // labels for toggle or dropdown
-    datasetLabels: ["2021 Census", "2011 Census", "Another label"],
+    datasetLabels: ["2021 Census", "2011 Census","3","4"],
 
     // Display settings
     xDomain: "auto-each",//"auto", "auto-each" or a range in an array e.g [0,100]

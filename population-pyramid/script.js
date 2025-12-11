@@ -78,7 +78,7 @@ function buildToggleControls() {
 
     let cell = grid
         .selectAll('div.grid-cell')
-        .data(config.buttonLabels)
+        .data(config.datasetLabels)
         .join('div')
         .attr('class', 'grid-cell');
 
@@ -99,13 +99,16 @@ function buildToggleControls() {
     // Set first button to selected
     d3.select('#button0').property('checked', true);
     d3.select('#selected').text(
-        config.buttonLabels[0] + ' is selected'
+        config.datasetLabels[0] + ' is selected'
     );
 
     // Button interactivity
     d3.selectAll('input[type="radio"]').on('change', function () {
         const selectedValue = document.querySelector('input[name="button"]:checked').value;
-        scenario.hasComparison ? onToggleChangeComparison(selectedValue) : onToggleChangeBars(selectedValue);
+
+        if(scenario.hasComparison) onToggleChangeComparison(selectedValue)
+
+        onToggleChangeBars(selectedValue)
         d3.select('#selected').text(
             config.datasetLabels[selectedValue] + ' is selected'
         );
@@ -616,7 +619,7 @@ function addLegend(margin) {
                 if (d === 'x') {
                     return config.legend[0];
                 } else if (config.pyramidInteractionType === 'toggle') {
-                    return config.datasetLabelsLabels[0];
+                    return config.datasetLabels[0];
                 } else {
                     return config.legend[1];
                 }
@@ -664,17 +667,26 @@ function changeDataFromDropdown(areacd) {
 }
 
 function onToggleChangeComparison(value) {
-    // For toggles, comparison data is after pyramid data in tidyDatasets
-    const compIndex = scenario.pyramidType === 'toggle' || scenario.pyramidType === 'dropdown-array'
-        ? config.pyramidData.length + Number(value)
-        : config.pyramidData.length; // fallback
-    updateComparisonLines(tidyDatasets[compIndex]);
+    // If static comparison, always use the static comparison dataset (last in tidyDatasets)
+    if (config.comparisonInteractionType === "static") {
+        updateComparisonLines(tidyDatasets[tidyDatasets.length - 1]);
+        console.log("static")
+    } else {
+        // For toggles, comparison data is after pyramid data in tidyDatasets
+        const compIndex = scenario.pyramidType === 'toggle' || scenario.pyramidType === 'dropdown-array'
+            ? config.pyramidData.length + Number(value)
+            : config.pyramidData.length; // fallback
+        console.log(compIndex, "compIndex")
+        console.log(tidyDatasets[compIndex][0])
+        updateComparisonLines(tidyDatasets[compIndex]);
+    }
 
     d3.selectAll("p.legend--text.itemy")
-        .text(config.buttonLabels[value]);
+        .text(config.datasetLabels[value]);
 }
 
 function onToggleChangeBars(value) {
+    console.log("bars",value)
     // For toggles, pyramid data is at tidyDatasets[value]
     updateBars(tidyDatasets[value]);
     // If comparisonInteraction is 'toggle', update comparison too
