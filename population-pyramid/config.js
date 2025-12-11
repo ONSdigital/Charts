@@ -49,7 +49,7 @@ const config = {
     accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 
     margin: {
-        sm: { top: 25, right: 20, bottom: 50, left: 20 },
+        sm: { top: 25, right: 20, bottom: 35, left: 20 },
         md: { top: 25, right: 30, bottom: 60, left: 30 },
         lg: { top: 25, right: 40, bottom: 70, left: 40 },
         centre: 50 // Gap between male/female sides
@@ -60,7 +60,7 @@ const config = {
         lg: 6
     },
     xAxisTicks: {
-        sm: 4,
+        sm: 2,
         md: 6,
         lg: 4
     },

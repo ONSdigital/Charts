@@ -12,6 +12,8 @@ let graphicData, dropdownData;
 let size, allAges;
 let primaryData
 let tidyDatasets = [];
+let scaleField = config.displayType === 'percentages' ? 'percentage' : 'value';
+
 
 // Chart variables
 let maxPercentage, width, chartWidth, height;
@@ -23,15 +25,6 @@ function drawGraphic() {
     titles.selectAll('*').remove();
     legend.selectAll('*').remove();
 
-    if (config.interactionType === 'toggle') {
-        d3.select('#nav').selectAll('*').remove();
-    }
-    if (config.interactionType === 'dropdown') {
-        d3.select('#select').selectAll('*').remove();
-    }
-
-
-
     // Set up basics
     size = initialise(size);
 
@@ -42,17 +35,21 @@ function drawGraphic() {
 
     primaryData = tidyDatasets[0]
 
-    // Build interaction controls based on config
+
     if (config.pyramidInteractionType === 'toggle') {
+        d3.select('#nav').selectAll('*').remove();
         buildToggleControls();
-    } else if (config.pyramidInteractionType === 'dropdown') {
+    }
+    if (config.pyramidInteractionType === 'dropdown') {
+        d3.select('#select').selectAll('*').remove();
         buildDropdownControls(tidyDatasets[0]);
     }
 
-    maxPercentage = findMax(tidyDatasets)
+    console.log("scenario", scenario)
+
+    // maxPercentage = findMax(tidyDatasets)/
     // Create chart
     createChart(margin);
-console.log(tidyDatasets)
     // Create source link
     addSource('source', config.sourceText)
 
@@ -222,6 +219,8 @@ function processSimple(data, dataType) {
         ];
     });
 
+    // Do I need to returns value for counts and percentages???
+
     return tidy.flatMap(d => d);
 }
 
@@ -275,6 +274,25 @@ function updateAxes() {
         );
 }
 
+
+function getXDomain(areacd) {
+    // Flatten datasets robustly in case .flat isn't available
+    const allData = Array.isArray(tidyDatasets?.flat)
+        ? tidyDatasets.flat()
+        : [].concat(...tidyDatasets);
+
+    const dataForMax = areacd
+        ? allData.filter(e => e && e.AREACD === areacd)
+        : allData;
+
+    if (Array.isArray(config.xDomain)) {
+        return config.xDomain;
+    } else if (config.xDomain === 'auto-each' || config.xDomain === "auto") {
+        let maxVal = d3.max(dataForMax, d => d[scaleField]);
+        return [0, maxVal || 1];
+    }
+}
+
 function createChart(margin) {
     // Set up dimensions
     width = parseInt(graphic.style('width'));
@@ -288,26 +306,14 @@ function createChart(margin) {
 
     // Set up scales
     // Determine which field to use for scaling: 'value' for counts, 'percentage' for percentages
-    let scaleField;
-    if (config.displayType === 'percentages') {
-        scaleField = 'percentage';
-    } else {
-        scaleField = 'value';
-    }
-
-    // Find max for both bars and comparison lines
-    let allData = tidyDatasets.flat();
-    let maxValue = d3.max(allData, d => d[scaleField]);
-    if (!maxValue || isNaN(maxValue)) {
-        maxValue = 1; // fallback
-    }
+    const xDomain = getXDomain();
 
     xLeft = d3.scaleLinear()
-        .domain([0, maxValue])
+        .domain(xDomain)
         .rangeRound([chartWidth, 0]);
 
     xRight = d3.scaleLinear()
-        .domain(xLeft.domain())
+        .domain(xDomain)
         .rangeRound([chartWidth + margin.centre, chartWidth * 2 + margin.centre]);
 
     if (config.primaryDataStructure === 'simple') {
@@ -333,7 +339,7 @@ function createChart(margin) {
     // Create line generators for comparison lines
     if (scenario.hasComparison) {
         // Use 'percentage' for percentage data, 'value' for count data
-        const field = config.comparisonDataType === 'counts' ? 'value' : 'percentage';
+        const field = config.displayType === 'counts' ? 'value' : 'percentage';
         lineLeft = d3.line()
             .curve(d3.curveStepBefore)
             .x(d => xLeft(d[field]))
@@ -349,7 +355,17 @@ function createChart(margin) {
     addAxes(margin);
 
     // Add bars
-    addBars(primaryData);
+    if (config.pyramidInteractionType === 'dropdown') {
+        addBars([]); // Start with empty bars for dropdown
+    } else {
+        addBars(primaryData);
+    }
+
+    // Add axis labels
+    addAxisLabels(margin);
+
+    // Add legend
+    addLegend(margin);
 
     // Add comparison lines
     if (scenario.hasComparison) {
@@ -362,8 +378,8 @@ function createChart(margin) {
             // For dropdown, show the default area (first in dropdownData or first in dataset)
             let comp;
             if (scenario.comparisonType === 'tidy') {
-                // Use the first area code in the pyramid data as default
                 comp = null;
+                clearChart();
                 return;
             } else if (scenario.comparisonType === 'array') {
                 // Use the first area code in the pyramid data as default
@@ -382,11 +398,7 @@ function createChart(margin) {
         }
     }
 
-    // Add axis labels
-    addAxisLabels(margin);
 
-    // Add legend
-    addLegend(margin);
 }
 
 function addAxes(margin) {
@@ -439,11 +451,11 @@ function addAxes(margin) {
         });
 }
 
-function addBars(initialData) {
+function addBars(data) {
     svg.append("g")
         .attr("id", "bars")
         .selectAll("rect")
-        .data(initialData)
+        .data(data)
         .join("rect")
         .attr("class", "bar")
         .attr("fill", d => d.sex === "female" ? config.colourPalette[0] : config.colourPalette[1])
@@ -474,12 +486,19 @@ function updateBars(newData, animate = true) {
 
         update => update.call(update => {
             const t = animate ? update.transition() : update;
-
             t.attr("x", d => getBarX(d))
-             .attr("width", d => getBarWidth(d));
+                .attr("width", d => getBarWidth(d));
         }),
 
         exit => exit.call(exit => exit.transition()
+            .attr("x", function(d) {
+                // For left bars (female), shrink to right edge
+                if (d.sex === "female") {
+                    return xLeft.range()[0]; // right edge of left axis
+                } else {
+                    return xRight(0); // keep right bars at left edge
+                }
+            })
             .attr("width", 0)
             .remove()
         )
@@ -505,23 +524,23 @@ function addComparisonLines() {
 function updateComparisonLines(dataset, animate = true) {
     if (!scenario.hasComparison) return;
 
-    const leftData = dataset.filter(d => d.sex === "female");
-    const rightData = dataset.filter(d => d.sex === "male");
-console.log(leftData,rightData)
+    const leftData = dataset.filter ? dataset.filter(d => d.sex === "female") : [];
+    const rightData = dataset.filter ? dataset.filter(d => d.sex === "male") : [];
+
     const tLeft = d3.select("#comparisonLeft");
     const tRight = d3.select("#comparisonRight");
 
     const trans = animate ? d3.transition().duration(300) : null;
 
     tLeft
-        .attr("opacity", 1)
+        .attr("opacity", leftData.length ? 1 : 0)
         .transition(trans)
-        .attr("d", lineLeft(leftData) + "l 0 " + -y.bandwidth());
+        .attr("d", leftData.length ? (lineLeft(leftData) + "l 0 " + -y.bandwidth()) : "");
 
     tRight
-        .attr("opacity", 1)
+        .attr("opacity", rightData.length ? 1 : 0)
         .transition(trans)
-        .attr("d", lineRight(rightData) + "l 0 " + -y.bandwidth());
+        .attr("d", rightData.length ? (lineRight(rightData) + "l 0 " + -y.bandwidth()) : "");
 }
 
 
@@ -560,7 +579,7 @@ function addLegend(margin) {
         .append('p')
         .text(d => d);
 
-    if (config.hasComparison) {
+    if (scenario.hasComparison) {
         dataForLegend = [['x', 'x'], ['y', 'y']];
 
         titleDivs = titles.selectAll('div')
@@ -585,7 +604,7 @@ function addLegend(margin) {
                 d === 'x' ? 'legend--icon--circle' : 'legend--icon--refline'
             );
 
-        const legendTextClass = config.interactionType === 'toggle' ?
+        const legendTextClass = config.pyramidInteractionType === 'toggle' ?
             (d) => 'legend--text ' + 'item' + d : 'legend--text';
 
         titleDivs.append('div')
@@ -594,8 +613,8 @@ function addLegend(margin) {
             .html(d => {
                 if (d === 'x') {
                     return config.legend[0];
-                } else if (config.interactionType === 'toggle') {
-                    return config.buttonLabels[0];
+                } else if (config.pyramidInteractionType === 'toggle') {
+                    return config.datasetLabelsLabels[0];
                 } else {
                     return config.legend[1];
                 }
@@ -604,22 +623,29 @@ function addLegend(margin) {
 }
 
 function changeDataFromDropdown(areacd) {
-    // For dropdown scenarios, pyramid data is tidyDatasets[0] (tidy) or tidyDatasets[index] (array)
-    let newBars;
-    if (scenario.pyramidType === 'dropdown-tidy') {
-        newBars = tidyDatasets[0].filter(d => d.AREACD === areacd);
-    } else if (scenario.pyramidType === 'dropdown-array') {
-        // If dropdown uses array, you may need to map dropdown selection to correct index
-        // This logic may need to be customized based on your dropdownData
-        newBars = tidyDatasets.find(ds => ds.some(d => d.AREACD === areacd));
-        newBars = newBars ? newBars.filter(d => d.AREACD === areacd) : [];
+    // Get pyramid data for selected area
+    let newBars = (scenario.pyramidType === 'dropdown-tidy')
+        ? tidyDatasets[0].filter(d => d.AREACD === areacd)
+        : (tidyDatasets.find(ds => ds.some(d => d.AREACD === areacd)) || []).filter(d => d.AREACD === areacd);
+
+    // Get comparison data for selected area
+    let compData = [];
+    if (scenario.hasComparison) {
+        if (scenario.comparisonInteraction === 'dropdown') {
+            compData = (scenario.comparisonType === 'tidy')
+                ? tidyDatasets[tidyDatasets.length - 1].filter(d => d.AREACD === areacd)
+                : ((tidyDatasets.slice(config.pyramidData.length).find(ds => ds.some(d => d.AREACD === areacd)) || []).filter(d => d.AREACD === areacd));
+        } else if (scenario.comparisonInteraction === 'static') {
+            compData = tidyDatasets[config.pyramidData.length];
+        }
     }
-console.log(scenario, tidyDatasets[0], areacd,newBars)
+
     // Auto-each scaling
     if (config.xDomain === "auto-each") {
-        const newMax = d3.max(newBars, d => d.percentage);
-        xLeft.domain([0, newMax]);
-        xRight.domain([0, newMax]);
+        const allForMax = [...newBars, ...compData];
+        const newMax = d3.max(allForMax, d => d[scaleField]);
+        xLeft.domain([0, newMax || 1]);
+        xRight.domain([0, newMax || 1]);
         updateAxes();
     }
 
@@ -628,18 +654,8 @@ console.log(scenario, tidyDatasets[0], areacd,newBars)
     // Comparison line logic
     if (scenario.hasComparison) {
         if (scenario.comparisonInteraction === 'dropdown') {
-            // Comparison data is last in tidyDatasets for tidy, or array for dropdown-array
-            let comp;
-            if (scenario.comparisonType === 'tidy') {
-                comp = tidyDatasets[tidyDatasets.length - 1].filter(d => d.AREACD === areacd);
-            } else if (scenario.comparisonType === 'array') {
-                comp = tidyDatasets.slice(config.pyramidData.length).find(ds => ds.some(d => d.AREACD === areacd));
-                comp = comp ? comp.filter(d => d.AREACD === areacd) : [];
-            }
-            console.log(comp, "comp")
-            updateComparisonLines(comp);
+            updateComparisonLines(compData);
         } else if (scenario.comparisonInteraction === 'static') {
-            // Static comparison: just use the first comparison dataset
             updateComparisonLines(tidyDatasets[config.pyramidData.length]);
         }
     }
@@ -670,11 +686,11 @@ function onToggleChangeBars(value) {
 }
 
 function clearChart() {
-    updateBars([], true);   // remove all bars
-    updateComparisonLines([], true); // hide comp lines
+    updateBars([], false);   // remove all bars
+    updateComparisonLines([], false); // hide comp lines
 
-    if (config.xDomain === "auto-each") {
-        const resetMax = findMax(tidyDatasets);
+    if (config.xDomain === "auto-each" || config.xDomain ==="auto") {
+        const resetMax = getXDomain();
         xLeft.domain([0, resetMax]);
         xRight.domain([0, resetMax]);
         updateAxes();
