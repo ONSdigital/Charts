@@ -26,10 +26,10 @@ const config = {
     comparisonInteractionType: "toggle", // default is static; set to "toggle" or "dropdown" as needed
 
     // labels for toggle or dropdown
-    datasetLabels: ["2021 Census", "2011 Census","3","4"],
+    datasetLabels: ["2021 Census", "2011 Census"],// this needs to match pyramidData
 
     // Display settings
-    xDomain: "auto-each",//"auto", "auto-each" or a range in an array e.g [0,100]
+    xDomain: "auto",//"auto", "auto-each" or a range in an array e.g [0,100]
     xAxisLabel: "Percentage of population",
     yAxisLabel: "Age",
     xAxisNumberFormat: ".1%",

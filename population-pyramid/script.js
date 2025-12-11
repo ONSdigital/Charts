@@ -45,8 +45,6 @@ function drawGraphic() {
         buildDropdownControls(tidyDatasets[0]);
     }
 
-    console.log("scenario", scenario)
-
     // maxPercentage = findMax(tidyDatasets)/
     // Create chart
     createChart(margin);
@@ -670,14 +668,12 @@ function onToggleChangeComparison(value) {
     // If static comparison, always use the static comparison dataset (last in tidyDatasets)
     if (config.comparisonInteractionType === "static") {
         updateComparisonLines(tidyDatasets[tidyDatasets.length - 1]);
-        console.log("static")
     } else {
         // For toggles, comparison data is after pyramid data in tidyDatasets
         const compIndex = scenario.pyramidType === 'toggle' || scenario.pyramidType === 'dropdown-array'
             ? config.pyramidData.length + Number(value)
             : config.pyramidData.length; // fallback
-        console.log(compIndex, "compIndex")
-        console.log(tidyDatasets[compIndex][0])
+
         updateComparisonLines(tidyDatasets[compIndex]);
     }
 
@@ -686,7 +682,6 @@ function onToggleChangeComparison(value) {
 }
 
 function onToggleChangeBars(value) {
-    console.log("bars",value)
     // For toggles, pyramid data is at tidyDatasets[value]
     updateBars(tidyDatasets[value]);
     // If comparisonInteraction is 'toggle', update comparison too
