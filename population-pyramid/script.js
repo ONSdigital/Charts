@@ -182,7 +182,7 @@ function processAllData(config, dataArray) {
                     )
                 );
             });
-        } else if (scenario.comparisonType === 'tidy') {
+        } else if (scenario.comparisonType === 'tidy' || scenario.comparisonType === "simple") {
             tidyDatasets.push(
                 processDataset(
                     dataArray[offset],
@@ -190,7 +190,7 @@ function processAllData(config, dataArray) {
                     config.comparisonDataType
                 )
             );
-        }
+        } 
     }
 }
 
@@ -210,18 +210,27 @@ function processSimple(data, dataType) {
         : 1;
 
     const tidy = data.flatMap(d => {
-        const male = isCounts ? d.maleBar / total : d.maleBar;
-        const female = isCounts ? d.femaleBar / total : d.femaleBar;
+        // Always calculate percentage
+        const malePercent = isCounts ? d.maleBar / total : d.maleBar;
+        const femalePercent = isCounts ? d.femaleBar / total : d.femaleBar;
 
-        return [
-            { age: d.age, sex: "male", value: male },
-            { age: d.age, sex: "female", value: female }
-        ];
+        let result = [];
+        result.push({
+            age: d.age,
+            sex: "male",
+            percentage: malePercent,
+            ...(isCounts ? { value: d.maleBar } : {})
+        });
+        result.push({
+            age: d.age,
+            sex: "female",
+            percentage: femalePercent,
+            ...(isCounts ? { value: d.femaleBar } : {})
+        });
+        return result;
     });
 
-    // Do I need to returns value for counts and percentages???
-
-    return tidy.flatMap(d => d);
+    return tidy;
 }
 
 
@@ -370,35 +379,29 @@ function createChart(margin) {
     // Add comparison lines
     if (scenario.hasComparison) {
         addComparisonLines();
+        console.log('hasComparison')
         // Show default comparison lines for static or dropdown scenarios
         if (scenario.comparisonInteraction === 'static') {
             // For static, use the first comparison dataset
-            updateComparisonLines(tidyDatasets[config.pyramidData.length]);
-        } else if (scenario.comparisonInteraction === 'dropdown') {
-            // For dropdown, show the default area (first in dropdownData or first in dataset)
-            let comp;
-            if (scenario.comparisonType === 'tidy') {
-                comp = null;
-                clearChart();
-                return;
-            } else if (scenario.comparisonType === 'array') {
-                // Use the first area code in the pyramid data as default
-                let defaultArea = null;
-                if (scenario.pyramidType === 'dropdown-array' && tidyDatasets[0] && tidyDatasets[0][0]) {
-                    defaultArea = tidyDatasets[0][0].AREACD;
-                }
-                if (defaultArea) {
-                    comp = tidyDatasets.slice(config.pyramidData.length).find(ds => ds.some(d => d.AREACD === defaultArea));
-                    comp = comp ? comp.filter(d => d.AREACD === defaultArea) : [];
-                } else {
-                    comp = tidyDatasets.slice(config.pyramidData.length)[0] || [];
-                }
+            updateComparisonLines(tidyDatasets[tidyDatasets.length-1]);
+            return;
+        } else if (scenario.comparisonType === 'array') {
+            // Use the first area code in the pyramid data as default
+            let defaultArea = null, comp;
+            if (scenario.pyramidType === 'dropdown-array' && tidyDatasets[0] && tidyDatasets[0][0]) {
+                defaultArea = tidyDatasets[0][0].AREACD;
+            }
+
+            if (defaultArea) {
+                comp = tidyDatasets.slice(config.pyramidData.length).find(ds => ds.some(d => d.AREACD === defaultArea));
+                comp = comp ? comp.filter(d => d.AREACD === defaultArea) : [];
+            } else {
+                comp = tidyDatasets.slice(config.pyramidData.length)[0] || [];
             }
             updateComparisonLines(comp);
+
         }
     }
-
-
 }
 
 function addAxes(margin) {
@@ -491,7 +494,7 @@ function updateBars(newData, animate = true) {
         }),
 
         exit => exit.call(exit => exit.transition()
-            .attr("x", function(d) {
+            .attr("x", function (d) {
                 // For left bars (female), shrink to right edge
                 if (d.sex === "female") {
                     return xLeft.range()[0]; // right edge of left axis
@@ -523,7 +526,7 @@ function addComparisonLines() {
 
 function updateComparisonLines(dataset, animate = true) {
     if (!scenario.hasComparison) return;
-
+console.log(dataset)
     const leftData = dataset.filter ? dataset.filter(d => d.sex === "female") : [];
     const rightData = dataset.filter ? dataset.filter(d => d.sex === "male") : [];
 
@@ -636,7 +639,7 @@ function changeDataFromDropdown(areacd) {
                 ? tidyDatasets[tidyDatasets.length - 1].filter(d => d.AREACD === areacd)
                 : ((tidyDatasets.slice(config.pyramidData.length).find(ds => ds.some(d => d.AREACD === areacd)) || []).filter(d => d.AREACD === areacd));
         } else if (scenario.comparisonInteraction === 'static') {
-            compData = tidyDatasets[config.pyramidData.length];
+            compData = tidyDatasets[tidyDatasets.length-1];
         }
     }
 
@@ -656,7 +659,7 @@ function changeDataFromDropdown(areacd) {
         if (scenario.comparisonInteraction === 'dropdown') {
             updateComparisonLines(compData);
         } else if (scenario.comparisonInteraction === 'static') {
-            updateComparisonLines(tidyDatasets[config.pyramidData.length]);
+            updateComparisonLines(tidyDatasets[tidyDatasets.length-1]);
         }
     }
 }
@@ -687,9 +690,13 @@ function onToggleChangeBars(value) {
 
 function clearChart() {
     updateBars([], false);   // remove all bars
-    updateComparisonLines([], false); // hide comp lines
+    if(config.comparisonInteractionType != "static") {
+        updateComparisonLines([], false); // hide comp lines
+    } else {
+        updateComparisonLines(tidyDatasets[tidyDatasets.length-1],false)
+    }
 
-    if (config.xDomain === "auto-each" || config.xDomain ==="auto") {
+    if (config.xDomain === "auto-each" || config.xDomain === "auto") {
         const resetMax = getXDomain();
         xLeft.domain([0, resetMax]);
         xRight.domain([0, resetMax]);
@@ -739,8 +746,10 @@ function detectScenario(config) {
     if (hasComparison) {
         if (Array.isArray(config.comparisonData)) {
             comparisonType = 'array';
-        } else if (typeof config.comparisonData === 'string' && config.comparisonData.endsWith('.csv')) {
+        } else if (typeof config.comparisonData === 'string' && config.comparisonDataStructure === "complex" && config.comparisonData.endsWith('.csv')) {
             comparisonType = 'tidy';
+        } else if (typeof config.comparisonData === 'string' && config.comparisonDataStructure === "simple" && config.comparisonData.endsWith('.csv')) {
+            comparisonType = "simple"
         }
     }
 
@@ -772,7 +781,7 @@ if (scenario.hasComparison) {
         config.comparisonData.forEach(file => {
             dataPromises.push(d3.csv(file, d3.autoType));
         });
-    } else if (scenario.comparisonType === 'tidy') {
+    } else if (scenario.comparisonType === 'tidy' || scenario.comparisonType === "simple") {
         dataPromises.push(d3.csv(config.comparisonData, d3.autoType));
     }
 }
