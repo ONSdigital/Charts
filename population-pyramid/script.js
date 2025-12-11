@@ -307,7 +307,7 @@ function createChart(margin) {
     width = parseInt(graphic.style('width'));
     chartWidth = (width - margin.centre - margin.left - margin.right) / 2;
 
-    if (config.primaryDataStructure === 'simple') {
+    if (config.pyramidDataStructure === 'simple') {
         height = (primaryData.length / 2) * config.seriesHeight[size];
     } else {
         height = allAges.length * config.seriesHeight[size];
@@ -325,7 +325,7 @@ function createChart(margin) {
         .domain(xDomain)
         .rangeRound([chartWidth + margin.centre, chartWidth * 2 + margin.centre]);
 
-    if (config.primaryDataStructure === 'simple') {
+    if (config.pyramidDataStructure === 'simple') {
         y = d3.scaleBand()
             .domain([...new Set(primaryData.map(d => d.age))])
             .rangeRound([height, 0])
@@ -379,7 +379,6 @@ function createChart(margin) {
     // Add comparison lines
     if (scenario.hasComparison) {
         addComparisonLines();
-        console.log('hasComparison')
         // Show default comparison lines for static or dropdown scenarios
         if (scenario.comparisonInteraction === 'static') {
             // For static, use the first comparison dataset
@@ -526,7 +525,7 @@ function addComparisonLines() {
 
 function updateComparisonLines(dataset, animate = true) {
     if (!scenario.hasComparison) return;
-console.log(dataset)
+
     const leftData = dataset.filter ? dataset.filter(d => d.sex === "female") : [];
     const rightData = dataset.filter ? dataset.filter(d => d.sex === "male") : [];
 

@@ -1,9 +1,9 @@
 const config = {
     // Data settings
     // pyramidData: string (single file), array of strings (toggle/dropdown), or string (tidydata file for complex/dropdown)
-    pyramidData: "population-complex.csv", // e.g. "population-simple.csv" | ["pop-2021.csv", "pop-2011.csv"] | "population-tidydata.csv"
+    pyramidData: "population-simple.csv", // e.g. "population-simple.csv" | ["pop-2021.csv", "pop-2011.csv"] | "population-tidydata.csv"
     pyramidDataType: "counts", // "counts" or "percentages" or array if multiple datasets
-    pyramidDataStructure: "complex", // "simple" or "complex" or array if multiple datasets
+    pyramidDataStructure: "simple", // "simple" or "complex" or array if multiple datasets
 
     // comparisonData: optional, same structure as pyramidData (string, array, or tidydata file link)
     comparisonData: "population-comparison-simple.csv", // or "population-comparison-complex.csv"
@@ -20,7 +20,7 @@ const config = {
 
     // Interaction settings
     // sets interaction for changing pyramid data
-    pyramidInteractionType: "dropdown", // "static", "toggle", "dropdown"
+    pyramidInteractionType: "static", // "static", "toggle", "dropdown"
     // Comparison interaction flag: determines how comparison line behaves
     // "static" (single comparison), "toggle" (matches pyramid toggle), "dropdown" (updates with pyramid dropdown), etc.
     comparisonInteractionType: "static", // default is static; set to "toggle" or "dropdown" as needed
