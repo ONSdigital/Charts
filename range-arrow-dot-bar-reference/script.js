@@ -4,7 +4,7 @@ import {
   addSvg,
   addAxisLabel,
   diamondShape,
-  adjustColorForWhiteContrast,
+  adjustColorForContrast,
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
