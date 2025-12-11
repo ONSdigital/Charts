@@ -16,7 +16,7 @@ let scaleField = config.displayType === 'percentages' ? 'percentage' : 'value';
 
 
 // Chart variables
-let maxPercentage, width, chartWidth, height;
+let width, chartWidth, height;
 let xLeft, xRight, y, svg, lineLeft, lineRight, comparisons;
 let widths, dataForLegend, titleDivs;
 
@@ -45,7 +45,6 @@ function drawGraphic() {
         buildDropdownControls(tidyDatasets[0]);
     }
 
-    // maxPercentage = findMax(tidyDatasets)/
     // Create chart
     createChart(margin);
     // Create source link
@@ -259,11 +258,6 @@ function processComplex(data, dataType) {
     return tidyPercent;
 }
 
-
-function findMax(tidyDatasets) {
-    return d3.max(tidyDatasets.flat(), d => d.value);
-}
-
 // Update both x axes after domain changes
 function updateAxes() {
     svg.select('.x.axis')
@@ -285,20 +279,51 @@ function updateAxes() {
 }
 
 
-function getXDomain(areacd) {
-    // Flatten datasets robustly in case .flat isn't available
-    const allData = Array.isArray(tidyDatasets?.flat)
-        ? tidyDatasets.flat()
-        : [].concat(...tidyDatasets);
-
-    const dataForMax = areacd
-        ? allData.filter(e => e && e.AREACD === areacd)
-        : allData;
-
+function getXDomain() {
+    // 'auto': find max across all pyramid and comparison datasets
+    // 'auto-each': find max for the initial selection (toggle/dropdown)
     if (Array.isArray(config.xDomain)) {
         return config.xDomain;
-    } else if (config.xDomain === 'auto-each' || config.xDomain === "auto") {
-        let maxVal = d3.max(dataForMax, d => d[scaleField]);
+    }
+
+    if (config.xDomain === 'auto') {
+        // All data, all datasets
+        const allData = Array.isArray(tidyDatasets?.flat)
+            ? tidyDatasets.flat()
+            : [].concat(...tidyDatasets);
+        let maxVal = d3.max(allData, d => d[scaleField]);
+        return [0, maxVal || 1];
+    }
+
+    if (config.xDomain === 'auto-each') {
+        // For toggles: use first pyramid and its comparison
+        // For dropdowns: empty on load, or use first area if available
+        let barsData = [];
+        let compData = [];
+        if (scenario.pyramidType === 'toggle' || scenario.pyramidType === 'dropdown-array') {
+            barsData = tidyDatasets[0] || [];
+            if (scenario.hasComparison) {
+                if (scenario.comparisonInteraction === 'toggle') {
+                    compData = tidyDatasets[config.pyramidData.length] || [];
+                } else if (config.comparisonInteractionType === 'static') {
+                    compData = tidyDatasets[tidyDatasets.length - 1] || [];
+                }
+            }
+        } else if (scenario.pyramidType === 'dropdown-tidy') {
+            // On load, dropdown is empty, so just use all pyramid data
+            barsData = tidyDatasets[0] || [];
+            if (scenario.hasComparison && config.comparisonInteractionType === 'static') {
+                compData = tidyDatasets[tidyDatasets.length - 1] || [];
+            }
+        } else {
+            // Simple scenario
+            barsData = tidyDatasets[0] || [];
+            if (scenario.hasComparison && config.comparisonInteractionType === 'static') {
+                compData = tidyDatasets[tidyDatasets.length - 1] || [];
+            }
+        }
+        const allForMax = [...barsData, ...compData];
+        let maxVal = d3.max(allForMax, d => d[scaleField]);
         return [0, maxVal || 1];
     }
 }
@@ -315,7 +340,6 @@ function createChart(margin) {
     }
 
     // Set up scales
-    // Determine which field to use for scaling: 'value' for counts, 'percentage' for percentages
     const xDomain = getXDomain();
 
     xLeft = d3.scaleLinear()
@@ -683,14 +707,35 @@ function onToggleChangeComparison(value) {
 
 function onToggleChangeBars(value) {
     // For toggles, pyramid data is at tidyDatasets[value]
-    updateBars(tidyDatasets[value]);
-    // If comparisonInteraction is 'toggle', update comparison too
+    const barsData = tidyDatasets[value];
+    let compData = [];
     if (scenario.hasComparison && scenario.comparisonInteraction === 'toggle') {
         // Comparison data follows pyramid data in tidyDatasets
         const compIndex = scenario.pyramidType === 'toggle' || scenario.pyramidType === 'dropdown-array'
             ? config.pyramidData.length + Number(value)
             : config.pyramidData.length; // fallback
-        updateComparisonLines(tidyDatasets[compIndex]);
+        compData = tidyDatasets[compIndex];
+    } else if (scenario.hasComparison && config.comparisonInteractionType === 'static') {
+        compData = tidyDatasets[tidyDatasets.length - 1];
+    }
+
+    // Auto-each scaling for toggles
+    if (config.xDomain === "auto-each") {
+        const allForMax = [...barsData, ...(compData || [])];
+        const newMax = d3.max(allForMax, d => d[scaleField]);
+        xLeft.domain([0, newMax || 1]);
+        xRight.domain([0, newMax || 1]);
+        updateAxes();
+    }
+
+    updateBars(barsData);
+    // Update comparison line
+    if (scenario.hasComparison) {
+        if (scenario.comparisonInteraction === 'toggle') {
+            updateComparisonLines(compData);
+        } else if (config.comparisonInteractionType === 'static') {
+            updateComparisonLines(tidyDatasets[tidyDatasets.length - 1]);
+        }
     }
 }
 

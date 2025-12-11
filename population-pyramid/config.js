@@ -29,7 +29,7 @@ const config = {
     datasetLabels: ["2021 Census", "2011 Census"],// this needs to match pyramidData
 
     // Display settings
-    xDomain: "auto",//"auto", "auto-each" or a range in an array e.g [0,100]
+    xDomain: "auto-each",//"auto", "auto-each" or a range in an array e.g [0,100]
     xAxisLabel: "Percentage of population",
     yAxisLabel: "Age",
     xAxisNumberFormat: ".1%",
