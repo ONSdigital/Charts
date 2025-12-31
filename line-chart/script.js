@@ -221,7 +221,6 @@ function drawGraphic() {
 	let xAxisGenerator; // Declare the variable
 
 	if (config.labelSpans === true) {
-		// customTimeAxis(x) must be a defined function
 		xAxisGenerator = customTimeAxis(x).tickSize(20);
 	} else {
 		xAxisGenerator = d3
