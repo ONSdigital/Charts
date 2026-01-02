@@ -10,14 +10,14 @@ function drawGraphic() {
   size = initialise(size);
 
   let margin = config.margin[size]
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
   //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
   let height = (config.seriesHeight[size] * graphic_data.length) + (10 * (graphic_data.length - 1)) + 12
   let isMobile = size == "sm";
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width]);
+    .range([0, chartWidth]);
 
   const y = d3.scaleBand()
     .paddingOuter(0.2)
@@ -43,7 +43,7 @@ function drawGraphic() {
   //create svg for chart
   svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   })
@@ -81,7 +81,7 @@ function drawGraphic() {
     .attr('y', (d) => y(d.name))
     .attr('width', (d) => x(d.value) - x(0))
     .attr('height', y.bandwidth())
-    .attr('fill', config.colour_palette);
+    .attr('fill', config.colourPalette);
 
 
   if (config.dataLabels.show == true) {
@@ -89,7 +89,7 @@ function drawGraphic() {
     addDataLabels({
       svgContainer: svg,
       data: graphic_data,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       labelPositionFactor: 7,
       xScaleFunction: x,
       yScaleFunction: y
@@ -99,18 +99,18 @@ function drawGraphic() {
   // This does the x-axis label
   addAxisLabel({
     svgContainer: svg,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height + 35,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   //setup the arrowhead marker
   setupArrowhead(d3.select("svg"));
   setupMobileAnnotations();
 
-  loadAnnotationsFromJson("annotations-1759314061962.json",svg, {xScale:x,yScale:y},isMobile)
+  loadAnnotationsFromJson("./annotations-1759314061962.json",svg, {xScale:x,yScale:y},isMobile)
 
   //create link to source
   addSource('source', config.sourceText)
@@ -121,7 +121,7 @@ function drawGraphic() {
   }
 }
 
-d3.csv(config.graphic_data_url)
+d3.csv(config.graphicDataURL)
   .then(data => {
     //load chart data
     graphic_data = data
