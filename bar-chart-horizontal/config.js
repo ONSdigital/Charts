@@ -2,7 +2,7 @@ config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screenreader text describing the chart.",
+	"accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title.",
 	"dataLabels": {
 		"show": true,
 		"numberFormat": ".0%"
@@ -40,7 +40,5 @@ config = {
 		"md": 8,
 		"lg": 10
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

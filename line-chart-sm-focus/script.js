@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -69,8 +69,6 @@ function drawGraphic() {
 			xDataType = 'numeric';
 		}
 
-		// console.log(xDataType)
-
 		let x;
 
 		if (xDataType == 'date') {
@@ -92,7 +90,6 @@ function drawGraphic() {
 			let minY = d3.min(graphicData, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
 			let maxY = d3.max(graphicData, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
 			y.domain([minY, maxY])
-			// console.log(minY, maxY)
 		} else {
 			y.domain(config.yDomain)
 		}
@@ -160,6 +157,7 @@ function drawGraphic() {
 				((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
 				category == reference ? " reference" : " other"));
 
+			svg.selectAll('.reference').raise()
 			svg.selectAll('.line' + chartIndex).raise()
 
 			const lastDatum = graphicData[graphicData.length - 1];
@@ -234,22 +232,12 @@ function drawGraphic() {
 			.call(
 				d3
 					.axisBottom(x)
-					.tickValues(graphicData
-						.map((d) => xDataType == 'date' ?
-							d.date.getTime() : d.date
-						) //just get dates as seconds past unix epoch
-						.filter(function (d, i, arr) {
-							return arr.indexOf(d) == i
-						}) //find unique
-						.map(function (d) {
-							return new Date(d)
-						}) //map back to dates
-						.sort(function (a, b) {
-							return a - b
-						})
-						.filter(function (d, i) {
-							return i % config.xAxisTicksEvery[size] === 0 && i <= graphicData.length - config.xAxisTicksEvery[size] || i == graphicData.length - 1 //Rob's fussy comment about labelling the last date
-						})
+					.tickValues(getXAxisTicks({
+										data: graphicData,
+										xDataType,
+										size,
+										config
+									})
 					)
 					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
 						: d3.format(config.xAxisNumberFormat)(d))

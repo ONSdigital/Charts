@@ -1,0 +1,22 @@
+name,This data,That data,series
+Other services,0.987848719,0.713166822,England
+Manufacturing,0.983661406,0.482401697,England
+Construction,0.681288045,0.495087081,England
+Arts,0.481757214,0.310957379,England
+Administrative,0.209665614,0.223459104,England
+Wholesale trade,0.176396639,0.787709541,England
+Administrative and supportive services,0.047910167,0.873262589,England
+Other services,0.987848719,0.102020442,Scotland
+Manufacturing,0.983661406,0.497197175,Scotland
+Construction,0.681288045,0.450160625,Scotland
+Arts,0.481757214,0.546506975,Scotland
+Administrative,0.209665614,0.604779339,Scotland
+Wholesale trade,0.176396639,0.511551674,Scotland
+Administrative and support services,0.047910167,0.503160932,Scotland
+Other services,0.987848719,0.426386631,Wales
+Manufacturing,0.983661406,0.656803629,Wales
+Administrative,0.209665614,-0.138300364,Wales
+Wholesale trade,-0.0176396639,0.545809768,Wales
+Administrative and supportive services,0.047910167,0.127290739,Wales
+Construction,0.681288045,0.488025492,Wales
+Arts,0.481757214,0.029835392,Wales

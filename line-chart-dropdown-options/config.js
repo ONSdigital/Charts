@@ -4,7 +4,7 @@ config = {
 	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -76,7 +76,5 @@ config = {
 	},
 	"addFirstDate": true,
 	"addFinalDate": true,
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

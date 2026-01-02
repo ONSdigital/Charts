@@ -1,8 +1,8 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
-	"sourceText": "Annual Population Survey from the Office for National Statistics ",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"sourceText": "Office for National Statistics ",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -58,18 +58,26 @@ config = {
 		}
 	},
 	"chartGap": 20,
-	"xAxisTicksEvery": { // this is the interval of ticks on the x axis but it will always show the first and last date.
+	// New tick config
+	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickCount": { // for "total" method
 		"sm": 2,
 		"md": 2,
-		"lg": 2
+		"lg": 6
+	},
+	"xAxisTickInterval": { // for "interval" method
+		"unit": "year", // "year", "month", "quarter", "day"
+		"step": { // every x "units"
+			"sm": 2,
+			"md": 2,
+			"lg": 2
+		}
 	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
 		"lg": 8
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

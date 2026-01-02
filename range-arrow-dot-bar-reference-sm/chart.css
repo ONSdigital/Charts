@@ -1,0 +1,45 @@
+.dataLabels {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.chart-container {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.chart-container:last-child {
+  margin-right: 0;
+}
+
+.arrowLegend {
+  fill: #414042;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.legendConnector {
+  stroke-width: 0.5px;
+  stroke: gray;
+}
+
+line.refline {
+  stroke: #222;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  forced-color-adjust: auto;
+}
+
+div.legend--item--here {
+  display: flex;
+  padding-right: 40px;
+  margin-top: 12px;
+}
+
+div#legend {
+  padding-bottom: 12px;
+}
+
+.legend--text {
+  margin-top: 2px;
+}

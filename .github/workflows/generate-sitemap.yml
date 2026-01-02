@@ -1,0 +1,58 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write   # <-- Required to allow commits back to the repo
+
+jobs:
+  generate-sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Needed so git diff works correctly
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install lxml
+
+      - name: Generate sitemap.xml
+        run: |
+          python .github/scripts/generate_sitemap.py
+
+      - name: Commit and Push sitemap.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # If sitemap.xml is untracked (new file), git ls-files returns nothing
+          if ! git ls-files --error-unmatch sitemap.xml > /dev/null 2>&1; then
+            echo "sitemap.xml is new. Committing..."
+            git add sitemap.xml
+            git commit -m "🤖 Chore: Add sitemap.xml [skip ci]"
+            git push
+            exit 0
+          fi
+
+          # If the file *is tracked*, check for changes
+          if git diff --quiet sitemap.xml; then
+            echo "No changes to sitemap.xml. Skipping commit."
+          else
+            echo "Changes detected. Committing..."
+            git add sitemap.xml
+            git commit -m "🤖 Chore: Update sitemap.xml [skip ci]"
+            git push
+          fi
+

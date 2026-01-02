@@ -1,0 +1,150 @@
+name: Accessibility Test (Axe WCAG 2.2)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          npm install puppeteer axe-core
+
+      - name: Extract URLs from sitemap
+        id: extract
+        run: |
+          python3 << 'EOF'
+          import xml.etree.ElementTree as ET
+
+          tree = ET.parse('sitemap.xml')
+          root = tree.getroot()
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+
+          urls = [elem.text for elem in root.findall('sm:url/sm:loc', ns)]
+
+          with open("urls.txt", "w") as f:
+              for u in urls:
+                  f.write(u + "\n")
+
+          print(f"Found {len(urls)} URLs")
+          EOF
+
+      - name: Run Axe WCAG 2.2 tests
+        run: |
+          mkdir -p reports
+
+          node << 'EOF'
+          const fs = require('fs');
+          const puppeteer = require('puppeteer');
+          const axe = require('axe-core');
+
+          (async () => {
+            const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+            const page = await browser.newPage();
+
+            const urls = fs.readFileSync('urls.txt', 'utf8').trim().split('\n');
+            let allResults = [];
+
+            for (const url of urls) {
+              console.log("Testing:", url);
+              await page.goto(url, { waitUntil: 'networkidle2' });
+
+              // Inject Axe
+              await page.addScriptTag({ content: axe.source });
+
+              // WCAG 2.2-only scan
+              const results = await page.evaluate(async () => {
+                return await axe.run({
+                  runOnly: {
+                    type: 'tag',
+                    values: ['wcag22']  // ← WCAG 2.2 here
+                  }
+                });
+              });
+
+              allResults.push({ url, results });
+            }
+
+            // Build HTML report
+            let html = `
+              <html>
+              <head>
+                <title>Axe Accessibility Report (WCAG 2.2)</title>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 40px; }
+                  h1 { color: #222; }
+                  h2 { margin-top: 40px; }
+                  .issue { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+                  .impact { font-weight: bold; }
+                </style>
+              </head>
+              <body>
+                <h1>Axe Accessibility Report (WCAG 2.2)</h1>
+                <p>Generated on ${new Date().toISOString()}</p>
+            `;
+
+            for (const entry of allResults) {
+              html += `<h2>${entry.url}</h2>`;
+
+              if (entry.results.violations.length === 0) {
+                html += `<p>✔ No WCAG 2.2 violations found.</p>`;
+                continue;
+              }
+
+              entry.results.violations.forEach(v => {
+                html += `
+                  <div class="issue">
+                    <div class="impact">Impact: ${v.impact}</div>
+                    <div><strong>${v.help}</strong></div>
+                    <div>${v.description}</div>
+                    <div><a href="${v.helpUrl}" target="_blank">More info</a></div>
+                  </div>
+                `;
+              });
+            }
+
+            html += `</body></html>`;
+            fs.writeFileSync('reports/a11y-report.html', html);
+
+            await browser.close();
+          })();
+          EOF
+
+      - name: Commit HTML report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          REPORT=reports/a11y-report.html
+
+          if ! git ls-files --error-unmatch "$REPORT" > /dev/null 2>&1; then
+            git add "$REPORT"
+            git commit -m "🧪 Add Axe WCAG 2.2 accessibility report [skip ci]"
+            git push
+          else
+            if git diff --quiet "$REPORT"; then
+              echo "No changes in accessibility report."
+            else
+              git add "$REPORT"
+              git commit -m "🧪 Update Axe WCAG 2.2 accessibility report [skip ci]"
+              git push
+            fi
+          fi

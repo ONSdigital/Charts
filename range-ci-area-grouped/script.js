@@ -19,7 +19,7 @@ function drawGraphic() {
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphicData.columns.length; i++) {
+		for (let i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
 				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
