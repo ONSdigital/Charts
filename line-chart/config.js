@@ -69,13 +69,16 @@ config = {
 			"lg": 2
 		}
 	},
-	"labelSpans":true,
+	"addFirstDate": false,
+	"addFinalDate": true,
+	"labelSpans":{
+		"enabled":true,
+		"secondaryLabels":false
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
 		"lg": 8
 	},
-	"addFirstDate": false,
-	"addFinalDate": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };
