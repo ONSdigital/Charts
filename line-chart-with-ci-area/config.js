@@ -70,6 +70,10 @@ config = {
 			"lg": 2
 		}
 	},
+	"labelSpans": {
+		"enabled": false,
+		"secondaryLabels": false
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,

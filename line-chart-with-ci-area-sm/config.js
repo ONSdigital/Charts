@@ -78,6 +78,10 @@ config = {
 		"md": 5,
 		"lg": 8
 	},
+	"labelSpans": {
+		"enabled": true,
+		"secondaryLabels": true
+	},
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

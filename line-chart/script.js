@@ -218,7 +218,7 @@ function drawGraphic() {
 		})
 
 
-	let xAxisGenerator; // Declare the variable
+	let xAxisGenerator;
 
 	if (config.labelSpans.enabled === true) {
 		xAxisGenerator = customTimeAxis(x).tickSize(20);
@@ -227,7 +227,7 @@ function drawGraphic() {
 			.axisBottom(x)
 			.tickValues(
 				getXAxisTicks({
-					data: graphic_data,
+					data: graphicData,
 					xDataType,
 					size,
 					config
@@ -245,7 +245,7 @@ function drawGraphic() {
 		.append('g')
 		.attr('class', 'x axis')
 		.attr('transform', `translate(0, ${height})`)
-		.call(xAxisGenerator); // Pass the variable to .call()
+		.call(xAxisGenerator); 
 
 	// Add the y-axis
 	svg

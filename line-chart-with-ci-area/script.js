@@ -1,6 +1,6 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
 
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -61,14 +61,6 @@ function drawGraphic() {
 		y.domain(config.yDomain)
 	}
 
-	// Use new getXAxisTicks function for tick values
-	let tickValues = getXAxisTicks({
-		data: graphicData,
-		xDataType,
-		size,
-		config
-	});
-
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
@@ -78,18 +70,34 @@ function drawGraphic() {
 	})
 
 	// Add the x-axis
+	let xAxisGenerator;
+
+	if (config.labelSpans.enabled === true) {
+		xAxisGenerator = customTimeAxis(x).tickSize(20);
+	} else {
+		xAxisGenerator = d3
+			.axisBottom(x)
+			.tickValues(
+				getXAxisTicks({
+					data: graphicData,
+					xDataType,
+					size,
+					config
+				})
+			)
+			.tickFormat(
+				(d) =>
+					xDataType == 'date' ?
+						d3.timeFormat(config.xAxisTickFormat[size])(d) :
+						d3.format(config.xAxisNumberFormat)(d)
+			);
+	}
+
 	svg
 		.append('g')
 		.attr('class', 'x axis')
 		.attr('transform', `translate(0, ${height})`)
-		.call(
-			d3
-				.axisBottom(x)
-				.tickValues(tickValues)
-				.tickFormat((d) => xDataType === 'date'
-					? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
-		);
+		.call(xAxisGenerator); 
 
 	// Add the y-axis
 	svg

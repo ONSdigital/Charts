@@ -71,10 +71,14 @@ config = {
 			"lg": 2
 		}
 	},
+	"labelSpans": {
+		"enabled": false,
+		"secondaryLabels": false
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
-		"lg":8
+		"lg": 8
 	},
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
