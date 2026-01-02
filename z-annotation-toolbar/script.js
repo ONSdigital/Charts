@@ -10,13 +10,14 @@ function drawGraphic() {
   size = initialise(size);
 
   let margin = config.margin[size]
-  let chart_width = parseInt(graphic.style("width")) - margin.left - margin.right;
+  let chartWidth = parseInt(graphic.style("width")) - margin.left - margin.right;
+
   //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
   let height = (config.seriesHeight[size] * graphic_data.length) + (10 * (graphic_data.length - 1)) + 12
 
   //set up scales
   const x = d3.scaleLinear()
-    .range([0, chart_width]);
+    .range([0, chartWidth]);
 
   const y = d3.scaleBand()
     .paddingOuter(0.2)
@@ -39,14 +40,13 @@ function drawGraphic() {
     .tickFormat(d3.format(".0%"))
     .ticks(config.xAxisTicks[size]);
 
-  //create svg for chart
+    //create svg for chart
   svg = addSvg({
     svgParent: graphic,
-    chart_width: chart_width,
+    chartWidth: chartWidth,
     height: height + margin.top + margin.bottom,
     margin: margin
   })
-
 
   if (config.xDomain == "auto") {
     x.domain([0, d3.max(graphic_data, function (d) { return d.value })]);
@@ -88,7 +88,7 @@ function drawGraphic() {
     addDataLabels({
       svgContainer: svg,
       data: graphic_data,
-      chart_width: chart_width,
+      chartWidth: chartWidth,
       labelPositionFactor: 7,
       xScaleFunction: x,
       yScaleFunction: y
@@ -98,17 +98,17 @@ function drawGraphic() {
   // This does the x-axis label
   addAxisLabel({
     svgContainer: svg,
-    xPosition: chart_width,
+    xPosition: chartWidth,
     yPosition: height + 35,
     text: config.xAxisLabel,
     textAnchor: "end",
-    wrapWidth: chart_width
+    wrapWidth: chartWidth
   });
 
   //setup the arrowhead marker
   setupArrowhead(d3.select("svg"));
 
-  createAnnotationToolbar(d3.select('svg'),svg,{xScale:x,yScale:y},margin, chart_width,height)
+  createAnnotationToolbar(d3.select('svg'),svg,{xScale:x,yScale:y},margin, chartWidth,height)
 
   //create link to source
   addSource('source', config.sourceText)
