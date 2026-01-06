@@ -6,6 +6,10 @@ on:
     paths: ['lib/**']
   workflow_dispatch:
 
+concurrency:
+  group: repo-write-main
+  cancel-in-progress: false
+
 jobs:
   sync-repos:
     runs-on: ubuntu-latest
@@ -61,6 +65,7 @@ jobs:
           echo "No changes to commit to charts-lib"
         else
           git commit -m "Sync from lib: ${{ github.sha }}"
+          git pull --rebase origin main
           git push
         fi
 
@@ -78,6 +83,7 @@ jobs:
           echo "No changes to commit to otherCharts"
         else
           git commit -m "Sync from lib: ${{ github.sha }}"
+          git pull --rebase origin main
           git push
         fi
     

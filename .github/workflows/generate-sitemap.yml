@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: repo-write-main
+  cancel-in-progress: false
+
 permissions:
   contents: write   # <-- Required to allow commits back to the repo
 
@@ -42,6 +46,7 @@ jobs:
             echo "sitemap.xml is new. Committing..."
             git add sitemap.xml
             git commit -m "🤖 Chore: Add sitemap.xml [skip ci]"
+            git pull --rebase origin main
             git push
             exit 0
           fi
@@ -53,6 +58,7 @@ jobs:
             echo "Changes detected. Committing..."
             git add sitemap.xml
             git commit -m "🤖 Chore: Update sitemap.xml [skip ci]"
+            git pull --rebase origin main
             git push
           fi
 

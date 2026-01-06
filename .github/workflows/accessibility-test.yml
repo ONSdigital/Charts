@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - sitemap.xml
+
+concurrency:
+  group: repo-write-main
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -138,6 +144,7 @@ jobs:
           if ! git ls-files --error-unmatch "$REPORT" > /dev/null 2>&1; then
             git add "$REPORT"
             git commit -m "🧪 Add Axe WCAG 2.2 accessibility report [skip ci]"
+            git pull --rebase origin main
             git push
           else
             if git diff --quiet "$REPORT"; then
@@ -145,6 +152,7 @@ jobs:
             else
               git add "$REPORT"
               git commit -m "🧪 Update Axe WCAG 2.2 accessibility report [skip ci]"
+              git pull --rebase origin main
               git push
             fi
           fi

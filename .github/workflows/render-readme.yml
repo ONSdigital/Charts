@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: repo-write-main
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -39,5 +43,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Render README.md from README.Rmd"
+            git pull --rebase origin main
             git push
           fi
