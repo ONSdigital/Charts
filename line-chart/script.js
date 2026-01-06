@@ -81,17 +81,19 @@ function drawGraphic() {
 
 	// create lines and circles for each category
 	categories.forEach(function (category, index) {
+
+		// If connectGaps is true, ignore nulls in defined (draw through gaps)
 		const lineGenerator = d3
 			.line()
 			.x((d) => x(d.date))
 			.y((d) => y(d[category]))
-			.defined(d => d[category] !== null) // Only plot lines where we have values
-			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
+			.defined(d => d[category] !== null)
+			.curve(d3[config.lineCurveType])
 			.context(null);
 
 		svg
 			.append('path')
-			.datum(graphicData)
+			.datum(graphicData.filter(d => config.connectGaps===true ? d[category] !== null && d[category] !== undefined : d))
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
@@ -103,6 +105,20 @@ function drawGraphic() {
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
+
+		// Add point markers if enabled in config
+		if (config.addPointMarkers) {
+			const points = graphicData.filter(d => d[category] !== null && d[category] !== undefined);
+			svg.selectAll(`circle.point-marker-${index}`)
+				.data(points)
+				.enter()
+				.append('circle')
+				.attr('cx', d => x(d.date))
+				.attr('cy', d => y(d[category]))
+				.attr('r', 4)
+				.attr('class', `point-marker point-marker-${index}`)
+				.style('fill', config.colourPalette[index % config.colourPalette.length])
+		}
 
 		const lastDatum = graphicData[graphicData.length - 1];
 		if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
