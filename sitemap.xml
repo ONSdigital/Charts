@@ -4,16 +4,13 @@
     <loc>https://onsdigital.github.io/Charts/beeswarm/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-with-dropdown/index.html</loc>
-  </url>
-  <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked-sm/index.html</loc>
-  </url>
-  <url>
     <loc>https://onsdigital.github.io/Charts/heatmap/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/doughnut/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-grouped/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/line-chart-sm-multiseries/index.html</loc>
@@ -22,19 +19,16 @@
     <loc>https://onsdigital.github.io/Charts/chart-menu/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-grouped-clustered/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-clustered/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-stacked-grouped/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/line-chart-dropdown-options/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked-grouped/index.html</loc>
-  </url>
-  <url>
     <loc>https://onsdigital.github.io/Charts/scatter-bubble-plot-animated/index.html</loc>
-  </url>
-  <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/column-chart-stacked-optional-line/index.html</loc>
@@ -43,13 +37,13 @@
     <loc>https://onsdigital.github.io/Charts/scatter-bubble-plot/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-sm/index.html</loc>
-  </url>
-  <url>
     <loc>https://onsdigital.github.io/Charts/z-annotation-example/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/line-chart/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-stacked/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/range-arrow-dot-bar-reference-sm/index.html</loc>
@@ -79,19 +73,22 @@
     <loc>https://onsdigital.github.io/Charts/column-chart-stacked-optional-line-sm/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-grouped/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-sm/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-clustered/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-clustered-sm/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/bar-chart/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-grouped-clustered/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/range-arrow-dot-bar-reference/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/bar-chart-horizontal-clustered-sm/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-with-dropdown/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/column-chart-ci-bands/index.html</loc>
@@ -101,6 +98,9 @@
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/line-chart-sm-focus/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/bar-chart-stacked-sm/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/area-stacked-sm/index.html</loc>
