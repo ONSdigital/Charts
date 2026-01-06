@@ -13,7 +13,7 @@ const chartConfig = [
   },
   {
     name: "Bar chart small multiple",
-    url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-sm/",
+    url: "https://onsdigital.github.io/Charts/bar-chart-sm/",
     tags: {
       comparison: true,
       rank: true
@@ -24,7 +24,7 @@ const chartConfig = [
   },
   {
     name: "Bar chart horizontal stacked small multiple",
-    url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked-sm/",
+    url: "https://onsdigital.github.io/Charts/bar-chart-stacked-sm/",
     tags: {
       comparison: true,
       "part-to-whole": true
@@ -35,7 +35,7 @@ const chartConfig = [
   },
   {
     name: "Bar chart horizontal stacked group",
-    url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-stacked-grouped/",
+    url: "https://onsdigital.github.io/Charts/bar-chart-stacked-grouped/",
     tags: {
       comparison: true,
       "part-to-whole": true
@@ -46,7 +46,7 @@ const chartConfig = [
   },
   {
     name: "Bar chart horizontal grouped",
-    url: "https://onsdigital.github.io/Charts/bar-chart-horizontal-grouped/",
+    url: "https://onsdigital.github.io/Charts/bar-chart-grouped/",
     tags: {
       comparison: true
     },
