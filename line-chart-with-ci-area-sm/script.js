@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -147,27 +147,36 @@ function drawGraphic() {
 				}
 			})
 
-		// Use new getXAxisTicks function for tick values
-		let tickValues = getXAxisTicks({
-			data: data,
-			xDataType,
-			size,
-			config
-		});
-
 		// Add the x-axis
+		let xAxisGenerator;
+
+		if (config.labelSpans.enabled === true) {
+			xAxisGenerator = customTimeAxis(x).tickSize(20).tickFormat(d3.timeFormat("%y"));
+		} else {
+			xAxisGenerator = d3
+				.axisBottom(x)
+				.tickValues(
+					getXAxisTicks({
+						data: graphicData,
+						xDataType,
+						size,
+						config
+					})
+				)
+				.tickFormat(
+					(d) =>
+						xDataType == 'date' ?
+							d3.timeFormat(config.xAxisTickFormat[size])(d) :
+							d3.format(config.xAxisNumberFormat)(d)
+				);
+		}
+
 		svg
 			.append('g')
 			.attr('class', 'x axis')
 			.attr('transform', `translate(0, ${height})`)
-			.call(
-				d3
-					.axisBottom(x)
-					.tickValues(tickValues)
-					.tickFormat((d) => xDataType === 'date'
-						? d3.timeFormat(config.xAxisTickFormat[size])(d)
-						: d3.format(config.xAxisNumberFormat)(d))
-			);
+			.call(xAxisGenerator);
+
 
 
 		//If dropYAxis == true Only draw the y axis tick labels on the first chart in each row

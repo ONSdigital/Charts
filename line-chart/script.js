@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, customTimeAxis, getXAxisTicks } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -217,23 +217,35 @@ function drawGraphic() {
 			}
 		})
 
-	// Add the x-axis
-	svg
-		.append('g')
-		.attr('class', 'x axis')
-		.attr('transform', `translate(0, ${height})`)
-		.call(
-			d3
-				.axisBottom(x)
-				.tickValues(getXAxisTicks({
+
+	let xAxisGenerator;
+
+	if (config.labelSpans.enabled === true) {
+		xAxisGenerator = customTimeAxis(x).tickSize(20);
+	} else {
+		xAxisGenerator = d3
+			.axisBottom(x)
+			.tickValues(
+				getXAxisTicks({
 					data: graphicData,
 					xDataType,
 					size,
 					config
-				}))
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
-		);
+				})
+			)
+			.tickFormat(
+				(d) =>
+					xDataType == 'date' ?
+						d3.timeFormat(config.xAxisTickFormat[size])(d) :
+						d3.format(config.xAxisNumberFormat)(d)
+			);
+	}
+
+	svg
+		.append('g')
+		.attr('class', 'x axis')
+		.attr('transform', `translate(0, ${height})`)
+		.call(xAxisGenerator); 
 
 	// Add the y-axis
 	svg
