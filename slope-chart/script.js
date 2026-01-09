@@ -14,25 +14,31 @@ function drawGraphic() {
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
+	if (size == "sm") {
+		margin.left = 50
+		margin.right = parseInt(graphic.style('width')) - 230;
+	} else {
+		let slopeMargin = parseInt(graphic.style('width')) / 2 - 90;
+
+		margin.left = slopeMargin
+		margin.right = slopeMargin
+	}
+
+
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
 	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
 	const columns = graphicData.columns.slice(1)
 
-	const startPoint = size == "sm" ? 50 : chartWidth / 2 - 90;
-	const endPoint = size == "sm" ? chartWidth - 160 : chartWidth / 2 + 90;
-
 	let x = d3.scalePoint().domain(columns)
-		.range([startPoint, endPoint])
+		.range([0, chartWidth])
 
 	let xLabels = d3.scalePoint().domain(config.xAxisLabels)
-		.range([startPoint, endPoint]);
-
+		.range([0, chartWidth])
 
 	const y = d3
 		.scaleLinear()
 		.range([height, 0]);
-
 
 	if (config.showZeroAxis) {
 		y.domain([0, d3.max(graphicData.flatMap(d => columns.map(col => Number(d[col]))))]);
@@ -59,33 +65,31 @@ function drawGraphic() {
 
 	function direction(data) {
 		if (+data[columns[0]] > +data[columns[columns.length - 1]]) {
-			return "decreasing"
+			return 0
 		} else if (+data[columns[columns.length - 1]] > +data[columns[0]]) {
-			return "increasing"
+			return 2
 		} else if (+data[columns[0]] == +data[columns[columns.length - 1]]) {
-			return "same"
+			return 1
 		}
 	}
 
-	const colourDirectionScale = d3.scaleOrdinal().domain(["decreasing", "same", "increasing"]).range(config.directionPalette)
-
-
+	// const colourDirectionScale = d3.scaleOrdinal().domain(["decreasing", "same", "increasing"]).range(config.colourPalette)
 
 	// add grid lines to y axis
 	if (config.showZeroAxis) {
 		const zeroAxis = svg
 			.append('g')
-			.attr('transform', "translate(" + (startPoint - 20) + ",0)")
+			.attr('transform', "translate(" + -20 + ",0)")
 			.attr('class', 'y axis')
 			.call(
 				d3
 					.axisLeft(y)
 					.tickValues([0])
-					.tickSize(-(endPoint - startPoint) - 40)
+					.tickSize(-220)
 				// .tickFormat('')
 			)
 
-		svg.append('g').attr('transform', "translate(" + (endPoint + 20) + ",0)")
+		svg.append('g').attr('transform', "translate(" + (chartWidth + 20) + ",0)")
 			.attr('class', 'y axis')
 			.call(d3.axisRight(y).tickValues([0]).tickSize(0))
 
@@ -115,6 +119,48 @@ function drawGraphic() {
 	xAxis.selectAll(".tick line")
 		.style("stroke", ONScolours.grey40)
 
+	const transposeData = columns.map(key => {
+		const newObj = { date: key };
+
+		graphicData.forEach(item => {
+			newObj[item.name] = +item[key];
+		});
+
+		return newObj;
+	})
+
+	const colourMap = new Map();
+	categories.forEach(category => {
+		colourMap.set(category, config.colourScheme === "categories"
+			? config.colourPalette[
+			categories.indexOf(category) % config.colourPalette.length
+			]
+			: config.colourPalette[
+			direction(graphicData.find(d => d.name === category))
+			]
+		);
+	})
+
+	createDirectLabels({
+		categories: categories,
+		data: transposeData,
+		svg: svg,
+		xScale: x,
+		yScale: y,
+		margin: margin,
+		chartHeight: height,
+		config: config,
+		options: {
+			labelStrategy: size == "sm" ? 'last' : 'firstLast',
+			minSpacing: 12,
+			useLeaderLines: true,
+			leaderLineStyle: 'dashed',
+			colourMap:colourMap,
+			includeDataValue:true
+		}
+	});
+
+
 
 	// create lines and circles for each category
 	categories.forEach(function (category, index) {
@@ -129,10 +175,9 @@ function drawGraphic() {
 			.datum(itemData)
 			.attr('fill', 'none')
 			.attr(
-				'stroke', config.colourScheme == "categories" ?
-				config.categoryPalette[
-				categories.indexOf(category) % config.categoryPalette.length
-				] : colourDirectionScale(direction(graphicData.find(d => d.name === category)))
+				'stroke', config.colourScheme == "categories"
+				? config.colourPalette[categories.indexOf(category) % config.colourPalette.length]
+				: config.colourPalette[direction(graphicData.find(d => d.name === category))]
 			)
 			.attr('stroke-width', 2.5)
 			.attr('d', lineGenerator)
@@ -144,31 +189,16 @@ function drawGraphic() {
 				.datum(data)
 				.attr('cx', d => x(d.x))
 				.attr('cy', d => y(d.y))
-				.style('fill', config.colourScheme == "categories" ?
-					config.categoryPalette[
-					categories.indexOf(category) % config.categoryPalette.length
-					] : colourDirectionScale(direction(graphicData.find(d => d.name === category))))
+				.style('fill', config.colourScheme == "categories"
+					? config.colourPalette[categories.indexOf(category) % config.colourPalette.length]
+					: config.colourPalette[direction(graphicData.find(d => d.name === category))]
+				)
 				.attr('r', 6)
 				.raise()
 		})
 	});
 
-	createDirectLabels({
-		categories: categories,
-		data: graphicData,
-		svg: svg,
-		xScale: x,
-		yScale: y,
-		margin: margin,
-		chartHeight: height,
-		config: config,
-		options: {
-			labelStrategy: 'all',
-			minSpacing: 12,
-			useLeaderLines: true,
-			leaderLineStyle: 'dashed'
-		}
-	});
+
 
 	//create link to source
 	addSource('source', config.sourceText);
