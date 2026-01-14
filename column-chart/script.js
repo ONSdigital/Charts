@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, customBandAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -60,14 +60,20 @@ function drawGraphic() {
 
 	let xTime = d3.timeFormat(config.xAxisTickFormat[size])
 
+
 	//set up xAxis generator
-	let xAxis = d3
-		.axisBottom(x)
-		.tickSize(10)
-		.tickPadding(10)
-		.tickValues(tickValues) //Labelling the first and/or last bar if needed
-		.tickFormat((d) => xDataType == 'date' ? xTime(d)
-			: d3.format(config.xAxisNumberFormat)(d));
+	let xAxisGenerator;
+	if (config.labelSpans.enabled === true) {
+		xAxisGenerator = customBandAxis(x).timeUnit("month").tickSize(0).tickPadding(6);
+	} else {
+		xAxisGenerator = d3
+			.axisBottom(x)
+			.tickSize(10)
+			.tickPadding(10)
+			.tickValues(tickValues) //Labelling the first and/or last bar if needed
+			.tickFormat((d) => xDataType == 'date' ? xTime(d)
+				: d3.format(config.xAxisNumberFormat)(d));
+	}
 
 	//create svg for chart
 	svg = addSvg({
@@ -93,7 +99,7 @@ function drawGraphic() {
 		.append('g')
 		.attr('transform', 'translate(0,' + height + ')')
 		.attr('class', 'x axis')
-		.call(xAxis);
+		.call(xAxisGenerator);
 
 	svg
 		.append('g')
