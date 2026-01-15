@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, customTimeAxis, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -221,7 +221,7 @@ function drawGraphic() {
 	let xAxisGenerator;
 
 	if (config.labelSpans.enabled === true) {
-		xAxisGenerator = customTimeAxis(x).tickSize(20);
+		xAxisGenerator = customTemporalAxis(x).tickSize(20);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)

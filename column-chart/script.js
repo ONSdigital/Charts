@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, customBandAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -63,8 +63,8 @@ function drawGraphic() {
 
 	//set up xAxis generator
 	let xAxisGenerator;
-	if (config.labelSpans.enabled === true) {
-		xAxisGenerator = customBandAxis(x).timeUnit("month").tickSize(0).tickPadding(6);
+	if (config.labelSpans.enabled === true && xDataType=="date") {
+		xAxisGenerator = customTemporalAxis(x).timeUnit("month").tickSize(0).tickPadding(6);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
