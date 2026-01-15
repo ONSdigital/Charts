@@ -22,7 +22,7 @@ function drawGraphic() {
 
 	const x = d3
 		.scaleBand()
-		.paddingOuter(0.0)
+		.paddingOuter(0.05)
 		.paddingInner(0.1)
 		.range([0, chartWidth])
 		.round(false);
