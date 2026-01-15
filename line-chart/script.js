@@ -48,15 +48,56 @@ function drawGraphic() {
 
 	let maxY, minY;
 
+	// Calculate data min/max across all categories
+	const dataYMin = d3.min(graphicData, d => d3.min(categories, c => d[c]));
+	const dataYMax = d3.max(graphicData, d => d3.max(categories, c => d[c]));
+	const dataRange = dataYMax - dataYMin;
+
+	// Helper function to calculate auto axis bounds with smart trimming
+	const calculateAutoBound = (dataValue, oppositeBound, isMin) => {
+		// Start at zero, or use data value with 10% of data range as padding if beyond zero
+		const padding = dataRange * 0.15;
+		let base = isMin 
+			? (dataValue < 0 ? dataValue - padding : 0)
+			: (dataValue > 0 ? dataValue + padding : 0);
+		
+		// Check if there's excessive unused space (gap > 50% of range)
+		const needsTrimming = isMin ? (dataValue > base) : (dataValue < base);
+		
+		if (needsTrimming) {
+			const range = isMin ? (oppositeBound - base) : (base - oppositeBound);
+			const gap = isMin ? (dataValue - base) : (base - dataValue);
+			
+			// If gap > 50% of range, cut the axis but keep 30% of final axis range as cushion
+			if (range > 0 && gap / range > 0.5) {
+				const cushion = 0.3;
+				const newBound = (dataValue - cushion * oppositeBound) / (1 - cushion);
+				const isValid = isMin ? (newBound < dataValue) : (newBound > dataValue);
+				
+				if (isValid) {
+					base = newBound;
+				}
+			}
+		}
+		
+		return base;
+	};
+
+	// Handle max Y domain
 	if (config.yDomainMax === "auto") {
-		maxY = d3.max(graphicData, d => d3.max(categories, c => d[c]));
+		maxY = calculateAutoBound(dataYMax, dataYMin, false);
 	} else {
 		maxY = config.yDomainMax;
 	}
 
+	// Handle min Y domain
 	if (config.yDomainMin === "auto") {
-		minY = d3.min(graphicData, d => d3.min(categories, c => d[c]));
+		minY = calculateAutoBound(dataYMin, maxY, true);
+	} else if (config.yDomainMin === "data") {
+		// Data mode: use actual data minimum
+		minY = dataYMin;
 	} else {
+		// Numeric value provided (e.g., 0 to force zero baseline)
 		minY = config.yDomainMin;
 	}
 
