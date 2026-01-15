@@ -1,6 +1,6 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
 
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -72,8 +72,8 @@ function drawGraphic() {
 	// Add the x-axis
 	let xAxisGenerator;
 
-	if (config.labelSpans.enabled === true) {
-		xAxisGenerator = customTimeAxis(x).tickSize(20);
+	if (config.labelSpans.enabled === true && xDataType=='date') {
+		xAxisGenerator = customTemporalAxis(x).tickSize(17).tickPadding(6);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)

@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -368,8 +368,8 @@ function drawGraphic() {
 
 	// In drawGraphic, replace the x-axis tickValues logic:
 	let xAxisGenerator;
-	if (config.labelSpans.enabled === true) {
-		xAxisGenerator = customTimeAxis(x).tickSize(20);
+	if (config.labelSpans.enabled === true && xDataType == 'date') {
+		xAxisGenerator = customTemporalAxis(x).tickSize(17).tickPadding(6);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)

@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -224,8 +224,8 @@ function drawGraphic() {
 			})
 
 		let xAxisGenerator;
-		if (config.labelSpans.enabled === true) {
-			xAxisGenerator = customTimeAxis(x).tickSize(20).timeUnit("quarter");
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
+			xAxisGenerator = customTemporalAxis(x).tickSize(17).tickPadding(6).timeUnit("quarter");
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)

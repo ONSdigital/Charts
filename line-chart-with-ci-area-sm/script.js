@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -151,7 +151,7 @@ function drawGraphic() {
 		let xAxisGenerator;
 
 		if (config.labelSpans.enabled === true) {
-			xAxisGenerator = customTimeAxis(x).tickSize(20).tickFormat(d3.timeFormat("%y"));
+			xAxisGenerator = customTemporalAxis(x).tickSize(17).tickPadding(6).tickFormat(d3.timeFormat("%y"));
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
