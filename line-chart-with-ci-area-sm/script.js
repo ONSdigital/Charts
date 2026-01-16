@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -151,7 +151,10 @@ function drawGraphic() {
 		let xAxisGenerator;
 
 		if (config.labelSpans.enabled === true) {
-			xAxisGenerator = customTimeAxis(x).tickSize(20).tickFormat(d3.timeFormat("%y"));
+			xAxisGenerator = customTemporalAxis(x)
+				.tickSize(17)
+				.tickPadding(6)
+				.tickFormat(d3.timeFormat("%y"));
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
@@ -327,7 +330,7 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
 		return {
-			date: d3.timeParse(config.dateFormat)(d.date),
+			date: d3.utcParse(config.dateFormat)(d.date),
 			...Object.entries(d)
 				.filter(([key]) => key !== 'date')
 				.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes

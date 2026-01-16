@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, customBandAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, customTemporalAxis, prefixYearFormatter } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -63,8 +63,15 @@ function drawGraphic() {
 
 	//set up xAxis generator
 	let xAxisGenerator;
-	if (config.labelSpans.enabled === true) {
-		xAxisGenerator = customBandAxis(x).timeUnit("month").tickSize(0).tickPadding(6);
+	if (config.labelSpans.enabled === true && xDataType == "date") {
+		xAxisGenerator = customTemporalAxis(x)
+			.timeUnit(config.labelSpans.timeUnit)
+			.tickSize(0)
+			.tickPadding(6)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.yearStartMonth(config.labelSpans.yearStartMonth)
+			.secondaryTickFormat(d => prefixYearFormatter(d, config.labelSpans.yearStartMonth, config.labelSpans.prefix));
+			
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
@@ -148,7 +155,7 @@ d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphicData = data;
 
-	let parseTime = d3.timeParse(config.dateFormat);
+	let parseTime = d3.utcParse(config.dateFormat);
 
 	data.forEach((d, i) => {
 
