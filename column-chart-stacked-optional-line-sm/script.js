@@ -405,7 +405,7 @@ d3.csv(config.graphicDataUrl).then((data) => {
   //load chart data
   graphic_data = data;
 
-  let parseTime = d3.timeParse(config.dateFormat);
+  let parseTime = d3.utcParse(config.dateFormat);
 
   data.forEach((d, i) => {
     //If the date column is has date data store it as dates

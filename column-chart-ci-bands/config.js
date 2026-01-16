@@ -49,6 +49,10 @@ config = {
         "md": 4,
         "lg": 2
     },
+    "labelSpans": {
+        "enabled": true,
+        "secondaryLabels": false
+    },
     "yAxisTicks": {
         "sm": 4,
         "md": 5,

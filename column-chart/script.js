@@ -148,7 +148,7 @@ d3.csv(config.graphicDataURL).then((data) => {
 	//load chart data
 	graphicData = data;
 
-	let parseTime = d3.timeParse(config.dateFormat);
+	let parseTime = d3.utcParse(config.dateFormat);
 
 	data.forEach((d, i) => {
 

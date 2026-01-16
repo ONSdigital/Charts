@@ -44,7 +44,7 @@ function drawGraphic() {
 		//Set the date format for the slider label
 
 		let dateformat = d3.timeFormat(config.dateFormat);
-		let dateparse = d3.timeParse(config.dateParse);
+		let dateparse = d3.utcParse(config.dateParse);
 
 		//Make the slider
 
