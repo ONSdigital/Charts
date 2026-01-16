@@ -4,6 +4,7 @@ import {
   addSvg,
   diamondShape,
   addAxisLabel,
+  customTemporalAxis
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -69,14 +70,19 @@ function drawGraphic() {
   }
 
   //set up xAxis generator
-  let xAxis = d3
-    .axisBottom(x)
-    .tickSize(10)
-    .tickPadding(10)
-    .tickValues(tickValues)
-    .tickFormat((d) =>
-      xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
-    );
+  let xAxis;
+  if (config.labelSpans.enabled === true && xDataType == "date") {
+    xAxis = customTemporalAxis(x).timeUnit("month").tickSize(0).tickPadding(6);
+  } else {
+    xAxis = d3
+      .axisBottom(x)
+      .tickSize(10)
+      .tickPadding(10)
+      .tickValues(tickValues)
+      .tickFormat((d) =>
+        xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
+      );
+  }
 
   // Determine which columns to use for stacked bars based on line toggle
   let stackColumns;
