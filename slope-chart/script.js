@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addSource, adjustColorForContrast } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
@@ -136,9 +136,10 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.textColourPalette[
-				categories.indexOf(category) % config.textColourPalette.length
-				]
+				adjustColorForContrast(
+					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
+					4.5
+				)
 			)
 			.text(d3.format(config.yAxisNumberFormat)((lastDatum[category]))) /* (Math.round((lastDatum[category]) / 100) * 100) */
 			.attr('id', 'lastDateLabel')
@@ -150,9 +151,10 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.textColourPalette[
-				categories.indexOf(category) % config.textColourPalette.length
-				]
+				adjustColorForContrast(
+					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
+					4.5
+				)
 			)
 			.text(category)
 			.attr("class", "directLineLabelRegular")
@@ -170,9 +172,10 @@ function drawGraphic() {
 			.attr('text-anchor', 'end')
 			.attr(
 				'fill',
-				config.textColourPalette[
-				categories.indexOf(category) % config.textColourPalette.length
-				]
+				adjustColorForContrast(
+					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
+					4.5
+				)
 			)
 			.text(d3.format(config.yAxisNumberFormat)(firstDatum[category]))
 			.attr("class", "directLineLabelBold")
