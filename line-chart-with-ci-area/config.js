@@ -72,7 +72,8 @@ config = {
 	},
 	"labelSpans": {
 		"enabled": false,
-		"secondaryLabels": false
+		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 	},
 	"yAxisTicks": {
 		"sm": 7,

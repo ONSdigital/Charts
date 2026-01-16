@@ -12,6 +12,7 @@ It enables:
 - Automatic label suppression based on available space
 - Explicit control over primary and secondary units
 
+
 ## Importing
 
 ```js

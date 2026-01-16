@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -148,8 +148,12 @@ function drawGraphic() {
 		// Add the x-axis
 
 		let xAxisGenerator;
-		if (config.labelSpans.enabled === true) {
-			xAxisGenerator = customTimeAxis(x).tickSize(20).timeUnit("quarter");
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
+			xAxisGenerator = customTemporalAxis(x)
+				.tickSize(17)
+				.tickPadding(6)
+				.timeUnit(config.labelSpans.timeUnit)
+				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
@@ -267,9 +271,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes

@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTimeAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -368,8 +368,12 @@ function drawGraphic() {
 
 	// In drawGraphic, replace the x-axis tickValues logic:
 	let xAxisGenerator;
-	if (config.labelSpans.enabled === true) {
-		xAxisGenerator = customTimeAxis(x).tickSize(20);
+	if (config.labelSpans.enabled === true && xDataType == 'date') {
+		xAxisGenerator = customTemporalAxis(x)
+			.tickSize(17)
+			.tickPadding(6)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
@@ -460,9 +464,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				option: d.option,
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date' && key !== 'option') // Exclude 'date' and 'option' keys from the data
