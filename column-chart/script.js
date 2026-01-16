@@ -65,11 +65,13 @@ function drawGraphic() {
 	let xAxisGenerator;
 	if (config.labelSpans.enabled === true && xDataType == "date") {
 		xAxisGenerator = customTemporalAxis(x)
-		.timeUnit("month")
-		.tickSize(0)
-		.tickPadding(6)
-		.yearStartMonth(config.labelSpans.yearStartMonth)
-		.secondaryTickFormat(d => prefixYearFormatter(d, config.labelSpans.yearStartMonth, config.labelSpans.prefix));
+			.timeUnit(config.labelSpans.timeUnit)
+			.tickSize(0)
+			.tickPadding(6)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.yearStartMonth(config.labelSpans.yearStartMonth)
+			.secondaryTickFormat(d => prefixYearFormatter(d, config.labelSpans.yearStartMonth, config.labelSpans.prefix));
+			
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)

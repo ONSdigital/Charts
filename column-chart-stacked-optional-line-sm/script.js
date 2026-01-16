@@ -143,7 +143,11 @@ function drawGraphic() {
     }
 
     if (config.labelSpans.enabled === true && xDataType == "date") {
-      xAxis = customTemporalAxis(x).timeUnit(config.labelSpans.timeUnit).tickSize(0).tickPadding(6).secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+      xAxis = customTemporalAxis(x)
+        .timeUnit(config.labelSpans.timeUnit)
+        .tickSize(0)
+        .tickPadding(6)
+        .secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
     } else {
       xAxis = d3
         .axisBottom(x)

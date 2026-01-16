@@ -73,7 +73,10 @@ function drawGraphic() {
 	let xAxisGenerator;
 
 	if (config.labelSpans.enabled === true && xDataType=='date') {
-		xAxisGenerator = customTemporalAxis(x).tickSize(17).tickPadding(6);
+		xAxisGenerator = customTemporalAxis(x)
+			.tickSize(17).tickPadding(6)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)

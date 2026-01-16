@@ -4,7 +4,8 @@ import {
   addSvg,
   diamondShape,
   addAxisLabel,
-  customTemporalAxis
+  customTemporalAxis,
+  quarterYearFormatter
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -72,7 +73,12 @@ function drawGraphic() {
   //set up xAxis generator
   let xAxis;
   if (config.labelSpans.enabled === true && xDataType == "date") {
-    xAxis = customTemporalAxis(x).timeUnit("month").tickSize(0).tickPadding(6);
+    xAxis = customTemporalAxis(x)
+      .timeUnit(config.labelSpans.timeUnit)
+      .tickSize(0)
+      .tickPadding(6)
+    .secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+      .secondaryTickFormat(d => quarterYearFormatter(d, config.labelSpans.yearStartMonth))
   } else {
     xAxis = d3
       .axisBottom(x)

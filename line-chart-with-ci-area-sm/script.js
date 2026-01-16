@@ -151,7 +151,10 @@ function drawGraphic() {
 		let xAxisGenerator;
 
 		if (config.labelSpans.enabled === true) {
-			xAxisGenerator = customTemporalAxis(x).tickSize(17).tickPadding(6).tickFormat(d3.timeFormat("%y"));
+			xAxisGenerator = customTemporalAxis(x)
+				.tickSize(17)
+				.tickPadding(6)
+				.tickFormat(d3.timeFormat("%y"));
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)

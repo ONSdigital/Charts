@@ -226,9 +226,9 @@ function drawGraphic() {
 		let xAxisGenerator;
 		if (config.labelSpans.enabled === true && xDataType == 'date') {
 			xAxisGenerator = customTemporalAxis(x)
-			// .tickSize(10)
 			.tickPadding(6)
-			.timeUnit("quarter");
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)

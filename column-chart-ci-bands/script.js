@@ -75,7 +75,11 @@ function drawGraphic() {
     //set up xAxis generator
 	let xAxisGenerator;
 	if (config.labelSpans.enabled === true && xDataType=="date") {
-		xAxisGenerator = customTemporalAxis(x).timeUnit("day").tickSize(0).tickPadding(6);
+		xAxisGenerator = customTemporalAxis(x)
+            .timeUnit(config.labelSpans.timeUnit)
+            .tickSize(0)
+            .tickPadding(6)
+            .secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
