@@ -55,7 +55,10 @@ config = {
 	"addFinalDate": false,
 	"labelSpans":{
 		"enabled":true,
-		"secondaryLabels":false
+		timeUnit:"month",
+		secondaryTimeUnit:"auto",
+		yearStartMonth:3,//0 indexed so this start
+		prefix:"FY ",
 	},
 	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };
