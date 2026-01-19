@@ -283,7 +283,7 @@ function drawGraphic() {
       })
       .attr("stroke", (d) => {
         return +d[minColumn] === +d[maxColumn]
-          ? "#999"
+          ? config.colourPaletteArrows[2]
           : +d[minColumn] < +d[maxColumn]
           ? config.colourPaletteArrows[0]
           : config.colourPaletteArrows[1];
@@ -306,7 +306,7 @@ function drawGraphic() {
       .attr("x2", (d) => x(d[maxColumn]))
       .attr("y1", (d, i) => groups.filter((e) => e[0] == d.group)[0][3](d.name))
       .attr("y2", (d, i) => groups.filter((e) => e[0] == d.group)[0][3](d.name))
-      .attr("stroke", "#c6c6c6")
+      .attr("stroke", ONScolours.grey30)
       .attr("stroke-width", "3px");
   }
 
@@ -357,7 +357,7 @@ function drawGraphic() {
         return chartType === "bar" ? "white" : colour("min");
       })
       .attr("stroke", () => {
-        return chartType === "bar" ? "#222" : strokeColour("min");
+        return chartType === "bar" ? ONScolours.black : strokeColour("min");
       })
       .attr("stroke-width", () => {
         return chartType === "bar" ? "1.5px" : "1.5px";
@@ -403,7 +403,7 @@ function drawGraphic() {
       .attr("fill", (d) => {
         if (chartType === "arrow") {
           if (+d[minColumn] === +d[maxColumn]) {
-            return "#999";
+            return config.colourPaletteArrows[2];
           } else if (+d[minColumn] < +d[maxColumn]) {
             return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
           } else {
@@ -437,7 +437,7 @@ function drawGraphic() {
       .attr("fill", (d) => {
         if (chartType === "arrow") {
           if (+d[minColumn] === +d[maxColumn]) {
-            return "#999"; // neutral color for no change
+            return config.colourPaletteArrows[2]; // neutral color for no change
           } else if (+d[minColumn] < +d[maxColumn]) {
             return adjustColorForContrast(config.colourPaletteArrows[0], 4.5); // up arrow color
           } else {
@@ -525,7 +525,7 @@ function drawGraphic() {
           .attr("transform", "translate(10, 10)")
           .attr("fill", chartType === "bar" ? "white" : color)
           .attr("stroke", () => {
-            return chartType === "bar" ? "#222" : strokeColour("min");
+            return chartType === "bar" ? ONScolours.black : strokeColour("min");
           })
           .attr("stroke-width", chartType === "bar" ? "1.5px" : "1.5px");
       }

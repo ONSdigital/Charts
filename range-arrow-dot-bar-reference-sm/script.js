@@ -80,7 +80,7 @@ function drawGraphic() {
       .attr("d", diamondShape(10))
       .attr("transform", "translate(12, 7)")
       .attr("fill", "white")
-      .attr("stroke", "#222")
+      .attr("stroke", ONScolours.black)
       .attr("stroke-width", "1.5px");
 
     d3.select(".legend--item--here.refmarker")
@@ -351,7 +351,7 @@ function drawGraphic() {
         .attr("x2", (d) => x(d[minColumn]))
         .attr("y1", (d) => y(d.name) + y.bandwidth() / 2)
         .attr("y2", (d) => y(d.name) + y.bandwidth() / 2)
-        .attr("stroke", "#c6c6c6")
+        .attr("stroke", ONScolours.grey30)
         .attr("stroke-width", "3px");
     }
 
@@ -393,7 +393,7 @@ function drawGraphic() {
         })
         .attr("stroke", (d) => {
           return +d[maxColumn] === +d[minColumn]
-            ? "#999"
+            ? ONScolours.grey50
             : +d[maxColumn] < +d[minColumn]
             ? config.colourPaletteArrows[0]
             : config.colourPaletteArrows[1];
@@ -440,7 +440,7 @@ function drawGraphic() {
         )
         .attr(
           "stroke",
-          chartType === "bar" ? "#222" : config.colourPaletteDotsStroke[1]
+          chartType === "bar" ? ONScolours.black : config.colourPaletteDotsStroke[1]
         )
         .attr("stroke-width", "1.5px");
     }
