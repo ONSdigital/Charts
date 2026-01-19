@@ -21,8 +21,9 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomain": "auto",
-	// either "auto" or an array for the y domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	"yDomainMax": "auto",
+	// Options: "auto" (smart trimming with zero baseline), "data" (exact data bounds), or numeric values
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",

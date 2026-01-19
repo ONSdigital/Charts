@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -6,26 +6,6 @@ let legend = d3.select('#legend');
 let graphicData, size;
 
 let pymChild = null;
-
-// Set y domain for new config structure (min/max can be "auto", "autoAll", or a value)
-function getYDomainMinMax({ minType, maxType, allData, filteredData, categories }) {
-	let min, max;
-	if (minType === "autoAll") {
-		min = d3.min(allData, (d) => Math.min(...categories.map((c) => d[c])));
-	} else if (minType === "auto") {
-		min = d3.min(filteredData, (d) => Math.min(...categories.map((c) => d[c])));
-	} else {
-		min = +minType;
-	}
-	if (maxType === "autoAll") {
-		max = d3.max(allData, (d) => Math.max(...categories.map((c) => d[c])));
-	} else if (maxType === "auto") {
-		max = d3.max(filteredData, (d) => Math.max(...categories.map((c) => d[c])));
-	} else {
-		max = +maxType;
-	}
-	return [min, max];
-}
 
 function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
@@ -132,17 +112,11 @@ function drawGraphic() {
 		// Get categories (series) for this option
 		const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
 
-	// Set y domain for "auto" min/max using filtered data
-	let yDomainMin = config.yDomainMin;
-	let yDomainMax = config.yDomainMax;
-	if (yDomainMin === "auto" || yDomainMax === "auto") {
-		const [minY, maxY] = getYDomainMinMax({
-			minType: yDomainMin,
-			maxType: yDomainMax,
-			allData: graphicData,
-			filteredData: filteredData,
-			categories
-		});
+	// Set y domain using calculateAutoBounds
+	// Use filtered data if freeYAxisScales is true, otherwise use all data
+	if (config.yDomainMin === "auto" || config.yDomainMax === "auto" || config.yDomainMin === "data" || config.yDomainMax === "data") {
+		const dataForBounds = config.freeYAxisScales ? filteredData : graphicData;
+		const { minY, maxY } = calculateAutoBounds(dataForBounds, config);
 		y.domain([minY, maxY]);
 		
 		// Update y axis
@@ -349,20 +323,10 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	// Set y domain for "autoAll" or manual values, but not for "auto"
-	let yDomainMin = config.yDomainMin;
-	let yDomainMax = config.yDomainMax;
-	if (yDomainMin === "auto" || yDomainMax === "auto") {
-		// Will be set in changeData for filtered data
-	} else {
-		// Use all data for "autoAll" or manual values
-		const [minY, maxY] = getYDomainMinMax({
-			minType: yDomainMin,
-			maxType: yDomainMax,
-			allData: graphicData,
-			filteredData: graphicData,
-			categories: categories
-		});
+	// Set initial y domain
+	// If freeYAxisScales is true and using auto, will be set in changeData for filtered data
+	if (!config.freeYAxisScales || (config.yDomainMin !== "auto" && config.yDomainMin !== "data" && config.yDomainMax !== "auto" && config.yDomainMax !== "data")) {
+		const { minY, maxY } = calculateAutoBounds(graphicData, config);
 		y.domain([minY, maxY]);
 	}
 

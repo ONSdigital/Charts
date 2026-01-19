@@ -5,8 +5,9 @@ config = {
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear",
-	"yDomain": [0, 550000],
-	// either "auto" or an array for the x domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	"yDomainMax": "auto",
+	// yDomainMin and yDomainMax can be "auto", "data", or a numeric value
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",

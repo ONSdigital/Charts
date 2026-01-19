@@ -16,7 +16,18 @@ config = {
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"xDomain": "auto",
-	"yDomain": [0, 7],
+	"yDomainMax": "auto",  
+	// Y-axis maximum options:
+	// "auto" - Smart mode: uses data max with 10% padding if positive, or 0 if all data is negative.
+	//          Automatically trims excessive whitespace below zero (>50% of range) while keeping 30% cushion above highest data point.
+	// "data" - Uses exact data maximum
+	// number - Custom value (e.g., 100)
+	"yDomainMin": "auto",
+	// Y-axis minimum options:
+	// "auto" - Smart mode: uses data min with 10% padding if negative, or 0 if all data is positive.
+	//          Automatically trims excessive whitespace above zero (>50% of range) while keeping 30% cushion below lowest data point.
+	// "data" - Uses exact data minimum
+	// number - Custom value (e.g., 0 to force zero baseline)
 	// either "auto" or an array for the x domain e.g. [0,2000]
 	"xAxisTickFormat": {
 		"sm": "%b %y",
