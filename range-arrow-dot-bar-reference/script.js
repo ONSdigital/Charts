@@ -285,8 +285,8 @@ function drawGraphic() {
         return +d[minColumn] === +d[maxColumn]
           ? "#999"
           : +d[minColumn] < +d[maxColumn]
-          ? "#206095"
-          : "#f66068";
+          ? config.colourPaletteArrows[0]
+          : config.colourPaletteArrows[1];
       })
       .attr("stroke-width", (d) => {
         return +d[minColumn] === +d[maxColumn] ? "4px" : "3px";
@@ -405,12 +405,12 @@ function drawGraphic() {
           if (+d[minColumn] === +d[maxColumn]) {
             return "#999";
           } else if (+d[minColumn] < +d[maxColumn]) {
-            return "#206095";
+            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
           } else {
-            return "#f66068";
+            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
           }
         } else {
-          return adjustColorForWhiteContrast(colour("min"), 4.5);
+          return adjustColorForContrast(colour("min"), 4.5);
         }
       })
       .style("font-weight", "600")
@@ -439,12 +439,12 @@ function drawGraphic() {
           if (+d[minColumn] === +d[maxColumn]) {
             return "#999"; // neutral color for no change
           } else if (+d[minColumn] < +d[maxColumn]) {
-            return "#206095"; // up arrow color
+            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5); // up arrow color
           } else {
-            return "#f66068"; // down arrow color
+            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5); // down arrow color
           }
         } else {
-          return adjustColorForWhiteContrast(colour("max"), 4.5);
+          return adjustColorForContrast(colour("max"), 4.5);
         }
       })
 

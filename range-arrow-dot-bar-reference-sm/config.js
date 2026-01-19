@@ -1,6 +1,6 @@
 config = {
   graphicDataUrl: "data.csv",
-  chartType: "dot",
+  chartType: "arrow",
   // can be range, dot, arrow or bar (for bar with reference point)
   colourPaletteDots: [ONScolours.oceanBlue, ONScolours.springGreen],
   colourPaletteDotsStroke: [ONScolours.white, ONScolours.white],
@@ -10,10 +10,10 @@ config = {
   sourceText: "Office for National Statistics",
   accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   dataLabels: {
-    show: false,
+    show: true,
     numberFormat: ".0%",
   },
-  xDomain: "auto",
+  xDomain: [-.39,1.15],
   // either "auto" or an array for the x domain e.g. [0,100]
   xAxisLabel: "x axis label",
   //show guidelines on range or arrow plot (default is false for both)
