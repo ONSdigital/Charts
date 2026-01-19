@@ -279,26 +279,14 @@ function drawGraphic() {
 		)
 
 		addDirectionArrow(
-			//name of your svg, normally just SVG
-			ciSvg,
-			//direction of arrow: left, right, up or down
-			'left',
-			//anchor end or start (end points the arrow towards your x value, start points away)
-			'end',
-			//x value
-			50,
-			//y value
-			7,
-			//alignment - left or right for vertical arrows, above or below for horizontal arrows
-			'right',
-			//annotation text
-			config.legendEstimateText,
-			//wrap width
-			1500,
-			//text adjust y
-			0,
-			//Text vertical align: top, middle or bottom (default is middle)
-			'bottom'
+			ciSvg,//name of your svg, normally just SVG
+			'left',//direction of arrow: left, right, up or down
+			'start',//anchor end or start (end points the arrow towards your x value, start points away)
+			60,//x value
+			12,//y value
+			config.legendEstimateText,//annotation text
+			150,//wrap width
+			'bottom'//Text vertical align: top, middle or bottom (default is middle)
 		)
 
 

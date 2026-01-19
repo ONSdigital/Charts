@@ -77,53 +77,25 @@ function drawGraphic() {
 		margin: margin
 	})
 
-	let labelData = [];
-
 	// create lines and circles for each category
 	categories.forEach(function (category, index) {
 		const lineGenerator = d3
 			.line()
 			.x((d) => x(d.date))
 			.y((d) => y(d[category]))
-			.defined(d => d[category] !== null) // Only plot lines where we have values
-			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
+			.defined(d => d[category] !== null)
+			.curve(d3[config.lineCurveType])
 			.context(null);
 
 		svg
 			.append('path')
 			.datum(graphicData)
 			.attr('fill', 'none')
-			.attr(
-				'stroke',
-				config.colourPalette[
-				categories.indexOf(category) % config.colourPalette.length
-				]
-			)
+			.attr('stroke', config.colourPalette[index % config.colourPalette.length])
 			.attr('stroke-width', 3)
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
-
-		const lastDatum = graphicData[graphicData.length - 1];
-		if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
-		const label = svg.append('text')
-			.attr('class', 'directLineLabel')
-			.attr('x', x(lastDatum.date) + 10)
-			.attr('y', y(lastDatum[category]))
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
-			.text(category)
-			.call(wrap, margin.right - 10);
-		const bbox = label.node().getBBox();
-		labelData.push({
-			node: label,
-			x: x(lastDatum.date) + 10,
-			y: y(lastDatum[category]),
-			originalY: y(lastDatum[category]),
-			height: bbox.height,
-			category: category
-		});
 	});
 
 	if (config.addEndMarkers) {

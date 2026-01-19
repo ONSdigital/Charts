@@ -405,9 +405,9 @@ function drawGraphic() {
           if (+d[minColumn] === +d[maxColumn]) {
             return config.colourPaletteArrows[2];
           } else if (+d[minColumn] < +d[maxColumn]) {
-            return config.colourPaletteArrows[0];
+            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
           } else {
-            return config.colourPaletteArrows[1];
+            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
           }
         } else {
           return adjustColorForContrast(colour("min"), 4.5);
@@ -439,9 +439,9 @@ function drawGraphic() {
           if (+d[minColumn] === +d[maxColumn]) {
             return config.colourPaletteArrows[2]; // neutral color for no change
           } else if (+d[minColumn] < +d[maxColumn]) {
-            return config.colourPaletteArrows[0]; // up arrow color
+            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5); // up arrow color
           } else {
-            return config.colourPaletteArrows[1]; // down arrow color
+            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5); // down arrow color
           }
         } else {
           return adjustColorForContrast(colour("max"), 4.5);

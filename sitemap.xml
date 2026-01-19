@@ -1,10 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://onsdigital.github.io/Charts/z-annotation-load-from-file/index.html</loc>
+  </url>
+  <url>
     <loc>https://onsdigital.github.io/Charts/beeswarm/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/heatmap/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/z-annotation-bar-example/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/doughnut/index.html</loc>
@@ -34,10 +40,10 @@
     <loc>https://onsdigital.github.io/Charts/column-chart-stacked-optional-line/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/scatter-bubble-plot/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/z-annotation-column-example/index.html</loc>
   </url>
   <url>
-    <loc>https://onsdigital.github.io/Charts/z-annotation-example/index.html</loc>
+    <loc>https://onsdigital.github.io/Charts/scatter-bubble-plot/index.html</loc>
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/line-chart/index.html</loc>
@@ -104,5 +110,8 @@
   </url>
   <url>
     <loc>https://onsdigital.github.io/Charts/area-stacked-sm/index.html</loc>
+  </url>
+  <url>
+    <loc>https://onsdigital.github.io/Charts/z-annotation-toolbar/index.html</loc>
   </url>
 </urlset>
