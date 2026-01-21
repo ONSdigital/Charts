@@ -13,8 +13,11 @@ config = {
 		// Minimum vertical spacing (px) between adjacent labels before they are offset
 		// Note: this chart previously used 0 to allow tight packing.
 		"minSpacing": 0,
-		// Strategy for which point gets labelled: 'last', 'lastValid', or 'lastValidRight'
-		"labelStrategy": "lastValid",
+		// Where labels should sit:
+		// - 'margin'
+		// - 'lastPoint'
+		// - 'marginLeader'
+		"labelLocation": "lastPoint",
 		// Leader lines appear only when a label is vertically displaced
 		"useLeaderLines": true,
 		// 'dashed' or 'solid'

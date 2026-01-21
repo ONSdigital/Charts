@@ -161,7 +161,7 @@ function drawGraphic() {
 			chartHeight: height,
 			config: config,
 			options: {
-				labelStrategy: directLabels.labelStrategy ?? 'lastValid',
+				labelLocation: directLabels.labelLocation ?? 'lastPoint',
 				minSpacing: directLabels.minSpacing ?? 12,
 				minLabelOffset: directLabels.minLabelOffset ?? 5,
 				labelGap: directLabels.gap ?? 10,

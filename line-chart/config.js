@@ -8,13 +8,16 @@ config = {
 		// Horizontal gap (px) from the series endpoint to the label anchor
 		"gap": 10,
 		// Horizontal gap (px) for labels that need leader lines (i.e. labels that are in a collision cluster
-		// or get vertically displaced). Note: for 'lastValidRight' early-ending series, this is ONLY applied
+		// or get vertically displaced). Note: for 'marginLeader' early-ending series, this is ONLY applied
 		// if the label is also displaced/clustered.
 		"gapWithLeaderLines": 23,
 		// Minimum vertical spacing (px) between adjacent labels before they are offset
 		"minSpacing": 12,
-		// Strategy for which point gets labelled: 'last', 'lastValid', or 'lastValidRight'
-		"labelStrategy": "lastValidRight",
+		// Where labels should sit:
+		// - 'margin'
+		// - 'lastPoint'
+		// - 'marginLeader'
+		"labelLocation": "marginLeader",
 		// Leader lines appear only when a label is vertically displaced
 		"useLeaderLines": true,
 		// 'dashed' or 'solid'
