@@ -2,6 +2,33 @@ config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
 	"drawLegend": false,
+	// Direct labels (used when drawLegend=false and size != 'sm')
+	// These options are passed into lib/helpers.js:createDirectLabels().
+	"directLabels": {
+		// Horizontal gap (px) from the series endpoint to the label anchor
+		"gap": 10,
+		// Horizontal gap (px) for labels that need leader lines (i.e. labels that are in a collision cluster
+		// or get vertically displaced). Note: for 'lastValidRight' early-ending series, this is ONLY applied
+		// if the label is also displaced/clustered.
+		"gapWithLeaderLines": 23,
+		// Minimum vertical spacing (px) between adjacent labels before they are offset
+		"minSpacing": 12,
+		// Strategy for which point gets labelled: 'last', 'lastValid', or 'lastValidRight'
+		"labelStrategy": "lastValidRight",
+		// Leader lines appear only when a label is vertically displaced
+		"useLeaderLines": true,
+		// 'dashed' or 'solid'
+		"leaderLineStyle": "dashed",
+		// 'series' (match series colour) or 'mono' (single colour)
+		"leaderLineColourMode": "series",
+		// Used when leaderLineColourMode is 'mono'
+		"leaderLineMonoColour": "#707070",
+		// Geometry tuning (px)
+		"leaderLineElbowOffset": 10,
+		"leaderLineEndGap": 2,
+		// Minimum pixels from chart edge for labels (currently used by some charts)
+		"minLabelOffset": 10
+	},
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type

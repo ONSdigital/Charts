@@ -268,7 +268,7 @@ function drawGraphic() {
         .style('opacity', 0)
         .remove();
     
-    svg.selectAll('line.label-leader-line')
+	svg.selectAll('.label-leader-line')
         .transition()
         .duration(300)
         .style('opacity', 0)
@@ -300,6 +300,7 @@ function drawGraphic() {
 					return d[0];
 				});
 		} else {
+			const directLabels = config.directLabels || {};
 			createDirectLabels({
 				categories: categories,
 				data: filteredData,
@@ -310,11 +311,17 @@ function drawGraphic() {
 				chartHeight: height,
 				config: config,
 				options: {
-					labelStrategy: 'lastValid',
-					minSpacing: 15,
-					useLeaderLines: true,
-					leaderLineStyle: 'dashed',
-					minLabelOffset: 5
+					labelStrategy: directLabels.labelStrategy ?? 'lastValid',
+					minSpacing: directLabels.minSpacing ?? 15,
+					minLabelOffset: directLabels.minLabelOffset ?? 5,
+					labelGap: directLabels.gap ?? 10,
+					labelGapWithLeaderLines: directLabels.gapWithLeaderLines ?? (directLabels.gap ?? 10),
+					useLeaderLines: directLabels.useLeaderLines ?? true,
+					leaderLineStyle: directLabels.leaderLineStyle ?? 'dashed',
+					leaderLineColourMode: directLabels.leaderLineColourMode ?? 'series',
+					leaderLineMonoColour: directLabels.leaderLineMonoColour ?? '#707070',
+					leaderLineElbowOffset: directLabels.leaderLineElbowOffset ?? 10,
+					leaderLineEndGap: directLabels.leaderLineEndGap ?? 2
 				}
 			});
 		}

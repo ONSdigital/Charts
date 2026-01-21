@@ -150,6 +150,7 @@ function drawGraphic() {
 				return d[0];
 			});
 	} else {
+		const directLabels = config.directLabels || {};
 		createDirectLabels({
 			categories: categories,
 			data: graphicData,
@@ -160,10 +161,17 @@ function drawGraphic() {
 			chartHeight: height,
 			config: config,
 			options: {
-				labelStrategy: 'lastValid',
-				minSpacing: 12,
-				useLeaderLines: true,
-				leaderLineStyle: 'dashed'
+				labelStrategy: directLabels.labelStrategy ?? 'lastValid',
+				minSpacing: directLabels.minSpacing ?? 12,
+				minLabelOffset: directLabels.minLabelOffset ?? 5,
+				labelGap: directLabels.gap ?? 10,
+				labelGapWithLeaderLines: directLabels.gapWithLeaderLines ?? (directLabels.gap ?? 10),
+				useLeaderLines: directLabels.useLeaderLines ?? true,
+				leaderLineStyle: directLabels.leaderLineStyle ?? 'dashed',
+				leaderLineColourMode: directLabels.leaderLineColourMode ?? 'series',
+				leaderLineMonoColour: directLabels.leaderLineMonoColour ?? '#707070',
+				leaderLineElbowOffset: directLabels.leaderLineElbowOffset ?? 10,
+				leaderLineEndGap: directLabels.leaderLineEndGap ?? 2
 			}
 		});
 	}
