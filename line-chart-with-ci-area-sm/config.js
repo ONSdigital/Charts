@@ -78,6 +78,11 @@ config = {
 		"md": 5,
 		"lg": 8
 	},
+	"labelSpans": {
+		"enabled": true,
+		timeUnit: 'year',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

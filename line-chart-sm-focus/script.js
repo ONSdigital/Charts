@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -153,9 +153,9 @@ function drawGraphic() {
 				.attr('d', (d, i) => lineGenerator(d[categoriesToPlot.indexOf(category)][1]))
 				.style('stroke-linejoin', 'round')
 				.style('stroke-linecap', 'round')
-				.attr('class', 'line' + categoriesToPlot.indexOf(category) + 
-				((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
-				category == reference ? " reference" : " other"));
+				.attr('class', 'line' + categoriesToPlot.indexOf(category) +
+					((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
+						category == reference ? " reference" : " other"));
 
 			svg.selectAll('.reference').raise()
 			svg.selectAll('.line' + chartIndex).raise()
@@ -224,29 +224,44 @@ function drawGraphic() {
 				}
 			})
 
-		// Add the x-axis
+		let xAxisGenerator;
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
+			xAxisGenerator = customTemporalAxis(x)
+			.tickPadding(6)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+		} else {
+			xAxisGenerator = d3
+				.axisBottom(x)
+				.tickValues(
+					getXAxisTicks({
+						data: graphic_data,
+						xDataType,
+						size,
+						config
+					})
+				)
+				.tickFormat(
+					(d) =>
+						xDataType == 'date' ?
+							d3.timeFormat(config.xAxisTickFormat[size])(d) :
+							d3.format(config.xAxisNumberFormat)(d)
+				);
+		}
+
 		svg
 			.append('g')
 			.attr('class', 'x axis')
 			.attr('transform', `translate(0, ${height})`)
-			.call(
-				d3
-					.axisBottom(x)
-					.tickValues(getXAxisTicks({
-										data: graphicData,
-										xDataType,
-										size,
-										config
-									})
-					)
-					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-						: d3.format(config.xAxisNumberFormat)(d))
-			).each(function(d){
-				d3.select(this).selectAll('.tick text')
-				.attr('text-anchor', function(e,j,arr){
-					return j==0 ? 'start' : j==arr.length-1 ? 'end' : 'middle'
-				})
-			});
+			.call(xAxisGenerator)
+			.each(function (d) {
+				if (config.labelSpans.enabled === false) {
+					d3.select(this).selectAll('.tick text')
+						.attr('text-anchor', function (e, j, arr) {
+							return j == 0 ? 'start' : j == arr.length - 1 ? 'end' : 'middle'
+						})
+				}
+			});;
 
 
 		//Only draw the y axis tick labels on the first chart in each row
@@ -288,7 +303,7 @@ function drawGraphic() {
 			addAxisLabel({
 				svgContainer: svg,
 				xPosition: chartWidth,
-				yPosition: height + 35,
+				yPosition: height + 45,
 				text: config.xAxisLabel,
 				textAnchor: "end",
 				wrapWidth: chartWidth
@@ -309,7 +324,7 @@ function drawGraphic() {
 		.data([[config.legendLabel, config.colourPalette[0]], [reference, config.colourPalette[1]], [config.allLabel, config.colourPalette[2]]])
 		.enter()
 		.append('div')
-		.attr('class','legend--item');
+		.attr('class', 'legend--item');
 
 	// Add line icon using SVG
 	legenditem
@@ -323,7 +338,7 @@ function drawGraphic() {
 		.attr('y2', 6)
 		.attr('stroke', function (d) { return d[1]; })
 		.attr('stroke-width', 3)
-		.attr('stroke-linecap',"round")
+		.attr('stroke-linecap', "round")
 		.attr('class', 'legend--icon--line');
 
 	legenditem
@@ -349,9 +364,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes

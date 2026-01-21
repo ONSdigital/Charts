@@ -71,10 +71,15 @@ config = {
 			"lg": 2
 		}
 	},
+	"labelSpans": {
+		"enabled": false,
+		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
-		"lg":8
+		"lg": 8
 	},
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis

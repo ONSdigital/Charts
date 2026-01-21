@@ -60,7 +60,7 @@ config = {
 		"lg": {
 			"top": 45,
 			"right": 50,
-			"bottom": 50,
+			"bottom": 55,
 			"left": 60
 		}
 	},
@@ -87,6 +87,11 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
+	"labelSpans": {
+		"enabled": true,
+		"timeUnit": 'quarter',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

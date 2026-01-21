@@ -49,6 +49,11 @@ config = {
         "md": 4,
         "lg": 2
     },
+    "labelSpans": {
+        enabled: true,
+        timeUnit:"day",//set to "day","month",'quarter' or 'year'
+        secondaryTimeUnit:"auto",//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
+    },
     "yAxisTicks": {
         "sm": 4,
         "md": 5,
