@@ -61,7 +61,7 @@ config = {
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],
-		"lg": [1, 1]
+		"lg": [1.5, 1]
 	},
 	"margin": {
 		"sm": {
