@@ -76,11 +76,6 @@ function drawGraphic() {
 		tickValues.push(graphicData[graphicData.length - 1].date)
 	}
 
-	const y = d3
-		.scaleLinear()
-		.domain([0, 1]) // Assuming the y-axis represents the percentage from 0 to 1
-		.range([height, 0]);
-
 	// Define the stack generator
 	const stack = d3
 		.stack()
@@ -90,6 +85,18 @@ function drawGraphic() {
 
 	// Generate the stacked data
 	const stackedData = stack(graphicData);
+
+	// Calculate y-domain from stacked data (supporting negative values)
+	const yDomain = config.yDomain === "auto" ? [
+		d3.min(stackedData, series => d3.min(series, d => d[0])),
+		d3.max(stackedData, series => d3.max(series, d => d[1]))
+	] : config.yDomain;
+
+	const y = d3
+		.scaleLinear()
+		.domain(yDomain)
+		.range([height, 0]);
+
 
 	// Define the area generator
 	const area = d3
