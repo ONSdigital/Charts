@@ -14,9 +14,9 @@ config = {
 		// Note: this chart previously used 0 to allow tight packing.
 		"minSpacing": 0,
 		// Where labels should sit:
-		// - 'margin'
-		// - 'lastPoint'
-		// - 'marginLeader'
+		// - 'margin' (labels in margin, no leader lines for early-ending series)
+		// - 'marginLeader' (labels in margin, with long leader lines for early-ending series)
+		// - 'lastPoint' (labels at last data point of early ending series)
 		"labelLocation": "lastPoint",
 		// Leader lines appear only when a label is vertically displaced
 		"useLeaderLines": true,

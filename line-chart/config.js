@@ -14,9 +14,9 @@ config = {
 		// Minimum vertical spacing (px) between adjacent labels before they are offset
 		"minSpacing": 12,
 		// Where labels should sit:
-		// - 'margin' (labels in margin, no leader lines)
-		// - 'marginLeader' (labels in margin, with leader lines if displaced)
-		// - 'lastPoint' (labels at last data point)
+		// - 'margin' (labels in margin, no leader lines for early-ending series)
+		// - 'marginLeader' (labels in margin, with long leader lines for early-ending series)
+		// - 'lastPoint' (labels at last data point of early ending series)
 		"labelLocation": "marginLeader",
 		// Leader lines appear only when a label is vertically displaced
 		"useLeaderLines": true,
