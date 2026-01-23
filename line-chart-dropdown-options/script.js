@@ -25,7 +25,7 @@ function drawGraphic() {
 		margin: margin
 	});
 
-	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
 
 	const optns = select
 		.append('div')
@@ -56,8 +56,6 @@ function drawGraphic() {
 
 
 	$('#optionsSelect').trigger('chosen:updated');  // Initialize Chosen
-
-	let labelPositions = new Map();  // Create a map to store label positions
 
 	$('#optionsSelect').chosen().change(function () {
 		const selectedOption = $(this).val();
@@ -106,19 +104,20 @@ function drawGraphic() {
 		d3.select('#legend').selectAll('div.legend--item').remove();
 
 	// Filter data for the selected option
-	let filteredData = graphicData.filter((d) => d.option === selectedOption);
+	let filteredData = graphicData.filter((d) => d.series === selectedOption);
 	if (filteredData.length === 0) return;
 
-		// Get categories (series) for this option
-		const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
+	// Get categories (series) for this option
+	const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'series');
 
 	// Set y domain using calculateAutoBounds
 	// Use filtered data if freeYAxisScales is true, otherwise use all data
 	if (config.yDomainMin === "auto" || config.yDomainMax === "auto" || config.yDomainMin === "data" || config.yDomainMax === "data") {
 		const dataForBounds = config.freeYAxisScales ? filteredData : graphicData;
 		const { minY, maxY } = calculateAutoBounds(dataForBounds, config);
+		console.log(dataForBounds)
 		y.domain([minY, maxY]);
-		
+		console.log(y.domain())
 		// Update y axis
 		svg.select('.y.axis.numeric')
 			.transition()
@@ -297,7 +296,7 @@ function drawGraphic() {
 	
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 
 	let xDataType;
 
@@ -431,18 +430,18 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.utcParse(config.dateFormat)(d.date),
-				option: d.option,
+				series: d.series,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'option') // Exclude 'date' and 'option' keys from the data
+					.filter(([key]) => key !== 'date' && key !== 'series') // Exclude 'date' and 'option' keys from the data
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		} else {
 			return {
 				date: (+d.date),
-				option: d.option,
+				series: d.series,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'option')
+					.filter(([key]) => key !== 'date' && key !== 'series')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
