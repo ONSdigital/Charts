@@ -17,7 +17,6 @@ function drawGraphic() {
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -77,9 +76,9 @@ function drawGraphic() {
 				.domain(d3.extent(graphicData, (d) => +d.date))
 				.range([0, chartWidth]);
 		}
-console.log('data',data, config.freeYAxisScales, config)
+
 		const {minY,maxY} = calculateAutoBounds(config.freeYAxisScales ? data : graphicData, config)
-console.log(minY,maxY, chartIndex)
+
 		const y = d3
 			.scaleLinear()
 			.domain([minY,maxY])
@@ -264,7 +263,6 @@ console.log(minY,maxY, chartIndex)
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data
