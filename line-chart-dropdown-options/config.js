@@ -1,7 +1,6 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
-	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
@@ -70,12 +69,18 @@ config = {
 			"lg": 3
 		}
 	},
+	"addFirstDate": true,
+	"addFinalDate": true,
+	"labelSpans": {
+		"enabled": true,
+		timeUnit:"year",//set to "day","month",'quarter' or 'year'
+		"secondaryTimeUnit": "auto"//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
 		"lg": 8
 	},
-	"addFirstDate": true,
-	"addFinalDate": true,
+
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

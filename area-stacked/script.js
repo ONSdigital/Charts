@@ -162,7 +162,7 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
 		return {
-			date: d3.timeParse(config.dateFormat)(d.date),
+			date: d3.utcParse(config.dateFormat)(d.date),
 			...Object.entries(d)
 				.filter(([key]) => key !== 'date')
 				.map(([key, value]) => [key, +value])
