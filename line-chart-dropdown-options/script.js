@@ -115,9 +115,9 @@ function drawGraphic() {
 	if (config.yDomainMin === "auto" || config.yDomainMax === "auto" || config.yDomainMin === "data" || config.yDomainMax === "data") {
 		const dataForBounds = config.freeYAxisScales ? filteredData : graphicData;
 		const { minY, maxY } = calculateAutoBounds(dataForBounds, config);
-		console.log(dataForBounds)
+
 		y.domain([minY, maxY]);
-		console.log(y.domain())
+
 		// Update y axis
 		svg.select('.y.axis.numeric')
 			.transition()
