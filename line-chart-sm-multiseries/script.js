@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -77,13 +77,12 @@ function drawGraphic() {
 				.domain(d3.extent(graphicData, (d) => +d.date))
 				.range([0, chartWidth]);
 		}
-
+console.log('data',data, config.freeYAxisScales, config)
+		const {minY,maxY} = calculateAutoBounds(config.freeYAxisScales ? data : graphicData, config)
+console.log(minY,maxY, chartIndex)
 		const y = d3
 			.scaleLinear()
-			.domain([
-				0, //This should be a calculated rather than 0 to allow for negativ values
-				d3.max(config.freeYAxisScales ? data : graphicData, (d) => Math.max(...categories.map((c) => d[c])))
-			])
+			.domain([minY,maxY])
 			.nice()
 			.range([height, 0]);
 
