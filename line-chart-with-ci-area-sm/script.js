@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -68,12 +68,12 @@ function drawGraphic() {
 
 		const y = d3
 			.scaleLinear()
-			.domain([
-				d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-				d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))
-			])
-			// .nice()
 			.range([height, 0]);
+
+		// Calculate Y-axis bounds based on data and config
+		const { minY, maxY } = calculateAutoBounds(graphicData, config);
+
+		y.domain([minY, maxY]);
 
 
 		// Create an SVG element

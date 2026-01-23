@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addSource, adjustColorForContrast } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addSource, calculateAutoBounds, adjustColorForContrast } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
@@ -52,13 +52,10 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	if (config.yDomain == "auto") {
-		let minY = d3.min(graphicData, (d) => Math.min(...categories.map((c) => d[c])))
-		let maxY = d3.max(graphicData, (d) => Math.max(...categories.map((c) => d[c])))
-		y.domain([minY, maxY])
-	} else {
-		y.domain(config.yDomain)
-	}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
+
+	y.domain([minY, maxY]);
 
 
 	// Create an SVG element

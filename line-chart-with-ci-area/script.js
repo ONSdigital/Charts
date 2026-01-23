@@ -1,6 +1,5 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
-
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -52,14 +51,10 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	if (config.yDomain == "auto") {
-		y.domain(
-			[d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-			d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
-		)
-	} else {
-		y.domain(config.yDomain)
-	}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
+
+	y.domain([minY, maxY]);
 
 	// Create an SVG element
 	const svg = addSvg({

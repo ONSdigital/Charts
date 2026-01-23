@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -17,7 +17,6 @@ function drawGraphic() {
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -78,12 +77,11 @@ function drawGraphic() {
 				.range([0, chartWidth]);
 		}
 
+		const {minY,maxY} = calculateAutoBounds(config.freeYAxisScales ? data : graphicData, config)
+
 		const y = d3
 			.scaleLinear()
-			.domain([
-				0, //This should be a calculated rather than 0 to allow for negativ values
-				d3.max(config.freeYAxisScales ? data : graphicData, (d) => Math.max(...categories.map((c) => d[c])))
-			])
+			.domain([minY,maxY])
 			.nice()
 			.range([height, 0]);
 
@@ -265,7 +263,6 @@ function drawGraphic() {
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data

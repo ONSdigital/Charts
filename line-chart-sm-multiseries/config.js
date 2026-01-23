@@ -15,6 +15,10 @@ config = {
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	// "auto" (smart zero baseline), "data" (exact min), or numeric value
+	"yDomainMax": "auto",
+	// "auto" (smart zero baseline), "data" (exact max), or numeric value
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",

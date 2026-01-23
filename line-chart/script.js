@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -46,26 +46,8 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	let maxY, minY;
-
-	if (config.yDomainMax === "auto") {
-		maxY = d3.max(graphicData, d => d3.max(categories, c => d[c]));
-	} else {
-		maxY = config.yDomainMax;
-	}
-
-	if (config.yDomainMin === "auto") {
-		minY = d3.min(graphicData, d => d3.min(categories, c => d[c]));
-	} else {
-		minY = config.yDomainMin;
-	}
-
-	// Ensure maxY is not less than minY
-	if (maxY < minY) {
-		const temp = maxY;
-		maxY = minY;
-		minY = temp;
-	}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
 	y.domain([minY, maxY]);
 

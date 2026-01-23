@@ -1,5 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
-
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -86,25 +85,20 @@ function drawGraphic() {
 			.scaleLinear()
 			.range([height, 0]);
 
-		if (config.yDomain == "auto") {
-			let minY = d3.min(graphicData, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
-			let maxY = d3.max(graphicData, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
-			y.domain([minY, maxY])
-		} else {
-			y.domain(config.yDomain)
-		}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
-		// Create an SVG element
-		const svg = addSvg({
-			svgParent: graphic,
-			chartWidth: chartWidth,
-			height: height + margin.top + margin.bottom,
-			margin: margin
-		})
+	y.domain([minY, maxY]);
 
+	// Create an SVG element
+	const svg = addSvg({
+		svgParent: container,
+		chartWidth: chartWidth,
+		height: height + margin.top + margin.bottom,
+		margin: margin
+	})
 
-
-		// create lines and circles for each category
+	// create lines and circles for each category
 		categoriesToPlot.forEach(function (category) {
 			const lineGenerator = d3
 				.line()

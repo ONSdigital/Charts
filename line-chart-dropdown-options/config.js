@@ -14,8 +14,9 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomainMax": "auto", // either "auto", "autoAll" or a value
-	"yDomainMin": 0, // either "auto", "autoAll" or a value
+	"yDomainMin": 0, // "auto" (smart zero baseline), "data" (exact min), or numeric value
+	"yDomainMax": "auto", // "auto" (smart zero baseline), "data" (exact max), or numeric value
+	"freeYAxisScales": true, // If true, each dropdown option gets independent y-axis scaling
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%y",
