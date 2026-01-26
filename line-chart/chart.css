@@ -3,4 +3,19 @@
   .axis path,
   .axis line {
     stroke: none; /* Changes the color of the axis lines */
-  }  
+  }
+
+  /* Stroke styling for legend shapes */
+  .legend--icon circle,
+  .legend--icon rect,
+  .legend--icon path {
+    stroke-width: 2.5;
+    stroke-linejoin: miter;
+  }
+
+  /* Stroke styling for line end markers */
+  .line-end,
+  g.line-end path {
+    stroke-width: 2.5;
+    stroke-linejoin: miter;
+  }
