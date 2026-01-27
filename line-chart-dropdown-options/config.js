@@ -30,9 +30,9 @@ config = {
 	"defaultOption": "option1",
 	"zeroLine": "0",
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {

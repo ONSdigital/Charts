@@ -1,6 +1,10 @@
 config = {
 	"graphicDataURL": "datanumeric.csv",
-	"colourPalette": ONSlinePalette,
+	"colourPalette": [
+			ONScolours.oceanBlue,
+		ONScolours.beetrootPurple,
+		ONScolours.emeraldGreen
+	],
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
@@ -41,9 +45,9 @@ config = {
 	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [4, 3],
-		"lg": [16, 9]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -92,5 +96,6 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
+	"addEndMarkers": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };
