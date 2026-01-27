@@ -36,9 +36,9 @@ config = {
 		"lg": 2
 	},
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -87,5 +87,6 @@ config = {
 	},
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
+	"addEndMarkers": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

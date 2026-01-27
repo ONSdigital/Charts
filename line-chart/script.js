@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -81,7 +81,7 @@ function drawGraphic() {
 	});
 
 	if (config.addEndMarkers) {
-		const circleData = categories.map((category, index) => {
+		const markerData = categories.map((category, index) => {
 			// Find last valid datum for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 			return lastDatum ? {
@@ -93,15 +93,41 @@ function drawGraphic() {
 			} : null;
 		}).filter(d => d); // Remove null entries
 
-		const circles = svg.selectAll('circle.line-end')
-			.data(circleData, d => d.category)
-			.enter()
-			.append('circle')
-			.attr('cx', d => d.x)
-			.attr('cy', d => d.y)
-			.style('fill', d => d.color)
-			.attr('r', 4)
-			.attr('class', 'line-end');
+		markerData.forEach(d => {
+			const shapeIndex = d.index % 6;
+			const isFilled = shapeIndex < 3;
+			const shapeType = shapeIndex % 3;
+			
+			if (shapeType === 0) {
+				// Circle
+				svg.append('circle')
+					.attr('cx', d.x)
+					.attr('cy', d.y)
+					.attr('r', 4)
+					.attr('class', 'line-end')
+					.style('fill', isFilled ? d.color : 'white')
+					.style('stroke', d.color);
+			} else if (shapeType === 1) {
+				// Square
+				svg.append('rect')
+					.attr('x', d.x - 4)
+					.attr('y', d.y - 4)
+					.attr('width', 8)
+					.attr('height', 8)
+					.attr('class', 'line-end')
+					.style('fill', isFilled ? d.color : 'white')
+					.style('stroke', d.color);
+			} else {
+				// Diamond
+				svg.append('g')
+					.attr('transform', `translate(${d.x}, ${d.y})`)
+					.attr('class', 'line-end')
+					.append('path')
+					.attr('d', diamondShape(7))
+					.style('fill', isFilled ? d.color : 'white')
+					.style('stroke', d.color);
+			}
+		});
 	}
 
 
@@ -112,17 +138,54 @@ function drawGraphic() {
 		// Set up the legend
 		let legenditem = legend
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
 
-		legenditem
-			.append('div')
-			.attr('class', 'legend--icon--circle')
-			.style('background-color', function (d) {
-				return d[1];
-			});
+		legenditem.each(function(d, i) {
+			const item = d3.select(this);
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			const shapeIndex = d[2] % 6;
+			const color = d[1];
+			const isFilled = shapeIndex < 3;
+			
+			// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
+			const shapeType = shapeIndex % 3;
+			
+			if (shapeType === 0) {
+				// Circle
+				svg.append('circle')
+					.attr('cx', 6)
+					.attr('cy', 6)
+					.attr('r', 4)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else if (shapeType === 1) {
+				// Square
+				svg.append('rect')
+					.attr('x', 2)
+					.attr('y', 2)
+					.attr('width', 8)
+					.attr('height', 8)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else {
+				// Diamond
+				svg.append('g')
+					.attr('transform', 'translate(6, 6)')
+					.append('path')
+					.attr('d', diamondShape(7))
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			}
+		});
 
 		legenditem
 			.append('div')

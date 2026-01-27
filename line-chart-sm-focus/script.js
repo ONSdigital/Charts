@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -156,6 +156,34 @@ function drawGraphic() {
 
 			const lastDatum = graphicData[graphicData.length - 1];
 
+			// Add end markers for selected and comparison lines
+			if (config.addEndMarkers) {
+				const lastValidDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
+				if (lastValidDatum) {
+					// Selected group - circle
+					if (categoriesToPlot.indexOf(category) == chartIndex) {
+						svg.append('circle')
+							.attr('cx', x(lastValidDatum.date))
+							.attr('cy', y(lastValidDatum[category]))
+							.attr('r', 3.5)
+							.attr('class', 'line-end selected')
+							.style('fill', config.colourPalette[0])
+							.style('stroke', config.colourPalette[0]);
+					} 
+					// Comparison group - square
+					else if (category == reference) {
+						svg.append('rect')
+							.attr('x', x(lastValidDatum.date) - 3.5)
+							.attr('y', y(lastValidDatum[category]) - 3.5)
+							.attr('width', 7)
+							.attr('height', 7)
+							.attr('class', 'line-end reference')
+							.style('fill', config.colourPalette[1])
+							.style('stroke', config.colourPalette[1]);
+					}
+				}
+			}
+
 			//Labelling the final data point on each chart if option selected in the config
 			if (config.labelFinalPoint == true) {
 				// Add text labels to the right of the circles
@@ -167,7 +195,7 @@ function drawGraphic() {
 							'transform',
 							`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`
 						)
-						.attr('x', 5)
+						.attr('x', 8)
 						.attr('y', 4)
 						.attr('text-anchor', 'start')
 						.attr(
@@ -315,25 +343,63 @@ function drawGraphic() {
 
 	let legenditem = legend
 		.selectAll('div.legend--item')
-		.data([[config.legendLabel, config.colourPalette[0]], [reference, config.colourPalette[1]], [config.allLabel, config.colourPalette[2]]])
+		.data([[config.legendLabel, config.colourPalette[0], 0], [reference, config.colourPalette[1], 1], [config.allLabel, config.colourPalette[2], 2]])
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item');
 
-	// Add line icon using SVG
-	legenditem
-		.append('svg')
-		.attr('width', 24)
-		.attr('height', 12)
-		.append('line')
-		.attr('x1', 2)
-		.attr('y1', 6)
-		.attr('x2', 22)
-		.attr('y2', 6)
-		.attr('stroke', function (d) { return d[1]; })
-		.attr('stroke-width', 3)
-		.attr('stroke-linecap', "round")
-		.attr('class', 'legend--icon--line');
+	legenditem.each(function(d, i) {
+		const item = d3.select(this);
+		const legendType = d[2]; // 0=selected, 1=comparison, 2=all others
+		const color = d[1];
+		
+		if (legendType === 0) {
+			// Selected group - circle (filled)
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			svg.append('circle')
+				.attr('cx', 6)
+				.attr('cy', 6)
+				.attr('r', 3.5)
+				.style('fill', color)
+				.style('stroke', color);
+		} else if (legendType === 1) {
+			// Comparison group - square (filled)
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			svg.append('rect')
+				.attr('x', 2.5)
+				.attr('y', 2.5)
+				.attr('width', 7)
+				.attr('height', 7)
+				.style('fill', color)
+				.style('stroke', color);
+		} else {
+			// All other groups - line (as before)
+			item.append('svg')
+				.attr('width', 24)
+				.attr('height', 12)
+				.append('line')
+				.attr('x1', 2)
+				.attr('y1', 6)
+				.attr('x2', 22)
+				.attr('y2', 6)
+				.attr('stroke', color)
+				.attr('stroke-width', 3)
+				.attr('stroke-linecap', 'round')
+				.attr('class', 'legend--icon--line');
+		}
+	});
 
 	legenditem
 		.append('div')

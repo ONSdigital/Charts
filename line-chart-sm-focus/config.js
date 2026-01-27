@@ -41,26 +41,26 @@ config = {
 		"lg": 3
 	},
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [5, 4],
+		"md": [5, 4],
+		"lg": [5, 4]
 	},
 	"margin": {
 		"sm": {
 			"top": 45,
-			"right": 50,
+			"right": 55,
 			"bottom": 50,
 			"left": 60
 		},
 		"md": {
 			"top": 45,
-			"right": 50,
+			"right": 55,
 			"bottom": 50,
 			"left": 60
 		},
 		"lg": {
 			"top": 45,
-			"right": 50,
+			"right": 55,
 			"bottom": 55,
 			"left": 60
 		}
@@ -94,5 +94,6 @@ config = {
 		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 	},
 	"dropYAxis": true,
+	"addEndMarkers": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

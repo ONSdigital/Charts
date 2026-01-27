@@ -6,6 +6,25 @@
   /* Changes the color of the axis lines */
 }
 
+/* Stroke styling for legend shapes */
+.legend--icon circle,
+.legend--icon rect,
+.legend--icon path {
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  stroke-miterlimit: 10;
+}
+
+/* Stroke styling for line end markers */
+.line-end,
+g.line-end path {
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  stroke-miterlimit: 10;
+}
+
 #legend {
   margin-top: 10px;
   margin-bottom: 10px;
