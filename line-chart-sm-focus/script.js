@@ -229,7 +229,7 @@ function drawGraphic() {
 				.axisBottom(x)
 				.tickValues(
 					getXAxisTicks({
-						data: graphic_data,
+						data: graphicData,
 						xDataType,
 						size,
 						config
