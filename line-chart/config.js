@@ -16,7 +16,7 @@ config = {
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"yDomainMax": "auto",  //"auto" for automatic y-axis max, or a number for fixed max
-	"yDomainMin": 0,
+	"yDomainMin": "auto",
 	"xAxisTickFormat": {
 		"sm": "%Y",
 		"md": "%Y",
@@ -30,7 +30,7 @@ config = {
 	"zeroLine": "0",
 	"addEndMarkers":true,
 	"addPointMarkers": true, // Set to true to show markers on all available data points
-	"connectGaps": true, // Set to true to draw lines over gaps (missing/null data)
+	"gapLineStyle": "dashed", // Style for lines over gaps: "dashed", "dotted", "solid" or "none"
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],
