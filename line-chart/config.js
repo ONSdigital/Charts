@@ -38,6 +38,8 @@ config = {
 	"xAxisLabel": "",
 	"zeroLine": "0",
 	"addEndMarkers":true,
+	"addPointMarkers": true, // Set to true to show markers on all available data points
+	"gapLineStyle": "dashed", // Style for lines over gaps: "dashed", "dotted", "solid" or "none"
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],
