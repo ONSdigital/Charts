@@ -80,20 +80,40 @@ function drawGraphic() {
 	let labelData = [];
 
 	// create lines and circles for each category
+	const labelData = [];
 	categories.forEach(function (category, index) {
-
-		// If connectGaps is true, ignore nulls in defined (draw through gaps)
 		const lineGenerator = d3
 			.line()
 			.x((d) => x(d.date))
 			.y((d) => y(d[category]))
-			.defined(d => d[category] !== null)
+			.defined(d => d[category] !== null && d[category] !== undefined && d[category] !== "")
 			.curve(d3[config.lineCurveType])
 			.context(null);
 
+		const gapLineStyle = (config.gapLineStyle || 'dashed').toLowerCase();
+		const gapDasharray = gapLineStyle === 'dashed'
+			? '6,4'
+			: gapLineStyle === 'dotted'
+				? '1,4'
+				: null;
+		const gapSegments = [];
+		let prevValidIndex = null;
+		if (gapLineStyle !== 'none') {
+			for (let i = 0; i < graphicData.length; i++) {
+				const value = graphicData[i][category];
+				const isValid = value !== null && value !== undefined && value !== "";
+				if (isValid) {
+					if (prevValidIndex !== null && i - prevValidIndex > 1) {
+						gapSegments.push([graphicData[prevValidIndex], graphicData[i]]);
+					}
+					prevValidIndex = i;
+				}
+			}
+		}
+
 		svg
 			.append('path')
-			.datum(graphicData.filter(d => config.connectGaps===true ? d[category] !== null && d[category] !== undefined : d))
+			.datum(graphicData)
 			.attr('fill', 'none')
 			.attr(
 				'stroke',
@@ -106,40 +126,67 @@ function drawGraphic() {
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
 
-		// Add point markers if enabled in config
-		if (config.addPointMarkers) {
-			const points = graphicData.filter(d => d[category] !== null && d[category] !== undefined);
-			svg.selectAll(`circle.point-marker-${index}`)
-				.data(points)
+		if (gapLineStyle !== 'none' && gapSegments.length) {
+			const gapLineGenerator = d3
+				.line()
+				.x((d) => x(d.date))
+				.y((d) => y(d[category]))
+				.curve(d3[config.lineCurveType])
+				.context(null);
+
+			const gapLines = svg
+				.selectAll(`path.gap-line-${index}`)
+				.data(gapSegments)
 				.enter()
-				.append('circle')
-				.attr('cx', d => x(d.date))
-				.attr('cy', d => y(d[category]))
-				.attr('r', 4)
-				.attr('class', `point-marker point-marker-${index}`)
-				.style('fill', config.colourPalette[index % config.colourPalette.length])
+				.append('path')
+				.attr('class', `gap-line gap-line-${index}`)
+				.attr('fill', 'none')
+				.attr('stroke', config.colourPalette[index % config.colourPalette.length])
+				.attr('stroke-width', 3)
+				.attr('d', (d) => gapLineGenerator(d))
+				.style('stroke-linejoin', 'round')
+				.style('stroke-linecap', 'round');
+
+			if (gapDasharray) {
+				gapLines.style('stroke-dasharray', gapDasharray);
+			}
 		}
 
-		const lastDatum = graphicData[graphicData.length - 1];
-		if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
-		const label = svg.append('text')
-			.attr('class', 'directLineLabel')
-			.attr('x', x(lastDatum.date) + 10)
-			.attr('y', y(lastDatum[category]))
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
-			.text(category)
-			.call(wrap, margin.right - 10);
-		const bbox = label.node().getBBox();
-		labelData.push({
-			node: label,
-			x: x(lastDatum.date) + 10,
-			y: y(lastDatum[category]),
-			originalY: y(lastDatum[category]),
-			height: bbox.height,
-			category: category
-		});
+			// Add point markers if enabled in config
+			if (config.addPointMarkers) {
+				const points = graphicData.filter(d => d[category] !== null && d[category] !== undefined);
+				svg.selectAll(`circle.point-marker-${index}`)
+					.data(points)
+					.enter()
+					.append('circle')
+					.attr('cx', d => x(d.date))
+					.attr('cy', d => y(d[category]))
+					.attr('r', 4)
+					.attr('class', `point-marker point-marker-${index}`)
+					.style('fill', config.colourPalette[index % config.colourPalette.length])
+			}
+
+			const lastDatum = graphicData[graphicData.length - 1];
+			if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
+			const label = svg.append('text')
+				.attr('class', 'directLineLabel')
+				.attr('x', x(lastDatum.date) + 10)
+				.attr('y', y(lastDatum[category]))
+				.attr('dy', '.35em')
+				.attr('text-anchor', 'start')
+				.attr('fill', config.colourPalette[index % config.colourPalette.length])
+				.text(category)
+				.call(wrap, margin.right - 10);
+			const bbox = label.node().getBBox();
+			labelData.push({
+				node: label,
+				x: x(lastDatum.date) + 10,
+				y: y(lastDatum[category]),
+				originalY: y(lastDatum[category]),
+				height: bbox.height,
+				category: category
+			});
+
 	});
 
 	if (config.addEndMarkers) {
