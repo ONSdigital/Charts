@@ -2,39 +2,44 @@
 
 ## Overview
 
-The unified population pyramid visualization supports multiple interaction types and data structures through a comprehensive configuration system. This documentation covers all configuration options and provides examples for different use cases.
+This population pyramid system supports multiple scenarios:
+
+- Static pyramid (single dataset, optional static comparison)
+- Toggle pyramid (multiple datasets, user can switch, optional matching comparison)
+- Dropdown pyramid (select area from tidy/complex data, optional static or dynamic comparison)
+
+Configuration is scenario-driven. The config fields below determine how the chart behaves. See scenario mapping and config expectations below.
 
 ## Table of Contents
 
 1. [Configuration Structure](#configuration-structure)
-2. [Essential Configuration Options](#essential-configuration-options)
-3. [Optional Configuration Options](#optional-configuration-options)
-4. [Data Structure Requirements](#data-structure-requirements)
-5. [Scenario Examples](#scenario-examples)
-6. [HTML Requirements](#html-requirements)
-7. [Dependencies](#dependencies)
+2. [Config Fields and Scenario Mapping](#config-fields-and-scenario-mapping)
+3. [Data Structure Requirements](#data-structure-requirements)
+4. [Scenario Examples](#scenario-examples)
+5. [HTML Requirements](#html-requirements)
+6. [Dependencies](#dependencies)
 
 
 ## Configuration Options
 
 ### Data Settings
 
-| Property               | Type   | Options                     | Description                                                                                       |
-| ---------------------- | ------ | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| `graphicData_url`     | string | -                           | Path to main population data CSV file                                                             |
-| `comparison_data`      | string | -                           | Path to comparison data CSV file (optional)                                                       |
-| `comparison_time_data` | string | -                           | Path to second comparison dataset for toggle mode (optional)                                      |
-| `dataType`             | string | `"counts"`, `"percentages"` | Whether data contains raw counts (to be converted to percentages) or already contains percentages |
-| `dataStructure`        | string | `"simple"`, `"complex"`     | Data format structure (see Data Structure Requirements)                                           |
+| Property                   | Type    | Options/Example                | Description |
+|----------------------------|---------|--------------------------------|-------------|
+| pyramidData                | string/array | "population-simple.csv" or ["pop1.csv", "pop2.csv"] or "population-tidydata.csv" | Main pyramid data. String for single dataset, array for toggle/dropdown, tidydata for dropdown with areas |
+| pyramidDataType            | string/array | "counts", "percentages"      | Data type for pyramid (raw counts or percentages) |
+| pyramidDataStructure       | string/array | "simple", "complex"          | Data structure for pyramid (see below) |
+| comparisonData             | string/array | "comparison.csv" or ["comp1.csv", "comp2.csv"] | Optional comparison data. String for static, array for toggle/dropdown, tidydata for area-based |
+| comparisonDataType         | string/array | "counts", "percentages"      | Data type for comparison |
+| comparisonDataStructure    | string/array | "simple", "complex"          | Data structure for comparison |
 
 ### Interaction Settings
 
 | Property                   | Type    | Options                              | Description                                                              |
-| -------------------------- | ------- | ------------------------------------ | ------------------------------------------------------------------------ |
-| `interactionType`          | string  | `"static"`, `"toggle"`, `"dropdown"` | Type of user interaction available                                       |
-| `hasComparison`            | boolean | `true`, `false`                      | Whether to display comparison lines                                      |
-| `hasInteractiveComparison` | boolean | `true`, `false`                      | Whether comparison lines change with user selection (dropdown mode only) |
-| `buttonLabels`             | array   | -                                    | Labels for toggle buttons (required for toggle mode)                     |
+|----------------------------|---------|--------------------------------------|--------------------------------------------------------------------------|
+| pyramidInteractionType     | string  | "static", "toggle", "dropdown"      | How user interacts with pyramid data |
+| comparisonInteractionType  | string  | "static", "toggle", "dropdown"      | How comparison line behaves: static (unchanging), toggle (matches pyramid), dropdown (updates with selection) |
+| datasetLabels              | array   | ["2021", "2011"]                   | Labels for toggle/dropdown options |
 
 ### Display Settings
 
@@ -95,7 +100,7 @@ xAxisTicks: {
 
 ## Data Structure Requirements
 
-### Simple Structure (`dataStructure: "simple"`)
+### Simple Structure (`pyramidDataStructure: "simple"`)
 
 Used for basic population pyramids with age groups in rows:
 
@@ -113,7 +118,7 @@ age,maleBar,femaleBar
 - Must have columns: `age`, `maleBar`, `femaleBar`
 - Values can be raw numbers (if `dataType: "counts"`) or percentages (if `dataType: "percentages"`) with numbers between 0–1.
 
-### Complex Structure (`dataStructure: "complex"`)
+### Complex Structure (`pyramidDataStructure: "complex"`)
 
 Used for dropdown visualizations with multiple geographic areas:
 
@@ -134,6 +139,16 @@ E06000002,Middlesbrough,male,1934,2045,2156,2267,2378,2489
 - Values can be raw numbers or percentages based on `dataType` setting
 
 ## Scenario Examples
+## Scenario Mapping and Config Expectations
+
+| Scenario                        | pyramidData           | pyramidInteractionType | comparisonData         | comparisonInteractionType | Notes |
+|----------------------------------|----------------------|-----------------------|-----------------------|--------------------------|-------|
+| Static pyramid, no comparison    | string               | "static"             | (none)                | (none)                   | Single chart |
+| Static pyramid, static comparison| string               | "static"             | string                | "static"                | Single chart, static line |
+| Toggle pyramid, matching comp    | array                | "toggle"             | array                 | "toggle"                | Toggle chart, comp matches toggle |
+| Toggle pyramid, static comp      | array                | "toggle"             | string                | "static"                | Toggle chart, comp line does not change |
+| Dropdown pyramid, static comp    | tidydata string      | "dropdown"           | string                | "static"                | Dropdown chart, comp line does not change |
+| Dropdown pyramid, dynamic comp   | tidydata string      | "dropdown"           | tidydata string       | "dropdown"              | Dropdown chart, comp line updates |
 
 ### 1. Static Population Pyramid with Comparison
 
@@ -141,22 +156,21 @@ E06000002,Middlesbrough,male,1934,2045,2156,2267,2378,2489
 
 ```javascript
 const config = {
-  graphicData_url: "data/population-2021.csv",
-  comparison_data: "data/population-2011.csv",
-  dataType: "counts",
-  dataStructure: "simple",
-  interactionType: "static",
-  hasComparison: true,
-  hasInteractiveComparison: false,
-
+  pyramidData: "population-2021.csv",
+  pyramidDataType: "counts",
+  pyramidDataStructure: "simple",
+  pyramidInteractionType: "static",
+  comparisonData: "population-2011.csv",
+  comparisonDataType: "counts",
+  comparisonDataStructure: "simple",
+  comparisonInteractionType: "static",
+  datasetLabels: ["2021 Census", "2011 Census"],
   xAxisLabel: "Percentage of population",
   yAxisLabel: "Age",
   xAxisNumberFormat: ".1%",
   yAxisTicksEvery: 2,
-
-  colour_palette: ["#d53e4f", "#3288bd"],
-  comparison_colour_palette: ["#f46d43", "#74add1"],
-
+  colourPalette: ["#d53e4f", "#3288bd"],
+  comparisonColourPalette: ["#f46d43", "#74add1"],
   legend: ["2021 Census", "2011 Census"],
   sourceText: "UK Census 2011, 2021",
 };
