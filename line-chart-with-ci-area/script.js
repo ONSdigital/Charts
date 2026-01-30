@@ -101,7 +101,7 @@ function drawGraphic() {
 	svg
 		.append('g')
 		.attr('class', 'y axis numeric')
-		.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]));
+		.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickFormat(d3.format(config.yAxisTickFormat)));
 
 	// add grid lines to y axis
 	svg
@@ -206,7 +206,7 @@ function drawGraphic() {
 				useLeaderLines: true,
 				leaderLineStyle: 'dashed',
 				labelStrategy: 'lastValid',
-				minLabelOffset: 5
+				minLabelOffset: 25
 			}
 		});
 	}

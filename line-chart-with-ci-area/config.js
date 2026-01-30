@@ -33,6 +33,7 @@ config = {
 		"md": "%b %y",
 		"lg": "%b %y"
 	},
+	"yAxisTickFormat":".0f",
 	"xAxisNumberFormat": ".0f",
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
