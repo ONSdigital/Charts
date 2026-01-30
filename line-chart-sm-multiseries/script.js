@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -17,7 +17,6 @@ function drawGraphic() {
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -78,12 +77,11 @@ function drawGraphic() {
 				.range([0, chartWidth]);
 		}
 
+		const {minY,maxY} = calculateAutoBounds(config.freeYAxisScales ? data : graphicData, config)
+
 		const y = d3
 			.scaleLinear()
-			.domain([
-				0, //This should be a calculated rather than 0 to allow for negativ values
-				d3.max(config.freeYAxisScales ? data : graphicData, (d) => Math.max(...categories.map((c) => d[c])))
-			])
+			.domain([minY,maxY])
 			.nice()
 			.range([height, 0]);
 
@@ -146,22 +144,38 @@ function drawGraphic() {
 				}
 			})
 		// Add the x-axis
-		svg
-			.append('g')
-			.attr('class', 'x axis')
-			.attr('transform', `translate(0, ${height})`)
-			.call(
-				d3
-					.axisBottom(x)
-					.tickValues(getXAxisTicks({
+
+		let xAxisGenerator;
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
+			xAxisGenerator = customTemporalAxis(x)
+				.tickSize(17)
+				.tickPadding(6)
+				.timeUnit(config.labelSpans.timeUnit)
+				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+		} else {
+			xAxisGenerator = d3
+				.axisBottom(x)
+				.tickValues(
+					getXAxisTicks({
 						data: graphicData,
 						xDataType,
 						size,
 						config
-					}))
-					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-						: d3.format(config.xAxisNumberFormat)(d))
-			);
+					})
+				)
+				.tickFormat(
+					(d) =>
+						xDataType == 'date' ?
+							d3.timeFormat(config.xAxisTickFormat[size])(d) :
+							d3.format(config.xAxisNumberFormat)(d)
+				);
+		}
+
+		svg
+			.append('g')
+			.attr('class', 'x axis')
+			.attr('transform', `translate(0, ${height})`)
+			.call(xAxisGenerator)
 
 
 		//If dropYAxis == true Only draw the y axis tick labels on the first chart in each row
@@ -186,9 +200,6 @@ function drawGraphic() {
 			text: seriesName,
 			wrapWidth: (chartWidth + margin.right)
 		});
-
-		console.log("hello")
-
 
 		// This does the y-axis label
 		addAxisLabel({
@@ -252,15 +263,14 @@ function drawGraphic() {
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes

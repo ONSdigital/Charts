@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addSource, calculateAutoBounds, adjustColorForContrast } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
@@ -52,13 +52,10 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	if (config.yDomain == "auto") {
-		let minY = d3.min(graphicData, (d) => Math.min(...categories.map((c) => d[c])))
-		let maxY = d3.max(graphicData, (d) => Math.max(...categories.map((c) => d[c])))
-		y.domain([minY, maxY])
-	} else {
-		y.domain(config.yDomain)
-	}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
+
+	y.domain([minY, maxY]);
 
 
 	// Create an SVG element
@@ -136,9 +133,10 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.textColourPalette[
-				categories.indexOf(category) % config.textColourPalette.length
-				]
+				adjustColorForContrast(
+					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
+					4.5
+				)
 			)
 			.text(d3.format(config.yAxisNumberFormat)((lastDatum[category]))) /* (Math.round((lastDatum[category]) / 100) * 100) */
 			.attr('id', 'lastDateLabel')
@@ -150,9 +148,10 @@ function drawGraphic() {
 			.attr('text-anchor', 'start')
 			.attr(
 				'fill',
-				config.textColourPalette[
-				categories.indexOf(category) % config.textColourPalette.length
-				]
+				adjustColorForContrast(
+					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
+					4.5
+				)
 			)
 			.text(category)
 			.attr("class", "directLineLabelRegular")
@@ -170,9 +169,10 @@ function drawGraphic() {
 			.attr('text-anchor', 'end')
 			.attr(
 				'fill',
-				config.textColourPalette[
-				categories.indexOf(category) % config.textColourPalette.length
-				]
+				adjustColorForContrast(
+					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
+					4.5
+				)
 			)
 			.text(d3.format(config.yAxisNumberFormat)(firstDatum[category]))
 			.attr("class", "directLineLabelBold")
@@ -248,9 +248,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, +value])

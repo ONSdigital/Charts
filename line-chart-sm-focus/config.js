@@ -21,8 +21,9 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomain": "auto",
-	// either "auto" or an array for the y domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	"yDomainMax": "auto",
+	// Options: "auto" (smart trimming with zero baseline), "data" (exact data bounds), or numeric values
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",
@@ -60,7 +61,7 @@ config = {
 		"lg": {
 			"top": 45,
 			"right": 50,
-			"bottom": 50,
+			"bottom": 55,
 			"left": 60
 		}
 	},
@@ -87,6 +88,11 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
+	"labelSpans": {
+		"enabled": true,
+		"timeUnit": 'quarter',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"dropYAxis": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

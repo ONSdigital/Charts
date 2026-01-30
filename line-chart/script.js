@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -46,26 +46,8 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	let maxY, minY;
-
-	if (config.yDomainMax === "auto") {
-		maxY = d3.max(graphicData, d => d3.max(categories, c => d[c]));
-	} else {
-		maxY = config.yDomainMax;
-	}
-
-	if (config.yDomainMin === "auto") {
-		minY = d3.min(graphicData, d => d3.min(categories, c => d[c]));
-	} else {
-		minY = config.yDomainMin;
-	}
-
-	// Ensure maxY is not less than minY
-	if (maxY < minY) {
-		const temp = maxY;
-		maxY = minY;
-		minY = temp;
-	}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
 	y.domain([minY, maxY]);
 
@@ -76,8 +58,6 @@ function drawGraphic() {
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
-
-	let labelData = [];
 
 	// create lines and circles for each category
 	categories.forEach(function (category, index) {
@@ -95,12 +75,7 @@ function drawGraphic() {
 			.append('path')
 			.datum(graphicData.filter(d => config.connectGaps===true ? d[category] !== null && d[category] !== undefined : d))
 			.attr('fill', 'none')
-			.attr(
-				'stroke',
-				config.colourPalette[
-				categories.indexOf(category) % config.colourPalette.length
-				]
-			)
+			.attr('stroke', config.colourPalette[index % config.colourPalette.length])
 			.attr('stroke-width', 3)
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
@@ -233,23 +208,37 @@ function drawGraphic() {
 			}
 		})
 
-	// Add the x-axis
-	svg
-		.append('g')
-		.attr('class', 'x axis')
-		.attr('transform', `translate(0, ${height})`)
-		.call(
-			d3
-				.axisBottom(x)
-				.tickValues(getXAxisTicks({
+
+	let xAxisGenerator;
+
+	if (config.labelSpans.enabled === true) {
+		xAxisGenerator = customTemporalAxis(x)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+	} else {
+		xAxisGenerator = d3
+			.axisBottom(x)
+			.tickValues(
+				getXAxisTicks({
 					data: graphicData,
 					xDataType,
 					size,
 					config
-				}))
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
-		);
+				})
+			)
+			.tickFormat(
+				(d) =>
+					xDataType == 'date' ?
+						d3.timeFormat(config.xAxisTickFormat[size])(d) :
+						d3.format(config.xAxisNumberFormat)(d)
+			);
+	}
+
+	svg
+		.append('g')
+		.attr('class', 'x axis')
+		.attr('transform', `translate(0, ${height})`)
+		.call(xAxisGenerator); 
 
 	// Add the y-axis
 	svg
@@ -294,9 +283,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
