@@ -283,10 +283,10 @@ function drawGraphic() {
       })
       .attr("stroke", (d) => {
         return +d[minColumn] === +d[maxColumn]
-          ? config.colourPaletteArrows[2]
+          ? "#999"
           : +d[minColumn] < +d[maxColumn]
-          ? config.colourPaletteArrows[0]
-          : config.colourPaletteArrows[1];
+          ? "#206095"
+          : "#f66068";
       })
       .attr("stroke-width", (d) => {
         return +d[minColumn] === +d[maxColumn] ? "4px" : "3px";
@@ -306,7 +306,7 @@ function drawGraphic() {
       .attr("x2", (d) => x(d[maxColumn]))
       .attr("y1", (d, i) => groups.filter((e) => e[0] == d.group)[0][3](d.name))
       .attr("y2", (d, i) => groups.filter((e) => e[0] == d.group)[0][3](d.name))
-      .attr("stroke", ONScolours.grey30)
+      .attr("stroke", "#c6c6c6")
       .attr("stroke-width", "3px");
   }
 
@@ -357,7 +357,7 @@ function drawGraphic() {
         return chartType === "bar" ? "white" : colour("min");
       })
       .attr("stroke", () => {
-        return chartType === "bar" ? ONScolours.black : strokeColour("min");
+        return chartType === "bar" ? "#222" : strokeColour("min");
       })
       .attr("stroke-width", () => {
         return chartType === "bar" ? "1.5px" : "1.5px";
@@ -403,14 +403,14 @@ function drawGraphic() {
       .attr("fill", (d) => {
         if (chartType === "arrow") {
           if (+d[minColumn] === +d[maxColumn]) {
-            return config.colourPaletteArrows[2];
+            return "#999";
           } else if (+d[minColumn] < +d[maxColumn]) {
-            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+            return "#206095";
           } else {
-            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            return "#f66068";
           }
         } else {
-          return adjustColorForContrast(colour("min"), 4.5);
+          return adjustColorForWhiteContrast(colour("min"), 4.5);
         }
       })
       .style("font-weight", "600")
@@ -437,14 +437,14 @@ function drawGraphic() {
       .attr("fill", (d) => {
         if (chartType === "arrow") {
           if (+d[minColumn] === +d[maxColumn]) {
-            return config.colourPaletteArrows[2]; // neutral color for no change
+            return "#999"; // neutral color for no change
           } else if (+d[minColumn] < +d[maxColumn]) {
-            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5); // up arrow color
+            return "#206095"; // up arrow color
           } else {
-            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5); // down arrow color
+            return "#f66068"; // down arrow color
           }
         } else {
-          return adjustColorForContrast(colour("max"), 4.5);
+          return adjustColorForWhiteContrast(colour("max"), 4.5);
         }
       })
 
@@ -525,7 +525,7 @@ function drawGraphic() {
           .attr("transform", "translate(10, 10)")
           .attr("fill", chartType === "bar" ? "white" : color)
           .attr("stroke", () => {
-            return chartType === "bar" ? ONScolours.black : strokeColour("min");
+            return chartType === "bar" ? "#222" : strokeColour("min");
           })
           .attr("stroke-width", chartType === "bar" ? "1.5px" : "1.5px");
       }

@@ -235,7 +235,7 @@ d3.csv(config.graphicDataURL)
 
 		// 	);
 		graphicData.forEach((d) => {
-			d.date = d3.utcParse(config.dateFormat)(d.date);
+			d.date = d3.timeParse(config.dateFormat)(d.date);
 		});
 
 		//use pym to create iframed chart dependent on specified variables

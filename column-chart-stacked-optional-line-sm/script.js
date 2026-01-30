@@ -6,7 +6,6 @@ import {
   diamondShape,
   addChartTitleLabel,
   addAxisLabel,
-  customTemporalAxis
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -111,8 +110,8 @@ function drawGraphic() {
         config.dropYAxis !== true
           ? d3.format(config.yAxisTickFormat)(d)
           : chartPosition == 0
-            ? d3.format(config.yAxisTickFormat)(d)
-            : ""
+          ? d3.format(config.yAxisTickFormat)(d)
+          : ""
       );
 
     // Use stackColumns for the stack instead of filtering out lineSeries
@@ -127,37 +126,44 @@ function drawGraphic() {
 
     let xTime = d3.timeFormat(config.xAxisTickFormat[size]);
 
-    let xAxis;
-
-    let tickValues = x.domain().filter(function (d, i) {
-      return !(i % config.xAxisTicksEvery[size]);
-    });
-
-    //Labelling the first and/or last bar if needed
-    if (config.addFirstDate == true) {
-      tickValues.push(domain[0]);
-    }
-
-    if (config.addFinalDate == true) {
-      tickValues.push(domain[domain.length - 1]);
-    }
-
-    if (config.labelSpans.enabled === true && xDataType == "date") {
-      xAxis = customTemporalAxis(x)
-        .timeUnit(config.labelSpans.timeUnit)
-        .tickSize(0)
-        .tickPadding(6)
-        .secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
-    } else {
-      xAxis = d3
-        .axisBottom(x)
-        .tickSize(10)
-        .tickPadding(10)
-        .tickValues(tickValues)
-        .tickFormat((d) =>
-          xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
-        );
-    }
+    //set up xAxis generator
+    const xAxis = d3
+      .axisBottom(x)
+      .tickSize(10)
+      .tickPadding(10)
+      .tickValues(
+        xDataType == "date"
+          ? graphic_data
+              .map(function (d) {
+                return d.date.getTime();
+              }) //just get dates as seconds past unix epoch
+              .filter(function (d, i, arr) {
+                return arr.indexOf(d) == i;
+              }) //find unique
+              .map(function (d) {
+                return new Date(d);
+              }) //map back to dates
+              .sort(function (a, b) {
+                return a - b;
+              })
+              .filter(function (d, i) {
+                return (
+                  (i % config.xAxisTicksEvery[size] === 0 &&
+                    i <= graphic_data.length - config.xAxisTicksEvery[size]) ||
+                  i == data.length - 1
+                ); //Rob's fussy comment about labelling the last date
+              })
+          : x.domain().filter((d, i) => {
+              return (
+                (i % config.xAxisTicksEvery[size] === 0 &&
+                  i <= graphic_data.length - config.xAxisTicksEvery[size]) ||
+                i == data.length - 1
+              );
+            })
+      )
+      .tickFormat((d) =>
+        xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
+      );
 
     //create svg for chart
     const svg = addSvg({
@@ -399,7 +405,7 @@ d3.csv(config.graphicDataUrl).then((data) => {
   //load chart data
   graphic_data = data;
 
-  let parseTime = d3.utcParse(config.dateFormat);
+  let parseTime = d3.timeParse(config.dateFormat);
 
   data.forEach((d, i) => {
     //If the date column is has date data store it as dates

@@ -100,8 +100,7 @@ function drawGraphic() {
       chartWidth: chartWidth,
       labelPositionFactor: 7,
       xScaleFunction: x,
-      yScaleFunction: y,
-      colourScale: config.colourPalette
+      yScaleFunction: y
     })
   } //end if for datalabels
 

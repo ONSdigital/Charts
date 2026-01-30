@@ -69,12 +69,6 @@ config = {
   },
   addFirstDate: false,
   addFinalDate: false,
-  labelSpans: {
-    enabled: true,
-    timeUnit:"month",//set to "day","month",'quarter' or 'year'
-    secondaryTimeUnit: 'quarter',//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
-    yearStartMonth:0,//0 indexed so year starts in Jan
-  },
   elements: { select: 0, nav: 0, legend: 0, titles: 0 },
   chartBuild: {},
 };
