@@ -38,8 +38,6 @@ config = {
 	"xAxisLabel": "",
 	"zeroLine": "0",
 	"addEndMarkers":true,
-	"addPointMarkers": true, // Set to true to show markers on all available data points
-	"connectGaps": true, // Set to true to draw lines over gaps (missing/null data)
 	"aspectRatio": {
 		"sm": [1, 1],
 		"md": [1, 1],
