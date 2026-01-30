@@ -61,6 +61,8 @@ function drawGraphic() {
 
 	// create lines and circles for each category
 	categories.forEach(function (category, index) {
+
+		// If connectGaps is true, ignore nulls in defined (draw through gaps)
 		const lineGenerator = d3
 			.line()
 			.x((d) => x(d.date))
@@ -71,13 +73,48 @@ function drawGraphic() {
 
 		svg
 			.append('path')
-			.datum(graphicData)
+			.datum(graphicData.filter(d => config.connectGaps===true ? d[category] !== null && d[category] !== undefined : d))
 			.attr('fill', 'none')
 			.attr('stroke', config.colourPalette[index % config.colourPalette.length])
 			.attr('stroke-width', 3)
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
+
+		// Add point markers if enabled in config
+		if (config.addPointMarkers) {
+			const points = graphicData.filter(d => d[category] !== null && d[category] !== undefined);
+			svg.selectAll(`circle.point-marker-${index}`)
+				.data(points)
+				.enter()
+				.append('circle')
+				.attr('cx', d => x(d.date))
+				.attr('cy', d => y(d[category]))
+				.attr('r', 4)
+				.attr('class', `point-marker point-marker-${index}`)
+				.style('fill', config.colourPalette[index % config.colourPalette.length])
+		}
+
+		const lastDatum = graphicData[graphicData.length - 1];
+		if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
+		const label = svg.append('text')
+			.attr('class', 'directLineLabel')
+			.attr('x', x(lastDatum.date) + 10)
+			.attr('y', y(lastDatum[category]))
+			.attr('dy', '.35em')
+			.attr('text-anchor', 'start')
+			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
+			.text(category)
+			.call(wrap, margin.right - 10);
+		const bbox = label.node().getBBox();
+		labelData.push({
+			node: label,
+			x: x(lastDatum.date) + 10,
+			y: y(lastDatum[category]),
+			originalY: y(lastDatum[category]),
+			height: bbox.height,
+			category: category
+		});
 	});
 
 	if (config.addEndMarkers) {
