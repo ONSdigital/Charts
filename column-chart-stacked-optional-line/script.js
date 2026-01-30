@@ -4,8 +4,6 @@ import {
   addSvg,
   diamondShape,
   addAxisLabel,
-  customTemporalAxis,
-  quarterYearFormatter
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -71,24 +69,14 @@ function drawGraphic() {
   }
 
   //set up xAxis generator
-  let xAxis;
-  if (config.labelSpans.enabled === true && xDataType == "date") {
-    xAxis = customTemporalAxis(x)
-      .timeUnit(config.labelSpans.timeUnit)
-      .tickSize(0)
-      .tickPadding(6)
-    .secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
-      .secondaryTickFormat(d => quarterYearFormatter(d, config.labelSpans.yearStartMonth))
-  } else {
-    xAxis = d3
-      .axisBottom(x)
-      .tickSize(10)
-      .tickPadding(10)
-      .tickValues(tickValues)
-      .tickFormat((d) =>
-        xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
-      );
-  }
+  let xAxis = d3
+    .axisBottom(x)
+    .tickSize(10)
+    .tickPadding(10)
+    .tickValues(tickValues)
+    .tickFormat((d) =>
+      xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
+    );
 
   // Determine which columns to use for stacked bars based on line toggle
   let stackColumns;
@@ -330,7 +318,7 @@ d3.csv(config.graphicDataUrl).then((data) => {
   //load chart data
   graphic_data = data;
 
-  let parseTime = d3.utcParse(config.dateFormat);
+  let parseTime = d3.timeParse(config.dateFormat);
 
   data.forEach((d, i) => {
     //If the date column is has date data store it as dates

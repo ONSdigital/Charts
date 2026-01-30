@@ -1,5 +1,6 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
+
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -51,10 +52,22 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	// Calculate Y-axis bounds based on data and config
-	const { minY, maxY } = calculateAutoBounds(graphicData, config);
+	if (config.yDomain == "auto") {
+		y.domain(
+			[d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
+			d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))]
+		)
+	} else {
+		y.domain(config.yDomain)
+	}
 
-	y.domain([minY, maxY]);
+	// Use new getXAxisTicks function for tick values
+	let tickValues = getXAxisTicks({
+		data: graphicData,
+		xDataType,
+		size,
+		config
+	});
 
 	// Create an SVG element
 	const svg = addSvg({
@@ -65,43 +78,24 @@ function drawGraphic() {
 	})
 
 	// Add the x-axis
-	let xAxisGenerator;
-
-	if (config.labelSpans.enabled === true && xDataType=='date') {
-		xAxisGenerator = customTemporalAxis(x)
-			.tickSize(17).tickPadding(6)
-			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
-	} else {
-		xAxisGenerator = d3
-			.axisBottom(x)
-			.tickValues(
-				getXAxisTicks({
-					data: graphicData,
-					xDataType,
-					size,
-					config
-				})
-			)
-			.tickFormat(
-				(d) =>
-					xDataType == 'date' ?
-						d3.timeFormat(config.xAxisTickFormat[size])(d) :
-						d3.format(config.xAxisNumberFormat)(d)
-			);
-	}
-
 	svg
 		.append('g')
 		.attr('class', 'x axis')
 		.attr('transform', `translate(0, ${height})`)
-		.call(xAxisGenerator); 
+		.call(
+			d3
+				.axisBottom(x)
+				.tickValues(tickValues)
+				.tickFormat((d) => xDataType === 'date'
+					? d3.timeFormat(config.xAxisTickFormat[size])(d)
+					: d3.format(config.xAxisNumberFormat)(d))
+		);
 
 	// Add the y-axis
 	svg
 		.append('g')
 		.attr('class', 'y axis numeric')
-		.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickFormat(d3.format(config.yAxisTickFormat)));
+		.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]));
 
 	// add grid lines to y axis
 	svg
@@ -206,7 +200,7 @@ function drawGraphic() {
 				useLeaderLines: true,
 				leaderLineStyle: 'dashed',
 				labelStrategy: 'lastValid',
-				minLabelOffset: 25
+				minLabelOffset: 5
 			}
 		});
 	}
@@ -252,16 +246,27 @@ function drawGraphic() {
 		)
 
 		addDirectionArrow(
-			ciSvg,//name of your svg, normally just SVG
-			'left',//direction of arrow: left, right, up or down
-			'start',//anchor end or start (end points the arrow towards your x value, start points away)
-			60,//x value
-			12,//y value
-			config.legendEstimateText,//annotation text
-			150,//wrap width
-			'bottom'//Text vertical align: top, middle or bottom (default is middle)
+			//name of your svg, normally just SVG
+			ciSvg,
+			//direction of arrow: left, right, up or down
+			'left',
+			//anchor end or start (end points the arrow towards your x value, start points away)
+			'end',
+			//x value
+			50,
+			//y value
+			7,
+			//alignment - left or right for vertical arrows, above or below for horizontal arrows
+			'right',
+			//annotation text
+			config.legendEstimateText,
+			//wrap width
+			1500,
+			//text adjust y
+			0,
+			//Text vertical align: top, middle or bottom (default is middle)
+			'bottom'
 		)
-
 	}
 
 
@@ -288,9 +293,9 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL).then(data => {
 
 	graphicData = data.map((d) => {
-		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
+		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.utcParse(config.dateFormat)(d.date),
+				date: d3.timeParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes

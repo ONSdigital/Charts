@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -73,22 +73,16 @@ function drawGraphic() {
     let xTime = d3.timeFormat(config.xAxisTickFormat[size])
 
     //set up xAxis generator
-	let xAxisGenerator;
-	if (config.labelSpans.enabled === true && xDataType=="date") {
-		xAxisGenerator = customTemporalAxis(x)
-            .timeUnit(config.labelSpans.timeUnit)
-            .tickSize(0)
-            .tickPadding(6)
-            .secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
-	} else {
-		xAxisGenerator = d3
-			.axisBottom(x)
-			.tickSize(10)
-			.tickPadding(10)
-			.tickValues(tickValues) //Labelling the first and/or last bar if needed
-			.tickFormat((d) => xDataType == 'date' ? xTime(d)
-				: d3.format(config.xAxisNumberFormat)(d));
-	}
+    let xAxis = d3
+        .axisBottom(x)
+        .tickSize(10)
+        .tickPadding(10)
+        .tickValues(tickValues) //Labelling the first and/or last bar if needed
+        .tickFormat((d) => {
+            if (xDataType == 'date') return xTime(d);
+            if (xDataType == 'numeric') return d3.format(config.xAxisNumberFormat)(d);
+            return d; // categorical: just show the label
+        });
 
     //create svg for chart
     svg = addSvg({
@@ -118,7 +112,7 @@ function drawGraphic() {
         .append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .attr('class', 'x axis')
-        .call(xAxisGenerator);
+        .call(xAxis);
 
     svg
         .append('g')
@@ -229,7 +223,7 @@ function drawGraphic() {
 
 d3.csv(config.graphicDataURL)
     .then((data) => {
-        let parseTime = d3.utcParse(config.dateFormat);
+        let parseTime = d3.timeParse(config.dateFormat);
         //load chart data
         graphicData = data;
 
