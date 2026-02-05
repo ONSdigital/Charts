@@ -1,0 +1,14 @@
+name,group,value
+Start,Net change,61099801
+Births and deaths,Net change,29982
+Internal migration,Net change,-13607
+International migration,Net change,690147
+Other changes,Net change,359
+Start,Individual Components,61099801
+Births,Individual Components,596012
+Deaths,Individual Components,-566030
+Internal migration in,Individual Components,42693
+Internal migration out,Individual Components,-56300
+International migration in,Individual Components,1142303
+International migration out,Individual Components,-1852156
+Other changes,Individual Components,359

@@ -1,0 +1,9 @@
+name,group,series,value,min,max
+England,Group 1,Series 1,55.2,44.8,65.5
+Wales,Group 1,Series 1,52.6,40.3,64.9
+Scotland,Group 2,Series 1,48.1,35.0,61.2
+Northern Ireland,Group 2,Series 1,50.8,38.4,63.1
+England,Group 1,Series 2,105.2,95.4,115.0
+Wales,Group 1,Series 2,102.6,92.2,113.0
+Scotland,Group 2,Series 2,98.1,88.7,107.5
+Northern Ireland,Group 2,Series 2,100.8,90.9,110.6
