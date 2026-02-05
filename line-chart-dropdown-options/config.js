@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/time-series-wide.csv",
 	"colourPalette": ONSlinePalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",

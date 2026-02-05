@@ -1,0 +1,13 @@
+name,category,value,group
+Administration,Category A,42.1,Group 1
+Administration,Category B,38.4,Group 1
+Retail,Category A,33.5,Group 1
+Retail,Category B,29.7,Group 1
+Manufacturing,Category A,28.9,Group 1
+Manufacturing,Category B,31.2,Group 1
+Administration,Category A,39.8,Group 2
+Administration,Category B,36.0,Group 2
+Retail,Category A,31.4,Group 2
+Retail,Category B,27.9,Group 2
+Manufacturing,Category A,26.7,Group 2
+Manufacturing,Category B,29.5,Group 2

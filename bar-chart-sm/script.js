@@ -10,7 +10,7 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Nest the graphicData by the 'series' column
-	let nestedData = d3.groups(graphicData, (d) => d.series);
+	let nestedData = d3.groups(graphicData, (d) => d.group);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
 	let namesArray = [...nestedData][0][1].map(d => d.name);

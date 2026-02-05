@@ -1,11 +1,11 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/categorical-grouped.csv",
 	"colourPalette": ONScolours.oceanBlue,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": 1,
-		"numberFormat": ".0%"
+		"numberFormat": ".0f"
 	},
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]

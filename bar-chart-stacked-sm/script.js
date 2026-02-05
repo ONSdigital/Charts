@@ -16,7 +16,7 @@ function drawGraphic() {
     const categories = graphicData.columns.slice(2);
 
     // Nest the graphicData by the 'series' column
-    let nestedData = d3.group(graphicData, (d) => d.series);
+    let nestedData = d3.group(graphicData, (d) => d.group);
 
     // Create a container div for each small multiple
     let chartContainers = graphic

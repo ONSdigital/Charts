@@ -1,5 +1,5 @@
 config = {
-  graphicDataUrl: "data.csv",
+  graphicDataUrl: "../example-data/range-arrow-dot.csv",
   chartType: "arrow",
   // can be range, dot, arrow or bar (for bar with reference point)
   colourPaletteDots: [ONScolours.oceanBlue, ONScolours.springGreen],

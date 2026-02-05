@@ -1,17 +1,15 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/time-series-long.csv",
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
-	"xDomain": "auto",
-	// either "auto" or an array for the x domain e.g. [0,100]
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%Y",
 		"lg": "%Y"
 	},
-	"yAxisFormat": ".0%",
-	"dateFormat": "%Y",
+	"yAxisFormat": ".0f",
+	"dateFormat": "%d/%m/%Y",
 	"xAxisLabel": "x axis label",
 	"yAxisLabel": "y axis label",
 	"stackOffset": "stackOffsetExpand",
@@ -56,11 +54,11 @@ config = {
 			"left": 50
 		}
 	},
-	"chartGap": 20,
+	"chartGap": 30,
 	"xAxisTicksEvery": {
 		"sm": 7,
 		"md": 5,
-		"lg": 4
+		"lg": 1
 	},
 	"legendColumns": 4,
 	"dropYAxis": true,

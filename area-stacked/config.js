@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/time-series-wide.csv",
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
@@ -11,7 +11,7 @@ config = {
 		"lg": "%Y"
 	},
 	"yAxisTickFormat": ".0%",
-	"dateFormat": "%Y",
+	"dateFormat": "%d/%m/%Y",
 	"xAxisLabel": "x axis label",
 	"yAxisLabel": "y axis label",
 	"stackOffset": "stackOffsetExpand",

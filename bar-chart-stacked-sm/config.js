@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/categorical-stacked-grouped.csv",
 	"colourPalette": ONSdivPlatte,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",

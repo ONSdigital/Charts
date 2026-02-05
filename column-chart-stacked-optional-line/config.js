@@ -1,5 +1,5 @@
 config = {
-  graphicDataUrl: "data.csv",
+  graphicDataUrl: "../example-data/stacked-optional-line.csv",
   showMarkers: true,
   showLine: true,
   lineSeries: "Total",

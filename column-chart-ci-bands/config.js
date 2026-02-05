@@ -1,5 +1,5 @@
 config = {
-    "graphicDataURL": "data.csv",
+    "graphicDataURL": "../example-data/column-ci-bands.csv",
     "colourPalette": ONScolours.oceanBlue,
     "lineColour": ONScolours.nightBlue,
     "sourceText": "Office for National Statistics",

@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/categorical-stacked-wide.csv",
 	"colourPalette": ONSpalette,
 	"drawLegend": true, // set to false to remove the legend (still working on this)
 	"someOtherVariable": "someOtherValue",

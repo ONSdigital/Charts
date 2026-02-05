@@ -1,5 +1,5 @@
 config={
-  "graphicDataURL": "data.csv",
+  "graphicDataURL": "../example-data/categorical-grouped.csv",
   "legendLabels": {"min":"2015-2019", "max":"2020"},
   //the keys match the column names
   "colourPalette": ONScolours.oceanBlue,
@@ -7,9 +7,9 @@ config={
   "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "dataLabels":{
     "show":true,
-    "numberFormat":".0%"
+    "numberFormat":".0f"
   },
-  "xAxisFormat": ".0%",
+  "xAxisFormat": ".0f",
   "xAxisLabel": "x-axis label",
   "xDomain": "auto",
   // either auto or a custom domain as an array e.g [0,100]

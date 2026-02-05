@@ -1,5 +1,5 @@
 config = {
-  graphicDataURL: "data.csv",
+  graphicDataURL: "../example-data/waterfall.csv",
   colourPalette: [
     ONScolours.oceanBlue,
     ONScolours.coralPink,

@@ -6,22 +6,36 @@ These files provide compact, synthetic data that match the column layouts used a
 
 - [example-data/time-series-wide.csv](example-data/time-series-wide.csv)
   - Line charts, area charts, stacked area, column/line charts with multiple series.
+- [example-data/time-series-single.csv](example-data/time-series-single.csv)
+  - Column chart (single series).
+- [example-data/time-series-long.csv](example-data/time-series-long.csv)
+  - Line chart small-multiples (multi-series long format).
 - [example-data/time-series-ci.csv](example-data/time-series-ci.csv)
   - Line chart with confidence interval area.
 - [example-data/column-ci-bands.csv](example-data/column-ci-bands.csv)
   - Column chart with confidence interval bands.
 - [example-data/categorical-single.csv](example-data/categorical-single.csv)
   - Bar chart, column chart, simple bar/column variants.
+- [example-data/categorical-clustered.csv](example-data/categorical-clustered.csv)
+  - Clustered bar/column charts.
 - [example-data/categorical-grouped.csv](example-data/categorical-grouped.csv)
   - Grouped bar/column charts.
+- [example-data/categorical-grouped-clustered.csv](example-data/categorical-grouped-clustered.csv)
+  - Grouped clustered bar/column charts.
 - [example-data/categorical-stacked-wide.csv](example-data/categorical-stacked-wide.csv)
   - Stacked bar/column charts, heatmap.
+- [example-data/categorical-stacked-grouped.csv](example-data/categorical-stacked-grouped.csv)
+  - Stacked grouped bar/column charts.
+- [example-data/categorical-dropdown.csv](example-data/categorical-dropdown.csv)
+  - Bar chart with dropdown.
 - [example-data/doughnut.csv](example-data/doughnut.csv)
   - Doughnut chart.
 - [example-data/scatter.csv](example-data/scatter.csv)
   - Scatter/bubble plot (static).
 - [example-data/bubble-animated.csv](example-data/bubble-animated.csv)
   - Scatter/bubble plot (animated).
+- [example-data/stacked-optional-line.csv](example-data/stacked-optional-line.csv)
+  - Stacked column chart with optional line.
 - [example-data/range-ci.csv](example-data/range-ci.csv)
   - Range CI area grouped chart.
 - [example-data/range-arrow-dot.csv](example-data/range-arrow-dot.csv)

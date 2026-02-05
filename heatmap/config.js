@@ -1,6 +1,6 @@
 config = {
 	// Added a dataNumeric.csv to the folder to demonstrate a numeric x axis
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/categorical-stacked-wide.csv",
 	"colourPalette": "YlGnBu",
 	// colour brewer palette or custom array of colours
 	"sourceText": "Office for National Statistics",

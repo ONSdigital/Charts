@@ -26,7 +26,7 @@ function drawGraphic() {
 
 		// Set dimensions
 		let margin = { ...config.margin[size] };
-		let chartGap = config.optional?.chartGap || 10;
+		let chartGap = config?.chartGap || 10;
 
 		// Calculate chart width here
 		let chartWidth = calculateChartWidth({
@@ -113,7 +113,8 @@ function drawGraphic() {
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
-
+console.log(data)
+console.log(stack(data))
 		// Add the areas
 		svg
 			.selectAll('.area')
@@ -228,12 +229,7 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL)
 	.then((data) => {
-		// console.log("Original data:", data);
-
-
 		graphicData = data;
-
-		// 	);
 		graphicData.forEach((d) => {
 			d.date = d3.utcParse(config.dateFormat)(d.date);
 		});

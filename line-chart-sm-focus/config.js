@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "../example-data/time-series-wide.csv",
 	"colourPalette": [
 		ONScolours.oceanBlue,
 		ONScolours.skyBlue,
