@@ -1,6 +1,6 @@
 config = {
 	"graphicDataURL": "../example-data/categorical-clustered.csv",
-	"legendLabels": ["Category 1 goes here", "Category 2 goes here"],
+	"legendLabels": ["Category 1 goes here", "Category 2 goes here", "Category 3"],
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",

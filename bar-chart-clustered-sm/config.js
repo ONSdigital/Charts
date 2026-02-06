@@ -1,11 +1,11 @@
 config = {
-	"graphicDataURL": "../example-data/categorical-clustered.csv",
+	"graphicDataURL": "../example-data/categorical-grouped-clustered.csv",
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": true,
-		"numberFormat": ".0%"
+		"numberFormat": ".0f"
 	},
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]
@@ -15,29 +15,24 @@ config = {
 		"md": 1,
 		"lg": 2
 	},
-	// "aspectRatio": {
-	// 	"sm": [1, 2],
-	// 	"md": [1, 2],
-	// 	"lg": [1, 2]
-	// },
 	"margin": {
 		"sm": {
 			"top": 30,
 			"right": 20,
 			"bottom": 50,
-			"left": 200
+			"left": 150
 		},
 		"md": {
 			"top": 30,
 			"right": 20,
 			"bottom": 50,
-			"left": 200
+			"left": 150
 		},
 		"lg": {
 			"top": 30,
 			"right": 20,
 			"bottom": 50,
-			"left": 200
+			"left": 150
 		}
 	},
 	"chartGap": 10,

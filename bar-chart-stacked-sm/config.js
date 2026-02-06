@@ -1,20 +1,19 @@
 config = {
-	"graphicDataURL": "../example-data/categorical-stacked-grouped.csv",
-	"colourPalette": ONSdivPlatte,
+	"graphicDataURL": "../example-data/categorical-grouped-wide.csv",
+	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"xAxisTickFormat": {
 		"sm": ".0f",
 		"md": ".0f",
-		"lg": ".0f"
+		"lg": ".0%"
 	},
-	"dateFormat": "%b-%y",
 	//the format your date data has in data.csv
-	"yDomain": [0,100],
+	"yDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]
 	"yAxisLabel": "yAxis Label",
 	"xAxisLabel": "xAxis Label",
-	"stackOffset": "stackOffsetNone",
+	"stackOffset": "stackOffsetExpand",
 	// options include
 	// stackOffsetNone means the baseline is set at zero
 	// stackOffsetExpand to do 100% charts

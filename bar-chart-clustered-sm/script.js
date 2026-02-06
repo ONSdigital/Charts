@@ -31,11 +31,10 @@ function drawGraphic() {
 		.text(d => d)
 
 	// Nest the graphicData by the 'series' column
-	let nestedData = d3.group(graphicData, (d) => d.series);
+	let nestedData = d3.group(graphicData, (d) => d.group);
 
 	//Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
 	let namesArray = [...new Set([...nestedData][0][1].map(d => d.name))];
-	// console.log(namesArray)
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
@@ -45,20 +44,13 @@ function drawGraphic() {
 		.attr('class', 'chart-container');
 
 	function drawChart(container, data, chartIndex) {
-
-		// console.log(chartIndex);
-
 		//Sort the data so that the bars in each chart are in the same order
 		data.sort((a, b) => namesArray.indexOf(a.name) - namesArray.indexOf(b.name))
-
-		// Log the data being used for each small multiple
-		// console.log('Data for this small multiple:', data);
 
 		// Calculate the height based on the data
 		let height = config.seriesHeight[size] * namesArray.length +
 			10 * (namesArray.length - 1) +
 			12;
-
 
 		let chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;

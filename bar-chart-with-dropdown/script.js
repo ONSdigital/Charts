@@ -14,7 +14,7 @@ function drawGraphic() {
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
 
-	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.group))];
 
 	const optns = select
 		.append('div')
@@ -76,7 +76,7 @@ function drawGraphic() {
 	function changeData(selectedOption) {
 
 		let filteredData = graphicData.filter(
-			(d) => d.option === selectedOption
+			(d) => d.group === selectedOption
 		)
 
 			// Sort the data 

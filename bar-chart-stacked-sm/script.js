@@ -13,9 +13,9 @@ function drawGraphic() {
     const chartsPerRow = config.chartEvery[size];
 
     // Get categories from the keys used in the stack generator
-    const categories = graphicData.columns.slice(2);
+    const categories = Object.keys(graphicData[0]).filter((k) => k !== 'name' && k !== 'date' && k !== 'series' && k !== 'group');
 
-    // Nest the graphicData by the 'series' column
+    // Nest the graphicData by the 'group' column
     let nestedData = d3.group(graphicData, (d) => d.group);
 
     // Create a container div for each small multiple
@@ -48,7 +48,7 @@ function drawGraphic() {
         const x = d3.scaleLinear().range([0, chartWidth]);
         const y = d3.scaleBand().paddingOuter(0.0).paddingInner(0.1).range([0, height]).round(true);
 
-        y.domain([...new Set(graphicData.map((d) => d.date))]);
+        y.domain([...new Set(graphicData.map((d) => d.name))]);
 
         const stack = d3.stack()
             .keys(categories)
@@ -82,7 +82,7 @@ function drawGraphic() {
             .data((d) => d)
             .join('rect')
             .attr('x', (d) => x(d[0]))
-            .attr('y', (d) => y(d.data.date))
+            .attr('y', (d) => y(d.data.name))
             .attr('width', (d) => Math.abs(x(d[1]) - x(d[0])))
             .attr('height', y.bandwidth());
 
@@ -171,21 +171,6 @@ function drawGraphic() {
                 wrapWidth: chartWidth
             });
         }
-
-        // Add annotation range if needed
-    //     if (chartIndex !== 0) {
-    //         addAnnotationRangeHorizontal(
-    //             svg,
-    //             chartWidth,
-    //             y("two years") + (4 - chartIndex) * y.step(),
-    //             y("five years") + y.bandwidth(),
-    //             chartIndex == 1 ? 'N/A' : "",
-    //             'above',
-    //             'inside',
-    //             x(5),
-    //             50
-    //         );
-    //     }
     }
 
     // Draw the charts for each small multiple

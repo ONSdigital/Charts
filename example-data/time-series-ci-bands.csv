@@ -1,4 +1,4 @@
-xvalue,yvalue,lowerCI,upperCI
+date,value,lowerBound,upperBound
 01/01/2022,0.90,0.78,1.02
 01/02/2022,0.95,0.83,1.07
 01/03/2022,0.70,0.56,0.84

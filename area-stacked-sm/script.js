@@ -11,11 +11,11 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Group the data by the 'series' column
-	const nestedData = d3.groups(graphicData, (d) => d.series);
+	const nestedData = d3.groups(graphicData, (d) => d.group);
 
 	// Get categories (stack keys)
 	const categories = Object.keys(graphicData[0])
-		.filter((k) => k !== 'date' && k !== 'series');
+		.filter((k) => k !== 'date' && k !== 'series' && k!=='group');
 
 	// Define stack generator ONCE
 	const stack = d3.stack()
@@ -75,9 +75,6 @@ function drawGraphic() {
 			}
 		}
 
-		// Get categories from the keys used in the stack generator
-		const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
-
 		const colorScale = d3
 			.scaleOrdinal()
 			.domain(categories)
@@ -116,8 +113,6 @@ function drawGraphic() {
 				.style('grid-template-columns', `repeat(${config.legendColumns}, 1fr)`)
 		}
 		//End of legend code
-
-console.log(chartIndex, margin.left, chartWidth);
 
 		let height =
 			chartWidth * (config.aspectRatio[size][1] / config.aspectRatio[size][0]) - margin.top - margin.bottom;

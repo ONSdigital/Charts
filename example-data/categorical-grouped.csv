@@ -1,9 +1,13 @@
 name,group,value
-England,Series A,58.2
-England,Series B,52.7
-Wales,Series A,54.1
-Wales,Series B,49.6
-Scotland,Series A,60.4
-Scotland,Series B,56.9
-Northern Ireland,Series A,51.8
-Northern Ireland,Series B,48.3
+England,Group A,58.2
+England,Group B,52.7
+England,Group C,46.4
+Wales,Group A,54.1
+Wales,Group B,49.6
+Wales,Group C,12.6
+Scotland,Group A,60.4
+Scotland,Group B,56.9
+Scotland,Group C,34.6
+Northern Ireland,Group A,51.8
+Northern Ireland,Group B,48.3
+Northern Ireland,Group C,46.5
