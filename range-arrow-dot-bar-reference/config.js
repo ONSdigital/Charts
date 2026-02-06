@@ -1,6 +1,6 @@
 config = {
-  graphicDataUrl: "../example-data/range-arrow-dot.csv",
-  chartType: "arrow",
+  graphicDataUrl: "../example-data/categorical-grouped-wide.csv",
+  chartType: "range",
   // can be range, dot, arrow or bar (for bar with reference point)
   colourPaletteDots: [ONScolours.oceanBlue, ONScolours.springGreen],
   colourPaletteDotsStroke: [ONScolours.white, ONScolours.white],
@@ -10,8 +10,8 @@ config = {
   colourPaletteBar: [ONScolours.skyBlue],
   sourceText: "Office for National Statistics",
   accessibleSummary: "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
-  numberFormat: ".0f",
-  xAxisTickFormat: ".0f",
+  numberFormat: ".2f",
+  xAxisTickFormat: ".2f",
   xAxisLabel: "x axis label",
   //show guidelines on range or arrow plot (default is false for both)
   // guidelines must always show on dot, and not show on bar
@@ -19,7 +19,7 @@ config = {
     range: false,
     arrow: true,
   },
-  xDomain: [-25, 104],
+  xDomain: [0,0.2],
   // either auto or a custom domain as an array e.g [0,100]
   showDataLabels: true,
   // can be true, false, or "desktopOnly", quotes only if desktopOnly

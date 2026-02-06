@@ -33,7 +33,7 @@ const config = {
     xAxisLabel: "Percentage of population",
     yAxisLabel: "Age",
     xAxisNumberFormat: ".1%",
-    yAxisTicksEvery: 10,
+    yAxisTicksEvery: 1,
     displayType: "percentages", // "counts" or "percentages"
     // Colors
     colourPalette: [ONScolours.femaleLight, ONScolours.male],
@@ -57,7 +57,7 @@ const config = {
     seriesHeight: {
         sm: 6,
         md: 6,
-        lg: 6
+        lg: 20
     },
     xAxisTicks: {
         sm: 2,

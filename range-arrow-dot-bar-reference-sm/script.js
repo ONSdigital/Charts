@@ -47,8 +47,8 @@ function drawGraphic() {
   // Determine chart type - default to 'range' if not specified
   const chartType = config.chartType || "range";
 
-  let minColumn = graphic_data.columns[1];
-  let maxColumn = graphic_data.columns[2];
+  let minColumn = graphic_data.columns[2];
+  let maxColumn = graphic_data.columns[3];
 
   // Get dynamic legend labels
   const { valueLabel, refLabel } = getLegendLabels(graphic_data);
@@ -133,7 +133,7 @@ function drawGraphic() {
   // Arrow chart uses dynamic legend created per chart
 
   // Nest the graphic_data by the 'series' column
-  let nested_data = d3.group(graphic_data, (d) => d.series);
+  let nested_data = d3.group(graphic_data, (d) => d.group);
 
   //Generate a list of categories based on the order in the first chart that we can use to order the subsequent charts
   let namesArray = [...nested_data][0][1].map((d) => d.name);
@@ -157,7 +157,7 @@ function drawGraphic() {
 
     // Add extra margin for arrow chart legend
     let extraMarginTop = 0;
-    if (config.chartType === "arrow" && chartIndex === 0) {
+    if (config.chartType === "arrow") {
       extraMarginTop = 12;
     }
 
@@ -165,19 +165,21 @@ function drawGraphic() {
     let chartPosition = chartIndex % chartsPerRow;
 
     let margin = { ...config.margin[size] };
-
-    // If the chart is not in the first position in the row, reduce the left margin
-    if (config.dropYAxis) {
-      if (chartPosition !== 0) {
-        margin.left = 10;
-      }
-    }
+    let chartGap = config.chartGap || 10;
 
     let chart_width = calculateChartWidth({
       screenWidth: parseInt(graphic.style("width")),
       chartEvery: config.chartEvery[size],
       chartMargin: config.margin[size],
+      chartGap: chartGap
     });
+
+    // If the chart is not in the first position in the row, reduce the left margin
+    if (config.dropYAxis) {
+      if (chartPosition !== 0) {
+        margin.left = chartGap;
+      }
+    }
 
     //set up scales
     const x = d3.scaleLinear().range([0, chart_width]);
@@ -395,8 +397,8 @@ function drawGraphic() {
           return +d[maxColumn] === +d[minColumn]
             ? ONScolours.grey50
             : +d[maxColumn] < +d[minColumn]
-            ? config.colourPaletteArrows[0]
-            : config.colourPaletteArrows[1];
+              ? config.colourPaletteArrows[0]
+              : config.colourPaletteArrows[1];
         })
         .attr("stroke-width", (d) => {
           return +d[maxColumn] === +d[minColumn] ? "4px" : "3px";

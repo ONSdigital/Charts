@@ -1,5 +1,5 @@
 config = {
-  graphicDataUrl: "../example-data/range-arrow-dot.csv",
+  graphicDataUrl: "../example-data/categorical-grouped-wide.csv",
   chartType: "arrow",
   // can be range, dot, arrow or bar (for bar with reference point)
   colourPaletteDots: [ONScolours.oceanBlue, ONScolours.springGreen],
@@ -13,7 +13,7 @@ config = {
     show: true,
     numberFormat: ".0%",
   },
-  xDomain: [-.39,1.15],
+  xDomain: [0.0,0.2],
   // either "auto" or an array for the x domain e.g. [0,100]
   xAxisLabel: "x axis label",
   //show guidelines on range or arrow plot (default is false for both)
@@ -27,6 +27,7 @@ config = {
     md: 2,
     lg: 2,
   },
+  chartGap:25,
   margin: {
     sm: {
       top: 30,
@@ -42,9 +43,9 @@ config = {
     },
     lg: {
       top: 30,
-      right: 40,
+      right: 50,
       bottom: 50,
-      left: 150,
+      left: 70,
     },
   },
   seriesHeight: {
