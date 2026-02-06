@@ -13,6 +13,38 @@ function drawGraphic() {
 	// Group the data by the 'series' column
 	const nestedData = d3.groups(graphicData, (d) => d.series);
 
+	// Get categories (stack keys)
+	const categories = Object.keys(graphicData[0])
+		.filter((k) => k !== 'date' && k !== 'series');
+
+	// Define stack generator ONCE
+	const stack = d3.stack()
+		.keys(categories)
+		.order(d3[config.stackOrder])
+		.offset(d3[config.stackOffset]);
+
+	// For each small multiple, stack its data and find min/max
+	const stackedExtents = nestedData.map(([key, values]) => {
+		const stacked = stack(values);
+
+		const min = d3.min(stacked, layer =>
+			d3.min(layer, d => d[0])
+		);
+
+		const max = d3.max(stacked, layer =>
+			d3.max(layer, d => d[1])
+		);
+
+		return [min, max];
+	});
+
+	// Reduce to a single global extent
+	const globalYExtent = [
+		d3.min(stackedExtents, d => d[0]),
+		d3.max(stackedExtents, d => d[1])
+	];
+
+
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -85,6 +117,7 @@ function drawGraphic() {
 		}
 		//End of legend code
 
+console.log(chartIndex, margin.left, chartWidth);
 
 		let height =
 			chartWidth * (config.aspectRatio[size][1] / config.aspectRatio[size][0]) - margin.top - margin.bottom;
@@ -95,16 +128,13 @@ function drawGraphic() {
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
 
-		const y = d3
+			const y = d3
 			.scaleLinear()
-			.domain([0, d3.max(graphicData, (d) => d3.sum(categories, (c) => d[c]))])
-			.range([height, 0]);
-
-		// Define the stack generator
-		const stack = d3.stack()
-			.keys(categories)
-			.order(d3[config.stackOrder]) // Use the stack order defined in the config
-			.offset(d3[config.stackOffset]); // Convert to percentage values
+			.domain(
+				config.stackOffset === "stackOffsetExpand"
+					? [0, 1]
+					: globalYExtent
+			).range([height, 0]);
 
 		// Create an SVG for this chart
 		const svg = addSvg({
@@ -113,8 +143,7 @@ function drawGraphic() {
 			height: height + margin.top + margin.bottom,
 			margin: margin
 		})
-console.log(data)
-console.log(stack(data))
+
 		// Add the areas
 		svg
 			.selectAll('.area')

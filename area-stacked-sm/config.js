@@ -8,7 +8,7 @@ config = {
 		"md": "%Y",
 		"lg": "%Y"
 	},
-	"yAxisFormat": ".0f",
+	"yAxisFormat": ".1f",
 	"dateFormat": "%d/%m/%Y",
 	"xAxisLabel": "x axis label",
 	"yAxisLabel": "y axis label",
