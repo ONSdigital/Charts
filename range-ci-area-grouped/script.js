@@ -37,7 +37,7 @@ function drawGraphic() {
 	//set up scales
 	const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
-	const series = [...new Set(graphicData.map(d => d.series))]
+	const series = [...new Set(graphicData.map(d => d.category))]
 	const colour = d3
 		.scaleOrdinal()
 		.range(config.colourPalette)
@@ -66,7 +66,7 @@ function drawGraphic() {
 	divs = graphic.selectAll('div.categoryLabels').data(groups).join('div');
 
 	if (groups.length > 1) { divs.append('p').attr('class', 'groupLabels').html((d) => d[0]) }
-
+console.log(groups)
 	charts = addSvg({
 		svgParent: divs,
 		chartWidth: chartWidth,
@@ -125,19 +125,19 @@ function drawGraphic() {
 		.selectAll("rect")
 		.data((d) => d[1])
 		.join("rect")
-		.attr("x", d => x(Number(d.min)))
+		.attr("x", d => x(Number(d.lowerBound)))
 		.attr("y", (d, i) => {
 			const baseY = groups.filter((e) => e[0] == d.group)[0][3](d.name) - rectHeight / 2;
 			// if clustered is true, move series 0 up 10, series 1 down 10 only 
 			if (config.clustered === true) {
-				if (d.series === series[0]) return baseY - 10;
-				if (d.series === series[1]) return baseY + 10;
+				if (d.category === series[0]) return baseY - 10;
+				if (d.category === series[1]) return baseY + 10;
 			}
 			return baseY;
 		})
-		.attr("width", d => Math.abs(x(Number(d.max)) - x(Number(d.min))))
+		.attr("width", d => Math.abs(x(Number(d.upperBound)) - x(Number(d.lowerBound))))
 		.attr("height", rectHeight)
-		.attr("fill", d => colour(d.series))
+		.attr("fill", d => colour(d.category))
 		.attr("opacity", 0.65)
 
 
@@ -150,9 +150,9 @@ function drawGraphic() {
 			const baseY = groups.filter((f) => f[0] == d.group)[0][3](d.name) - 5;
 			// if clustered is true, move series 0 up 10, series 1 down 10 only 
 			if (config.clustered === true) {
-				const series = [...new Set(graphicData.map(d => d.series))];
-				if (d.series === series[0]) return baseY - 10;
-				if (d.series === series[1]) return baseY + 10;
+				const series = [...new Set(graphicData.map(d => d.category))];
+				if (d.category === series[0]) return baseY - 10;
+				if (d.category === series[1]) return baseY + 10;
 			}
 			return baseY;
 		})
@@ -162,15 +162,15 @@ function drawGraphic() {
 			const baseY = groups.filter((f) => f[0] == d.group)[0][3](d.name);
 			let y = baseY;
 			if (config.clustered === true) {
-				const series = [...new Set(graphicData.map(d => d.series))];
-				if (d.series === series[0]) y = baseY - 10;
-				if (d.series === series[1]) y = baseY + 10;
+				const series = [...new Set(graphicData.map(d => d.category))];
+				if (d.category === series[0]) y = baseY - 10;
+				if (d.category === series[1]) y = baseY + 10;
 			}
 			return `rotate(45 ${x(d.value)} ${y})`;
 		})
 		.attr("fill", "white")
 		.attr("stroke-width", "2px")
-		.attr('stroke', d => colour(d.series))
+		.attr('stroke', d => colour(d.category))
 		.attr('rx', 1)
 		.attr('ry', 1);
 
