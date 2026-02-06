@@ -1,8 +1,8 @@
 config = {
-  graphicDataUrl: "../example-data/stacked-optional-line.csv",
+  graphicDataUrl: "../example-data/time-series-wide.csv",
   showMarkers: true,
   showLine: true,
-  lineSeries: "Total",
+  lineSeries: "Series D long label",
   //line will only be shown if the markers are also shown
   colourPalette: ONSpalette,
   lineColour: ONScolours.black,
@@ -13,9 +13,9 @@ config = {
     md: "%b %Y",
     lg: "%b %Y",
   },
-  yAxisTickFormat: ".0%",
+  yAxisTickFormat: ".0f",
   xAxisNumberFormat: ".0f",
-  dateFormat: "%b-%y",
+  dateFormat: "%d/%m/%Y",
   //the format your date data has in data.csv
   yDomain: "auto",
   // either "auto" or an array for the x domain e.g. [0,100]

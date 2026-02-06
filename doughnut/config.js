@@ -1,13 +1,13 @@
 config = {
-	"graphicDataURL": "../example-data/doughnut.csv",
+	"graphicDataURL": "../example-data/categorical-single.csv",
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": true,
-		"numberFormat": ".1%"
+		"numberFormat": ".0f"
 	},
-	"centreLabel": "Sikh identity",
+	"centreLabel": "Slices",
 	"chartHeight": {
 		"sm": 400,
 		"md": 400,

@@ -1,5 +1,5 @@
 config = {
-  graphicDataUrl: "../example-data/stacked-optional-line.csv",
+  graphicDataUrl: "../example-data/time-series-long.csv",
   showMarkers: true,
   showLine: true,
   colourPalette: ONSpalette,
@@ -13,11 +13,11 @@ config = {
   },
   xAxisNumberFormat: ".0f",
   yAxisTickFormat: ".0f",
-  dateFormat: "%b-%y",
+  dateFormat: "%d/%m/%Y",
   //the format your date data has in data.csv
   yDomain: "auto",
   // either "auto" or an array for the x domain e.g. [0,100]
-  lineSeries: "Total",
+  lineSeries: "Category C",
   yAxisLabel: "y axis label",
   stackOffset: "stackOffsetNone",
   // options include
@@ -79,8 +79,8 @@ config = {
   dropYAxis: true,
   labelSpans: {
     enabled: true,
-    timeUnit:"month",//"day","month","year"
-    secondaryTimeUnit: "auto",//"auto" or define "day","month","year". false to disable
+    timeUnit:"year",//"day","month","year"
+    secondaryTimeUnit: "none",//"auto" or define "day","month","year". false to disable
   },
   elements: { select: 0, nav: 0, legend: 0, titles: 0 },
   chartBuild: {},

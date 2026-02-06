@@ -84,7 +84,7 @@ config = {
 	"addFinalDate": true,
 	"labelSpans":{
 		"enabled":true,
-		timeUnit:"year",//set to "day","month",'quarter' or 'year'
+		timeUnit:"month",//set to "day","month",'quarter' or 'year'
 		secondaryTimeUnit:"auto",//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 	},
 	"yAxisTicks": {

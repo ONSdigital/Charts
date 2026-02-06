@@ -175,10 +175,10 @@ function drawGraphic() {
 
   function buildDropdownData(graphicData, config) {
     if (config.multiHighlight) {
-      const groups = d3.group(graphicData, d => d.areanm);
+      const groups = d3.group(graphicData, d => d.name);
 
-      const dropdownData = Array.from(groups, ([areanm, points]) => ({
-        label: areanm,
+      const dropdownData = Array.from(groups, ([name, points]) => ({
+        label: name,
         ids: points.map(p => p.originalId),
         group: points[0].group,
       })).sort((a, b) => a.label.localeCompare(b.label));
@@ -188,10 +188,10 @@ function drawGraphic() {
 
     return graphicData
       .slice()
-      .sort((a, b) => a.areanm.localeCompare(b.areanm))
+      .sort((a, b) => a.name.localeCompare(b.name))
       .map((point) => ({
         id: point.originalId,
-        label: point.areanm,
+        label: point.name,
         group: point.group,
       }));
   }
@@ -335,20 +335,20 @@ function drawGraphic() {
     .attr("r", radius / 2)
     .attr("class", (d) => `circle-${d.cleanId}`)
     .append("title")
-    .text((d) => d.areanm + " " + d.value);
+    .text((d) => d.name + " " + d.value);
 
   const positionedOverlayData = positionedData
     .map((d, index) => ({
       xvalue: d.x,
       yvalue: d.y,
-      name: d.areanm,
+      name: d.name,
       group: d.group,
       value: d.value,
       formattedValue: d3.format(".1f")(d.value),
       originalId: graphicData.findIndex(
         (orig) =>
           orig ===
-          graphicData.find((g) => g.areanm === d.areanm && g.group === d.group)
+          graphicData.find((g) => g.name === d.name && g.group === d.group)
       ),
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -449,7 +449,7 @@ d3.csv(config.graphicDataURL).then((data) => {
   data.forEach((d, index) => {
     d.value = +d.value; // Convert to number if it's a string
     d.originalId = index; // Add stable ID
-    d.cleanId = removeSpaces(d.areanm)
+    d.cleanId = removeSpaces(d.name)
   });
 
 

@@ -19,7 +19,7 @@ function drawGraphic() {
   size = initialise(size);
 
   // Nest the graphic_data by the 'series' column
-  let nested_data = d3.group(graphic_data, (d) => d.series);
+  let nested_data = d3.group(graphic_data, (d) => d.group);
 
   // Create a container div for each small multiple
   let chartContainers = graphic
@@ -176,7 +176,7 @@ function drawGraphic() {
     //gets array of arrays for individual lines
     let lines = [];
     for (let column in graphic_data[0]) {
-      if (column == "date" || column == "series") continue;
+      if (column == "date" || column == "group") continue;
       lines[column] = data.map(function (d) {
         return {
           name: d.date,

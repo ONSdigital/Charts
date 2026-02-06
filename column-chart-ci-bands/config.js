@@ -1,5 +1,5 @@
 config = {
-    "graphicDataURL": "../example-data/column-ci-bands.csv",
+    "graphicDataURL": "../example-data/time-series-ci-bands.csv",
     "colourPalette": ONScolours.oceanBlue,
     "lineColour": ONScolours.nightBlue,
     "sourceText": "Office for National Statistics",
@@ -51,8 +51,8 @@ config = {
     },
     "labelSpans": {
         enabled: true,
-        timeUnit:"day",//set to "day","month",'quarter' or 'year'
-        secondaryTimeUnit:"auto",//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
+        timeUnit:"month",//set to "day","month",'quarter' or 'year'
+        secondaryTimeUnit:"false",//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
     },
     "yAxisTicks": {
         "sm": 4,

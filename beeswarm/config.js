@@ -1,5 +1,5 @@
 config = {
-  "graphicDataURL": "../example-data/category-grouped.csv",
+  "graphicDataURL": "../example-data/categorical-grouped.csv",
   "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
   "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
@@ -21,7 +21,7 @@ config = {
     "show":false,
     "label":"Country average"
   },
-  "multiHighlight":true,
+  "multiHighlight":false,
   "averages": {
     "show": false,  // Whether to show average lines
     "showLabels": false,  // Whether to show labels for the average lines
@@ -58,15 +58,15 @@ config = {
     },
     "lg": {
       "top": 0,
-      "right": 0,
+      "right": 10,
       "bottom": 25,
-      "left": 0
+      "left": 5
     }
   },
   "seriesHeight": {
     "sm": 100,
     "md": 100,
-    "lg": 160
+    "lg": 50
   },
   "xAxisTicks": {
     "sm": 3,

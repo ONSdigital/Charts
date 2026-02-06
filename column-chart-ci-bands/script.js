@@ -27,15 +27,15 @@ function drawGraphic() {
         .range([0, chartWidth])
         .round(false);
 
-    //use the data to find unique entries in the xvalue column
-    x.domain([...new Set(graphicData.map((d) => d.xvalue))]);
+    //use the data to find unique entries in the date column
+    x.domain([...new Set(graphicData.map((d) => d.date))]);
 
     // determine what type of variable xvalue is
     let xDataType;
 
-    if (Object.prototype.toString.call(graphicData[0].xvalue) === '[object Date]') {
+    if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
         xDataType = 'date';
-    } else if (!isNaN(Number(graphicData[0].xvalue))) {
+    } else if (!isNaN(Number(graphicData[0].date))) {
         xDataType = 'numeric';
     } else {
         xDataType = 'categorical';
@@ -55,11 +55,11 @@ function drawGraphic() {
 
     //Labelling the first and/or last bar if needed
     if (config.addFirstDate == true) {
-        tickValues.push(graphicData[0].xvalue)
+        tickValues.push(graphicData[0].date)
     }
 
     if (config.addFinalDate == true) {
-        tickValues.push(graphicData[graphicData.length - 1].xvalue)
+        tickValues.push(graphicData[graphicData.length - 1].date)
     }
 
     //set up yAxis generator
@@ -98,16 +98,16 @@ function drawGraphic() {
         margin: margin
     })
 
-    // set ydomain based on max upperCI and min lowerCI
+    // set ydomain based on max upperBound and min lowerBound
     if (config.yDomain == 'auto') {
-        if (d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))) >= 0) {
+        if (d3.min(graphicData.map(({ lowerBound }) => Number(lowerBound))) >= 0) {
             y.domain([
                 0,
-                d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))]); //modified so it converts string to number
+                d3.max(graphicData.map(({ upperBound }) => Number(upperBound)))]); //modified so it converts string to number
         } else {
             y.domain([
-                d3.min(graphicData.map(({ lowerCI }) => Number(lowerCI))),
-                d3.max(graphicData.map(({ upperCI }) => Number(upperCI)))
+                d3.min(graphicData.map(({ lowerBound }) => Number(lowerBound))),
+                d3.max(graphicData.map(({ upperBound }) => Number(upperBound)))
             ])
         }
     } else {
@@ -137,9 +137,9 @@ function drawGraphic() {
         .selectAll('rect')
         .data(graphicData)
         .join('rect')
-        .attr('y', (d) => y(d.upperCI))
-        .attr('x', (d) => x(d.xvalue))
-        .attr('height', (d) => Math.abs(y(d.upperCI) - y(d.lowerCI)))
+        .attr('y', (d) => y(d.upperBound))
+        .attr('x', (d) => x(d.date))
+        .attr('height', (d) => Math.abs(y(d.upperBound) - y(d.lowerBound)))
         .attr('width', x.bandwidth())
         .attr('fill', config.colourPalette)
         .attr("opacity", 0.65);
@@ -149,10 +149,10 @@ function drawGraphic() {
         .data(graphicData)
         .attr("class", "estLine")
         .join('line')
-        .attr('x1', (d) => x(d.xvalue))
-        .attr('x2', (d) => x(d.xvalue) + x.bandwidth())
-        .attr('y1', (d) => y((d.yvalue)))
-        .attr('y2', (d) => y((d.yvalue)))
+        .attr('x1', (d) => x(d.date))
+        .attr('x2', (d) => x(d.date) + x.bandwidth())
+        .attr('y1', (d) => y((d.value)))
+        .attr('y2', (d) => y((d.value)))
         .attr('stroke-width', 3)
         .attr('stroke-linecap', 'butt')
         .attr('stroke', config.lineColour)
@@ -236,8 +236,8 @@ d3.csv(config.graphicDataURL)
         data.forEach((d, i) => {
 
             //If the date column is has date data store it as dates
-            if (parseTime(data[i].xvalue) !== null) {
-                d.xvalue = parseTime(d.xvalue)
+            if (parseTime(data[i].date) !== null) {
+                d.date = parseTime(d.date)
             }
         });
 
