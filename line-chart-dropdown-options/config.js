@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "../example-data/time-series-wide.csv",
+	"graphicDataURL": "../example-data/time-series-long.csv",
 	"colourPalette": ONSlinePalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
@@ -24,10 +24,10 @@ config = {
 	},
 	"xAxisNumberFormat": ",.0f",
 	"yAxisNumberFormat": ",.0f",
-	"dateFormat": "%m/%d/%Y",
+	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
 	"xAxisLabel": "",
-	"defaultOption": "option1",
+	"defaultOption": "Group 1",
 	"zeroLine": "0",
 	"aspectRatio": {
 		"sm": [1, 1],

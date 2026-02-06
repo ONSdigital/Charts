@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "../example-data/time-series-ci.csv",
+	"graphicDataURL": "../example-data/time-series-ci-long.csv",
 	"colourPalette": ONSlinePalette,
 	"sourceText": "Office for National Statistics ",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
@@ -13,9 +13,7 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"xDomain": [-13, 25],
-	// either "auto" or an array for the x domain e.g. [0,2000] - DOES NOT WORK
-	"yDomainMax": "auto",  
+	"yDomainMax": "data",  
 	// Y-axis maximum options:
 	// "auto" - Smart mode: uses data max with 10% padding if positive, or 0 if all data is negative.
 	//          Automatically trims excessive whitespace below zero (>50% of range) while keeping 30% cushion above highest data point.
@@ -32,8 +30,8 @@ config = {
 		"md": "%Y",
 		"lg": "%Y"
 	},
-	"yAxisFormat": ",.0%",
-	"dateFormat": "%Y",
+	"yAxisFormat": ",.1f",
+	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "Pay Gap",
 	"ciLegend": true,
 	"legendIntervalText": "Likely range (95% confidence interval)",
@@ -92,7 +90,7 @@ config = {
 	},
 	"labelSpans": {
 		"enabled": true,
-		timeUnit: 'year',//set to "day","month",'quarter' or 'year'
+		timeUnit: 'month',//set to "day","month",'quarter' or 'year'
 		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 	},
 	"dropYAxis": true,

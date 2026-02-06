@@ -6,7 +6,7 @@ config = {
 		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
-	"referenceCategory": "England",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off
+	"referenceCategory": "Series D long label",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off
 	"legendLabel": "selected group",
 	"allLabel": "all other groups",
 	"sourceText": "Office for National Statistics",

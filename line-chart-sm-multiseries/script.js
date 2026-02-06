@@ -12,10 +12,10 @@ function drawGraphic() {
 	size = initialise(size);
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'group');
 
-	// Nest the graphicData by the 'series' column
-	let nestedData = d3.group(graphicData, (d) => d.series);
+	// Nest the graphicData by the 'group' column
+	let nestedData = d3.group(graphicData, (d) => d.group);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
@@ -273,7 +273,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
-					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+					.map(([key, value]) => key !== "group" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		} else {
@@ -281,7 +281,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 				date: (+d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
-					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+					.map(([key, value]) => key !== "group" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		}

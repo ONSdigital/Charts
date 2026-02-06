@@ -12,8 +12,7 @@ function drawGraphic() {
 
 	// Get categories from the keys used in the stack generator
 	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
-	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1).filter((k) => k !== 'series')
-	const fulldataKeys = Object.keys(graphicData[0]).slice(1).filter((k) => k !== 'series')
+	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('-lowerBound') && !d.endsWith('-upperBound')).slice(1).filter((k) => k !== 'group')
 
 	let xDataType;
 
@@ -22,8 +21,8 @@ function drawGraphic() {
 	} else {
 		xDataType = 'numeric';
 	}
-	// Nest the graphicData by the 'series' column
-	let nestedData = d3.group(graphicData, (d) => d.series);
+	// Nest the graphicData by the 'group' column
+	let nestedData = d3.group(graphicData, (d) => d.group);
 
 	// Create a container div for each small multiple
 	let chartContainers = graphic
@@ -113,9 +112,9 @@ function drawGraphic() {
 
 			const areaGenerator = d3.area()
 				.x(d => x(d.date))
-				.y0(d => y(d[`${category}_lowerCI`]))
-				.y1(d => y(d[`${category}_upperCI`]))
-				.defined(d => d[`${category}_lowerCI`] !== null && d[`${category}_upperCI`] !== null) // Only plot areas where we have values
+				.y0(d => y(d[`${category}-lowerBound`]))
+				.y1(d => y(d[`${category}-upperBound`]))
+				.defined(d => d[`${category}-lowerBound`] !== null && d[`${category}-upperBound`] !== null) // Only plot areas where we have values
 
 			svg.append('path')
 				.attr('class', 'shaded')
@@ -152,9 +151,9 @@ function drawGraphic() {
 
 		if (config.labelSpans.enabled === true) {
 			xAxisGenerator = customTemporalAxis(x)
+				.timeUnit(config.labelSpans.timeUnit)
 				.tickSize(17)
 				.tickPadding(6)
-				.tickFormat(d3.timeFormat("%y"));
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
@@ -321,7 +320,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 			date: d3.utcParse(config.dateFormat)(d.date),
 			...Object.entries(d)
 				.filter(([key]) => key !== 'date')
-				.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
+				.map(([key, value]) => key !== "group" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes
 				.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 		};
 	});

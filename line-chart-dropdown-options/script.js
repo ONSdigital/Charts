@@ -25,7 +25,7 @@ function drawGraphic() {
 		margin: margin
 	});
 
-	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.group))];
 
 	const optns = select
 		.append('div')
@@ -104,15 +104,16 @@ function drawGraphic() {
 		d3.select('#legend').selectAll('div.legend--item').remove();
 
 	// Filter data for the selected option
-	let filteredData = graphicData.filter((d) => d.series === selectedOption);
+	let filteredData = graphicData.filter((d) => d.group === selectedOption);
 	if (filteredData.length === 0) return;
 
-	// Get categories (series) for this option
-	const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'series');
+	// Get categories (group) for this option
+	const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'group');
 
 	// Set y domain using calculateAutoBounds
 	// Use filtered data if freeYAxisScales is true, otherwise use all data
 	if (config.yDomainMin === "auto" || config.yDomainMax === "auto" || config.yDomainMin === "data" || config.yDomainMax === "data") {
+		
 		const dataForBounds = config.freeYAxisScales ? filteredData : graphicData;
 		const { minY, maxY } = calculateAutoBounds(dataForBounds, config);
 
@@ -296,7 +297,7 @@ function drawGraphic() {
 	
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'group');
 
 	let xDataType;
 
@@ -430,18 +431,18 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.utcParse(config.dateFormat)(d.date),
-				series: d.series,
+				group: d.group,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'series') // Exclude 'date' and 'option' keys from the data
+					.filter(([key]) => key !== 'date' && key !== 'group') // Exclude 'date' and 'option' keys from the data
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		} else {
 			return {
 				date: (+d.date),
-				series: d.series,
+				group: d.group,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'series')
+					.filter(([key]) => key !== 'date' && key !== 'group')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}

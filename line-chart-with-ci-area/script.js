@@ -1,4 +1,4 @@
-//Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
+//Note: see data.csv for the required data format - the template is quite paticular on the columns ending with -lowerBound and -upperBound
 import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
@@ -19,7 +19,7 @@ function drawGraphic() {
 
 	// Get categories from the keys used in the stack generator
 	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
-	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('_lowerCI') && !d.endsWith('_upperCI')).slice(1)
+	const categories = Object.keys(graphicData[0]).filter(d => !d.endsWith('-lowerBound') && !d.endsWith('-upperBound')).slice(1)
 
 	const fulldataKeys = Object.keys(graphicData[0]).slice(1)
 
@@ -151,9 +151,9 @@ function drawGraphic() {
 
 		const areaGenerator = d3.area()
 			.x(d => x(d.date))
-			.y0(d => y(d[`${category}_lowerCI`]))
-			.y1(d => y(d[`${category}_upperCI`]))
-			.defined(d => d[`${category}_lowerCI`] !== null && d[`${category}_upperCI`] !== null) // Only plot areas where we have values
+			.y0(d => y(d[`${category}-lowerBound`]))
+			.y1(d => y(d[`${category}-upperBound`]))
+			.defined(d => d[`${category}-lowerBound`] !== null && d[`${category}-upperBound`] !== null) // Only plot areas where we have values
 
 		svg.append('path')
 			.attr('class', 'shaded')
