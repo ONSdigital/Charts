@@ -1,9 +1,28 @@
-name,group,series,value,min,max
-England,Group 1,Series 1,55.2,44.8,65.5
-Wales,Group 1,Series 1,52.6,40.3,64.9
-Scotland,Group 2,Series 1,48.1,35.0,61.2
-Northern Ireland,Group 2,Series 1,50.8,38.4,63.1
-England,Group 1,Series 2,105.2,95.4,115.0
-Wales,Group 1,Series 2,102.6,92.2,113.0
-Scotland,Group 2,Series 2,98.1,88.7,107.5
-Northern Ireland,Group 2,Series 2,100.8,90.9,110.6
+name,group,category,value,lowerBound,upperBound
+England,Group name 1,Category 1,55.15726549,44.79967469,65.51485629
+Wales,Group name 1,Category 1,53,20,86
+North East,Group name 2,Category 1,38.29309225,21.04544788,55.54073662
+North West,Group name 2,Category 1,45.1373065,39.13579896,51.13881403
+Yorkshire and The Humber,Group name 2,Category 1,60,40,80
+East Midlands,Group name 2,Category 1,40.56442504,29.36591976,51.76293031
+West Midlands,Group name 2,Category 1,60.02733084,39.86949419,80.18516748
+East,Group name 2,Category 1,50.79985161,17.64884078,83.95086243
+London,Group name 2,Category 1,50.89339154,43.91069538,57.87608769
+South West,Group name 2,Category 1,29.68960375,9.379207492,50
+South East,Group name 2,Category 1,35.07397305,8.973142806,61.1748033
+Another name,Group name 3,Category 1,45.19066503,24.79415817,65.58717189
+And another,Group name 3,Category 1,43,33,53
+England,Group name 1,Category 2,110.1572655,99.79967469,120.5148563
+Wales,Group name 1,Category 2,120,90,150
+North East,Group name 2,Category 2,93.29309224,76.04544788,110.5407366
+North West,Group name 2,Category 2,100.1373065,94.13579896,106.138814
+Yorkshire and The Humber,Group name 2,Category 2,118.1506859,85.57469086,150.726681
+East Midlands,Group name 2,Category 2,95.56442503,84.36591976,106.7629303
+West Midlands,Group name 2,Category 2,115.0273308,94.86949419,135.1851675
+East,Group name 2,Category 2,124.4754312,110,138.9508624
+London,Group name 2,Category 2,105.8933915,98.91069538,112.8760877
+South West,Group name 2,Category 2,92.14356115,64.37920749,119.9079148
+South East,Group name 2,Category 2,90.07397306,63.97314281,116.1748033
+Another name,Group name 3,Category 2,100.190665,79.79415817,120.5871719
+And another,Group name 3,Category 2,97,93,101
+All,Group name 1,All people,53,20,86

@@ -3,68 +3,96 @@
 These files provide compact, synthetic data that match the column layouts used across the chart templates in this repo. Each file is small but valid for the charts listed below.
 
 ## Column headers
-Column headers have been standardised
-`date` for time-series or `name` for categories
-`category` for sub-series within each name/date
-`group` for higher level grouping/small-multiples
-`value` for the measure
+Column headers have been standardised:
 
-`lowerBound` and `upperBound` for confidence intervals
+- `date` for time-series or `name` for categories
+- `group` for higher level grouping/small-multiples
+- `category` for sub-series within each name/date
+- `value` for the measure
+- `lowerBound` and `upperBound` for confidence intervals
 
-## File overview
+## Categorical data
 
-### Categorical data
-- [example-data/categorical-clustered.csv](example-data/categorical-clustered.csv)
-  - Clustered bar/column charts.
-- [example-data/categorical-single.csv](example-data/categorical-single.csv)
-  - Bar chart, column chart, simple bar/column variants.
-- [example-data/categorical-grouped.csv](example-data/categorical-grouped.csv)
-  - Grouped bar/column charts.
-- [example-data/categorical-grouped-clustered.csv](example-data/categorical-grouped-clustered.csv)
-  - Grouped clustered bar/column charts.
-- [example-data/categorical-stacked-wide.csv](example-data/categorical-stacked-wide.csv)
-  - Stacked bar/column charts, heatmap.
-- [example-data/categorical-stacked-grouped.csv](example-data/categorical-stacked-grouped.csv)
-  - Stacked grouped bar/column charts.
-- [example-data/categorical-dropdown.csv](example-data/categorical-dropdown.csv)
-  - Bar chart with dropdown.
+### categorical-grouped-clustered.csv
 
-### Time series data
+- [Bar chart clustered sm](https://onsdigital.github.io/Charts/bar-chart-clustered-sm/)
+- [Bar chart grouped clustered](https://onsdigital.github.io/Charts/bar-chart-grouped-clustered/)
 
-- [example-data/time-series-wide.csv](example-data/time-series-wide.csv)
-  - Line charts, area charts, stacked area, column/line charts with multiple series.
-- [example-data/time-series-single.csv](example-data/time-series-single.csv)
-  - Column chart (single series).
-- [example-data/time-series-long.csv](example-data/time-series-long.csv)
-  - Line chart small-multiples (multi-series long format).
-- [example-data/time-series-ci.csv](example-data/time-series-ci.csv)
-  - Line chart with confidence interval area.
-- [example-data/column-ci-bands.csv](example-data/column-ci-bands.csv)
-  - Column chart with confidence interval bands.
+### categorical-grouped-long-ci.csv
+
+- [Range CI area grouped](https://onsdigital.github.io/Charts/range-ci-area-grouped/)
+
+### categorical-grouped-wide.csv
+
+- [Bar chart stacked grouped](https://onsdigital.github.io/Charts/bar-chart-stacked-grouped/)
+- [Bar chart stacked sm](https://onsdigital.github.io/Charts/bar-chart-stacked-sm/)
+- [Range arrow dot bar reference](https://onsdigital.github.io/Charts/range-arrow-dot-bar-reference/)
+- [Range arrow dot bar reference sm](https://onsdigital.github.io/Charts/range-arrow-dot-bar-reference-sm/)
+
+### categorical-grouped.csv
+
+- [Bar chart clustered](https://onsdigital.github.io/Charts/bar-chart-clustered/)
+- [Bar chart grouped](https://onsdigital.github.io/Charts/bar-chart-grouped/)
+- [Bar chart sm](https://onsdigital.github.io/Charts/bar-chart-sm/)
+- [Bar chart with dropdown](https://onsdigital.github.io/Charts/bar-chart-with-dropdown/)
+- [Beeswarm](https://onsdigital.github.io/Charts/beeswarm/)
+
+### categorical-single.csv
+
+- [Bar chart](https://onsdigital.github.io/Charts/bar-chart/)
+- [Doughnut](https://onsdigital.github.io/Charts/doughnut/)
+
+### categorical-wide.csv
+
+- [Bar chart stacked](https://onsdigital.github.io/Charts/bar-chart-stacked/)
+- [Heatmap](https://onsdigital.github.io/Charts/heatmap/)
+
+## time-series data
+
+### time-series-ci-bands.csv
+
+- [Column chart CI bands](https://onsdigital.github.io/Charts/column-chart-ci-bands/)
+
+### time-series-ci-long.csv
+
+- [Line chart with CI area sm](https://onsdigital.github.io/Charts/line-chart-with-ci-area-sm/)
+
+### time-series-ci-wide.csv
+
+- [Line chart with CI area](https://onsdigital.github.io/Charts/line-chart-with-ci-area/)
+
+### time-series-long.csv
+
+- [Area stacked sm](https://onsdigital.github.io/Charts/area-stacked-sm/)
+- [Column chart stacked optional line sm](https://onsdigital.github.io/Charts/column-chart-stacked-optional-line-sm/)
+- [Line chart dropdown options](https://onsdigital.github.io/Charts/line-chart-dropdown-options/)
+- [Line chart sm multiseries](https://onsdigital.github.io/Charts/line-chart-sm-multiseries/)
+
+### time-series-single.csv
+
+- [Column chart](https://onsdigital.github.io/Charts/column-chart/)
+
+### time-series-wide.csv
+
+- [Area stacked](https://onsdigital.github.io/Charts/area-stacked/)
+- [Column chart stacked optional line](https://onsdigital.github.io/Charts/column-chart-stacked-optional-line/)
+- [Line chart](https://onsdigital.github.io/Charts/line-chart/)
+- [Line chart sm focus](https://onsdigital.github.io/Charts/line-chart-sm-focus/)
 
 
-### Confidence interval
+## Chart specific data
+### population-pyramid.csv
 
+- [Population pyramid](https://onsdigital.github.io/Charts/population-pyramid/)
 
-### Chart specific formats
+### scatter.csv
 
-- [example-data/doughnut.csv](example-data/doughnut.csv)
-  - Doughnut chart.
-- [example-data/scatter.csv](example-data/scatter.csv)
-  - Scatter/bubble plot (static).
-- [example-data/bubble-animated.csv](example-data/bubble-animated.csv)
-  - Scatter/bubble plot (animated).
-- [example-data/stacked-optional-line.csv](example-data/stacked-optional-line.csv)
-  - Stacked column chart with optional line.
-- [example-data/range-ci.csv](example-data/range-ci.csv)
-  - Range CI area grouped chart.
-- [example-data/range-arrow-dot.csv](example-data/range-arrow-dot.csv)
-  - Range arrow dot bar reference chart.
-- [example-data/waterfall.csv](example-data/waterfall.csv)
-  - Waterfall chart.
-- [example-data/slope.csv](example-data/slope.csv)
-  - Slope chart.
-- [example-data/population-pyramid.csv](example-data/population-pyramid.csv)
-  - Population pyramid chart.
-- [example-data/beeswarm.csv](example-data/beeswarm.csv)
-  - Beeswarm chart.
+- [Scatter bubble plot](https://onsdigital.github.io/Charts/scatter-bubble-plot/)
+
+### slope.csv
+
+- [Slope chart](https://onsdigital.github.io/Charts/slope-chart/)
+
+### waterfall.csv
+
+- [Waterfall](https://onsdigital.github.io/Charts/waterfall/)

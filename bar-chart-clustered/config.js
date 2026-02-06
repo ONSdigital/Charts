@@ -1,5 +1,5 @@
 config = {
-	"graphicDataURL": "../example-data/categorical-clustered.csv",
+	"graphicDataURL": "../example-data/categorical-grouped.csv",
 	"legendLabels": ["Category 1 goes here", "Category 2 goes here", "Category 3"],
 	"colourPalette": ONSpalette,
 	"sourceText": "Office for National Statistics",
