@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addDataLabels, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addDataLabels, addSource, addAxisLabel } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
 let pymChild = null;
@@ -11,12 +11,10 @@ function drawGraphic() {
   size = initialise(size);
 
   let margin = config.margin[size];
-  console.log("margin object:", margin);
-  // console.log("margin.right:", margin.right);
+
   let chartWidth =
     parseInt(graphic.style("width")) - margin.left - margin.bubble - 20;
-  // console.log("chartWidth:", chartWidth);
-  //height is set by unique options in column name * a fixed height + some magic because scale band is all about proportion
+
   let height =
     config.seriesHeight[size] * graphicData.length +
     10 * (graphicData.length - 1) +
@@ -82,8 +80,6 @@ function drawGraphic() {
     .selectAll("text")
     .call(wrap, margin.left - 20);
 
-  // addYAxis(svg, margin.left-10)
-
   svg
     .selectAll("rect")
     .data(graphicData)
@@ -131,7 +127,7 @@ function drawGraphic() {
       return isNaN(d.value1) ? "Not applicable" : d3.format(config.dataLabelsBubbleFormat)(d.value1);
     });
 
-  // let labelPositionFactor = 7;
+
 
   if (config.dataLabels.show == true) {
     addDataLabels({
@@ -145,36 +141,32 @@ function drawGraphic() {
   } //end if for datalabels
 
   //This does the x-axis title at the top for bars
-  svg
-    .append("g")
-    .append("text")
-    .attr("x", 0)
-    .attr("y", -10)
-    .attr("class", "axis--label")
-    .text(config.xAxisTitle)
-    .attr("text-anchor", "start");
+  addAxisLabel({
+    svgContainer: svg,
+    xPosition: 0,
+    yPosition: -10,
+    text: config.xAxisTitle,
+    textAnchor: 'start'
+  })
 
   //This does the x-axis label below the x-axis
-  svg
-    .append("g")
-    .append("text")
-    .attr("x", chartWidth)
-    .attr("y", height + 35)
-    .attr("class", "axis--label")
-    .text(config.xAxisLabel)
-    .attr("text-anchor", "end");
+  addAxisLabel({
+    svgContainer: svg,
+    xPosition: chartWidth,
+    yPosition: height + 35,
+    text: config.xAxisTitle,
+    textAnchor: 'end'
+  })
 
   //This does the bubble label at the top
-  svg
-    .append("g")
-    .append("text")
-    .attr("x", chartWidth + margin.bubble / 2)
-    .attr("y", -10)
-    .attr("class", "axis--label")
-    .text(config.bubbleLabel)
-    .attr("text-anchor", "middle")
-    .call(wrap, margin.bubble);
-
+  addAxisLabel({
+    svgContainer: svg,
+    xPosition: chartWidth + margin.bubble / 2,
+    yPosition: -10,
+    text: config.bubbleLabel,
+    textAnchor: 'middle',
+    wrapWidth: margin.bubble
+  })
 
   //create link to source
   addSource('source', config.sourceText);
