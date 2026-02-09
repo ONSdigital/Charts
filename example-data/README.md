@@ -81,9 +81,9 @@ Column headers have been standardised:
 
 
 ## Chart specific data
-### [population-pyramid.csv](population-pyramid.csv)
+### [Population pyramid](https://onsdigital.github.io/Charts/population-pyramid/)
 
-- [Population pyramid](https://onsdigital.github.io/Charts/population-pyramid/)
+See the population pyramid folder
 
 ### [scatter.csv](scatter.csv)
 
