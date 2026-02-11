@@ -1,0 +1,224 @@
+[
+  {
+    "timestamp": "2025-09-12T14:09:59.441Z",
+    "pixel": {
+      "x": 153,
+      "y": 22.399993896484375
+    },
+    "data": {
+      "x": 0.2732142857142857,
+      "y": "Small bar"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "text",
+    "editable": true,
+    "x": 153,
+    "y": 22.399993896484375,
+    "label": "Would you look at that!",
+    "line": {},
+    "id": "annotation-1757686199441-02scgtr",
+    "text": {
+      "wrapWidth": 200
+    }
+  },
+  {
+    "timestamp": "2025-09-12T14:10:19.130Z",
+    "pixel": {
+      "x": 89,
+      "y": 415.3999938964844
+    },
+    "data": {
+      "x": 0.15892857142857142,
+      "y": "Small bars"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "direction-arrow",
+    "editable": true,
+    "x": 89,
+    "y": 415.3999938964844,
+    "arrow": {
+      "direction": "right"
+    },
+    "position": {
+      "anchor": "start"
+    },
+    "label": "More 'cor blimeys",
+    "text": {
+      "verticalAlign": "middle",
+      "wrapWidth": 150
+    },
+    "line": {},
+    "id": "annotation-1757686219130-hpps79a"
+  },
+  {
+    "timestamp": "2025-09-12T14:10:35.340Z",
+    "pixel": {
+      "x": 540,
+      "y": 22.399993896484375
+    },
+    "data": {
+      "x": 0.9642857142857143,
+      "y": "Small bar"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "direction-arrow",
+    "editable": true,
+    "x": 540,
+    "y": 22.399993896484375,
+    "arrow": {
+      "direction": "left"
+    },
+    "position": {
+      "anchor": "end"
+    },
+    "label": "Fewer bazings!",
+    "text": {
+      "verticalAlign": "middle",
+      "wrapWidth": 150
+    },
+    "line": {},
+    "id": "annotation-1757686235341-gevnvbm"
+  },
+  {
+    "timestamp": "2025-09-12T14:10:56.935Z",
+    "pixel": {
+      "x": 337,
+      "y": 74.39999389648438
+    },
+    "data": {
+      "x": 0.6017857142857143,
+      "y": "Quite small bar"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "range-vertical",
+    "editable": true,
+    "x": 337,
+    "y": 74.39999389648438,
+    "label": "Sweet spot",
+    "line": {
+      "height": 442,
+      "endX": 393
+    },
+    "position": {
+      "text": "left",
+      "enclosure": "outside"
+    },
+    "id": "annotation-1757686256935-p4s982a",
+    "text": {
+      "wrapWidth": 150
+    }
+  },
+  {
+    "timestamp": "2025-09-12T14:11:30.694Z",
+    "pixel": {
+      "x": 0.35,
+      "y": 288.3999938964844
+    },
+    "data": {
+      "x": 0.35,
+      "y": "Wholesale trade"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "line-vertical",
+    "editable": true,
+    "x": 196,
+    "y": 288.3999938964844,
+    "label": "Average whoo hoo!",
+    "line": {
+      "height": 442
+    },
+    "id": "annotation-1757686290694-bi9ineq",
+    "text": {
+      "wrapWidth": 150
+    },
+    "position": {
+      "text": "right"
+    }
+  },
+  {
+    "timestamp": "2025-09-12T14:12:01.008Z",
+    "pixel": {
+      "x": 269,
+      "y": 220.39999389648438
+    },
+    "data": {
+      "x": 0.48035714285714287,
+      "y": "Arts"
+    },
+    "svg": {
+      "_groups": [
+        [
+          {}
+        ]
+      ],
+      "_parents": [
+        {}
+      ]
+    },
+    "type": "arrow",
+    "editable": true,
+    "x": 269,
+    "y": 220.39999389648438,
+    "label": "Look over 'ere",
+    "arrow": {
+      "offsetX": 10,
+      "offsetY": 10,
+      "lengthX": 160,
+      "lengthY": -1,
+      "arrowOffsetX": 8,
+      "arrowOffsetY": 5,
+      "curve": "left"
+    },
+    "line": {},
+    "id": "annotation-1757686321008-ztadrpy",
+    "text": {
+      "wrapWidth": 150,
+      "position": "below"
+    }
+  }
+]

@@ -19,7 +19,7 @@ function drawGraphic() {
 	if (config.xDomain == 'auto') {
 		let min = 1000000;
 		let max = 0;
-		for (i = 2; i < graphicData.columns.length; i++) {
+		for (let i = 2; i < graphicData.columns.length; i++) {
 			min = d3.min([
 				min,
 				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
@@ -171,8 +171,8 @@ function drawGraphic() {
 		.attr("fill", "white")
 		.attr("stroke-width", "2px")
 		.attr('stroke', d => colour(d.series))
-		.attr('rx',1)
-		.attr('ry',1);
+		.attr('rx', 1)
+		.attr('ry', 1);
 
 
 	// This does the x-axis label
@@ -248,8 +248,8 @@ function drawGraphic() {
 			.attr("fill", "white")
 			.attr("stroke-width", "2px")
 			.attr('stroke', "#959495")
-			.attr('rx',1)
-			.attr('ry',1);
+			.attr('rx', 1)
+			.attr('ry', 1);
 
 
 		addElbowArrow(
@@ -269,26 +269,14 @@ function drawGraphic() {
 		)
 
 		addDirectionArrow(
-			//name of your svg, normally just SVG
-			ciSvg,
-			//direction of arrow: left, right, up or down
-			'left',
-			//anchor end or start (end points the arrow towards your x value, start points away)
-			'end',
-			//x value
-			50,
-			//y value
-			3,
-			//alignment - left or right for vertical arrows, above or below for horizontal arrows
-			'right',
-			//annotation text
-			config.legendIntervalText,
-			//wrap width
-			150,
-			//text adjust y
-			0,
-			//Text vertical align: top, middle or bottom (default is middle)
-			'bottom'
+			ciSvg,//name of your svg, normally just SVG
+			'left',//direction of arrow: left, right, up or down
+			'start',//anchor end or start (end points the arrow towards your x value, start points away)
+			60,//x value
+			10,//y value
+			config.legendIntervalText,//annotation text
+			150,//wrap width
+			'bottom'//Text vertical align: top, middle or bottom (default is middle)
 		)
 	}
 

@@ -3,7 +3,7 @@ config = {
     "colourPalette": ONScolours.oceanBlue,
     "lineColour": ONScolours.nightBlue,
     "sourceText": "Office for National Statistics",
-    "accessibleSummary": "This chart has been hidden from screen readers. The main message of the chart is summarised in the chart title, and the data is available to download below.",
+    "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
     "xAxisTickFormat": {
         "sm": "%Y",
         "md": "%Y",
@@ -49,12 +49,15 @@ config = {
         "md": 4,
         "lg": 2
     },
+    "labelSpans": {
+        enabled: true,
+        timeUnit:"day",//set to "day","month",'quarter' or 'year'
+        secondaryTimeUnit:"auto",//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
+    },
     "yAxisTicks": {
         "sm": 4,
         "md": 5,
         "lg": 5
     },
-    "mobileBreakpoint": 510,
-    "mediumBreakpoint": 600,
     "elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

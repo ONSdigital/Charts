@@ -1,8 +1,8 @@
 config = {
-	"graphicDataURL": "data.csv",
+	"graphicDataURL": "datanumeric.csv",
 	"colourPalette": ONSlinePalette,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -15,13 +15,19 @@ config = {
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	// "auto" (smart zero baseline), "data" (exact min), or numeric value
+	"yDomainMax": "auto",
+	// "auto" (smart zero baseline), "data" (exact max), or numeric value
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",
 		"lg": "%b %y"
 	},
-	"yAxisFormat": ",.0f",
 	"dateFormat": "%d/%m/%Y",
+	"xAxisNumberFormat": ".0f",
+	"yAxisNumberFormat": ".0f",
+	"xAxisLabel": "x axis label",
 	"yAxisLabel": "y axis label",
 	"zeroLine": "0",
 	"chartEvery": {
@@ -30,9 +36,9 @@ config = {
 		"lg": 2
 	},
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -55,19 +61,32 @@ config = {
 		}
 	},
 	"chartGap": 20,
-	"xAxisTicksEvery": { // this is the interval of ticks on the x axis but it will always show the first and last date.
-		"sm": 4,
-		"md": 4,
-		"lg": 4
+	"xAxisTickMethod": "total", // "interval" or "total"
+	"xAxisTickCount": { // for "total" method
+		"sm": 2,
+		"md": 2,
+		"lg": 6
+	},
+	"xAxisTickInterval": { // for "interval" method
+		"unit": "year", // "year", "month", "quarter", "day"
+		"step": { // every x "units"
+			"sm": 2,
+			"md": 2,
+			"lg": 2
+		}
+	},
+	"labelSpans": {
+		"enabled": false,
+		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
-		"lg":8
+		"lg": 8
 	},
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
+	"addEndMarkers": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

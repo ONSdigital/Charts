@@ -1,10 +1,9 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
-	"textColourPalette": ONStextPalette,
 	"drawLegend": false,
 	"sourceText": "Office for National Statistics",
-	"accessibleSummary": "Here is the screen reader text describing the chart.",
+	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
 	// Examples of line curve types
 	// "lineCurveType": "curveLinear", // Straight line segments
@@ -15,8 +14,9 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomainMax": "auto", // either "auto", "autoAll" or a value
-	"yDomainMin": 0, // either "auto", "autoAll" or a value
+	"yDomainMin": 0, // "auto" (smart zero baseline), "data" (exact min), or numeric value
+	"yDomainMax": "auto", // "auto" (smart zero baseline), "data" (exact max), or numeric value
+	"freeYAxisScales": true, // If true, each dropdown option gets independent y-axis scaling
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%y",
@@ -30,9 +30,9 @@ config = {
 	"defaultOption": "option1",
 	"zeroLine": "0",
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -69,14 +69,18 @@ config = {
 			"lg": 3
 		}
 	},
+	"addFirstDate": true,
+	"addFinalDate": true,
+	"labelSpans": {
+		"enabled": true,
+		timeUnit:"year",//set to "day","month",'quarter' or 'year'
+		"secondaryTimeUnit": "auto"//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
 		"lg": 8
 	},
-	"addFirstDate": true,
-	"addFinalDate": true,
-	"mobileBreakpoint": 510,
-	"mediumBreakpoint": 600,
+
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

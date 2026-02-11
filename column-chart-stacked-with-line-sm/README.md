@@ -1,1 +1,0 @@
-# Stacked column chart with reference line (small multiple)

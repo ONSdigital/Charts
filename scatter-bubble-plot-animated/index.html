@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+  <title>Scatter chart with slider</title>
+
+  <meta name="template" content="scatter-plot-with-slider">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" href="../lib/globalStyle.css" />
+  <link rel="stylesheet" href="./chart.css"/>
+  <link rel="stylesheet" href="css/chosen.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  
+
+
+</head>
+
+<body>
+
+  <h5 id="accessibleSummary" class="visuallyhidden">The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.</h5>
+
+  <div id="graphic" aria-hidden="true">
+    <!-- <img src="fallback.png" alt="[Chart]" /> -->
+  </div>
+
+<div class="flex-container">
+  <div id='controls'>
+    <button id="back" class="timeControlButtons">
+          <span class="glyphicon glyphicon-chevron-left">
+      </button>
+    <button id="play" class="timeControlButtons">
+          <span class="glyphicon glyphicon-play">
+      </button>
+    <button id="forward" class="timeControlButtons">
+          <span class="glyphicon glyphicon-chevron-right">
+      </button>
+  </div>
+  <div id="slider-simple"></div>
+</div>
+
+
+  <h6 id="source">
+  </h6>
+
+  <script src="https://cdn.ons.gov.uk/vendor/d3/6.3.0/d3.min.js" type="text/javascript"></script>
+  <script src="https://unpkg.com/d3-simple-slider"></script>
+  <script src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.js" type="text/javascript"></script>
+  <!-- <script src="../lib/d3-annotation.js" type="text/javascript"></script> -->
+  <script src="../lib/colours.js"></script>
+  <script src="./config.js"></script>
+  <script src="./script.js" type="module"></script>
+
+ 
+
+</body>
+
+</html>
