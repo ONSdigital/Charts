@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -202,36 +202,47 @@ function drawGraphic() {
         };
     });
     
-    const circles = svg.selectAll('circle.line-end')
-        .data(circleData, d => d.category); // Use category as key
+    // Remove all existing end markers (circles, rects, and diamond groups)
+    svg.selectAll('circle.line-end').remove();
+    svg.selectAll('rect.line-end').remove();
+    svg.selectAll('g.line-end').remove();
     
-    // EXIT: Remove old circles
-    circles.exit()
-        .transition()
-        .duration(300)
-        .attr('r', 0)
-        .style('opacity', 0)
-        .remove();
-    
-    // ENTER: Add new circles
-    const circlesEnter = circles.enter()
-        .append('circle')
-        .attr('class', 'line-end')
-        .attr('r', 0)
-        .style('opacity', 0);
-    
-    // UPDATE + ENTER: Update all circles
-    const circlesUpdate = circlesEnter.merge(circles);
-    
-    circlesUpdate
-        .transition()
-        .duration(500)
-        // .delay(250) // Slight delay so circles animate after lines
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('r', 4)
-        .attr('fill', d => d.color)
-        .style('opacity', 1);
+    // Add new end markers with varying shapes
+    circleData.forEach((d, index) => {
+        const shapeIndex = d.index % 6;
+        const isFilled = shapeIndex < 3;
+        const shapeType = shapeIndex % 3;
+        
+        if (shapeType === 0) {
+            // Circle
+            svg.append('circle')
+                .attr('cx', d.x)
+                .attr('cy', d.y)
+                .attr('r', 4)
+                .attr('class', 'line-end')
+                .style('fill', isFilled ? d.color : 'white')
+                .style('stroke', d.color);
+        } else if (shapeType === 1) {
+            // Square
+            svg.append('rect')
+                .attr('x', d.x - 4)
+                .attr('y', d.y - 4)
+                .attr('width', 8)
+                .attr('height', 8)
+                .attr('class', 'line-end')
+                .style('fill', isFilled ? d.color : 'white')
+                .style('stroke', d.color);
+        } else {
+            // Diamond
+            svg.append('g')
+                .attr('transform', `translate(${d.x}, ${d.y})`)
+                .attr('class', 'line-end')
+                .append('path')
+                .attr('d', diamondShape(7))
+                .style('fill', isFilled ? d.color : 'white')
+                .style('stroke', d.color);
+        }
+    });
     
     // LABELS AND LEADER LINES: Handle similarly if needed
     // Remove existing labels and leader lines with transition
@@ -253,25 +264,62 @@ function drawGraphic() {
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
 
-			legenditem
-				.append('div')
-				.attr('class', 'legend--icon--circle')
-				.style('background-color', function (d) {
-					return d[1];
-				});
+		legenditem.each(function(d, i) {
+			const item = d3.select(this);
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			const shapeIndex = d[2] % 6;
+			const color = d[1];
+			const isFilled = shapeIndex < 3;
+			
+			// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
+			const shapeType = shapeIndex % 3;
+			
+			if (shapeType === 0) {
+				// Circle
+				svg.append('circle')
+					.attr('cx', 6)
+					.attr('cy', 6)
+					.attr('r', 4)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else if (shapeType === 1) {
+				// Square
+				svg.append('rect')
+					.attr('x', 2)
+					.attr('y', 2)
+					.attr('width', 8)
+					.attr('height', 8)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else {
+				// Diamond
+				svg.append('g')
+					.attr('transform', 'translate(6, 6)')
+					.append('path')
+					.attr('d', diamondShape(7))
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			}
+		});
 
-			legenditem
-				.append('div')
-				.append('p')
-				.attr('class', 'legend--text')
-				.html(function (d) {
-					return d[0];
-				});
+		legenditem
+			.append('div')
+			.append('p')
+			.attr('class', 'legend--text')
+			.html(function (d) {
+				return d[0];
+			});
 		} else {
 			createDirectLabels({
 				categories: categories,
