@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -46,26 +46,8 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	let maxY, minY;
-
-	if (config.yDomainMax === "auto") {
-		maxY = d3.max(graphicData, d => d3.max(categories, c => d[c]));
-	} else {
-		maxY = config.yDomainMax;
-	}
-
-	if (config.yDomainMin === "auto") {
-		minY = d3.min(graphicData, d => d3.min(categories, c => d[c]));
-	} else {
-		minY = config.yDomainMin;
-	}
-
-	// Ensure maxY is not less than minY
-	if (maxY < minY) {
-		const temp = maxY;
-		maxY = minY;
-		minY = temp;
-	}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
 	y.domain([minY, maxY]);
 
@@ -77,57 +59,113 @@ function drawGraphic() {
 		margin: margin
 	})
 
-	let labelData = [];
-
 	// create lines and circles for each category
+	const labelData = [];
 	categories.forEach(function (category, index) {
 		const lineGenerator = d3
 			.line()
 			.x((d) => x(d.date))
 			.y((d) => y(d[category]))
-			.defined(d => d[category] !== null) // Only plot lines where we have values
-			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
+			.defined(d => d[category] !== null && d[category] !== undefined && d[category] !== "")
+			.curve(d3[config.lineCurveType])
 			.context(null);
+
+		const gapLineStyle = (config.gapLineStyle || 'dashed').toLowerCase();
+		const gapDasharray = gapLineStyle === 'dashed'
+			? '6,4'
+			: gapLineStyle === 'dotted'
+				? '1,4'
+				: null;
+		const gapSegments = [];
+		let prevValidIndex = null;
+		if (gapLineStyle !== 'none') {
+			for (let i = 0; i < graphicData.length; i++) {
+				const value = graphicData[i][category];
+				const isValid = value !== null && value !== undefined && value !== "";
+				if (isValid) {
+					if (prevValidIndex !== null && i - prevValidIndex > 1) {
+						gapSegments.push([graphicData[prevValidIndex], graphicData[i]]);
+					}
+					prevValidIndex = i;
+				}
+			}
+		}
 
 		svg
 			.append('path')
 			.datum(graphicData)
 			.attr('fill', 'none')
-			.attr(
-				'stroke',
-				config.colourPalette[
-				categories.indexOf(category) % config.colourPalette.length
-				]
-			)
+			.attr('stroke', config.colourPalette[index % config.colourPalette.length])
 			.attr('stroke-width', 3)
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
 
-		const lastDatum = graphicData[graphicData.length - 1];
-		if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
-		const label = svg.append('text')
-			.attr('class', 'directLineLabel')
-			.attr('x', x(lastDatum.date) + 10)
-			.attr('y', y(lastDatum[category]))
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr('fill', config.textColourPalette[index % config.textColourPalette.length])
-			.text(category)
-			.call(wrap, margin.right - 10);
-		const bbox = label.node().getBBox();
-		labelData.push({
-			node: label,
-			x: x(lastDatum.date) + 10,
-			y: y(lastDatum[category]),
-			originalY: y(lastDatum[category]),
-			height: bbox.height,
-			category: category
-		});
+		if (gapLineStyle !== 'none' && gapSegments.length) {
+			const gapLineGenerator = d3
+				.line()
+				.x((d) => x(d.date))
+				.y((d) => y(d[category]))
+				.curve(d3[config.lineCurveType])
+				.context(null);
+
+			const gapLines = svg
+				.selectAll(`path.gap-line-${index}`)
+				.data(gapSegments)
+				.enter()
+				.append('path')
+				.attr('class', `gap-line gap-line-${index}`)
+				.attr('fill', 'none')
+				.attr('stroke', config.colourPalette[index % config.colourPalette.length])
+				.attr('stroke-width', 3)
+				.attr('d', (d) => gapLineGenerator(d))
+				.style('stroke-linejoin', 'round')
+				.style('stroke-linecap', 'round');
+
+			if (gapDasharray) {
+				gapLines.style('stroke-dasharray', gapDasharray);
+			}
+		}
+
+			// Add point markers if enabled in config
+			if (config.addPointMarkers) {
+				const points = graphicData.filter(d => d[category] !== null && d[category] !== undefined);
+				svg.selectAll(`circle.point-marker-${index}`)
+					.data(points)
+					.enter()
+					.append('circle')
+					.attr('cx', d => x(d.date))
+					.attr('cy', d => y(d[category]))
+					.attr('r', 4)
+					.attr('class', `point-marker point-marker-${index}`)
+					.style('fill', config.colourPalette[index % config.colourPalette.length])
+			}
+
+			const lastDatum = graphicData[graphicData.length - 1];
+			if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
+			const label = svg.append('text')
+				.attr('class', 'directLineLabel')
+				.attr('x', x(lastDatum.date) + 10)
+				.attr('y', y(lastDatum[category]))
+				.attr('dy', '.35em')
+				.attr('text-anchor', 'start')
+				.attr('fill', config.colourPalette[index % config.colourPalette.length])
+				.text(category)
+				.call(wrap, margin.right - 10);
+			const bbox = label.node().getBBox();
+			labelData.push({
+				node: label,
+				x: x(lastDatum.date) + 10,
+				y: y(lastDatum[category]),
+				originalY: y(lastDatum[category]),
+				height: bbox.height,
+				category: category
+			});
+
 	});
 
 	if (config.addEndMarkers) {
-		const circleData = categories.map((category, index) => {
+		const markerData = categories.map((category, index) => {
 			// Find last valid datum for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 			return lastDatum ? {
@@ -139,15 +177,41 @@ function drawGraphic() {
 			} : null;
 		}).filter(d => d); // Remove null entries
 
-		const circles = svg.selectAll('circle.line-end')
-			.data(circleData, d => d.category)
-			.enter()
-			.append('circle')
-			.attr('cx', d => d.x)
-			.attr('cy', d => d.y)
-			.style('fill', d => d.color)
-			.attr('r', 4)
-			.attr('class', 'line-end');
+		markerData.forEach(d => {
+			const shapeIndex = d.index % 6;
+			const isFilled = shapeIndex < 3;
+			const shapeType = shapeIndex % 3;
+			
+			if (shapeType === 0) {
+				// Circle
+				svg.append('circle')
+					.attr('cx', d.x)
+					.attr('cy', d.y)
+					.attr('r', 4)
+					.attr('class', 'line-end')
+					.style('fill', isFilled ? d.color : 'white')
+					.style('stroke', d.color);
+			} else if (shapeType === 1) {
+				// Square
+				svg.append('rect')
+					.attr('x', d.x - 4)
+					.attr('y', d.y - 4)
+					.attr('width', 8)
+					.attr('height', 8)
+					.attr('class', 'line-end')
+					.style('fill', isFilled ? d.color : 'white')
+					.style('stroke', d.color);
+			} else {
+				// Diamond
+				svg.append('g')
+					.attr('transform', `translate(${d.x}, ${d.y})`)
+					.attr('class', 'line-end')
+					.append('path')
+					.attr('d', diamondShape(7))
+					.style('fill', isFilled ? d.color : 'white')
+					.style('stroke', d.color);
+			}
+		});
 	}
 
 
@@ -158,17 +222,54 @@ function drawGraphic() {
 		// Set up the legend
 		let legenditem = legend
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
 
-		legenditem
-			.append('div')
-			.attr('class', 'legend--icon--circle')
-			.style('background-color', function (d) {
-				return d[1];
-			});
+		legenditem.each(function(d, i) {
+			const item = d3.select(this);
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			const shapeIndex = d[2] % 6;
+			const color = d[1];
+			const isFilled = shapeIndex < 3;
+			
+			// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
+			const shapeType = shapeIndex % 3;
+			
+			if (shapeType === 0) {
+				// Circle
+				svg.append('circle')
+					.attr('cx', 6)
+					.attr('cy', 6)
+					.attr('r', 4)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else if (shapeType === 1) {
+				// Square
+				svg.append('rect')
+					.attr('x', 2)
+					.attr('y', 2)
+					.attr('width', 8)
+					.attr('height', 8)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else {
+				// Diamond
+				svg.append('g')
+					.attr('transform', 'translate(6, 6)')
+					.append('path')
+					.attr('d', diamondShape(7))
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			}
+		});
 
 		legenditem
 			.append('div')
@@ -217,23 +318,37 @@ function drawGraphic() {
 			}
 		})
 
-	// Add the x-axis
-	svg
-		.append('g')
-		.attr('class', 'x axis')
-		.attr('transform', `translate(0, ${height})`)
-		.call(
-			d3
-				.axisBottom(x)
-				.tickValues(getXAxisTicks({
+
+	let xAxisGenerator;
+
+	if (config.labelSpans.enabled === true) {
+		xAxisGenerator = customTemporalAxis(x)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+	} else {
+		xAxisGenerator = d3
+			.axisBottom(x)
+			.tickValues(
+				getXAxisTicks({
 					data: graphicData,
 					xDataType,
 					size,
 					config
-				}))
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
-		);
+				})
+			)
+			.tickFormat(
+				(d) =>
+					xDataType == 'date' ?
+						d3.timeFormat(config.xAxisTickFormat[size])(d) :
+						d3.format(config.xAxisNumberFormat)(d)
+			);
+	}
+
+	svg
+		.append('g')
+		.attr('class', 'x axis')
+		.attr('transform', `translate(0, ${height})`)
+		.call(xAxisGenerator); 
 
 	// Add the y-axis
 	svg
@@ -278,9 +393,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes

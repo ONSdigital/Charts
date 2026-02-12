@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -68,12 +68,12 @@ function drawGraphic() {
 
 		const y = d3
 			.scaleLinear()
-			.domain([
-				d3.min(graphicData, (d) => Math.min(...fulldataKeys.map((c) => d[c]))),
-				d3.max(graphicData, (d) => Math.max(...fulldataKeys.map((c) => d[c])))
-			])
-			// .nice()
 			.range([height, 0]);
+
+		// Calculate Y-axis bounds based on data and config
+		const { minY, maxY } = calculateAutoBounds(graphicData, config);
+
+		y.domain([minY, maxY]);
 
 
 		// Create an SVG element
@@ -123,7 +123,49 @@ function drawGraphic() {
 				.attr('fill', config.colourPalette[
 					categories.indexOf(category) % config.colourPalette.length
 				])
-				.attr('opacity', 0.15)
+				.attr('opacity', 0.3)
+
+			if (config.addEndMarkers) {
+				// Add end marker for this category
+				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");
+				if (lastDatum) {
+					const index = categories.indexOf(category);
+					const shapeIndex = index % 6;
+					const isFilled = shapeIndex < 3;
+					const shapeType = shapeIndex % 3;
+					const color = config.colourPalette[index % config.colourPalette.length];
+					
+					if (shapeType === 0) {
+						// Circle
+						svg.append('circle')
+							.attr('cx', x(lastDatum.date))
+							.attr('cy', y(lastDatum[category]))
+							.attr('r', 3.5)
+							.attr('class', 'line-end')
+							.style('fill', isFilled ? color : 'white')
+							.style('stroke', color);
+					} else if (shapeType === 1) {
+						// Square
+						svg.append('rect')
+							.attr('x', x(lastDatum.date) - 3.5)
+							.attr('y', y(lastDatum[category]) - 3.5)
+							.attr('width', 7)
+							.attr('height', 7)
+							.attr('class', 'line-end')
+							.style('fill', isFilled ? color : 'white')
+							.style('stroke', color);
+					} else {
+						// Diamond
+						svg.append('g')
+							.attr('transform', `translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`)
+							.attr('class', 'line-end')
+							.append('path')
+							.attr('d', diamondShape(6))
+							.style('fill', isFilled ? color : 'white')
+							.style('stroke', color);
+					}
+				}
+			}
 
 		});
 
@@ -147,27 +189,39 @@ function drawGraphic() {
 				}
 			})
 
-		// Use new getXAxisTicks function for tick values
-		let tickValues = getXAxisTicks({
-			data: data,
-			xDataType,
-			size,
-			config
-		});
-
 		// Add the x-axis
+		let xAxisGenerator;
+
+		if (config.labelSpans.enabled === true) {
+			xAxisGenerator = customTemporalAxis(x)
+				.tickSize(17)
+				.tickPadding(6)
+				.tickFormat(d3.timeFormat("%y"));
+		} else {
+			xAxisGenerator = d3
+				.axisBottom(x)
+				.tickValues(
+					getXAxisTicks({
+						data: graphicData,
+						xDataType,
+						size,
+						config
+					})
+				)
+				.tickFormat(
+					(d) =>
+						xDataType == 'date' ?
+							d3.timeFormat(config.xAxisTickFormat[size])(d) :
+							d3.format(config.xAxisNumberFormat)(d)
+				);
+		}
+
 		svg
 			.append('g')
 			.attr('class', 'x axis')
 			.attr('transform', `translate(0, ${height})`)
-			.call(
-				d3
-					.axisBottom(x)
-					.tickValues(tickValues)
-					.tickFormat((d) => xDataType === 'date'
-						? d3.timeFormat(config.xAxisTickFormat[size])(d)
-						: d3.format(config.xAxisNumberFormat)(d))
-			);
+			.call(xAxisGenerator);
+
 
 
 		//If dropYAxis == true Only draw the y axis tick labels on the first chart in each row
@@ -215,19 +269,55 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(categories, config.colourPalette)
+			categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i])
 		)
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item');
 
-	legenditem
-		.append('div')
-		.attr('class', 'legend--icon--circle')
-		.style('background-color', function (d) {
-			return d[1];
-		});
-
+	legenditem.each(function(d, i) {
+		const item = d3.select(this);
+		const svg = item.append('svg')
+			.attr('width', 14)
+			.attr('height', 14)
+			.attr('viewBox', '0 0 12 12')
+			.attr('class', 'legend--icon')
+			.style('overflow', 'visible');
+		
+		const shapeIndex = d[2] % 6;
+		const color = d[1];
+		const isFilled = shapeIndex < 3;
+		
+		// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
+		const shapeType = shapeIndex % 3;
+		
+		if (shapeType === 0) {
+			// Circle
+			svg.append('circle')
+				.attr('cx', 6)
+				.attr('cy', 6)
+				.attr('r', 3.5)
+				.style('fill', isFilled ? color : 'white')
+				.style('stroke', color);
+		} else if (shapeType === 1) {
+			// Square
+			svg.append('rect')
+				.attr('x', 2.5)
+				.attr('y', 2.5)
+				.attr('width', 7)
+				.attr('height', 7)
+				.style('fill', isFilled ? color : 'white')
+				.style('stroke', color);
+		} else {
+			// Diamond
+			svg.append('g')
+				.attr('transform', 'translate(6, 6)')
+				.append('path')
+				.attr('d', diamondShape(6))
+				.style('fill', isFilled ? color : 'white')
+				.style('stroke', color);
+		}
+	});
 
 	legenditem
 		.append('div')
@@ -279,26 +369,14 @@ function drawGraphic() {
 		)
 
 		addDirectionArrow(
-			//name of your svg, normally just SVG
-			ciSvg,
-			//direction of arrow: left, right, up or down
-			'left',
-			//anchor end or start (end points the arrow towards your x value, start points away)
-			'end',
-			//x value
-			50,
-			//y value
-			7,
-			//alignment - left or right for vertical arrows, above or below for horizontal arrows
-			'right',
-			//annotation text
-			config.legendEstimateText,
-			//wrap width
-			1500,
-			//text adjust y
-			0,
-			//Text vertical align: top, middle or bottom (default is middle)
-			'bottom'
+			ciSvg,//name of your svg, normally just SVG
+			'left',//direction of arrow: left, right, up or down
+			'start',//anchor end or start (end points the arrow towards your x value, start points away)
+			60,//x value
+			12,//y value
+			config.legendEstimateText,//annotation text
+			150,//wrap width
+			'bottom'//Text vertical align: top, middle or bottom (default is middle)
 		)
 
 
@@ -318,7 +396,7 @@ function drawGraphic() {
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
 		return {
-			date: d3.timeParse(config.dateFormat)(d.date),
+			date: d3.utcParse(config.dateFormat)(d.date),
 			...Object.entries(d)
 				.filter(([key]) => key !== 'date')
 				.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes

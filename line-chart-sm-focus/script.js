@@ -1,5 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks } from "../lib/helpers.js";
-
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -86,25 +85,20 @@ function drawGraphic() {
 			.scaleLinear()
 			.range([height, 0]);
 
-		if (config.yDomain == "auto") {
-			let minY = d3.min(graphicData, (d) => Math.min(...categoriesToPlot.map((c) => d[c])))
-			let maxY = d3.max(graphicData, (d) => Math.max(...categoriesToPlot.map((c) => d[c])))
-			y.domain([minY, maxY])
-		} else {
-			y.domain(config.yDomain)
-		}
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
-		// Create an SVG element
-		const svg = addSvg({
-			svgParent: graphic,
-			chartWidth: chartWidth,
-			height: height + margin.top + margin.bottom,
-			margin: margin
-		})
+	y.domain([minY, maxY]);
 
+	// Create an SVG element
+	const svg = addSvg({
+		svgParent: container,
+		chartWidth: chartWidth,
+		height: height + margin.top + margin.bottom,
+		margin: margin
+	})
 
-
-		// create lines and circles for each category
+	// create lines and circles for each category
 		categoriesToPlot.forEach(function (category) {
 			const lineGenerator = d3
 				.line()
@@ -153,14 +147,42 @@ function drawGraphic() {
 				.attr('d', (d, i) => lineGenerator(d[categoriesToPlot.indexOf(category)][1]))
 				.style('stroke-linejoin', 'round')
 				.style('stroke-linecap', 'round')
-				.attr('class', 'line' + categoriesToPlot.indexOf(category) + 
-				((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
-				category == reference ? " reference" : " other"));
+				.attr('class', 'line' + categoriesToPlot.indexOf(category) +
+					((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
+						category == reference ? " reference" : " other"));
 
 			svg.selectAll('.reference').raise()
 			svg.selectAll('.line' + chartIndex).raise()
 
 			const lastDatum = graphicData[graphicData.length - 1];
+
+			// Add end markers for selected and comparison lines
+			if (config.addEndMarkers) {
+				const lastValidDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
+				if (lastValidDatum) {
+					// Selected group - circle
+					if (categoriesToPlot.indexOf(category) == chartIndex) {
+						svg.append('circle')
+							.attr('cx', x(lastValidDatum.date))
+							.attr('cy', y(lastValidDatum[category]))
+							.attr('r', 3.5)
+							.attr('class', 'line-end selected')
+							.style('fill', config.colourPalette[0])
+							.style('stroke', config.colourPalette[0]);
+					} 
+					// Comparison group - square
+					else if (category == reference) {
+						svg.append('rect')
+							.attr('x', x(lastValidDatum.date) - 3.5)
+							.attr('y', y(lastValidDatum[category]) - 3.5)
+							.attr('width', 7)
+							.attr('height', 7)
+							.attr('class', 'line-end reference')
+							.style('fill', config.colourPalette[1])
+							.style('stroke', config.colourPalette[1]);
+					}
+				}
+			}
 
 			//Labelling the final data point on each chart if option selected in the config
 			if (config.labelFinalPoint == true) {
@@ -173,7 +195,7 @@ function drawGraphic() {
 							'transform',
 							`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`
 						)
-						.attr('x', 5)
+						.attr('x', 8)
 						.attr('y', 4)
 						.attr('text-anchor', 'start')
 						.attr(
@@ -224,29 +246,44 @@ function drawGraphic() {
 				}
 			})
 
-		// Add the x-axis
+		let xAxisGenerator;
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
+			xAxisGenerator = customTemporalAxis(x)
+			.tickPadding(6)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+		} else {
+			xAxisGenerator = d3
+				.axisBottom(x)
+				.tickValues(
+					getXAxisTicks({
+						data: graphicData,
+						xDataType,
+						size,
+						config
+					})
+				)
+				.tickFormat(
+					(d) =>
+						xDataType == 'date' ?
+							d3.timeFormat(config.xAxisTickFormat[size])(d) :
+							d3.format(config.xAxisNumberFormat)(d)
+				);
+		}
+
 		svg
 			.append('g')
 			.attr('class', 'x axis')
 			.attr('transform', `translate(0, ${height})`)
-			.call(
-				d3
-					.axisBottom(x)
-					.tickValues(getXAxisTicks({
-										data: graphicData,
-										xDataType,
-										size,
-										config
-									})
-					)
-					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-						: d3.format(config.xAxisNumberFormat)(d))
-			).each(function(d){
-				d3.select(this).selectAll('.tick text')
-				.attr('text-anchor', function(e,j,arr){
-					return j==0 ? 'start' : j==arr.length-1 ? 'end' : 'middle'
-				})
-			});
+			.call(xAxisGenerator)
+			.each(function (d) {
+				if (config.labelSpans.enabled === false) {
+					d3.select(this).selectAll('.tick text')
+						.attr('text-anchor', function (e, j, arr) {
+							return j == 0 ? 'start' : j == arr.length - 1 ? 'end' : 'middle'
+						})
+				}
+			});;
 
 
 		//Only draw the y axis tick labels on the first chart in each row
@@ -288,7 +325,7 @@ function drawGraphic() {
 			addAxisLabel({
 				svgContainer: svg,
 				xPosition: chartWidth,
-				yPosition: height + 35,
+				yPosition: height + 45,
 				text: config.xAxisLabel,
 				textAnchor: "end",
 				wrapWidth: chartWidth
@@ -306,25 +343,63 @@ function drawGraphic() {
 
 	let legenditem = legend
 		.selectAll('div.legend--item')
-		.data([[config.legendLabel, config.colourPalette[0]], [reference, config.colourPalette[1]], [config.allLabel, config.colourPalette[2]]])
+		.data([[config.legendLabel, config.colourPalette[0], 0], [reference, config.colourPalette[1], 1], [config.allLabel, config.colourPalette[2], 2]])
 		.enter()
 		.append('div')
-		.attr('class','legend--item');
+		.attr('class', 'legend--item');
 
-	// Add line icon using SVG
-	legenditem
-		.append('svg')
-		.attr('width', 24)
-		.attr('height', 12)
-		.append('line')
-		.attr('x1', 2)
-		.attr('y1', 6)
-		.attr('x2', 22)
-		.attr('y2', 6)
-		.attr('stroke', function (d) { return d[1]; })
-		.attr('stroke-width', 3)
-		.attr('stroke-linecap',"round")
-		.attr('class', 'legend--icon--line');
+	legenditem.each(function(d, i) {
+		const item = d3.select(this);
+		const legendType = d[2]; // 0=selected, 1=comparison, 2=all others
+		const color = d[1];
+		
+		if (legendType === 0) {
+			// Selected group - circle (filled)
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			svg.append('circle')
+				.attr('cx', 6)
+				.attr('cy', 6)
+				.attr('r', 3.5)
+				.style('fill', color)
+				.style('stroke', color);
+		} else if (legendType === 1) {
+			// Comparison group - square (filled)
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			svg.append('rect')
+				.attr('x', 2.5)
+				.attr('y', 2.5)
+				.attr('width', 7)
+				.attr('height', 7)
+				.style('fill', color)
+				.style('stroke', color);
+		} else {
+			// All other groups - line (as before)
+			item.append('svg')
+				.attr('width', 24)
+				.attr('height', 12)
+				.append('line')
+				.attr('x1', 2)
+				.attr('y1', 6)
+				.attr('x2', 22)
+				.attr('y2', 6)
+				.attr('stroke', color)
+				.attr('stroke-width', 3)
+				.attr('stroke-linecap', 'round')
+				.attr('class', 'legend--icon--line');
+		}
+	});
 
 	legenditem
 		.append('div')
@@ -349,9 +424,9 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes

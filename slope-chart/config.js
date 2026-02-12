@@ -2,10 +2,11 @@ config = {
 	"graphicDataURL": "data.csv",
 	"colourScheme":"direction", //"categories" or "direction"
 	"colourPalette":[ONScolours.coralPink,ONScolours.grey30,ONScolours.oceanBlue],
-	"textColourPalette": ONStextPalette,
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
-	"yDomainMax": "auto",  //"auto" for automatic y-axis max, or a number for fixed max
+	"yDomainMin": "auto",
+	"yDomainMax": "auto",
+	// yDomainMin and yDomainMax can be "auto", "data", or a numeric value	
 	"showZeroAxis":true,
 	"yAxisLabel": "y axis label",
 	"yAxisTicks":{
@@ -13,30 +14,25 @@ config = {
 		"md": 5,
 		"lg": 5
 	},
+	"lineCurveType": "curveLinear",
 	"xAxisLabels": ["Q1 2018","Q1 2021"],
 	"aspectRatio": {
 		"sm": [1, 2],
 		"md": [1, 2],
 		"lg": [1, 2]
 	},
-	"margin": {
+	"margin": {//left and right are set by the script
 		"sm": {
 			"top": 30,
-			"right": 0,
 			"bottom": 10,
-			"left": 0
 		},
 		"md": {
 			"top": 30,
-			"right": 0,
 			"bottom": 10,
-			"left": 0
 		},
 		"lg": {
 			"top": 30,
-			"right": 0,
 			"bottom": 10,
-			"left": 0
 		}
 	},
 };

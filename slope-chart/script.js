@@ -1,7 +1,6 @@
-import { initialise, addSvg, addSource, createDirectLabels } from "../lib/helpers.js";
+import { initialise, addSvg, addSource, createDirectLabels, calculateAutoBounds } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
-let legend = d3.select('#legend');
 let graphicData, size;
 
 let pymChild = null;
@@ -40,10 +39,13 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
+	// Calculate Y-axis bounds based on data and config
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
+
 	if (config.showZeroAxis) {
-		y.domain([0, d3.max(graphicData.flatMap(d => columns.map(col => Number(d[col]))))]);
+		y.domain([d3.min([0,minY]), maxY]);
 	} else {
-		y.domain(d3.extent(graphicData.flatMap(d => columns.map(col => Number(d[col])))));
+		y.domain([minY, maxY]);
 	}
 
 	// Create an SVG element
@@ -61,7 +63,7 @@ function drawGraphic() {
 		.x(d => x(d.x))
 		.y(d => y(d.y))
 		.defined(d => d.y !== null && !isNaN(d.y))
-		.curve(d3.curveLinear);
+		.curve(d3[config.lineCurveType]);
 
 	function direction(data) {
 		if (+data[columns[0]] > +data[columns[columns.length - 1]]) {
@@ -155,8 +157,8 @@ function drawGraphic() {
 			minSpacing: 12,
 			useLeaderLines: true,
 			leaderLineStyle: 'dashed',
-			colourMap:colourMap,
-			includeDataValue:true
+			colourMap: colourMap,
+			includeDataValue: true
 		}
 	});
 
@@ -213,6 +215,10 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData
+
+	rawData.columns.slice(1).forEach(column=>
+		graphicData.forEach(d=>d[column] = +d[column])
+	)
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({

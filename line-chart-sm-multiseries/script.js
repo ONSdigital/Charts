@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds, diamondShape } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -17,7 +17,6 @@ function drawGraphic() {
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
 
-	// console.log(Array.from(nestedData))
 	// Create a container div for each small multiple
 	let chartContainers = graphic
 		.selectAll('.chart-container')
@@ -78,12 +77,11 @@ function drawGraphic() {
 				.range([0, chartWidth]);
 		}
 
+		const {minY,maxY} = calculateAutoBounds(config.freeYAxisScales ? data : graphicData, config)
+
 		const y = d3
 			.scaleLinear()
-			.domain([
-				0, //This should be a calculated rather than 0 to allow for negativ values
-				d3.max(config.freeYAxisScales ? data : graphicData, (d) => Math.max(...categories.map((c) => d[c])))
-			])
+			.domain([minY,maxY])
 			.nice()
 			.range([height, 0]);
 
@@ -126,6 +124,57 @@ function drawGraphic() {
 
 		});
 
+		// Add end markers
+		if (config.addEndMarkers) {
+			const markerData = categories.map((category, index) => {
+				// Find last valid datum for this category
+				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");
+				return lastDatum ? {
+					category: category,
+					index: index,
+					x: x(lastDatum.date),
+					y: y(lastDatum[category]),
+					color: config.colourPalette[index % config.colourPalette.length]
+				} : null;
+			}).filter(d => d); // Remove null entries
+
+			markerData.forEach(d => {
+				const shapeIndex = d.index % 6;
+				const isFilled = shapeIndex < 3;
+				const shapeType = shapeIndex % 3;
+				
+				if (shapeType === 0) {
+					// Circle
+					svg.append('circle')
+						.attr('cx', d.x)
+						.attr('cy', d.y)
+						.attr('r', 3.5)
+						.attr('class', 'line-end')
+						.style('fill', isFilled ? d.color : 'white')
+						.style('stroke', d.color);
+				} else if (shapeType === 1) {
+					// Square
+					svg.append('rect')
+						.attr('x', d.x - 3.5)
+						.attr('y', d.y - 3.5)
+						.attr('width', 7)
+						.attr('height', 7)
+						.attr('class', 'line-end')
+						.style('fill', isFilled ? d.color : 'white')
+						.style('stroke', d.color);
+				} else {
+					// Diamond
+					svg.append('g')
+						.attr('transform', `translate(${d.x}, ${d.y})`)
+						.attr('class', 'line-end')
+						.append('path')
+						.attr('d', diamondShape(6))
+						.style('fill', isFilled ? d.color : 'white')
+						.style('stroke', d.color);
+				}
+			});
+		}
+
 		// add grid lines to y axis
 		svg
 			.append('g')
@@ -146,22 +195,38 @@ function drawGraphic() {
 				}
 			})
 		// Add the x-axis
-		svg
-			.append('g')
-			.attr('class', 'x axis')
-			.attr('transform', `translate(0, ${height})`)
-			.call(
-				d3
-					.axisBottom(x)
-					.tickValues(getXAxisTicks({
+
+		let xAxisGenerator;
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
+			xAxisGenerator = customTemporalAxis(x)
+				.tickSize(17)
+				.tickPadding(6)
+				.timeUnit(config.labelSpans.timeUnit)
+				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+		} else {
+			xAxisGenerator = d3
+				.axisBottom(x)
+				.tickValues(
+					getXAxisTicks({
 						data: graphicData,
 						xDataType,
 						size,
 						config
-					}))
-					.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-						: d3.format(config.xAxisNumberFormat)(d))
-			);
+					})
+				)
+				.tickFormat(
+					(d) =>
+						xDataType == 'date' ?
+							d3.timeFormat(config.xAxisTickFormat[size])(d) :
+							d3.format(config.xAxisNumberFormat)(d)
+				);
+		}
+
+		svg
+			.append('g')
+			.attr('class', 'x axis')
+			.attr('transform', `translate(0, ${height})`)
+			.call(xAxisGenerator)
 
 
 		//If dropYAxis == true Only draw the y axis tick labels on the first chart in each row
@@ -186,9 +251,6 @@ function drawGraphic() {
 			text: seriesName,
 			wrapWidth: (chartWidth + margin.right)
 		});
-
-		console.log("hello")
-
 
 		// This does the y-axis label
 		addAxisLabel({
@@ -216,26 +278,55 @@ function drawGraphic() {
 		.select('#legend')
 		.selectAll('div.legend--item')
 		.data(
-			d3.zip(categories, config.colourPalette)
+			categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i])
 		)
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item');
 
-	// Add line icon using SVG
-	legenditem
-		.append('svg')
-		.attr('width', 24)
-		.attr('height', 12)
-		.append('line')
-		.attr('x1', 2)
-		.attr('y1', 6)
-		.attr('x2', 22)
-		.attr('y2', 6)
-		.attr('stroke', function (d) { return d[1]; })
-		.attr('stroke-linecap', 'round')
-		.attr('stroke-width', 3)
-		.attr('class', 'legend--icon--line');
+	legenditem.each(function(d, i) {
+		const item = d3.select(this);
+		const svg = item.append('svg')
+			.attr('width', 14)
+			.attr('height', 14)
+			.attr('viewBox', '0 0 12 12')
+			.attr('class', 'legend--icon')
+			.style('overflow', 'visible');
+		
+		const shapeIndex = d[2] % 6;
+		const color = d[1];
+		const isFilled = shapeIndex < 3;
+		
+		// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
+		const shapeType = shapeIndex % 3;
+		
+		if (shapeType === 0) {
+			// Circle
+			svg.append('circle')
+				.attr('cx', 6)
+				.attr('cy', 6)
+				.attr('r', 3.5)
+				.style('fill', isFilled ? color : 'white')
+				.style('stroke', color);
+		} else if (shapeType === 1) {
+			// Square
+			svg.append('rect')
+				.attr('x', 2.5)
+				.attr('y', 2.5)
+				.attr('width', 7)
+				.attr('height', 7)
+				.style('fill', isFilled ? color : 'white')
+				.style('stroke', color);
+		} else {
+			// Diamond
+			svg.append('g')
+				.attr('transform', 'translate(6, 6)')
+				.append('path')
+				.attr('d', diamondShape(6))
+				.style('fill', isFilled ? color : 'white')
+				.style('stroke', color);
+		}
+	});
 
 	legenditem
 		.append('div')
@@ -252,15 +343,14 @@ function drawGraphic() {
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
 }
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
+				date: d3.utcParse(config.dateFormat)(d.date),
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes

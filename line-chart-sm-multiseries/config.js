@@ -15,6 +15,10 @@ config = {
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	// "auto" (smart zero baseline), "data" (exact min), or numeric value
+	"yDomainMax": "auto",
+	// "auto" (smart zero baseline), "data" (exact max), or numeric value
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",
@@ -32,9 +36,9 @@ config = {
 		"lg": 2
 	},
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -71,12 +75,18 @@ config = {
 			"lg": 2
 		}
 	},
+	"labelSpans": {
+		"enabled": false,
+		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
-		"lg":8
+		"lg": 8
 	},
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
+	"addEndMarkers": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

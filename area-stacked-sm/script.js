@@ -95,16 +95,23 @@ function drawGraphic() {
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
 
-		const y = d3
-			.scaleLinear()
-			.domain([0, d3.max(graphicData, (d) => d3.sum(categories, (c) => d[c]))])
-			.range([height, 0]);
-
 		// Define the stack generator
 		const stack = d3.stack()
 			.keys(categories)
 			.order(d3[config.stackOrder]) // Use the stack order defined in the config
 			.offset(d3[config.stackOffset]); // Convert to percentage values
+
+		const stackedData = stack(data)
+
+		const yDomain = config.yDomain === "auto" ? [
+			d3.min(stackedData, series => d3.min(series, d => d[0])),
+			d3.max(stackedData, series => d3.max(series, d => d[1]))
+		] : config.yDomain;
+
+		const y = d3
+			.scaleLinear()
+			.domain(yDomain)
+			.range([height, 0]);
 
 		// Create an SVG for this chart
 		const svg = addSvg({
@@ -117,7 +124,7 @@ function drawGraphic() {
 		// Add the areas
 		svg
 			.selectAll('.area')
-			.data(stack(data))
+			.data(stackedData)
 			.enter()
 			.append('path')
 			.attr('class', 'area')
@@ -235,7 +242,7 @@ d3.csv(config.graphicDataURL)
 
 		// 	);
 		graphicData.forEach((d) => {
-			d.date = d3.timeParse(config.dateFormat)(d.date);
+			d.date = d3.utcParse(config.dateFormat)(d.date);
 		});
 
 		//use pym to create iframed chart dependent on specified variables

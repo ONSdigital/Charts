@@ -73,8 +73,15 @@ config = {
     md: 4,
     lg: 6,
   },
+  addFirstDate: false,
+  addFinalDate: false,
   legendColumns: 4,
   dropYAxis: true,
+  labelSpans: {
+    enabled: true,
+    timeUnit:"month",//"day","month","year"
+    secondaryTimeUnit: "auto",//"auto" or define "day","month","year". false to disable
+  },
   elements: { select: 0, nav: 0, legend: 0, titles: 0 },
   chartBuild: {},
 };

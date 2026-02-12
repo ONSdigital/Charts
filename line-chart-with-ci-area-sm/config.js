@@ -1,6 +1,10 @@
 config = {
 	"graphicDataURL": "data.csv",
-	"colourPalette": ONSlinePalette,
+	"colourPalette": [
+		ONScolours.oceanBlue,
+		ONScolours.beetrootPurple,
+		ONScolours.emeraldGreen
+	],
 	"sourceText": "Office for National Statistics ",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
@@ -15,6 +19,18 @@ config = {
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"xDomain": [-13, 25],
 	// either "auto" or an array for the x domain e.g. [0,2000] - DOES NOT WORK
+	"yDomainMax": "auto",  
+	// Y-axis maximum options:
+	// "auto" - Smart mode: uses data max with 10% padding if positive, or 0 if all data is negative.
+	//          Automatically trims excessive whitespace below zero (>50% of range) while keeping 30% cushion above highest data point.
+	// "data" - Uses exact data maximum
+	// number - Custom value (e.g., 100)
+	"yDomainMin": "auto",
+	// Y-axis minimum options:
+	// "auto" - Smart mode: uses data min with 10% padding if negative, or 0 if all data is positive.
+	//          Automatically trims excessive whitespace above zero (>50% of range) while keeping 30% cushion below lowest data point.
+	// "data" - Uses exact data minimum
+	// number - Custom value (e.g., 0 to force zero baseline)
 	"xAxisTickFormat": {
 		"sm": "%Y",
 		"md": "%Y",
@@ -33,9 +49,9 @@ config = {
 		"lg": 2
 	},
 	"aspectRatio": {
-		"sm": [1.2, 1],
-		"md": [1.2, 1],
-		"lg": [1.2, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -78,6 +94,12 @@ config = {
 		"md": 5,
 		"lg": 8
 	},
+	"labelSpans": {
+		"enabled": true,
+		timeUnit: 'year',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+	},
 	"dropYAxis": true,
+	"addEndMarkers": true,
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

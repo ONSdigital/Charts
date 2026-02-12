@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -6,26 +6,6 @@ let legend = d3.select('#legend');
 let graphicData, size;
 
 let pymChild = null;
-
-// Set y domain for new config structure (min/max can be "auto", "autoAll", or a value)
-function getYDomainMinMax({ minType, maxType, allData, filteredData, categories }) {
-	let min, max;
-	if (minType === "autoAll") {
-		min = d3.min(allData, (d) => Math.min(...categories.map((c) => d[c])));
-	} else if (minType === "auto") {
-		min = d3.min(filteredData, (d) => Math.min(...categories.map((c) => d[c])));
-	} else {
-		min = +minType;
-	}
-	if (maxType === "autoAll") {
-		max = d3.max(allData, (d) => Math.max(...categories.map((c) => d[c])));
-	} else if (maxType === "auto") {
-		max = d3.max(filteredData, (d) => Math.max(...categories.map((c) => d[c])));
-	} else {
-		max = +maxType;
-	}
-	return [min, max];
-}
 
 function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
@@ -45,7 +25,7 @@ function drawGraphic() {
 		margin: margin
 	});
 
-	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
 
 	const optns = select
 		.append('div')
@@ -76,8 +56,6 @@ function drawGraphic() {
 
 
 	$('#optionsSelect').trigger('chosen:updated');  // Initialize Chosen
-
-	let labelPositions = new Map();  // Create a map to store label positions
 
 	$('#optionsSelect').chosen().change(function () {
 		const selectedOption = $(this).val();
@@ -126,25 +104,20 @@ function drawGraphic() {
 		d3.select('#legend').selectAll('div.legend--item').remove();
 
 	// Filter data for the selected option
-	let filteredData = graphicData.filter((d) => d.option === selectedOption);
+	let filteredData = graphicData.filter((d) => d.series === selectedOption);
 	if (filteredData.length === 0) return;
 
-		// Get categories (series) for this option
-		const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
+	// Get categories (series) for this option
+	const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'series');
 
-	// Set y domain for "auto" min/max using filtered data
-	let yDomainMin = config.yDomainMin;
-	let yDomainMax = config.yDomainMax;
-	if (yDomainMin === "auto" || yDomainMax === "auto") {
-		const [minY, maxY] = getYDomainMinMax({
-			minType: yDomainMin,
-			maxType: yDomainMax,
-			allData: graphicData,
-			filteredData: filteredData,
-			categories
-		});
+	// Set y domain using calculateAutoBounds
+	// Use filtered data if freeYAxisScales is true, otherwise use all data
+	if (config.yDomainMin === "auto" || config.yDomainMax === "auto" || config.yDomainMin === "data" || config.yDomainMax === "data") {
+		const dataForBounds = config.freeYAxisScales ? filteredData : graphicData;
+		const { minY, maxY } = calculateAutoBounds(dataForBounds, config);
+
 		y.domain([minY, maxY]);
-		
+
 		// Update y axis
 		svg.select('.y.axis.numeric')
 			.transition()
@@ -229,36 +202,47 @@ function drawGraphic() {
         };
     });
     
-    const circles = svg.selectAll('circle.line-end')
-        .data(circleData, d => d.category); // Use category as key
+    // Remove all existing end markers (circles, rects, and diamond groups)
+    svg.selectAll('circle.line-end').remove();
+    svg.selectAll('rect.line-end').remove();
+    svg.selectAll('g.line-end').remove();
     
-    // EXIT: Remove old circles
-    circles.exit()
-        .transition()
-        .duration(300)
-        .attr('r', 0)
-        .style('opacity', 0)
-        .remove();
-    
-    // ENTER: Add new circles
-    const circlesEnter = circles.enter()
-        .append('circle')
-        .attr('class', 'line-end')
-        .attr('r', 0)
-        .style('opacity', 0);
-    
-    // UPDATE + ENTER: Update all circles
-    const circlesUpdate = circlesEnter.merge(circles);
-    
-    circlesUpdate
-        .transition()
-        .duration(500)
-        // .delay(250) // Slight delay so circles animate after lines
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('r', 4)
-        .attr('fill', d => d.color)
-        .style('opacity', 1);
+    // Add new end markers with varying shapes
+    circleData.forEach((d, index) => {
+        const shapeIndex = d.index % 6;
+        const isFilled = shapeIndex < 3;
+        const shapeType = shapeIndex % 3;
+        
+        if (shapeType === 0) {
+            // Circle
+            svg.append('circle')
+                .attr('cx', d.x)
+                .attr('cy', d.y)
+                .attr('r', 4)
+                .attr('class', 'line-end')
+                .style('fill', isFilled ? d.color : 'white')
+                .style('stroke', d.color);
+        } else if (shapeType === 1) {
+            // Square
+            svg.append('rect')
+                .attr('x', d.x - 4)
+                .attr('y', d.y - 4)
+                .attr('width', 8)
+                .attr('height', 8)
+                .attr('class', 'line-end')
+                .style('fill', isFilled ? d.color : 'white')
+                .style('stroke', d.color);
+        } else {
+            // Diamond
+            svg.append('g')
+                .attr('transform', `translate(${d.x}, ${d.y})`)
+                .attr('class', 'line-end')
+                .append('path')
+                .attr('d', diamondShape(7))
+                .style('fill', isFilled ? d.color : 'white')
+                .style('stroke', d.color);
+        }
+    });
     
     // LABELS AND LEADER LINES: Handle similarly if needed
     // Remove existing labels and leader lines with transition
@@ -280,25 +264,62 @@ function drawGraphic() {
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
 
-			legenditem
-				.append('div')
-				.attr('class', 'legend--icon--circle')
-				.style('background-color', function (d) {
-					return d[1];
-				});
+		legenditem.each(function(d, i) {
+			const item = d3.select(this);
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+			
+			const shapeIndex = d[2] % 6;
+			const color = d[1];
+			const isFilled = shapeIndex < 3;
+			
+			// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
+			const shapeType = shapeIndex % 3;
+			
+			if (shapeType === 0) {
+				// Circle
+				svg.append('circle')
+					.attr('cx', 6)
+					.attr('cy', 6)
+					.attr('r', 4)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else if (shapeType === 1) {
+				// Square
+				svg.append('rect')
+					.attr('x', 2)
+					.attr('y', 2)
+					.attr('width', 8)
+					.attr('height', 8)
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			} else {
+				// Diamond
+				svg.append('g')
+					.attr('transform', 'translate(6, 6)')
+					.append('path')
+					.attr('d', diamondShape(7))
+					.style('fill', isFilled ? color : 'white')
+					.style('stroke', color);
+			}
+		});
 
-			legenditem
-				.append('div')
-				.append('p')
-				.attr('class', 'legend--text')
-				.html(function (d) {
-					return d[0];
-				});
+		legenditem
+			.append('div')
+			.append('p')
+			.attr('class', 'legend--text')
+			.html(function (d) {
+				return d[0];
+			});
 		} else {
 			createDirectLabels({
 				categories: categories,
@@ -323,7 +344,7 @@ function drawGraphic() {
 	
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 
 	let xDataType;
 
@@ -349,40 +370,45 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	// Set y domain for "autoAll" or manual values, but not for "auto"
-	let yDomainMin = config.yDomainMin;
-	let yDomainMax = config.yDomainMax;
-	if (yDomainMin === "auto" || yDomainMax === "auto") {
-		// Will be set in changeData for filtered data
-	} else {
-		// Use all data for "autoAll" or manual values
-		const [minY, maxY] = getYDomainMinMax({
-			minType: yDomainMin,
-			maxType: yDomainMax,
-			allData: graphicData,
-			filteredData: graphicData,
-			categories: categories
-		});
+	// Set initial y domain
+	// If freeYAxisScales is true and using auto, will be set in changeData for filtered data
+	if (!config.freeYAxisScales || (config.yDomainMin !== "auto" && config.yDomainMin !== "data" && config.yDomainMax !== "auto" && config.yDomainMax !== "data")) {
+		const { minY, maxY } = calculateAutoBounds(graphicData, config);
 		y.domain([minY, maxY]);
 	}
 
 	// In drawGraphic, replace the x-axis tickValues logic:
+	let xAxisGenerator;
+	if (config.labelSpans.enabled === true && xDataType == 'date') {
+		xAxisGenerator = customTemporalAxis(x)
+			.tickSize(17)
+			.tickPadding(6)
+			.timeUnit(config.labelSpans.timeUnit)
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+	} else {
+		xAxisGenerator = d3
+			.axisBottom(x)
+			.tickValues(
+				getXAxisTicks({
+					data: graphic_data,
+					xDataType,
+					size,
+					config
+				})
+			)
+			.tickFormat(
+				(d) =>
+					xDataType == 'date' ?
+						d3.timeFormat(config.xAxisTickFormat[size])(d) :
+						d3.format(config.xAxisNumberFormat)(d)
+			);
+	}
+
 	svg
 		.append('g')
 		.attr('class', 'x axis')
 		.attr('transform', `translate(0, ${height})`)
-		.call(
-			d3
-				.axisBottom(x)
-				.tickValues(getXAxisTicks({
-					data: graphicData,
-					xDataType,
-					size,
-					config
-				}))
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
-		);
+		.call(xAxisGenerator); 
 
 	// Add the y-axis
 	svg
@@ -449,21 +475,21 @@ function drawGraphic() {
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
 	graphicData = rawData.map((d) => {
-		if (d3.timeParse(config.dateFormat)(d.date) !== null) {
+		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
-				date: d3.timeParse(config.dateFormat)(d.date),
-				option: d.option,
+				date: d3.utcParse(config.dateFormat)(d.date),
+				series: d.series,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'option') // Exclude 'date' and 'option' keys from the data
+					.filter(([key]) => key !== 'date' && key !== 'series') // Exclude 'date' and 'option' keys from the data
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		} else {
 			return {
 				date: (+d.date),
-				option: d.option,
+				series: d.series,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'option')
+					.filter(([key]) => key !== 'date' && key !== 'series')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
