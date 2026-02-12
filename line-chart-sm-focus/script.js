@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawShapeMarker } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -162,24 +162,29 @@ function drawGraphic() {
 				if (lastValidDatum) {
 					// Selected group - circle
 					if (categoriesToPlot.indexOf(category) == chartIndex) {
-						svg.append('circle')
-							.attr('cx', x(lastValidDatum.date))
-							.attr('cy', y(lastValidDatum[category]))
-							.attr('r', 3.5)
-							.attr('class', 'line-end selected')
-							.style('fill', config.colourPalette[0])
-							.style('stroke', config.colourPalette[0]);
+							drawShapeMarker({
+								svg,
+								shape: 'circle',
+								color: config.colourPalette[0],
+								x: x(lastValidDatum.date),
+								y: y(lastValidDatum[category]),
+								size: 3.5,
+								className: 'line-end selected',
+								isFilled: true,
+							});
 					} 
 					// Comparison group - square
 					else if (category == reference) {
-						svg.append('rect')
-							.attr('x', x(lastValidDatum.date) - 3.5)
-							.attr('y', y(lastValidDatum[category]) - 3.5)
-							.attr('width', 7)
-							.attr('height', 7)
-							.attr('class', 'line-end reference')
-							.style('fill', config.colourPalette[1])
-							.style('stroke', config.colourPalette[1]);
+							drawShapeMarker({
+								svg,
+								shape: 'square',
+								color: config.colourPalette[1],
+								x: x(lastValidDatum.date),
+								y: y(lastValidDatum[category]),
+								size: 3.5,
+								className: 'line-end reference',
+								isFilled: true,
+							});
 					}
 				}
 			}
@@ -361,13 +366,16 @@ function drawGraphic() {
 				.attr('viewBox', '0 0 12 12')
 				.attr('class', 'legend--icon')
 				.style('overflow', 'visible');
-			
-			svg.append('circle')
-				.attr('cx', 6)
-				.attr('cy', 6)
-				.attr('r', 3.5)
-				.style('fill', color)
-				.style('stroke', color);
+
+			drawShapeMarker({
+				svg,
+				shape: 'circle',
+				color,
+				x: 6,
+				y: 6,
+				size: 3.5,
+				isFilled: true,
+			});
 		} else if (legendType === 1) {
 			// Comparison group - square (filled)
 			const svg = item.append('svg')
@@ -376,14 +384,16 @@ function drawGraphic() {
 				.attr('viewBox', '0 0 12 12')
 				.attr('class', 'legend--icon')
 				.style('overflow', 'visible');
-			
-			svg.append('rect')
-				.attr('x', 2.5)
-				.attr('y', 2.5)
-				.attr('width', 7)
-				.attr('height', 7)
-				.style('fill', color)
-				.style('stroke', color);
+
+			drawShapeMarker({
+				svg,
+				shape: 'square',
+				color,
+				x: 6,
+				y: 6,
+				size: 3.5,
+				isFilled: true,
+			});
 		} else {
 			// All other groups - line (as before)
 			item.append('svg')
