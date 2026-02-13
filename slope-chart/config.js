@@ -1,50 +1,38 @@
 config = {
 	"graphicDataURL": "data.csv",
-	"colourPalette": ONSlinePalette,
+	"colourScheme":"direction", //"categories" or "direction"
+	"colourPalette":[ONScolours.coralPink,ONScolours.grey30,ONScolours.oceanBlue],
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
-	"lineCurveType": "curveLinear",
 	"yDomainMin": "auto",
 	"yDomainMax": "auto",
-	// yDomainMin and yDomainMax can be "auto", "data", or a numeric value
-	"xAxisTickFormat": {
-		"sm": "%b %y",
-		"md": "%b %y",
-		"lg": "%B %Y"
+	// yDomainMin and yDomainMax can be "auto", "data", or a numeric value	
+	"showZeroAxis":true,
+	"yAxisLabel": "y axis label",
+	"yAxisTicks":{
+		"sm": 5,
+		"md": 5,
+		"lg": 5
 	},
-	"xAxisNumberFormat": ".0f",
-	"yAxisNumberFormat": ",.0f",
-	"dateFormat": "%d-%m-%Y",
-	// default is 75
-	"chartHeight": {
-		"sm": 350,
-		"md": 350,
-		"lg": 350
+	"lineCurveType": "curveLinear",
+	"xAxisLabels": ["Q1 2018","Q1 2021"],
+	"aspectRatio": {
+		"sm": [1, 2],
+		"md": [1, 2],
+		"lg": [1, 2]
 	},
-	"chartWidth": {
-		"sm": 75,
-		"md": 75,
-		"lg": 75
-	},
-	"margin": {
+	"margin": {//left and right are set by the script
 		"sm": {
 			"top": 30,
-			"right": 0, //Not needed - right margin calculated from chartwidth etc.
-			"bottom": 25,
-			"left": 70
+			"bottom": 10,
 		},
 		"md": {
 			"top": 30,
-			"right": 0, //Not needed - right margin calculated from chartwidth etc.
-			"bottom": 15,
-			"left": 70
+			"bottom": 10,
 		},
 		"lg": {
 			"top": 30,
-			"right": 0, //Not needed - right margin calculated from chartwidth etc.
-			"bottom": 15,
-			"left": 70
+			"bottom": 10,
 		}
 	},
-	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };
