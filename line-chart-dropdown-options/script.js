@@ -82,6 +82,9 @@ function drawGraphic() {
 			// .attr('r', 0)
 			.remove();
 
+		svg.selectAll('circle.point-marker')
+			.remove();
+
 		svg
 			.selectAll('text.directLineLabel')
 			// .transition()
@@ -190,17 +193,34 @@ function drawGraphic() {
             return customLineGenerator(d.data);
         });
     
-    // CIRCLES: Handle end-of-line circles
-    const circleData = categories.map((category, index) => {
-        const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
-        return {
-            category: category,
-            index: index,
-            x: x(lastDatum.date),
-            y: y(lastDatum[category]),
-            color: config.colourPalette[index % config.colourPalette.length]
-        };
-    });
+	// POINT MARKERS: Add markers for all available data points
+	if (config.addPointMarkers) {
+		svg.selectAll('circle.point-marker').remove();
+		categories.forEach((category, index) => {
+			const points = filteredData.filter(d => d[category] !== null && d[category] !== undefined);
+			svg.selectAll(`circle.point-marker-${index}`)
+				.data(points)
+				.enter()
+				.append('circle')
+				.attr('cx', d => x(d.date))
+				.attr('cy', d => y(d[category]))
+				.attr('r', 4)
+				.attr('class', `point-marker point-marker-${index}`)
+				.style('fill', config.colourPalette[index % config.colourPalette.length]);
+		});
+	}
+
+	// END MARKERS: Handle end-of-line markers
+	const circleData = categories.map((category, index) => {
+		const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
+		return lastDatum ? {
+			category: category,
+			index: index,
+			x: x(lastDatum.date),
+			y: y(lastDatum[category]),
+			color: config.colourPalette[index % config.colourPalette.length]
+		} : null;
+	}).filter(d => d);
     
     // Remove all existing end markers (circles, rects, and diamond groups)
     svg.selectAll('circle.line-end').remove();
@@ -208,17 +228,19 @@ function drawGraphic() {
     svg.selectAll('g.line-end').remove();
     
 	// Add new end markers with varying shapes
-	circleData.forEach((d) => {
-		drawIndexedLineEndMarker({
-			svg,
-			index: d.index,
-			color: d.color,
-			x: d.x,
-			y: d.y,
-			size: 4,
-			diamondSize: 7,
+	if (config.addEndMarkers || size === 'sm') {
+		circleData.forEach((d) => {
+			drawIndexedLineEndMarker({
+				svg,
+				index: d.index,
+				color: d.color,
+				x: d.x,
+				y: d.y,
+				size: 4,
+				diamondSize: 7,
+			});
 		});
-	});
+	}
     
     // LABELS AND LEADER LINES: Handle similarly if needed
     // Remove existing labels and leader lines with transition
