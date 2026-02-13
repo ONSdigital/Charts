@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -178,39 +178,15 @@ function drawGraphic() {
 		}).filter(d => d); // Remove null entries
 
 		markerData.forEach(d => {
-			const shapeIndex = d.index % 6;
-			const isFilled = shapeIndex < 3;
-			const shapeType = shapeIndex % 3;
-			
-			if (shapeType === 0) {
-				// Circle
-				svg.append('circle')
-					.attr('cx', d.x)
-					.attr('cy', d.y)
-					.attr('r', 4)
-					.attr('class', 'line-end')
-					.style('fill', isFilled ? d.color : 'white')
-					.style('stroke', d.color);
-			} else if (shapeType === 1) {
-				// Square
-				svg.append('rect')
-					.attr('x', d.x - 4)
-					.attr('y', d.y - 4)
-					.attr('width', 8)
-					.attr('height', 8)
-					.attr('class', 'line-end')
-					.style('fill', isFilled ? d.color : 'white')
-					.style('stroke', d.color);
-			} else {
-				// Diamond
-				svg.append('g')
-					.attr('transform', `translate(${d.x}, ${d.y})`)
-					.attr('class', 'line-end')
-					.append('path')
-					.attr('d', diamondShape(7))
-					.style('fill', isFilled ? d.color : 'white')
-					.style('stroke', d.color);
-			}
+			drawIndexedLineEndMarker({
+				svg,
+				index: d.index,
+				color: d.color,
+				x: d.x,
+				y: d.y,
+				size: 4,
+				diamondSize: 7,
+			});
 		});
 	}
 
@@ -235,40 +211,14 @@ function drawGraphic() {
 				.attr('viewBox', '0 0 12 12')
 				.attr('class', 'legend--icon')
 				.style('overflow', 'visible');
-			
-			const shapeIndex = d[2] % 6;
-			const color = d[1];
-			const isFilled = shapeIndex < 3;
-			
-			// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
-			const shapeType = shapeIndex % 3;
-			
-			if (shapeType === 0) {
-				// Circle
-				svg.append('circle')
-					.attr('cx', 6)
-					.attr('cy', 6)
-					.attr('r', 4)
-					.style('fill', isFilled ? color : 'white')
-					.style('stroke', color);
-			} else if (shapeType === 1) {
-				// Square
-				svg.append('rect')
-					.attr('x', 2)
-					.attr('y', 2)
-					.attr('width', 8)
-					.attr('height', 8)
-					.style('fill', isFilled ? color : 'white')
-					.style('stroke', color);
-			} else {
-				// Diamond
-				svg.append('g')
-					.attr('transform', 'translate(6, 6)')
-					.append('path')
-					.attr('d', diamondShape(7))
-					.style('fill', isFilled ? color : 'white')
-					.style('stroke', color);
-			}
+
+			drawIndexedLegendShape({
+				svg,
+				index: d[2],
+				color: d[1],
+				size: 4,
+				diamondSize: 7,
+			});
 		});
 
 		legenditem

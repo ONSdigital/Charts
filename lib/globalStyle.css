@@ -352,6 +352,24 @@ h5#source {
   padding-bottom: 12px;
 }
 
+/* Stroke styling for legend shapes and line end markers */
+.legend--icon circle,
+.legend--icon rect,
+.legend--icon path {
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  stroke-miterlimit: 10;
+}
+
+.line-end,
+g.line-end path {
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  stroke-miterlimit: 10;
+}
+
 .legend--icon--circle {
   height: 12px;
   width: 12px;
