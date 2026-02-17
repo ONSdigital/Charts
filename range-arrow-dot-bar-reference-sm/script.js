@@ -3,12 +3,13 @@ import {
   wrap,
   addSvg,
   calculateChartWidth,
-  addDataLabels,
   addChartTitleLabel,
   addAxisLabel,
   diamondShape,
-  adjustColorForContrast
+  adjustColorForContrast,
+  addLabelWithBackground
 } from "../lib/helpers.js";
+
 
 let graphic = d3.select("#graphic");
 let legend = d3.select("#legend");
@@ -273,7 +274,10 @@ function drawGraphic() {
         .attr("x1", x(x.domain()[0]))
         .attr("x2", x(x.domain()[1]))
         .attr("y1", (d) => y(d.name) + y.bandwidth() / 2)
-        .attr("y2", (d) => y(d.name) + y.bandwidth() / 2);
+        .attr("y2", (d) => y(d.name) + y.bandwidth() / 2)
+        .attr("stroke", "#888")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "4,3");
     }
 
     // Setup arrowhead marker for arrow charts
@@ -395,8 +399,8 @@ function drawGraphic() {
           return +d[maxColumn] === +d[minColumn]
             ? ONScolours.grey50
             : +d[maxColumn] < +d[minColumn]
-            ? config.colourPaletteArrows[0]
-            : config.colourPaletteArrows[1];
+              ? config.colourPaletteArrows[0]
+              : config.colourPaletteArrows[1];
         })
         .attr("stroke-width", (d) => {
           return +d[maxColumn] === +d[minColumn] ? "4px" : "3px";
@@ -455,25 +459,36 @@ function drawGraphic() {
     }
 
     if (shouldShowDataLabels() && ["range", "arrow", "dot"].includes(chartType)) {
-      // minColumn label (diamond)
-      svg
-        .selectAll("text.min")
-        .data(data)
-        .join("text")
-        .attr("class", "dataLabels")
-        .attr("x", (d) => x(d[minColumn]))
-        .attr("y", (d) => {
+      // Min label
+      addLabelWithBackground({
+        selection: svg,
+        data: data,
+        valueAccessor: (d) => d3.format(config.dataLabels.numberFormat)(d[minColumn]),
+        xAccessor: (d) => x(d[minColumn]),
+        yAccessor: (d) => {
           if (chartType === "range" || chartType === "dot") {
-            // If dots are close, offset vertically
             return Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
               ? y(d.name) - 5
               : y(d.name) + y.bandwidth() / 2;
           } else {
             return y(d.name) + y.bandwidth() / 2;
           }
-        })
-        .text((d) => d3.format(config.dataLabels.numberFormat)(d[minColumn]))
-        .attr("fill", (d) => {
+        },
+        dxAccessor: (d) => {
+          if (chartType === "arrow" || chartType === "range") {
+            return +d[minColumn] <= +d[maxColumn] ? -10 : 10;
+          } else {
+            return -10;
+          }
+        },
+        anchorAccessor: (d) => {
+          if (chartType === "arrow" || chartType === "range") {
+            return +d[minColumn] <= +d[maxColumn] ? "end" : "start";
+          } else {
+            return "end";
+          }
+        },
+        fillAccessor: (d) => {
           if (chartType === "arrow") {
             if (+d[minColumn] === +d[maxColumn]) {
               return "#999";
@@ -487,32 +502,19 @@ function drawGraphic() {
           } else {
             return adjustColorForContrast(config.colourPaletteDots[0], 4.5);
           }
-        })
-        .style("font-weight", "600")
-        .attr("dy", 6)
-        .attr("dx", (d) => {
-          if (chartType === "arrow") {
-            return +d[minColumn] <= +d[maxColumn] ? -10 : 10;
-          } else {
-            return -10;
-          }
-        })
-        .attr("text-anchor", (d) => {
-          if (chartType === "arrow") {
-            return +d[minColumn] <= +d[maxColumn] ? "end" : "start";
-          } else {
-            return "end";
-          }
-        });
+        },
+        fontWeightAccessor: () => "600",
+        labelType: "min",
+        background: config.dataLabels && typeof config.dataLabels.background !== 'undefined' ? config.dataLabels.background : true
+      });
 
-      // maxColumn label (dot/circle)
-      svg
-        .selectAll("text.max")
-        .data(data)
-        .join("text")
-        .attr("class", "dataLabels")
-        .attr("x", (d) => x(d[maxColumn]))
-        .attr("y", (d) => {
+      // Max label
+      addLabelWithBackground({
+        selection: svg,
+        data: data,
+        valueAccessor: (d) => d3.format(config.dataLabels.numberFormat)(d[maxColumn]),
+        xAccessor: (d) => x(d[maxColumn]),
+        yAccessor: (d) => {
           if (chartType === "range" || chartType === "dot") {
             return Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
               ? y(d.name) + 15
@@ -520,9 +522,22 @@ function drawGraphic() {
           } else {
             return y(d.name) + y.bandwidth() / 2;
           }
-        })
-        .text((d) => d3.format(config.dataLabels.numberFormat)(d[maxColumn]))
-        .attr("fill", (d) => {
+        },
+        dxAccessor: (d) => {
+          if (chartType === "arrow" || chartType === "range") {
+            return +d[minColumn] > +d[maxColumn] ? -10 : 10;
+          } else {
+            return 10;
+          }
+        },
+        anchorAccessor: (d) => {
+          if (chartType === "arrow" || chartType === "range") {
+            return +d[minColumn] > +d[maxColumn] ? "end" : "start";
+          } else {
+            return "start";
+          }
+        },
+        fillAccessor: (d) => {
           if (chartType === "arrow") {
             if (+d[minColumn] === +d[maxColumn]) {
               return "#999";
@@ -536,23 +551,11 @@ function drawGraphic() {
           } else {
             return adjustColorForContrast(config.colourPaletteDots[1], 4.5);
           }
-        })
-        .style("font-weight", chartType === "arrow" ? "700" : "600")
-        .attr("dy", 6)
-        .attr("dx", (d) => {
-          if (chartType === "arrow") {
-            return +d[minColumn] > +d[maxColumn] ? -10 : 10;
-          } else {
-            return 10;
-          }
-        })
-        .attr("text-anchor", (d) => {
-          if (chartType === "arrow") {
-            return +d[minColumn] > +d[maxColumn] ? "end" : "start";
-          } else {
-            return "start";
-          }
-        });
+        },
+        fontWeightAccessor: () => (chartType === "arrow" ? "700" : "600"),
+        labelType: "max",
+        background: config.dataLabels && typeof config.dataLabels.background !== 'undefined' ? config.dataLabels.background : true
+      });
     }
 
     // This does the chart title label

@@ -5,6 +5,7 @@ import {
   addAxisLabel,
   diamondShape,
   adjustColorForContrast,
+  addLabelWithBackground
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -387,75 +388,73 @@ function drawGraphic() {
 
   //dataLabels
   if (shouldShowDataLabels() && ["range", "arrow", "dot"].includes(chartType)) {
-    charts
-      .selectAll("text.min")
-      .data((d) => d[1])
-      .join("text")
-      .attr("class", "dataLabels")
-      .attr("x", (d) => x(d[minColumn]))
-      .attr("y", (d) =>
-        Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
-          ? groups.filter((f) => f[0] == d.group)[0][3](d.name) -
-            adjustWhenClose
-          : groups.filter((f) => f[0] == d.group)[0][3](d.name)
-      )
-      .text((d) => d3.format(config.numberFormat)(d[minColumn]))
-      .attr("fill", (d) => {
-        if (chartType === "arrow") {
-          if (+d[minColumn] === +d[maxColumn]) {
-            return config.colourPaletteArrows[2];
-          } else if (+d[minColumn] < +d[maxColumn]) {
-            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+    // Render data labels per chart/group for correct positioning
+    charts.each(function (groupData) {
+      const group = groupData[0];
+      const data = groupData[1];
+      const yScale = groupData[3];
+      const chartGroup = d3.select(this);
+
+      // Min labels
+      addLabelWithBackground({
+        selection: chartGroup,
+        data: data,
+        valueAccessor: (d) => d3.format(config.numberFormat)(d[minColumn]),
+        xAccessor: (d) => x(d[minColumn]),
+        yAccessor: (d) =>
+          Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
+            ? yScale(d.name) - adjustWhenClose
+            : yScale(d.name),
+        dxAccessor: (d) => (+d[minColumn] <= +d[maxColumn] ? -10 : 10),
+        anchorAccessor: (d) => (+d[minColumn] <= +d[maxColumn] ? "end" : "start"),
+        fillAccessor: (d) => {
+          if (chartType === "arrow") {
+            if (+d[minColumn] === +d[maxColumn]) {
+              return config.colourPaletteArrows[2];
+            } else if (+d[minColumn] < +d[maxColumn]) {
+              return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+            } else {
+              return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            }
           } else {
-            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            return adjustColorForContrast(colour("min"), 4.5);
           }
-        } else {
-          return adjustColorForContrast(colour("min"), 4.5);
-        }
-      })
-      .style("font-weight", "600")
-
-      .attr("dy", 6)
-      .attr("dx", (d) => (+d[minColumn] <= +d[maxColumn] ? -10 : 10))
-      .attr("text-anchor", (d) =>
-        +d[minColumn] <= +d[maxColumn] ? "end" : "start"
-      );
-
-    charts
-      .selectAll("text.max")
-      .data((d) => d[1])
-      .join("text")
-      .attr("class", "dataLabels")
-      .attr("x", (d) => x(d[maxColumn]))
-      .attr("y", (d) =>
-        Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
-          ? groups.filter((f) => f[0] == d.group)[0][3](d.name) +
-            adjustWhenClose
-          : groups.filter((f) => f[0] == d.group)[0][3](d.name)
-      )
-      .text((d) => d3.format(config.numberFormat)(d[maxColumn]))
-      .attr("fill", (d) => {
-        if (chartType === "arrow") {
-          if (+d[minColumn] === +d[maxColumn]) {
-            return config.colourPaletteArrows[2]; // neutral color for no change
-          } else if (+d[minColumn] < +d[maxColumn]) {
-            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5); // up arrow color
-          } else {
-            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5); // down arrow color
-          }
-        } else {
-          return adjustColorForContrast(colour("max"), 4.5);
-        }
-      })
-
-      .attr("dy", 6)
-      .attr("dx", (d) => (+d[minColumn] > +d[maxColumn] ? -10 : 10))
-      .attr("text-anchor", (d) =>
-        +d[minColumn] > +d[maxColumn] ? "end" : "start"
-      )
-      .style("font-weight", () => {
-        return chartType === "arrow" ? "700" : "600";
+        },
+        fontWeightAccessor: (d) => "600",
+        labelType:'min',
+        background: config.dataLabels.enabled && typeof config.dataLabels.background !== 'undefined' ? config.dataLabels.background : true
       });
+
+      // Max labels
+      addLabelWithBackground({
+        selection: chartGroup,
+        data: data,
+        valueAccessor: (d) => d3.format(config.numberFormat)(d[maxColumn]),
+        xAccessor: (d) => x(d[maxColumn]),
+        yAccessor: (d) =>
+          Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
+            ? yScale(d.name) + adjustWhenClose
+            : yScale(d.name),
+        dxAccessor: (d) => (+d[minColumn] > +d[maxColumn] ? -10 : 10),
+        anchorAccessor: (d) => (+d[minColumn] > +d[maxColumn] ? "end" : "start"),
+        fillAccessor: (d) => {
+          if (chartType === "arrow") {
+            if (+d[minColumn] === +d[maxColumn]) {
+              return config.colourPaletteArrows[2];
+            } else if (+d[minColumn] < +d[maxColumn]) {
+              return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+            } else {
+              return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            }
+          } else {
+            return adjustColorForContrast(colour("max"), 4.5);
+          }
+        },
+        fontWeightAccessor: (d) => (chartType === "arrow" ? "700" : "600"),
+        labelType:'max',
+        background: config.dataLabels.endabled && typeof config.dataLabels.background !== 'undefined' ? config.dataLabels.background : true
+      });
+    });
   }
 
   // This does the x-axis label

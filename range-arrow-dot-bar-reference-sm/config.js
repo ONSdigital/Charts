@@ -1,6 +1,6 @@
 config = {
   graphicDataUrl: "data.csv",
-  chartType: "arrow",
+  chartType: "range",
   // can be range, dot, arrow or bar (for bar with reference point)
   colourPaletteDots: [ONScolours.oceanBlue, ONScolours.springGreen],
   colourPaletteDotsStroke: [ONScolours.white, ONScolours.white],
@@ -12,6 +12,7 @@ config = {
   dataLabels: {
     show: true,
     numberFormat: ".0%",
+    background: false, // Set to false to disable white background behind data labels
   },
   xDomain: [-.39,1.15],
   // either "auto" or an array for the x domain e.g. [0,100]
@@ -20,7 +21,7 @@ config = {
   // guidelines must always show on dot, and not show on bar
   showGuidelines: {
     range: false,
-    arrow: false,
+    arrow: true,
   },
   chartEvery: {
     sm: 1,
