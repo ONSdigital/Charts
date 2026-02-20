@@ -1,4 +1,5 @@
 import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -27,45 +28,29 @@ function drawGraphic() {
 
 	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
 
-	const optns = select
-		.append('div')
-		.attr('id', 'sel')
-		.append('select')
-		.attr('id', 'optionsSelect')
-		.attr('style', 'width:calc(100% - 6px)')
-		.attr('class', 'chosen-select')
-		.attr('data-placeholder', 'Select an option');
+	const dropdownData = uniqueOptions
+		.slice()
+		.sort((a, b) => (a || '').localeCompare(b || ''))
+		.map((series) => ({
+			id: series,
+			label: series
+		}));
 
-
-	optns
-		.selectAll('option.option')
-		.data(uniqueOptions)
-		.enter()
-		.append('option')
-		.attr('value', (d) => d)
-		.text((d) => d);
-
-
-	//add some more accessibility stuff
-	d3.select('input.chosen-search-input').attr('id', 'chosensearchinput');
-	d3.select('div.chosen-search')
-		.insert('label', 'input.chosen-search-input')
-		.attr('class', 'visuallyhidden')
-		.attr('for', 'chosensearchinput')
-		.html('Type to select an area');
-
-
-	$('#optionsSelect').trigger('chosen:updated');  // Initialize Chosen
-
-	$('#optionsSelect').chosen().change(function () {
-		const selectedOption = $(this).val();
-
-		if (selectedOption) {
-			changeData(selectedOption);
-
-		} else {
-			// Clear the chart if no option is selected
-			clearChart();
+	const selectControl = new EnhancedSelect({
+		containerId: 'select',
+		options: dropdownData,
+		label: 'Choose a series',
+		placeholder: 'Select a series',
+		mode: 'default',
+		idKey: 'id',
+		labelKey: 'label',
+		showClear: false,
+		onChange: (selectedValue) => {
+			if (selectedValue) {
+				changeData(selectedValue.id);
+			} else {
+				clearChart();
+			}
 		}
 	});
 
@@ -394,12 +379,20 @@ function drawGraphic() {
 
 	//if there is a default option, set it
 	if (config.defaultOption) {
-		$('#optionsSelect').val(config.defaultOption).trigger('chosen:updated');
-		changeData(config.defaultOption);
+		const defaultOption = dropdownData.find((option) => option.id === config.defaultOption);
+		if (defaultOption) {
+			selectControl.select(defaultOption);
+		} else {
+			clearChart();
+			selectControl.clear();
+			d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
+		}
+	} else if (dropdownData.length > 0) {
+		selectControl.select(dropdownData[0]);
 	} else {
 		// If no default option, clear the chart
 		clearChart();
-		$('#optionsSelect').val('').trigger('chosen:updated');
+		selectControl.clear();
 		d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
 	}
 
