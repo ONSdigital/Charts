@@ -24,6 +24,12 @@ someone else will review it before it gets merged into main.
 Please raise an [issue](https://github.com/ONSdigital/Charts/issues) and
 the team will have a look.
 
+## Accessibility
+
+See the (work-in-progress) [accessibility
+report](https://onsdigital.github.io/Charts/reports/a11y-report.html) on
+each chart template.
+
 ## Guide to updating and placing an initial commit for a chart
 
 -   All missing charts can be found in the issues section of the
@@ -75,7 +81,6 @@ the team will have a look.
 | Range CI area grouped                 | [View](https://onsdigital.github.io/Charts/range-ci-area-grouped/)                 | [`</>`](https://github.com/ONSdigital/Charts/tree/main/range-ci-area-grouped/)                 | [README](https://github.com/ONSvisual/Charts/blob/main/range-ci-area-grouped/README.md)                 |
 | Reports                               | [View](https://onsdigital.github.io/Charts/reports/)                               | [`</>`](https://github.com/ONSdigital/Charts/tree/main/reports/)                               | [README](https://github.com/ONSvisual/Charts/blob/main/reports/README.md)                               |
 | Scatter bubble plot                   | [View](https://onsdigital.github.io/Charts/scatter-bubble-plot/)                   | [`</>`](https://github.com/ONSdigital/Charts/tree/main/scatter-bubble-plot/)                   | [README](https://github.com/ONSvisual/Charts/blob/main/scatter-bubble-plot/README.md)                   |
-| Sitemap.xml                           | [View](https://onsdigital.github.io/Charts/sitemap.xml/)                           | [`</>`](https://github.com/ONSdigital/Charts/tree/main/sitemap.xml/)                           | [README](https://github.com/ONSvisual/Charts/blob/main/sitemap.xml/README.md)                           |
 | Slope chart                           | [View](https://onsdigital.github.io/Charts/slope-chart/)                           | [`</>`](https://github.com/ONSdigital/Charts/tree/main/slope-chart/)                           | [README](https://github.com/ONSvisual/Charts/blob/main/slope-chart/README.md)                           |
 | Waterfall                             | [View](https://onsdigital.github.io/Charts/waterfall/)                             | [`</>`](https://github.com/ONSdigital/Charts/tree/main/waterfall/)                             | [README](https://github.com/ONSvisual/Charts/blob/main/waterfall/README.md)                             |
 | Z annotation bar example              | [View](https://onsdigital.github.io/Charts/z-annotation-bar-example/)              | [`</>`](https://github.com/ONSdigital/Charts/tree/main/z-annotation-bar-example/)              | [README](https://github.com/ONSvisual/Charts/blob/main/z-annotation-bar-example/README.md)              |
