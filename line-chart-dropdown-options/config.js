@@ -81,6 +81,8 @@ config = {
 		"md": 5,
 		"lg": 8
 	},
+	"addEndMarkers": false,
+	"addPointMarkers": false,
 
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };
