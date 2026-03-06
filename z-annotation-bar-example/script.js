@@ -113,7 +113,7 @@ function drawGraphic() {
     label: 'A vertical line annotation',
     line: { height: height },
     editable:false,
-    mobile:{enabled:isMobile,number:1}
+    mobile:{enabled:isMobile,number:"A"}
   })
 
   //setup the arrowhead marker
@@ -130,7 +130,7 @@ function drawGraphic() {
       text:'below',
     },
     editable:false,
-    mobile:{enabled:isMobile,number:2}
+    mobile:{enabled:isMobile,number:"B"}
 
   })
 
@@ -141,7 +141,7 @@ function drawGraphic() {
     y:y("A few more")-5,
     label:"A free text annotation",
     editable:false,   
-    mobile:{enabled:isMobile,number:3}
+    mobile:{enabled:isMobile,number:"C"}
 
   })
 
@@ -175,7 +175,7 @@ function drawGraphic() {
     line:{endX:x(0.9),height:height},
     position:{text:"left",enclosure:"inside"},
     editable:false,
-    mobile:{enabled:isMobile,number:4}
+    mobile:{enabled:isMobile,number:"D"}
   })
 
   //create link to source

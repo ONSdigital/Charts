@@ -146,7 +146,7 @@ function drawGraphic() {
 		label: "A horizontal line annotation",
 		line: { width: chartWidth },
 		editable: false,
-		mobile: { enabled: isMobile, number: 1 }
+		mobile: { enabled: isMobile, number: "A" }
 	})
 
 	addAnnotation({
@@ -158,7 +158,7 @@ function drawGraphic() {
 		label: 'A horizontal range annotation',
 		text: { wrapWidth: 250 },
 		editable: false,
-		mobile: { enabled: isMobile, number: 2 }
+		mobile: { enabled: isMobile, number: "B" }
 
 	})
 
