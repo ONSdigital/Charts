@@ -178,6 +178,7 @@ function drawGraphic() {
       const groups = d3.group(graphicData, d => d.areanm);
 
       const dropdownData = Array.from(groups, ([areanm, points]) => ({
+        id: areanm,
         label: areanm,
         ids: points.map(p => p.originalId),
         group: points[0].group,
@@ -213,11 +214,17 @@ function drawGraphic() {
       overlay.clearHighlight();
       if (!selectedValue) return;
       if (config.multiHighlight) {
-        selectedValue.ids.forEach(idx => {
-          overlay.highlightAll(idx);   
+        selectedValue.ids.forEach(originalId => {
+          const overlayIndex = overlayIndexByOriginalId.get(originalId);
+          if (overlayIndex !== undefined) {
+            overlay.highlightAll(overlayIndex);
+          }
         });
       } else {
-        overlay.highlightPoint(selectedValue.id);
+        const overlayIndex = overlayIndexByOriginalId.get(selectedValue.id);
+        if (overlayIndex !== undefined) {
+          overlay.highlightPoint(overlayIndex);
+        }
       }
     }
   });
@@ -328,7 +335,7 @@ function drawGraphic() {
     .attr("stroke", "white")
     .attr("stroke-width", 0.6)
     .selectAll("circle")
-    .data(positionedData.reverse())
+    .data([...positionedData].reverse())
     .join("circle")
     .attr("cx", (d) => d.x)
     .attr("cy", (d) => d.y)
@@ -345,13 +352,13 @@ function drawGraphic() {
       group: d.group,
       value: d.value,
       formattedValue: d3.format(".1f")(d.value),
-      originalId: graphicData.findIndex(
-        (orig) =>
-          orig ===
-          graphicData.find((g) => g.areanm === d.areanm && g.group === d.group)
-      ),
+      originalId: d.originalId,
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
+
+  const overlayIndexByOriginalId = new Map(
+    positionedOverlayData.map((d, i) => [d.originalId, i])
+  );
 
   // Add Delaunay overlay
   const overlay = createDelaunayOverlay({
