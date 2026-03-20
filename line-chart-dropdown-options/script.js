@@ -1,4 +1,5 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, diamondShape } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -27,45 +28,29 @@ function drawGraphic() {
 
 	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
 
-	const optns = select
-		.append('div')
-		.attr('id', 'sel')
-		.append('select')
-		.attr('id', 'optionsSelect')
-		.attr('style', 'width:calc(100% - 6px)')
-		.attr('class', 'chosen-select')
-		.attr('data-placeholder', 'Select an option');
+	const dropdownData = uniqueOptions
+		.slice()
+		.sort((a, b) => (a || '').localeCompare(b || ''))
+		.map((series) => ({
+			id: series,
+			label: series
+		}));
 
-
-	optns
-		.selectAll('option.option')
-		.data(uniqueOptions)
-		.enter()
-		.append('option')
-		.attr('value', (d) => d)
-		.text((d) => d);
-
-
-	//add some more accessibility stuff
-	d3.select('input.chosen-search-input').attr('id', 'chosensearchinput');
-	d3.select('div.chosen-search')
-		.insert('label', 'input.chosen-search-input')
-		.attr('class', 'visuallyhidden')
-		.attr('for', 'chosensearchinput')
-		.html('Type to select an area');
-
-
-	$('#optionsSelect').trigger('chosen:updated');  // Initialize Chosen
-
-	$('#optionsSelect').chosen().change(function () {
-		const selectedOption = $(this).val();
-
-		if (selectedOption) {
-			changeData(selectedOption);
-
-		} else {
-			// Clear the chart if no option is selected
-			clearChart();
+	const selectControl = new EnhancedSelect({
+		containerId: 'select',
+		options: dropdownData,
+		label: 'Choose a series',
+		placeholder: 'Select a series',
+		mode: 'default',
+		idKey: 'id',
+		labelKey: 'label',
+		showClear: false,
+		onChange: (selectedValue) => {
+			if (selectedValue) {
+				changeData(selectedValue.id);
+			} else {
+				clearChart();
+			}
 		}
 	});
 
@@ -80,6 +65,9 @@ function drawGraphic() {
 		svg.selectAll('circle.line-end')
 			// .transition().duration(2000)
 			// .attr('r', 0)
+			.remove();
+
+		svg.selectAll('circle.point-marker')
 			.remove();
 
 		svg
@@ -190,59 +178,54 @@ function drawGraphic() {
             return customLineGenerator(d.data);
         });
     
-    // CIRCLES: Handle end-of-line circles
-    const circleData = categories.map((category, index) => {
-        const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
-        return {
-            category: category,
-            index: index,
-            x: x(lastDatum.date),
-            y: y(lastDatum[category]),
-            color: config.colourPalette[index % config.colourPalette.length]
-        };
-    });
+	// POINT MARKERS: Add markers for all available data points
+	if (config.addPointMarkers) {
+		svg.selectAll('circle.point-marker').remove();
+		categories.forEach((category, index) => {
+			const points = filteredData.filter(d => d[category] !== null && d[category] !== undefined);
+			svg.selectAll(`circle.point-marker-${index}`)
+				.data(points)
+				.enter()
+				.append('circle')
+				.attr('cx', d => x(d.date))
+				.attr('cy', d => y(d[category]))
+				.attr('r', 4)
+				.attr('class', `point-marker point-marker-${index}`)
+				.style('fill', config.colourPalette[index % config.colourPalette.length]);
+		});
+	}
+
+	// END MARKERS: Handle end-of-line markers
+	const circleData = categories.map((category, index) => {
+		const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
+		return lastDatum ? {
+			category: category,
+			index: index,
+			x: x(lastDatum.date),
+			y: y(lastDatum[category]),
+			color: config.colourPalette[index % config.colourPalette.length]
+		} : null;
+	}).filter(d => d);
     
     // Remove all existing end markers (circles, rects, and diamond groups)
     svg.selectAll('circle.line-end').remove();
     svg.selectAll('rect.line-end').remove();
     svg.selectAll('g.line-end').remove();
     
-    // Add new end markers with varying shapes
-    circleData.forEach((d, index) => {
-        const shapeIndex = d.index % 6;
-        const isFilled = shapeIndex < 3;
-        const shapeType = shapeIndex % 3;
-        
-        if (shapeType === 0) {
-            // Circle
-            svg.append('circle')
-                .attr('cx', d.x)
-                .attr('cy', d.y)
-                .attr('r', 4)
-                .attr('class', 'line-end')
-                .style('fill', isFilled ? d.color : 'white')
-                .style('stroke', d.color);
-        } else if (shapeType === 1) {
-            // Square
-            svg.append('rect')
-                .attr('x', d.x - 4)
-                .attr('y', d.y - 4)
-                .attr('width', 8)
-                .attr('height', 8)
-                .attr('class', 'line-end')
-                .style('fill', isFilled ? d.color : 'white')
-                .style('stroke', d.color);
-        } else {
-            // Diamond
-            svg.append('g')
-                .attr('transform', `translate(${d.x}, ${d.y})`)
-                .attr('class', 'line-end')
-                .append('path')
-                .attr('d', diamondShape(7))
-                .style('fill', isFilled ? d.color : 'white')
-                .style('stroke', d.color);
-        }
-    });
+	// Add new end markers with varying shapes
+	if (config.addEndMarkers || size === 'sm') {
+		circleData.forEach((d) => {
+			drawIndexedLineEndMarker({
+				svg,
+				index: d.index,
+				color: d.color,
+				x: d.x,
+				y: d.y,
+				size: 4,
+				diamondSize: 7,
+			});
+		});
+	}
     
     // LABELS AND LEADER LINES: Handle similarly if needed
     // Remove existing labels and leader lines with transition
@@ -277,40 +260,14 @@ function drawGraphic() {
 				.attr('viewBox', '0 0 12 12')
 				.attr('class', 'legend--icon')
 				.style('overflow', 'visible');
-			
-			const shapeIndex = d[2] % 6;
-			const color = d[1];
-			const isFilled = shapeIndex < 3;
-			
-			// Determine shape type: 0,3=circle, 1,4=square, 2,5=diamond
-			const shapeType = shapeIndex % 3;
-			
-			if (shapeType === 0) {
-				// Circle
-				svg.append('circle')
-					.attr('cx', 6)
-					.attr('cy', 6)
-					.attr('r', 4)
-					.style('fill', isFilled ? color : 'white')
-					.style('stroke', color);
-			} else if (shapeType === 1) {
-				// Square
-				svg.append('rect')
-					.attr('x', 2)
-					.attr('y', 2)
-					.attr('width', 8)
-					.attr('height', 8)
-					.style('fill', isFilled ? color : 'white')
-					.style('stroke', color);
-			} else {
-				// Diamond
-				svg.append('g')
-					.attr('transform', 'translate(6, 6)')
-					.append('path')
-					.attr('d', diamondShape(7))
-					.style('fill', isFilled ? color : 'white')
-					.style('stroke', color);
-			}
+
+			drawIndexedLegendShape({
+				svg,
+				index: d[2],
+				color: d[1],
+				size: 4,
+				diamondSize: 7,
+			});
 		});
 
 		legenditem
@@ -444,12 +401,20 @@ function drawGraphic() {
 
 	//if there is a default option, set it
 	if (config.defaultOption) {
-		$('#optionsSelect').val(config.defaultOption).trigger('chosen:updated');
-		changeData(config.defaultOption);
+		const defaultOption = dropdownData.find((option) => option.id === config.defaultOption);
+		if (defaultOption) {
+			selectControl.select(defaultOption);
+		} else {
+			clearChart();
+			selectControl.clear();
+			d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
+		}
+	} else if (dropdownData.length > 0) {
+		selectControl.select(dropdownData[0]);
 	} else {
 		// If no default option, clear the chart
 		clearChart();
-		$('#optionsSelect').val('').trigger('chosen:updated');
+		selectControl.clear();
 		d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
 	}
 

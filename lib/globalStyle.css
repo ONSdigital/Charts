@@ -255,9 +255,15 @@ text.title {
   fill: var(--ons-color-grey-100);
 }
 
-svg.chart:focus {
+svg.chart:focus-visible {
   box-shadow: 0 0 0 2px var(--ons-color-black),
     0 0 0 5px var(--ons-color-sun-yellow);
+}
+
+.chart-keyboard-instruction {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--ons-color-grey-75);
 }
 
 /* axis tick labels */
@@ -344,6 +350,24 @@ h5#source {
   display: flex;
   padding-right: 40px;
   padding-bottom: 12px;
+}
+
+/* Stroke styling for legend shapes and line end markers */
+.legend--icon circle,
+.legend--icon rect,
+.legend--icon path {
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  stroke-miterlimit: 10;
+}
+
+.line-end,
+g.line-end path {
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  stroke-miterlimit: 10;
 }
 
 .legend--icon--circle {
