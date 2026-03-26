@@ -209,6 +209,7 @@ function drawGraphic() {
     mode: "default",
     idKey: "id",
     labelKey: "label",
+    hideLabel:true,
     groupKey: config.multiHighlight ? "" : "group",
     onChange: (selectedValue) => {
       overlay.clearHighlight();
@@ -251,7 +252,13 @@ function drawGraphic() {
   let xAxis = d3
     .axisBottom(x)
     .ticks(config.xAxisTicks[size])
-    .tickSize(-height + margin.bottom + y(y.domain()[0]))
+    .tickSize(-height + margin.bottom + (config.topXAxis ? margin.top : y(y.domain()[0])))
+    .tickFormat(d3.format(config.xAxisFormat));
+
+  let xAxisTop = d3
+    .axisTop(x)
+    .ticks(config.xAxisTicks[size])
+    .tickSize(0)
     .tickFormat(d3.format(config.xAxisFormat));
 
   if (config.radius == "auto") {
@@ -273,26 +280,27 @@ function drawGraphic() {
     height: height + margin.top + margin.bottom,
     margin: margin,
   });
-  // x axis
+
+  // bottom x axis
   chart
     .append("g")
     .attr(
       "transform",
-      (d) => "translate(0," + (height - margin.top - margin.bottom) + ")"
+      (d) => "translate(0," + (height - margin.bottom) + ")"
     )
     .attr("class", "x axis")
     .call(xAxis);
 
-  // x axis
-  chart
-    .append("g")
-    .attr(
-      "transform",
-      (d) => "translate(0," + (height - margin.top - margin.bottom) + ")"
-    )
-    .attr("class", "x axis")
-    .call(xAxis);
+  // Top x axis
+  if (config.topXAxis) {
+    chart
+      .append("g")
+      .attr("transform", `translate(0,${margin.top})`)
+      .attr("class", "x axis top")
+      .call(xAxisTop);
+  }
 
+  // Grey boxes to contain the bees
   chart
     .append("g")
     .attr("fill", "#d7d7d7")
@@ -310,6 +318,10 @@ function drawGraphic() {
     chart
       .append("g")
       .attr("fill", "#444")
+      .attr("stroke", "white")
+      .attr("stroke-width", 3)
+      .attr("stroke-opacity", 0.95)
+      .attr("paint-order", "stroke")
       .selectAll("text")
       .data(y.domain())
       .join("text")
@@ -380,12 +392,13 @@ function drawGraphic() {
     },
     shape: () => "circle",
     circleSize: Math.PI * (radius / 2) * (radius / 2),
-    getSymbolSize: () => Math.PI * (radius / 2) * (radius / 2), 
+    getSymbolSize: () => Math.PI * (radius / 2) * (radius / 2),
     sizeScale: null,
-    sizeField: null, 
+    sizeField: null,
     radius: 25,
     margin: margin,
-    multiHighlight: config.multiHighlight
+    multiHighlight: config.multiHighlight,
+    highlightFillColour: ONScolours.highlightOrange
   });
 
   // Add average lines if they're defined in config
@@ -436,7 +449,7 @@ function drawGraphic() {
   addAxisLabel({
     svgContainer: chart,
     xPosition: chartWidth,
-    yPosition: height - margin.top - margin.bottom + 40,
+    yPosition: height + margin.bottom - 10,
     text: config.xAxisLabel,
     textAnchor: "end",
     wrapWidth: chartWidth,
