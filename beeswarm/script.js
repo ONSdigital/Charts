@@ -22,6 +22,8 @@ function positionCircles(
 ) {
   if (layoutMethod === "force") {
     return positionCirclesWithForce(data, x, y, radius);
+  } else if (layoutMethod === "forceAccurate") {
+    return positionCirclesWithAccurateForce(data, x, y, radius);
   } else {
     return positionCirclesWithBinning(data, x, y, radius, circleDist);
   }
@@ -106,6 +108,261 @@ function positionCirclesWithForce(data, x, y, radius) {
   });
 
   return data;
+}
+
+function positionCirclesWithAccurateForce(data, x, y, radius) {
+  const visualRadius = radius / 2;
+
+  // Group data by group and resolve overlaps within each row.
+  const groupedData = d3.groups(data, (d) => d.group);
+
+  groupedData.forEach(([groupName, groupData]) => {
+    const rowTop = y(groupName);
+    const rowBottom = rowTop + y.bandwidth();
+    const targetY = rowTop + y.bandwidth() / 2;
+
+    const swarm = new AccurateBeeswarm(groupData, visualRadius, (d) =>
+      x(d.value)
+    ).withTiesBrokenByArrayOrder();
+
+    const positioned = swarm.calculateYPositions();
+
+    positioned.forEach((point) => {
+      point.datum.x = point.x;
+      point.datum.y = Math.max(
+        rowTop + visualRadius,
+        Math.min(rowBottom - visualRadius, targetY + point.y)
+      );
+    });
+  });
+
+  return data;
+}
+
+// Adapted from https://github.com/jtrim-ons/accurate-beeswarm-plot
+class AccurateBeeswarm {
+  constructor(items, radius, xFun) {
+    this.items = items;
+    this.diameter = radius * 2;
+    this.diameterSq = this.diameter * this.diameter;
+    this.xFun = xFun;
+    this.tieBreakFn = (x) => x;
+    this._oneSided = false;
+  }
+
+  withTiesBrokenRandomly() {
+    this.tieBreakFn = this._sfc32(0x9e3779b9, 0x243f6a88, 0xb7e15162, 1);
+    return this;
+  }
+
+  withTiesBrokenByArrayOrder() {
+    this.tieBreakFn = (x, i) => i;
+    return this;
+  }
+
+  oneSided() {
+    this._oneSided = true;
+    return this;
+  }
+
+  calculateYPositions() {
+    const all = this.items
+      .map((d, i) => ({
+        datum: d,
+        originalIndex: i,
+        x: this.xFun(d),
+        y: null,
+        placed: false,
+        minPositiveY: 0,
+        maxNegativeY: 0,
+        score: 0,
+        bestPosition: 0,
+        heapPos: -1,
+      }))
+      .sort((a, b) => a.x - b.x);
+
+    all.forEach((d, i) => {
+      d.index = i;
+    });
+
+    const tieBreakFn = this.tieBreakFn;
+    all.forEach((d) => {
+      d.tieBreaker = tieBreakFn(d.x, d.originalIndex);
+    });
+
+    const pq = new AccurateBeeswarmPriorityQueue();
+    pq.push(...all);
+
+    while (!pq.isEmpty()) {
+      const item = pq.pop();
+      item.placed = true;
+      item.y = item.bestPosition;
+      this._updateYBounds(item, all, pq);
+    }
+
+    all.sort((a, b) => a.originalIndex - b.originalIndex);
+    return all.map((d) => ({ datum: d.datum, x: d.x, y: d.y }));
+  }
+
+  // Random number generator: https://stackoverflow.com/a/47593316
+  _sfc32(a, b, c, d) {
+    const rng = function () {
+      a >>>= 0;
+      b >>>= 0;
+      c >>>= 0;
+      d >>>= 0;
+      let t = (a + b) | 0;
+      a = b ^ (b >>> 9);
+      b = c + (c << 3) | 0;
+      c = (c << 21) | (c >>> 11);
+      d = (d + 1) | 0;
+      t = (t + d) | 0;
+      c = (c + t) | 0;
+      return (t >>> 0) / 4294967296;
+    };
+
+    for (let i = 0; i < 10; i++) {
+      rng();
+    }
+
+    return rng;
+  }
+
+  _updateYBounds(item, all, pq) {
+    for (const step of [-1, 1]) {
+      let xDist;
+      for (
+        let i = item.index + step;
+        i >= 0 &&
+        i < all.length &&
+        (xDist = Math.abs(item.x - all[i].x)) < this.diameter;
+        i += step
+      ) {
+        const other = all[i];
+        if (other.placed) {
+          continue;
+        }
+
+        const yDist = Math.sqrt(this.diameterSq - xDist * xDist);
+        other.minPositiveY = Math.max(other.minPositiveY, item.y + yDist);
+
+        const prevScore = other.score;
+        other.score = other.minPositiveY;
+        other.bestPosition = other.minPositiveY;
+
+        if (!this._oneSided) {
+          other.maxNegativeY = Math.min(other.maxNegativeY, item.y - yDist);
+          if (-other.maxNegativeY < other.score) {
+            other.score = -other.maxNegativeY;
+            other.bestPosition = other.maxNegativeY;
+          }
+        }
+
+        if (other.score > prevScore) {
+          pq.deprioritise(other);
+        }
+      }
+    }
+  }
+}
+
+class AccurateBeeswarmPriorityQueue {
+  parent(i) {
+    return ((i + 1) >>> 1) - 1;
+  }
+
+  left(i) {
+    return (i << 1) + 1;
+  }
+
+  right(i) {
+    return (i + 1) << 1;
+  }
+
+  constructor() {
+    this.TOP = 0;
+    this._heap = [];
+  }
+
+  size() {
+    return this._heap.length;
+  }
+
+  isEmpty() {
+    return this.size() === 0;
+  }
+
+  peek() {
+    return this._heap[this.TOP];
+  }
+
+  push(...values) {
+    values.forEach((value) => {
+      value.heapPos = this.size();
+      this._heap.push(value);
+      this._siftUp();
+    });
+    return this.size();
+  }
+
+  pop() {
+    const poppedValue = this.peek();
+    const bottom = this.size() - 1;
+    if (bottom > this.TOP) {
+      this._swap(this.TOP, bottom);
+    }
+    this._heap.pop();
+    this._siftDown();
+    return poppedValue;
+  }
+
+  // Caution: this only works if new priority is <= old one.
+  deprioritise(item) {
+    this._siftDown(item.heapPos);
+  }
+
+  _greater(i, j) {
+    const a = this._heap[i];
+    const b = this._heap[j];
+    if (a.score < b.score) {
+      return true;
+    }
+    if (a.score > b.score) {
+      return false;
+    }
+    return a.tieBreaker < b.tieBreaker;
+  }
+
+  _swap(i, j) {
+    const tmp = this._heap[i];
+    this._heap[i] = this._heap[j];
+    this._heap[j] = tmp;
+    this._heap[i].heapPos = i;
+    this._heap[j].heapPos = j;
+  }
+
+  _siftUp() {
+    let node = this.size() - 1;
+    while (node > this.TOP && this._greater(node, this.parent(node))) {
+      this._swap(node, this.parent(node));
+      node = this.parent(node);
+    }
+  }
+
+  _siftDown(node = this.TOP) {
+    let l;
+    let r;
+    const sz = this.size();
+    while (
+      ((l = this.left(node)),
+      (r = this.right(node)),
+      (l < sz && this._greater(l, node)) || (r < sz && this._greater(r, node)))
+    ) {
+      const maxChild = r < sz && this._greater(r, l) ? r : l;
+      this._swap(node, maxChild);
+      node = maxChild;
+    }
+  }
 }
 
 // Custom force to keep circles within group boundaries
@@ -330,6 +587,51 @@ function drawGraphic() {
       .text((d) => d);
   }
 
+  // Add average lines if they're defined in config
+  if (config.averages && config.averages.show) {
+    // Create average lines
+    chart
+      .append("g")
+      .attr("class", "average-lines")
+      .selectAll("line")
+      .data(config.averages.values)
+      .join("line")
+      .attr("x1", (d) => x(d.value))
+      .attr("x2", (d) => x(d.value))
+      .attr("y1", (d) => y(d.group))
+      .attr("y2", (d) => y(d.group) + y.bandwidth())
+      .attr("stroke", config.averages.colour || "#444")
+      .attr("stroke-width", config.averages.strokeWidth || 2)
+      .attr("stroke-dasharray", config.averages.strokeDash || "");
+
+    // Add average labels if enabled
+    if (config.averages.showLabels) {
+      chart
+        .append("g")
+        .attr("class", "average-labels")
+        .selectAll("text")
+        .data(config.averages.values)
+        .join("text")
+        .attr("x", (d) => x(d.value) + (config.averages.labelOffset?.x || 5))
+        .attr(
+          "y",
+          (d) =>
+            y(d.group) +
+            y.bandwidth() / 2 +
+            (config.averages.labelOffset?.y || 0)
+        )
+        .attr("dy", "0.35em")
+        .attr("fill", config.averages.labelColour || "#444")
+        .text((d) => {
+          const format = d3.format(
+            config.averages.labelFormat || config.xAxisFormat
+          );
+          const prefix = config.averages.labelPrefix || "Mean: ";
+          return `${prefix}${format(d.value)}`;
+        });
+    }
+  }
+
   // Position circles based on selected method
   const positionedData = positionCircles(
     [...graphicData],
@@ -401,50 +703,7 @@ function drawGraphic() {
     highlightFillColour: ONScolours.highlightOrange
   });
 
-  // Add average lines if they're defined in config
-  if (config.averages && config.averages.show) {
-    // Create average lines
-    chart
-      .append("g")
-      .attr("class", "average-lines")
-      .selectAll("line")
-      .data(config.averages.values)
-      .join("line")
-      .attr("x1", (d) => x(d.value))
-      .attr("x2", (d) => x(d.value))
-      .attr("y1", (d) => y(d.group))
-      .attr("y2", (d) => y(d.group) + y.bandwidth())
-      .attr("stroke", config.averages.colour || "#444")
-      .attr("stroke-width", config.averages.strokeWidth || 2)
-      .attr("stroke-dasharray", config.averages.strokeDash || "");
-
-    // Add average labels if enabled
-    if (config.averages.showLabels) {
-      chart
-        .append("g")
-        .attr("class", "average-labels")
-        .selectAll("text")
-        .data(config.averages.values)
-        .join("text")
-        .attr("x", (d) => x(d.value) + (config.averages.labelOffset?.x || 5))
-        .attr(
-          "y",
-          (d) =>
-            y(d.group) +
-            y.bandwidth() / 2 +
-            (config.averages.labelOffset?.y || 0)
-        )
-        .attr("dy", "0.35em")
-        .attr("fill", config.averages.labelColour || "#444")
-        .text((d) => {
-          const format = d3.format(
-            config.averages.labelFormat || config.xAxisFormat
-          );
-          const prefix = config.averages.labelPrefix || "Mean: ";
-          return `${prefix}${format(d.value)}`;
-        });
-    }
-  }
+  
 
   addAxisLabel({
     svgContainer: chart,

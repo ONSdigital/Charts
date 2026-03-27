@@ -5,7 +5,7 @@ config = {
   "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "xAxisFormat": ".0f",
   "topXAxis":true,
-  "layoutMethod": "binned",// 'binned' or 'force'
+  "layoutMethod": "forceAccurate",// 'binned', 'force', or 'forceAccurate'
   "forceOptions": {
     "strength": 0.5,        // Collision force strength (0-1)
     "iterations": 120,      // Number of simulation iterations
