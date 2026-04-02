@@ -36,6 +36,14 @@ jobs:
         token: ${{ secrets.SYNC_LIB }}
         fetch-depth: 0
         path: otherCharts
+
+    - name: Checkout target repository for maps
+      uses: actions/checkout@v4
+      with:
+        repository: ONSdigital/Maps
+        token: ${{ secrets.SYNC_MAPS_LIB }}
+        fetch-depth: 0
+        path: Maps
     
     - name: Clear existing lib folders in target repo
       run: |
@@ -44,12 +52,16 @@ jobs:
 
         rm -rf otherCharts/lib
         mkdir -p otherCharts/lib
+
+        rm -rf Maps/lib
+        mkdir -p Maps/lib
     
     - name: Copy files to target repo (excluding GitHub Actions)
       run: |
         # Copy
         rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ charts-lib/
         rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ otherCharts/lib/
+        rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ Maps/lib/
     
     - name: Commit and push changes to charts-lib
       run: |
@@ -81,6 +93,24 @@ jobs:
         # Only commit if there are changes
         if git diff --staged --quiet; then
           echo "No changes to commit to otherCharts"
+        else
+          git commit -m "Sync from lib: ${{ github.sha }}"
+          git pull --rebase origin main
+          git push
+        fi
+
+    - name: Commit and push changes to Maps
+      run: |
+        cd Maps
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add all changes
+        git add lib/
+        
+        # Only commit if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit to Maps"
         else
           git commit -m "Sync from lib: ${{ github.sha }}"
           git pull --rebase origin main

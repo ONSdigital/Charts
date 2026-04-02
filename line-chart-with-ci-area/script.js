@@ -163,7 +163,7 @@ function drawGraphic() {
 			])
 			.attr('opacity', 0.3)
 
-		if (config.addEndMarkers) {
+		if (config.addEndMarkers || size === "sm") {
 			// Add end marker for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 			if (lastDatum) {
