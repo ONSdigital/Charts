@@ -19,8 +19,10 @@ function drawGraphic() {
 
 	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
-	} else {
+	} else if (!isNaN(Number(graphicData[0].date))) {
 		xDataType = 'numeric';
+	} else {
+		xDataType = 'ordinal';
 	}
 	// Nest the graphicData by the 'series' column
 	let nestedData = d3.group(graphicData, (d) => d.series);
@@ -60,10 +62,24 @@ function drawGraphic() {
 			aspectRatio[1] / aspectRatio[0] * chartWidth;
 
 		// Define the x and y scales
-		const x = d3
-			.scaleTime()
-			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, chartWidth]);
+		let x;
+
+		if (xDataType == 'date') {
+			x = d3
+				.scaleTime()
+				.domain(d3.extent(graphicData, (d) => d.date))
+				.range([0, chartWidth]);
+		} else if (xDataType == 'numeric') {
+			x = d3
+				.scaleLinear()
+				.domain(d3.extent(graphicData, (d) => d.date))
+				.range([0, chartWidth]);
+		} else {
+			x = d3
+				.scalePoint()
+				.domain(Array.from(new Set(graphicData.map((d) => d.date))))
+				.range([0, chartWidth]);
+		}
 
 
 		const y = d3
@@ -169,7 +185,7 @@ function drawGraphic() {
 		// Add the x-axis
 		let xAxisGenerator;
 
-		if (config.labelSpans.enabled === true) {
+		if (config.labelSpans.enabled === true && xDataType == 'date') {
 			xAxisGenerator = customTemporalAxis(x)
 				.tickSize(17)
 				.tickPadding(6)
@@ -189,7 +205,9 @@ function drawGraphic() {
 					(d) =>
 						xDataType == 'date' ?
 							d3.timeFormat(config.xAxisTickFormat[size])(d) :
-							d3.format(config.xAxisNumberFormat)(d)
+							xDataType == 'numeric' ?
+								d3.format(config.xAxisNumberFormat)(d) :
+								d
 				);
 		}
 
@@ -345,9 +363,14 @@ function drawGraphic() {
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
+	const parseDate = d3.utcParse(config.dateFormat);
+
 	graphicData = rawData.map((d) => {
+		const parsedDate = parseDate(d.date);
+		const parsedNumber = Number(d.date);
+
 		return {
-			date: d3.utcParse(config.dateFormat)(d.date),
+			date: parsedDate !== null ? parsedDate : !isNaN(parsedNumber) ? parsedNumber : d.date,
 			...Object.entries(d)
 				.filter(([key]) => key !== 'date')
 				.map(([key, value]) => key !== "series" ? [key, value == "" ? null : +value] : [key, value]) // Checking for missing values so that they can be separated from zeroes

@@ -24,8 +24,10 @@ function drawGraphic() {
 
 	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
 		xDataType = 'date';
-	} else {
+	} else if (!isNaN(Number(graphicData[0].date))) {
 		xDataType = 'numeric';
+	} else {
+		xDataType = 'ordinal';
 	}
 
 	// Define the x and y scales
@@ -36,9 +38,13 @@ function drawGraphic() {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
-	} else {
+	} else if (xDataType == 'numeric') {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
+			.range([0, chartWidth]);
+	} else {
+		x = d3.scalePoint()
+			.domain(graphicData.map((d) => d.date))
 			.range([0, chartWidth]);
 	}
 
@@ -271,7 +277,7 @@ function drawGraphic() {
 
 	let xAxisGenerator;
 
-	if (config.labelSpans.enabled === true) {
+	if (config.labelSpans.enabled === true && xDataType == 'date') {
 		xAxisGenerator = customTemporalAxis(x)
 			.timeUnit(config.labelSpans.timeUnit)
 			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
@@ -290,7 +296,9 @@ function drawGraphic() {
 				(d) =>
 					xDataType == 'date' ?
 						d3.timeFormat(config.xAxisTickFormat[size])(d) :
-						d3.format(config.xAxisNumberFormat)(d)
+						xDataType == 'numeric' ?
+							d3.format(config.xAxisNumberFormat)(d) :
+							d
 			);
 	}
 
@@ -342,10 +350,23 @@ function drawGraphic() {
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
+	const parseDate = d3.utcParse(config.dateFormat);
+
 	graphicData = rawData.map((d) => {
-		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
+		const parsedDate = parseDate(d.date);
+		const parsedNumber = Number(d.date);
+
+		if (parsedDate !== null) {
 			return {
-				date: d3.utcParse(config.dateFormat)(d.date),
+				date: parsedDate,
+				...Object.entries(d)
+					.filter(([key]) => key !== 'date')
+					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
+					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+			}
+		} else if (!isNaN(parsedNumber)) {
+			return {
+				date: parsedNumber,
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
@@ -353,7 +374,7 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 			}
 		} else {
 			return {
-				date: (+d.date),
+				date: d.date,
 				...Object.entries(d)
 					.filter(([key]) => key !== 'date')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes

@@ -30,9 +30,25 @@ function drawGraphic() {
 	//use the data to find unique entries in the date column
 	x.domain([...new Set(graphicData.map((d) => d.date))]);
 
-	let tickValues = x.domain().filter(function (d, i) {
-		return !(i % config.xAxisTicksEvery[size])
-	});
+	let xDataType;
+
+	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
+		xDataType = 'date';
+	} else if (!isNaN(Number(graphicData[0].date))) {
+		xDataType = 'numeric';
+	} else {
+		xDataType = 'ordinal';
+	}
+
+	let tickValues;
+
+	if (xDataType === 'ordinal') {
+		tickValues = x.domain();
+	} else {
+		tickValues = x.domain().filter(function (d, i) {
+			return !(i % config.xAxisTicksEvery[size])
+		});
+	}
 
 	//Labelling the first and/or last bar if needed
 	if (config.addFirstDate == true) {
@@ -49,14 +65,6 @@ function drawGraphic() {
 		.tickPadding(10)
 		.ticks(config.yAxisTicks[size])
 		.tickFormat(d3.format(config.yAxisTickFormat));
-
-	let xDataType;
-
-	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
-		xDataType = 'date';
-	} else {
-		xDataType = 'numeric';
-	}
 
 	let xTime = d3.timeFormat(config.xAxisTickFormat[size])
 
@@ -79,7 +87,7 @@ function drawGraphic() {
 			.tickPadding(10)
 			.tickValues(tickValues) //Labelling the first and/or last bar if needed
 			.tickFormat((d) => xDataType == 'date' ? xTime(d)
-				: d3.format(config.xAxisNumberFormat)(d));
+				: xDataType == 'numeric' ? d3.format(config.xAxisNumberFormat)(d) : d);
 	}
 
 	//create svg for chart
@@ -158,10 +166,14 @@ d3.csv(config.graphicDataURL).then((data) => {
 	let parseTime = d3.utcParse(config.dateFormat);
 
 	data.forEach((d, i) => {
+		const parsedDate = parseTime(data[i].date);
+		const parsedNumber = Number(data[i].date);
 
 		//If the date column is has date data store it as dates
-		if (parseTime(data[i].date) !== null) {
-			d.date = parseTime(d.date)
+		if (parsedDate !== null) {
+			d.date = parsedDate
+		} else if (!isNaN(parsedNumber)) {
+			d.date = parsedNumber
 		}
 
 	});

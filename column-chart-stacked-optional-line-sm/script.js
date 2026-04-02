@@ -34,8 +34,10 @@ function drawGraphic() {
     Object.prototype.toString.call(graphic_data[0].date) === "[object Date]"
   ) {
     xDataType = "date";
-  } else {
+  } else if (!isNaN(Number(graphic_data[0].date))) {
     xDataType = "numeric";
+  } else {
+    xDataType = "ordinal";
   }
 
   // Determine which columns to use for stacked bars based on showMarkers setting
@@ -129,9 +131,15 @@ function drawGraphic() {
 
     let xAxis;
 
-    let tickValues = x.domain().filter(function (d, i) {
+  let tickValues;
+
+  if (xDataType === "ordinal") {
+    tickValues = x.domain();
+  } else {
+    tickValues = x.domain().filter(function (d, i) {
       return !(i % config.xAxisTicksEvery[size]);
     });
+  }
 
     //Labelling the first and/or last bar if needed
     if (config.addFirstDate == true) {
@@ -153,11 +161,15 @@ function drawGraphic() {
         .axisBottom(x)
         .tickSize(10)
         .tickPadding(10)
-        .tickValues(tickValues)
-        .tickFormat((d) =>
-          xDataType == "date" ? xTime(d) : d3.format(config.xAxisNumberFormat)(d)
-        );
-    }
+      .tickValues(tickValues)
+      .tickFormat((d) =>
+        xDataType == "date"
+          ? xTime(d)
+          : xDataType == "numeric"
+            ? d3.format(config.xAxisNumberFormat)(d)
+            : d
+      );
+  }
 
     //create svg for chart
     const svg = addSvg({
@@ -402,9 +414,14 @@ d3.csv(config.graphicDataUrl).then((data) => {
   let parseTime = d3.utcParse(config.dateFormat);
 
   data.forEach((d, i) => {
+    const parsedDate = parseTime(data[i].date);
+    const parsedNumber = Number(data[i].date);
+
     //If the date column is has date data store it as dates
-    if (parseTime(data[i].date) !== null) {
-      d.date = parseTime(d.date);
+    if (parsedDate !== null) {
+      d.date = parsedDate;
+    } else if (!isNaN(parsedNumber)) {
+      d.date = parsedNumber;
     }
   });
 

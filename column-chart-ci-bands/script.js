@@ -38,13 +38,13 @@ function drawGraphic() {
     } else if (!isNaN(Number(graphicData[0].xvalue))) {
         xDataType = 'numeric';
     } else {
-        xDataType = 'categorical';
+        xDataType = 'ordinal';
     }
 
-    // If xvalue is categorical, show all values, else use the config number of ticks
+    // If xvalue is ordinal, show all values, else use the config number of ticks
     let tickValues
 
-    if (xDataType === 'categorical') {
+    if (xDataType === 'ordinal') {
         tickValues = x.domain()
     }
     else {
@@ -87,7 +87,7 @@ function drawGraphic() {
 			.tickPadding(10)
 			.tickValues(tickValues) //Labelling the first and/or last bar if needed
 			.tickFormat((d) => xDataType == 'date' ? xTime(d)
-				: d3.format(config.xAxisNumberFormat)(d));
+				: xDataType == 'numeric' ? d3.format(config.xAxisNumberFormat)(d) : d);
 	}
 
     //create svg for chart
@@ -234,10 +234,14 @@ d3.csv(config.graphicDataURL)
         graphicData = data;
 
         data.forEach((d, i) => {
+            const parsedDate = parseTime(data[i].xvalue);
+            const parsedNumber = Number(data[i].xvalue);
 
             //If the date column is has date data store it as dates
-            if (parseTime(data[i].xvalue) !== null) {
-                d.xvalue = parseTime(d.xvalue)
+            if (parsedDate !== null) {
+                d.xvalue = parsedDate
+            } else if (!isNaN(parsedNumber)) {
+                d.xvalue = parsedNumber
             }
         });
 
