@@ -91,7 +91,8 @@ config = {
 	"labelSpans": {
 		"enabled": true,
 		"timeUnit": 'quarter',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"dropYAxis": true,
 	"addEndMarkers": true,
