@@ -310,6 +310,10 @@ function drawGraphic() {
     chart
       .append("g")
       .attr("fill", "#444")
+      .attr("stroke", "white")
+      .attr("stroke-width", 3)
+      .attr("stroke-opacity", 0.95)
+      .attr("paint-order", "stroke")
       .selectAll("text")
       .data(y.domain())
       .join("text")
