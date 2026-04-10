@@ -1,0 +1,103 @@
+{
+  "name": "@onsvisual/charts",
+  "version": "0.1.0",
+  "description": "Modular foundations for the ONS charts library with unified config, responsive runtime, and accessibility scaffolding.",
+  "type": "module",
+  "license": "MIT",
+  "author": "ONS Data visualisation team",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ONSdigital/Charts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ONSdigital/Charts/issues"
+  },
+  "homepage": "https://github.com/ONSdigital/Charts#readme",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/umd/ons-charts.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/umd/ons-charts.js"
+    },
+    "./audit": {
+      "types": "./dist/types/audit/index.d.ts",
+      "import": "./dist/esm/audit/index.js"
+    },
+    "./charts": {
+      "types": "./dist/types/charts/index.d.ts",
+      "import": "./dist/esm/charts/index.js"
+    },
+    "./config": {
+      "types": "./dist/types/config/index.d.ts",
+      "import": "./dist/esm/config/index.js"
+    },
+    "./core": {
+      "types": "./dist/types/core/index.d.ts",
+      "import": "./dist/esm/core/index.js"
+    },
+    "./data": {
+      "types": "./dist/types/data/index.d.ts",
+      "import": "./dist/esm/data/index.js"
+    },
+    "./plugins": {
+      "types": "./dist/types/plugins/index.d.ts",
+      "import": "./dist/esm/plugins/index.js"
+    },
+    "./schema": {
+      "types": "./dist/types/schema/index.d.ts",
+      "import": "./dist/esm/schema/index.js"
+    },
+    "./schema.json": "./dist/schema.JSON",
+    "./styles.css": "./dist/styles/theme.css",
+    "./theme": {
+      "types": "./dist/types/theme/index.d.ts",
+      "import": "./dist/esm/theme/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/types/index.d.ts",
+      "import": "./dist/esm/types/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true });\"",
+    "sync:theme": "tsx scripts/sync-theme-css.ts",
+    "sync:schema": "tsx scripts/sync-schema-module.ts",
+    "build:types": "tsc --project tsconfig.build.json",
+    "build:esm": "vite build --mode esm",
+    "build:umd": "vite build --mode umd",
+    "copy:assets": "tsx scripts/copy-assets.ts",
+    "build": "npm run clean && npm run sync:theme && npm run sync:schema && npm run build:types && npm run build:esm && npm run build:umd && npm run copy:assets",
+    "typecheck": "npm run sync:schema && tsc --project tsconfig.json --noEmit",
+    "dev": "npm run sync:theme && npm run sync:schema && vite --open /playground/",
+    "preview": "vite preview --open /playground/"
+  },
+  "dependencies": {
+    "d3-array": "^3.2.4",
+    "d3-axis": "^3.0.0",
+    "d3-dsv": "^3.0.1",
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0",
+    "d3-transition": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-axis": "^3.0.6",
+    "@types/d3-dsv": "^3.0.7",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-selection": "^3.0.11",
+    "@types/d3-transition": "^3.0.9",
+    "@types/node": "^24.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.9"
+  }
+}

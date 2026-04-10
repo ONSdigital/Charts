@@ -1,4 +1,5 @@
-{
+/* Auto-generated from schema.JSON. */
+export const chartConfigSchema = ({
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://onsdigital.github.io/Charts/schema.JSON",
   "title": "ONS chart configuration",
@@ -825,3 +826,6 @@
     }
   }
 }
+) as const;
+
+export default chartConfigSchema;
