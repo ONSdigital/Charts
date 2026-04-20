@@ -5,12 +5,364 @@ import {
   createDelaunayOverlay,
   addSource,
   removeSpaces,
+  AccurateBeeswarm
 } from "../lib/helpers.js";
 import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select("#graphic");
 let pymChild = null;
 let graphicData, size, xDomain, circleDist, radius;
+
+function drawGraphic() {
+  //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
+  size = initialise(size);
+
+  let margin = config.margin[size];
+  let groups = d3.groups(graphicData, (d) => d.group);
+  let chartWidth =
+    parseInt(graphic.style("width")) - margin.left - margin.right;
+  let height = config.seriesHeight[size] * groups.length;
+
+  if (config.legend.show) {
+    // Set up the legend
+    const legenditem = d3
+      .select("#legend")
+      .selectAll("div.legend--item")
+      .data([[config.legend.label, config.averages.colour]])
+      .enter()
+      .append("div")
+      .attr("class", "legend--item");
+
+    legenditem
+      .append("div")
+      .attr("class", "legend--icon--refline")
+      .style("background-color", function (d) {
+        return d[1];
+      });
+
+    legenditem
+      .append("div")
+      .append("p")
+      .attr("class", "legend--text")
+      .html(function (d) {
+        return d[0];
+      });
+  }
+
+  // set up dropdown
+  const dropdownData = buildDropdownData(graphicData, config);
+
+  function buildDropdownData(graphicData, config) {
+    if (config.multiHighlight) {
+      const groups = d3.group(graphicData, d => d.areanm);
+
+      const dropdownData = Array.from(groups, ([areanm, points]) => ({
+        id: areanm,
+        label: areanm,
+        ids: points.map(p => p.originalId),
+        group: points[0].group,
+      })).sort((a, b) => a.label.localeCompare(b.label));
+
+      return dropdownData;
+    }
+
+    return graphicData
+      .slice()
+      .sort((a, b) => a.areanm.localeCompare(b.areanm))
+      .map((point) => ({
+        id: point.originalId,
+        label: point.areanm,
+        group: point.group,
+      }));
+  }
+
+
+  //remove and then add dropdown again.
+  d3.select("#select").selectAll("*").remove();
+
+  const select = new EnhancedSelect({
+    containerId: "select",
+    options: dropdownData,
+    label: "Choose a point",
+    placeholder: "Select a data point",
+    mode: "default",
+    idKey: "id",
+    labelKey: "label",
+    hideLabel:true,
+    groupKey: config.multiHighlight ? "" : "group",
+    onChange: (selectedValue) => {
+      overlay.clearHighlight();
+      if (!selectedValue) return;
+      if (config.multiHighlight) {
+        selectedValue.ids.forEach(originalId => {
+          const overlayIndex = overlayIndexByOriginalId.get(originalId);
+          if (overlayIndex !== undefined) {
+            overlay.highlightAll(overlayIndex);
+          }
+        });
+      } else {
+        const overlayIndex = overlayIndexByOriginalId.get(selectedValue.id);
+        if (overlayIndex !== undefined) {
+          overlay.highlightPoint(overlayIndex);
+        }
+      }
+    }
+  });
+
+  const min = d3.min(graphicData, (d) => +d["value"]);
+  const max = d3.max(graphicData, (d) => +d["value"]);
+
+  if (config.xDomain == "auto") {
+    xDomain = [min, max];
+  } else {
+    xDomain = config.xDomain;
+  }
+
+  //set up scales
+  const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
+
+  const y = d3
+    .scaleBand()
+    .domain(groups.map((d) => d[0]))
+    .rangeRound([margin.top, height - margin.bottom])
+    .padding(0.07);
+
+  //set up xAxis generator
+  let xAxis = d3
+    .axisBottom(x)
+    .ticks(config.xAxisTicks[size])
+    .tickSize(-height + margin.bottom + (config.topXAxis ? margin.top : y(y.domain()[0])))
+    .tickFormat(d3.format(config.xAxisFormat));
+
+  let xAxisTop = d3
+    .axisTop(x)
+    .ticks(config.xAxisTicks[size])
+    .tickSize(0)
+    .tickFormat(d3.format(config.xAxisFormat));
+
+  if (config.radius == "auto") {
+    radius = (x(x.domain()[1]) - x(x.domain()[0])) / (config.numBands * 1.1);
+  } else {
+    radius = config.radius;
+  }
+
+  if (config.circleDist == "auto") {
+    circleDist =
+      (y.bandwidth() * 0.95 - radius) / d3.max(graphicData, (d) => d.value);
+  } else {
+    circleDist = config.circleDist * radius;
+  }
+
+  let chart = addSvg({
+    svgParent: graphic,
+    chartWidth: chartWidth,
+    height: height + margin.top + margin.bottom,
+    margin: margin,
+  });
+
+  // bottom x axis
+  chart
+    .append("g")
+    .attr(
+      "transform",
+      (d) => "translate(0," + (height - margin.bottom) + ")"
+    )
+    .attr("class", "x axis")
+    .call(xAxis);
+
+  // Top x axis
+  if (config.topXAxis) {
+    chart
+      .append("g")
+      .attr("transform", `translate(0,${margin.top})`)
+      .attr("class", "x axis top")
+      .call(xAxisTop);
+  }
+
+  // Grey boxes to contain the bees
+  chart
+    .append("g")
+    .attr("fill", "#d7d7d7")
+    .attr("opacity", 0.25)
+    .selectAll("rect")
+    .data(y.domain())
+    .join("rect")
+    .attr("x", 0)
+    .attr("y", (d) => y(d))
+    .attr("width", () => x(x.domain()[1]) - x(x.domain()[0]))
+    .attr("height", y.bandwidth);
+
+  // group labels
+  if (groups.length > 1) {
+    chart
+      .append("g")
+      .attr("fill", "#444")
+      .attr("stroke", "white")
+      .attr("stroke-width", 3)
+      .attr("stroke-opacity", 0.95)
+      .attr("paint-order", "stroke")
+      .selectAll("text")
+      .data(y.domain())
+      .join("text")
+      .attr("x", 5)
+      .attr("y", (d) => y(d) + 17)
+      .text((d) => d);
+  }
+
+  // Add average lines if they're defined in config
+  if (config.averages && config.averages.show) {
+    // Create average lines
+    chart
+      .append("g")
+      .attr("class", "average-lines")
+      .selectAll("line")
+      .data(config.averages.values)
+      .join("line")
+      .attr("x1", (d) => x(d.value))
+      .attr("x2", (d) => x(d.value))
+      .attr("y1", (d) => y(d.group))
+      .attr("y2", (d) => y(d.group) + y.bandwidth())
+      .attr("stroke", config.averages.colour || "#444")
+      .attr("stroke-width", config.averages.strokeWidth || 2)
+      .attr("stroke-dasharray", config.averages.strokeDash || "");
+
+    // Add average labels if enabled
+    if (config.averages.showLabels) {
+      chart
+        .append("g")
+        .attr("class", "average-labels")
+        .selectAll("text")
+        .data(config.averages.values)
+        .join("text")
+        .attr("x", (d) => x(d.value) + (config.averages.labelOffset?.x || 5))
+        .attr(
+          "y",
+          (d) =>
+            y(d.group) +
+            y.bandwidth() / 2 +
+            (config.averages.labelOffset?.y || 0)
+        )
+        .attr("dy", "0.35em")
+        .attr("fill", config.averages.labelColour || "#444")
+        .text((d) => {
+          const format = d3.format(
+            config.averages.labelFormat || config.xAxisFormat
+          );
+          const prefix = config.averages.labelPrefix || "Mean: ";
+          return `${prefix}${format(d.value)}`;
+        });
+    }
+  }
+
+  // Position circles based on selected method
+  const positionedData = positionCircles(
+    [...graphicData],
+    x,
+    y,
+    radius,
+    config.layoutMethod || "binned",
+    circleDist
+  );
+
+  // Draw circles with positioned data
+  chart
+    .append("g")
+    .attr("fill", config.colourPalette)
+    .attr("stroke", "white")
+    .attr("stroke-width", 0.6)
+    .selectAll("circle")
+    .data([...positionedData].reverse())
+    .join("circle")
+    .attr("cx", (d) => d.x)
+    .attr("cy", (d) => d.y)
+    .attr("r", radius / 2)
+    .attr("class", (d) => `circle-${d.cleanId}`)
+    .append("title")
+    .text((d) => d.areanm + " " + d.value);
+
+  const positionedOverlayData = positionedData
+    .map((d, index) => ({
+      xvalue: d.x,
+      yvalue: d.y,
+      name: d.areanm,
+      group: d.group,
+      value: d.value,
+      formattedValue: d3.format(".1f")(d.value),
+      originalId: d.originalId,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const overlayIndexByOriginalId = new Map(
+    positionedOverlayData.map((d, i) => [d.originalId, i])
+  );
+
+  // Add Delaunay overlay
+  const overlay = createDelaunayOverlay({
+    svgContainer: chart,
+    data: positionedOverlayData,
+    chartWidth: chartWidth,
+    height: height - margin.top - margin.bottom,
+    xScale: (d) => d,
+    yScale: d3
+      .scaleLinear()
+      .domain([0, height - margin.top - margin.bottom])
+      .range([0, height - margin.top - margin.bottom]),
+    tooltipConfig: {
+      xLabel: config.xAxisLabel || "Value",
+      xValueFormat: d3.format(".1f"),
+      showYValue: false,
+      showSize: false,
+      backgroundColor: "#fff",
+    },
+    shape: () => "circle",
+    circleSize: Math.PI * (radius / 2) * (radius / 2),
+    getSymbolSize: () => Math.PI * (radius / 2) * (radius / 2),
+    sizeScale: null,
+    sizeField: null,
+    radius: 25,
+    margin: margin,
+    multiHighlight: config.multiHighlight,
+    highlightFillColour: ONScolours.highlightOrange
+  });
+
+  
+
+  addAxisLabel({
+    svgContainer: chart,
+    xPosition: chartWidth,
+    yPosition: height + margin.bottom - 10,
+    text: config.xAxisLabel,
+    textAnchor: "end",
+    wrapWidth: chartWidth,
+  });
+
+  //create link to source
+  addSource("source", config.sourceText);
+
+  //use pym to calculate chart dimensions
+  if (pymChild) {
+    pymChild.sendHeight();
+  }
+}
+
+d3.csv(config.graphicDataURL).then((data) => {
+  // First convert string values to numbers if needed
+  data.forEach((d, index) => {
+    d.value = +d.value; // Convert to number if it's a string
+    d.originalId = index; // Add stable ID
+    d.cleanId = removeSpaces(d.areanm)
+  });
+
+
+
+  graphicData = data;
+
+  // Create visualization using pym
+  pymChild = new pym.Child({
+    renderCallback: drawGraphic,
+  });
+});
+
 
 function positionCircles(
   data,
@@ -22,6 +374,8 @@ function positionCircles(
 ) {
   if (layoutMethod === "force") {
     return positionCirclesWithForce(data, x, y, radius);
+  } else if (layoutMethod === "forceAccurate") {
+    return positionCirclesWithAccurateForce(data, x, y, radius);
   } else {
     return positionCirclesWithBinning(data, x, y, radius, circleDist);
   }
@@ -108,6 +462,35 @@ function positionCirclesWithForce(data, x, y, radius) {
   return data;
 }
 
+function positionCirclesWithAccurateForce(data, x, y, radius) {
+  const visualRadius = radius / 2;
+
+  // Group data by group and resolve overlaps within each row.
+  const groupedData = d3.groups(data, (d) => d.group);
+
+  groupedData.forEach(([groupName, groupData]) => {
+    const rowTop = y(groupName);
+    const rowBottom = rowTop + y.bandwidth();
+    const targetY = rowTop + y.bandwidth() / 2;
+
+    const swarm = new AccurateBeeswarm(groupData, visualRadius, (d) =>
+      x(d.value)
+    ).withTiesBrokenByArrayOrder();
+
+    const positioned = swarm.calculateYPositions();
+
+    positioned.forEach((point) => {
+      point.datum.x = point.x;
+      point.datum.y = Math.max(
+        rowTop + visualRadius,
+        Math.min(rowBottom - visualRadius, targetY + point.y)
+      );
+    });
+  });
+
+  return data;
+}
+
 // Custom force to keep circles within group boundaries
 function boundaryForce(minY, maxY, radius) {
   let nodes;
@@ -133,341 +516,3 @@ function boundaryForce(minY, maxY, radius) {
 
   return force;
 }
-
-function drawGraphic() {
-  //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
-
-  let margin = config.margin[size];
-  let groups = d3.groups(graphicData, (d) => d.group);
-  let chartWidth =
-    parseInt(graphic.style("width")) - margin.left - margin.right;
-  let height = config.seriesHeight[size] * groups.length;
-
-  if (config.legend.show) {
-    // Set up the legend
-    const legenditem = d3
-      .select("#legend")
-      .selectAll("div.legend--item")
-      .data([[config.legend.label, config.averages.colour]])
-      .enter()
-      .append("div")
-      .attr("class", "legend--item");
-
-    legenditem
-      .append("div")
-      .attr("class", "legend--icon--refline")
-      .style("background-color", function (d) {
-        return d[1];
-      });
-
-    legenditem
-      .append("div")
-      .append("p")
-      .attr("class", "legend--text")
-      .html(function (d) {
-        return d[0];
-      });
-  }
-
-  // set up dropdown
-  const dropdownData = buildDropdownData(graphicData, config);
-
-  function buildDropdownData(graphicData, config) {
-    if (config.multiHighlight) {
-      const groups = d3.group(graphicData, d => d.areanm);
-
-      const dropdownData = Array.from(groups, ([areanm, points]) => ({
-        id: areanm,
-        label: areanm,
-        ids: points.map(p => p.originalId),
-        group: points[0].group,
-      })).sort((a, b) => a.label.localeCompare(b.label));
-
-      return dropdownData;
-    }
-
-    return graphicData
-      .slice()
-      .sort((a, b) => a.areanm.localeCompare(b.areanm))
-      .map((point) => ({
-        id: point.originalId,
-        label: point.areanm,
-        group: point.group,
-      }));
-  }
-
-
-  //remove and then add dropdown again.
-  d3.select("#select").selectAll("*").remove();
-
-  const select = new EnhancedSelect({
-    containerId: "select",
-    options: dropdownData,
-    label: "Choose a point",
-    placeholder: "Select a data point",
-    mode: "default",
-    idKey: "id",
-    labelKey: "label",
-    groupKey: config.multiHighlight ? "" : "group",
-    onChange: (selectedValue) => {
-      overlay.clearHighlight();
-      if (!selectedValue) return;
-      if (config.multiHighlight) {
-        selectedValue.ids.forEach(originalId => {
-          const overlayIndex = overlayIndexByOriginalId.get(originalId);
-          if (overlayIndex !== undefined) {
-            overlay.highlightAll(overlayIndex);
-          }
-        });
-      } else {
-        const overlayIndex = overlayIndexByOriginalId.get(selectedValue.id);
-        if (overlayIndex !== undefined) {
-          overlay.highlightPoint(overlayIndex);
-        }
-      }
-    }
-  });
-
-  const min = d3.min(graphicData, (d) => +d["value"]);
-  const max = d3.max(graphicData, (d) => +d["value"]);
-
-  if (config.xDomain == "auto") {
-    xDomain = [min, max];
-  } else {
-    xDomain = config.xDomain;
-  }
-
-  //set up scales
-  const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
-
-  const y = d3
-    .scaleBand()
-    .domain(groups.map((d) => d[0]))
-    .rangeRound([margin.top, height - margin.bottom])
-    .padding(0.07);
-
-  //set up xAxis generator
-  let xAxis = d3
-    .axisBottom(x)
-    .ticks(config.xAxisTicks[size])
-    .tickSize(-height + margin.bottom + y(y.domain()[0]))
-    .tickFormat(d3.format(config.xAxisFormat));
-
-  if (config.radius == "auto") {
-    radius = (x(x.domain()[1]) - x(x.domain()[0])) / (config.numBands * 1.1);
-  } else {
-    radius = config.radius;
-  }
-
-  if (config.circleDist == "auto") {
-    circleDist =
-      (y.bandwidth() * 0.95 - radius) / d3.max(graphicData, (d) => d.value);
-  } else {
-    circleDist = config.circleDist * radius;
-  }
-
-  let chart = addSvg({
-    svgParent: graphic,
-    chartWidth: chartWidth,
-    height: height + margin.top + margin.bottom,
-    margin: margin,
-  });
-  // x axis
-  chart
-    .append("g")
-    .attr(
-      "transform",
-      (d) => "translate(0," + (height - margin.top - margin.bottom) + ")"
-    )
-    .attr("class", "x axis")
-    .call(xAxis);
-
-  // x axis
-  chart
-    .append("g")
-    .attr(
-      "transform",
-      (d) => "translate(0," + (height - margin.top - margin.bottom) + ")"
-    )
-    .attr("class", "x axis")
-    .call(xAxis);
-
-  chart
-    .append("g")
-    .attr("fill", "#d7d7d7")
-    .attr("opacity", 0.25)
-    .selectAll("rect")
-    .data(y.domain())
-    .join("rect")
-    .attr("x", 0)
-    .attr("y", (d) => y(d))
-    .attr("width", () => x(x.domain()[1]) - x(x.domain()[0]))
-    .attr("height", y.bandwidth);
-
-  // group labels
-  if (groups.length > 1) {
-    chart
-      .append("g")
-      .attr("fill", "#444")
-      .selectAll("text")
-      .data(y.domain())
-      .join("text")
-      .attr("x", 5)
-      .attr("y", (d) => y(d) + 17)
-      .text((d) => d);
-  }
-
-  // Position circles based on selected method
-  const positionedData = positionCircles(
-    [...graphicData],
-    x,
-    y,
-    radius,
-    config.layoutMethod || "binned",
-    circleDist
-  );
-
-  // Draw circles with positioned data
-  chart
-    .append("g")
-    .attr("fill", config.colourPalette)
-    .attr("stroke", "white")
-    .attr("stroke-width", 0.6)
-    .selectAll("circle")
-    .data([...positionedData].reverse())
-    .join("circle")
-    .attr("cx", (d) => d.x)
-    .attr("cy", (d) => d.y)
-    .attr("r", radius / 2)
-    .attr("class", (d) => `circle-${d.cleanId}`)
-    .append("title")
-    .text((d) => d.areanm + " " + d.value);
-
-  const positionedOverlayData = positionedData
-    .map((d, index) => ({
-      xvalue: d.x,
-      yvalue: d.y,
-      name: d.areanm,
-      group: d.group,
-      value: d.value,
-      formattedValue: d3.format(".1f")(d.value),
-      originalId: d.originalId,
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  const overlayIndexByOriginalId = new Map(
-    positionedOverlayData.map((d, i) => [d.originalId, i])
-  );
-
-  // Add Delaunay overlay
-  const overlay = createDelaunayOverlay({
-    svgContainer: chart,
-    data: positionedOverlayData,
-    chartWidth: chartWidth,
-    height: height - margin.top - margin.bottom,
-    xScale: (d) => d,
-    yScale: d3
-      .scaleLinear()
-      .domain([0, height - margin.top - margin.bottom])
-      .range([0, height - margin.top - margin.bottom]),
-    tooltipConfig: {
-      xLabel: config.xAxisLabel || "Value",
-      xValueFormat: d3.format(".1f"),
-      showYValue: false,
-      showSize: false,
-      backgroundColor: "#fff",
-    },
-    shape: () => "circle",
-    circleSize: Math.PI * (radius / 2) * (radius / 2),
-    getSymbolSize: () => Math.PI * (radius / 2) * (radius / 2), 
-    sizeScale: null,
-    sizeField: null, 
-    radius: 25,
-    margin: margin,
-    multiHighlight: config.multiHighlight
-  });
-
-  // Add average lines if they're defined in config
-  if (config.averages && config.averages.show) {
-    // Create average lines
-    chart
-      .append("g")
-      .attr("class", "average-lines")
-      .selectAll("line")
-      .data(config.averages.values)
-      .join("line")
-      .attr("x1", (d) => x(d.value))
-      .attr("x2", (d) => x(d.value))
-      .attr("y1", (d) => y(d.group))
-      .attr("y2", (d) => y(d.group) + y.bandwidth())
-      .attr("stroke", config.averages.colour || "#444")
-      .attr("stroke-width", config.averages.strokeWidth || 2)
-      .attr("stroke-dasharray", config.averages.strokeDash || "");
-
-    // Add average labels if enabled
-    if (config.averages.showLabels) {
-      chart
-        .append("g")
-        .attr("class", "average-labels")
-        .selectAll("text")
-        .data(config.averages.values)
-        .join("text")
-        .attr("x", (d) => x(d.value) + (config.averages.labelOffset?.x || 5))
-        .attr(
-          "y",
-          (d) =>
-            y(d.group) +
-            y.bandwidth() / 2 +
-            (config.averages.labelOffset?.y || 0)
-        )
-        .attr("dy", "0.35em")
-        .attr("fill", config.averages.labelColour || "#444")
-        .text((d) => {
-          const format = d3.format(
-            config.averages.labelFormat || config.xAxisFormat
-          );
-          const prefix = config.averages.labelPrefix || "Mean: ";
-          return `${prefix}${format(d.value)}`;
-        });
-    }
-  }
-
-  addAxisLabel({
-    svgContainer: chart,
-    xPosition: chartWidth,
-    yPosition: height - margin.top - margin.bottom + 40,
-    text: config.xAxisLabel,
-    textAnchor: "end",
-    wrapWidth: chartWidth,
-  });
-
-  //create link to source
-  addSource("source", config.sourceText);
-
-  //use pym to calculate chart dimensions
-  if (pymChild) {
-    pymChild.sendHeight();
-  }
-}
-
-d3.csv(config.graphicDataURL).then((data) => {
-  // First convert string values to numbers if needed
-  data.forEach((d, index) => {
-    d.value = +d.value; // Convert to number if it's a string
-    d.originalId = index; // Add stable ID
-    d.cleanId = removeSpaces(d.areanm)
-  });
-
-
-
-  graphicData = data;
-
-  // Create visualization using pym
-  pymChild = new pym.Child({
-    renderCallback: drawGraphic,
-  });
-});
-
-
-
