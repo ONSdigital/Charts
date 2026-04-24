@@ -1,0 +1,28 @@
+.legendLabel {
+  font-size: 14px;
+}
+
+.chart-container {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.chart-container:last-child {
+  margin-right: 0;
+}
+
+.legend--item{
+  padding-right: 12px !important;
+ }
+
+ .annotation_arrow_left {
+   stroke: #F66068
+ }
+
+ .netChange text{
+  text-anchor: middle;
+ }
+
+ .netChange line{
+  stroke-width: 2px;
+ }
