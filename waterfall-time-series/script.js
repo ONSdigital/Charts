@@ -31,7 +31,7 @@ function drawGraphic() {
   const x = d3
     .scaleBand()
     .paddingOuter(0.0)
-    .paddingInner(0.1)
+    .paddingInner(0.15)
     .range([0, chart_width])
     .round(false);
 
@@ -269,31 +269,29 @@ const generateWaterfallPath = (d, bandwidth, yScale) => {
   const y0 = yScale(d[0]);
   const y1 = yScale(d[1]);
   const dy = y1 - y0;
-  
-  // Radius is half bandwidth, but capped by the height of the jump 
-  // to prevent 'inverted' arcs on very small data points
-  const r = Math.min(bandwidth / 2, Math.abs(dy)); 
+  const r = bandwidth / 2;
   const arrowSize = 6;
 
   let path = `M 0,${y0}`;
 
-  if (dy < 0) {
-    // POSITIVE DATA (Arrow goes UP)
-    const verticalStraight = Math.abs(dy) - r;
-    path += ` v -${verticalStraight}`;
+  if (Math.abs(dy) < r && dy !== 0) {
+    // If the data point is too small for a full radius, draw a diagonal
+    path += ` l ${r},${dy}`;
+  } else if (dy < 0) {
+    // POSITIVE: Curve UP-Right, then go straight up
+    // `a r,r 0 0 1 r,-r` : Arc UP-Right
+    path += ` v -${Math.abs(dy) - r}`;
     path += ` a ${r},${r} 0 0 1 ${r},-${r}`;
   } else if (dy > 0) {
-    // NEGATIVE DATA (Arrow goes DOWN)
-    const verticalStraight = Math.abs(dy) - r;
-    path += ` v ${verticalStraight}`;
-    path += ` a ${r},${r} 0 0 0 ${r},${r}`;
+    // NEGATIVE: Curve DOWN-Right, then go straight down
+    // `a r,r 0 0 0 r,r` : Arc DOWN-Right
+    path += ` a ${r},${r} 0 0 1 ${r},${r}`;
+    path += ` v ${Math.abs(dy) - r}`;
   } else {
-    // ZERO DATA
-    return `M 0,${y0} h ${bandwidth / 2}`;
+    // ZERO change: Move straight right
+    path += ` h ${r}`;
   }
 
-  // Draw Arrowhead tip (pointing right)
-  // path += ` l 0,-${arrowSize / 2} l ${arrowSize},${arrowSize / 2} l -${arrowSize},${arrowSize / 2} `;
   return path;
 };
 

@@ -1,5 +1,5 @@
 config = {
-  graphicDataUrl: "data copy.csv",
+  graphicDataUrl: "data.csv",
   showMarkers: true,
   showLine: true,
   lineSeries: "Net migration",
