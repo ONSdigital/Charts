@@ -166,8 +166,29 @@ function drawGraphic() {
 			showYAxisLabel: true,
 			showYAxisTicks: true,
 			xDomain: globalXDomain,
-			stackColumns
+			stackColumns,
+			xAxisTicksEvery: featured.xAxisTicksEvery ? featured.xAxisTicksEvery[size] : null,
+			titleClass: featured.titleStyle === 'heading' ? 'featured-title' : null
 		});
+	}
+
+	// ── Group heading for the regular-chart section ────────────────────────
+	if (config.groupHeading) {
+		const heading = graphic.append('div')
+			.attr('class', 'group-heading');
+
+		// Span all regular-chart columns:
+		// "left" layout: chartsPerRow cols (auto-placed after the featured div)
+		// "top" / no featured: full row
+		if (isFeatured && featuredPosition === 'left') {
+			heading.style('grid-column', `span ${chartsPerRow}`);
+		} else {
+			heading.style('grid-column', '1 / -1');
+		}
+
+		heading.append('p')
+			.style('margin-left', `${margin.left}px`)
+			.text(config.groupHeading);
 	}
 
 	// ── Draw regular charts ─────────────────────────────────────────────────
@@ -271,8 +292,10 @@ function drawColumnChart({
 	yDomain,
 	showYAxisLabel,
 	showYAxisTicks,
-	xDomain,      // global date domain — keeps x axes consistent across panels
-	stackColumns  // array of column names to stack (empty/undefined = simple bars)
+	xDomain,           // global date domain — keeps x axes consistent across panels
+	stackColumns,      // array of column names to stack (empty/undefined = simple bars)
+	xAxisTicksEvery,   // per-panel override; falls back to config.xAxisTicksEvery[size]
+	titleClass         // optional extra CSS class added to the chart title text
 }) {
 
 	// Detect x data type from the first datum
@@ -300,8 +323,9 @@ function drawColumnChart({
 		.range([height, 0]);
 
 	// ── X-axis tick values ───────────────────────────────────────────────────
+	const tickEvery = xAxisTicksEvery ?? config.xAxisTicksEvery[size];
 	const allDates = x.domain();
-	let tickValues = allDates.filter((d, i) => !(i % config.xAxisTicksEvery[size]));
+	let tickValues = allDates.filter((d, i) => !(i % tickEvery));
 	if (config.addFirstDate) tickValues = [...new Set([allDates[0], ...tickValues])];
 	if (config.addFinalDate) tickValues = [...new Set([...tickValues, allDates[allDates.length - 1]])];
 
@@ -438,6 +462,7 @@ function drawColumnChart({
 		text: seriesName,
 		wrapWidth: chartWidth + margin.right
 	});
+	if (titleClass) svg.select('.title').classed(titleClass, true);
 
 	// ── Y-axis label ──────────────────────────────────────────────────────────
 	if (showYAxisLabel) {

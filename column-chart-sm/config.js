@@ -53,9 +53,9 @@ config = {
 	"chartGap": 10,
 
 	"aspectRatio": {
-		"sm": [3, 2],
+		"sm": [1, 1],
 		"md": [3, 2],
-		"lg": [1, 2]
+		"lg": [1, 1.5]
 	},
 
 	"margin": {
@@ -63,13 +63,13 @@ config = {
 			"top": 40,
 			"right": 20,
 			"bottom": 40,
-			"left": 50
+			"left": 62
 		},
 		"md": {
 			"top": 40,
 			"right": 20,
 			"bottom": 40,
-			"left": 50
+			"left": 62
 		},
 		"lg": {
 			"top": 50,
@@ -111,12 +111,21 @@ config = {
 
 	// ── Featured chart configuration ───────────────────────────────────────
 	"featuredChart": {
-		"series": "Total",
-		"position": "left",
+		"series": "All ages",
+		"position": "top",
 		"colSpan": 2,
-		"rowSpan": 2,
-		"independentYAxis": true
+		"rowSpan": 1,
+		"independentYAxis": true,
+		// Style the featured chart title like the group heading (bold, larger)
+		"titleStyle": "heading",
+		// Override x-axis tick frequency for the featured chart only.
+		// Set to null to inherit the global xAxisTicksEvery value.
+		"xAxisTicksEvery": { "sm": 1, "md": 1, "lg": 1 }
 	},
+
+	// Optional heading displayed above the grid of regular (non-featured) charts.
+	// Set to null to disable.
+	"groupHeading": "By age group",
 
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

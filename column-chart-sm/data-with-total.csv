@@ -1,4 +1,4 @@
-date,series,Immigration to Spain,Emigration from Spain,Net migration
+date,series,Immigration to Spain,Emigration from,Net migration
 2021,0 to 15 years,3487,-1737,1750
 2021,16 to 24 years,3079,-1629,1450
 2021,25 to 34 years,3863,-3061,802
@@ -27,7 +27,7 @@ date,series,Immigration to Spain,Emigration from Spain,Net migration
 2024,45 to 54 years,2191,-2388,-197
 2024,55 to 64 years,4000,-3854,146
 2024,65 and over,3506,-6036,-2530
-2021,Total,34015,-23982,10033
-2022,Total,19977,-21399,-1422
-2023,Total,19576,-25237,-5661
-2024,Total,19916,-20079,-163
+2021,All ages,34015,-23982,10033
+2022,All ages,19977,-21399,-1422
+2023,All ages,19576,-25237,-5661
+2024,All ages,19916,-20079,-163
