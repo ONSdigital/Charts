@@ -125,7 +125,7 @@ function drawGraphic() {
 		});
 
 		// Add end markers
-		if (config.addEndMarkers) {
+		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			const markerData = categories.map((category, index) => {
 				// Find last valid datum for this category
 				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");

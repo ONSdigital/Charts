@@ -157,7 +157,7 @@ function drawGraphic() {
 			const lastDatum = graphicData[graphicData.length - 1];
 
 			// Add end markers for selected and comparison lines
-			if (config.addEndMarkers) {
+			if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 				const lastValidDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 				if (lastValidDatum) {
 					// Selected group - circle

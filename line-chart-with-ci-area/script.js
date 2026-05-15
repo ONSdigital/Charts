@@ -163,7 +163,7 @@ function drawGraphic() {
 			])
 			.attr('opacity', 0.3)
 
-		if (config.addEndMarkers || size === "sm") {
+		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			// Add end marker for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 			if (lastDatum) {
@@ -182,7 +182,7 @@ function drawGraphic() {
 			}
 		}
 
-		if (config.drawLegend || size === 'sm') {
+		if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 			// Set up the legend
 			let legenditem = d3
 				.select('#legend')
@@ -221,7 +221,7 @@ function drawGraphic() {
 		}
 	});
 
-	if (!config.drawLegend && size !== 'sm') {
+	if (!(config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm'))) {
 		createDirectLabels({
 			categories: categories,
 			data: graphicData,

@@ -213,7 +213,7 @@ function drawGraphic() {
     svg.selectAll('g.line-end').remove();
     
 	// Add new end markers with varying shapes
-	if (config.addEndMarkers || size === 'sm') {
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 		circleData.forEach((d) => {
 			drawIndexedLineEndMarker({
 				svg,
@@ -242,7 +242,7 @@ function drawGraphic() {
         .remove();
 
 	// Handle legend vs direct labels
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		// Create legend (moved outside the loop)
 		let legenditem = d3
 			.select('#legend')
