@@ -24,6 +24,79 @@ if (chartType === "arrow") {
   extraMarginTop = 0;
 }
 
+/**
+ * Draws a comet-plot style legend in the #legend div for arrow charts.
+ * Shows Increase (→), Decrease (←) and No change (|) items with column name labels.
+ * Used instead of the inline arrowLegend when the arrow change is too small to read clearly.
+ */
+function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPaletteArrows }) {
+  legendContainer.selectAll("*").remove();
+
+  const lineLength = 40;
+  const lineY = 26;
+  const svgHeight = 36;
+
+  const items = [
+    { label: "Increase", color: colourPaletteArrows[0], leftCol: minColumn, rightCol: maxColumn, goRight: true },
+    { label: "Decrease", color: colourPaletteArrows[1], leftCol: maxColumn, rightCol: minColumn, goRight: false },
+    { label: "No change", color: colourPaletteArrows[2], isNoChange: true },
+  ];
+
+  items.forEach(({ label, color, leftCol, rightCol, goRight, isNoChange }) => {
+    const item = legendContainer.append("div").attr("class", "legend--item");
+    const svgEl = item.append("svg").attr("height", svgHeight).attr("width", 200);
+
+    if (isNoChange) {
+      svgEl.append("line")
+        .attr("x1", 6).attr("x2", 6)
+        .attr("y1", lineY - 7).attr("y2", lineY + 7)
+        .attr("stroke", color).attr("stroke-width", "3px");
+
+      svgEl.append("text")
+        .attr("x", 14).attr("y", lineY + 4)
+        .attr("fill", color).attr("class", "legendLabel")
+        .text(label);
+
+      const bbox = svgEl.node().getBBox();
+      svgEl.attr("width", bbox.x + bbox.width + 4);
+    } else {
+      const leftText = svgEl.append("text")
+        .attr("x", 2).attr("y", lineY + 4)
+        .attr("text-anchor", "start")
+        .attr("fill", color).attr("class", "legendLabel")
+        .text(leftCol);
+
+      const leftW = leftText.node().getBBox().width;
+      const lineX1 = leftW + 8;
+      const lineX2 = lineX1 + lineLength;
+
+      // Direction label centred above the arrow line
+      svgEl.append("text")
+        .attr("x", (lineX1 + lineX2) / 2).attr("y", 12)
+        .attr("text-anchor", "middle")
+        .attr("fill", color).attr("class", "legendLabel")
+        .text(label);
+
+      // For decrease, draw line right-to-left so marker-end arrowhead points left
+      svgEl.append("line")
+        .attr("x1", goRight ? lineX1 : lineX2)
+        .attr("x2", goRight ? lineX2 : lineX1)
+        .attr("y1", lineY).attr("y2", lineY)
+        .attr("stroke", color).attr("stroke-width", "2px")
+        .attr("marker-end", "url(#annotation_arrowhead)");
+
+      const rightText = svgEl.append("text")
+        .attr("x", lineX2 + 8).attr("y", lineY + 4)
+        .attr("text-anchor", "start")
+        .attr("fill", color).attr("class", "legendLabel")
+        .text(rightCol);
+
+      const rtBBox = rightText.node().getBBox();
+      svgEl.attr("width", rtBBox.x + rtBBox.width + 4);
+    }
+  });
+}
+
 function setupArrowhead(svgContainer) {
   const svgDefs = svgContainer.append("svg:defs");
   const arrowheadMarker = svgDefs
@@ -90,6 +163,22 @@ function drawGraphic() {
     .scaleOrdinal()
     .range(config.colourPaletteDotsStroke)
     .domain([maxColumn, minColumn]);
+
+  // Determine whether the arrow change is too small for inline labels.
+  // When small, a comet-style legend in #legend is used instead.
+  const firstDataPoint = groups[0]?.[1]?.[0];
+  const arrowPixelWidth =
+    chartType === "arrow" && firstDataPoint
+      ? Math.abs(x(+firstDataPoint[maxColumn]) - x(+firstDataPoint[minColumn]))
+      : Infinity;
+  const smallChangeThreshold = config.smallChangeLegendThreshold ?? 40;
+  const useInlineLegend = chartType !== "arrow" || arrowPixelWidth >= smallChangeThreshold;
+
+  // Inline arrow legend needs extra top margin in the first chart SVG;
+  // the comet legend lives in #legend so no extra margin is needed.
+  if (chartType === "arrow") {
+    extraMarginTop = useInlineLegend ? 12 : 0;
+  }
 
   // create the y scale in groups
   groups.map(function (d) {
@@ -196,7 +285,7 @@ function drawGraphic() {
       .attr("fill", config.colourPaletteBar);
   }
 
-  if (chartType === "arrow") {
+  if (chartType === "arrow" && useInlineLegend) {
     charts.each(function (groupData, groupIndex) {
       if (groupData.groupIndex === 0 && groupData[1].length > 0) {
         // Get the first data point in the first group
@@ -538,6 +627,17 @@ function drawGraphic() {
       .html(function (d) {
         return d[0];
       });
+  }
+
+  // When the arrow change is small, draw a comet-style legend in #legend
+  // instead of the inline labels above the first data row.
+  if (chartType === "arrow" && !useInlineLegend) {
+    drawArrowCometLegend({
+      legendContainer: legend,
+      minColumn,
+      maxColumn,
+      colourPaletteArrows: config.colourPaletteArrows,
+    });
   }
 
   //create link to source
