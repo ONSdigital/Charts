@@ -53,12 +53,12 @@ function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPal
   const svgHeight = 36;
 
   const items = [
-    { label: "Increase", color: colourPaletteArrows[0], leftCol: minColumn, rightCol: maxColumn, goRight: true },
-    { label: "Decrease", color: colourPaletteArrows[1], leftCol: maxColumn, rightCol: minColumn, goRight: false },
+    { label: "Increase", color: colourPaletteArrows[0], leftCol: minColumn, rightCol: maxColumn, goRight: true,  boldLeft: false },
+    { label: "Decrease", color: colourPaletteArrows[1], leftCol: maxColumn, rightCol: minColumn, goRight: false, boldLeft: true  },
     { label: "No change", color: colourPaletteArrows[2], isNoChange: true },
   ];
 
-  items.forEach(({ label, color, leftCol, rightCol, goRight, isNoChange }) => {
+  items.forEach(({ label, color, leftCol, rightCol, goRight, boldLeft, isNoChange }) => {
     const item = legendContainer.append("div").attr("class", "legend--item");
     const svgEl = item.append("svg").attr("height", svgHeight).attr("width", 200);
 
@@ -80,6 +80,7 @@ function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPal
         .attr("x", 2).attr("y", lineY + 4)
         .attr("text-anchor", "start")
         .attr("fill", color).attr("class", "legendLabel")
+        .style("font-weight", boldLeft ? "bold" : null)
         .text(leftCol);
 
       const leftW = leftText.node().getBBox().width;
@@ -105,6 +106,7 @@ function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPal
         .attr("x", lineX2 + 8).attr("y", lineY + 4)
         .attr("text-anchor", "start")
         .attr("fill", color).attr("class", "legendLabel")
+        .style("font-weight", boldLeft ? null : "bold")
         .text(rightCol);
 
       const rtBBox = rightText.node().getBBox();
