@@ -414,12 +414,19 @@ function drawGraphic() {
         }
       })
       .style("font-weight", "600")
-
       .attr("dy", 6)
-      .attr("dx", (d) => (+d[minColumn] <= +d[maxColumn] ? -10 : 10))
-      .attr("text-anchor", (d) =>
-        +d[minColumn] <= +d[maxColumn] ? "end" : "start"
-      );
+      .attr("dx", (d) => {
+        // If the label would normally sit to the left (arrow pointing right) but the
+        // start value is too close to the y-axis, flip it to the right instead.
+        const labelWidth = String(d3.format(config.numberFormat)(d[minColumn])).length * 7 + 10;
+        const tooCloseToAxis = +d[minColumn] <= +d[maxColumn] && x(d[minColumn]) < labelWidth;
+        return tooCloseToAxis ? 10 : (+d[minColumn] <= +d[maxColumn] ? -10 : 10);
+      })
+      .attr("text-anchor", (d) => {
+        const labelWidth = String(d3.format(config.numberFormat)(d[minColumn])).length * 7 + 10;
+        const tooCloseToAxis = +d[minColumn] <= +d[maxColumn] && x(d[minColumn]) < labelWidth;
+        return tooCloseToAxis ? "start" : (+d[minColumn] <= +d[maxColumn] ? "end" : "start");
+      });
 
     charts
       .selectAll("text.max")
