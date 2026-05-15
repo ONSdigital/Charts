@@ -131,6 +131,25 @@ function drawGraphic() {
 
 		});
 
+		// Add point markers at every data point if enabled
+		if (config.addPointMarkers) {
+			categories.forEach(function (category, index) {
+				const color = config.colourPalette[index % config.colourPalette.length];
+				data.filter(d => d[category] != null && d[category] !== "").forEach(d => {
+					drawIndexedLineEndMarker({
+						svg,
+						index,
+						color,
+						x: x(d.date),
+						y: y(d[category]),
+						size: 3.5,
+						diamondSize: 6,
+						className: `point-marker point-marker-${index}`,
+					});
+				});
+			});
+		}
+
 		// Add end markers
 		if (config.addEndMarkers) {
 			const markerData = categories.map((category, index) => {
@@ -158,23 +177,7 @@ function drawGraphic() {
 			});
 		}
 
-		// Add point markers at every data point if enabled
-		if (config.addPointMarkers) {
-			categories.forEach(function (category, index) {
-				const color = config.colourPalette[index % config.colourPalette.length];
-				svg.selectAll(`.point-marker-${index}`)
-					.data(data.filter(d => d[category] != null && d[category] !== ""))
-					.enter()
-					.append('circle')
-					.attr('class', `point-marker point-marker-${index}`)
-					.attr('cx', d => x(d.date))
-					.attr('cy', d => y(d[category]))
-					.attr('r', 3)
-					.attr('fill', color)
-					.attr('stroke', 'white')
-					.attr('stroke-width', 1);
-			});
-		}
+		
 
 		// Add direct labels (end-of-line category names) when legend is not shown
 		if (!shouldDrawLegend) {
