@@ -2,3 +2,4 @@
 .vscode/settings.json
 .Rproj.user
 *.Rproj
+*node_modules
