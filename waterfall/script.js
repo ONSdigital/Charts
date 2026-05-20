@@ -45,7 +45,7 @@ function drawGraphic() {
   const flagOffset = config.showXAxis == true ? 35 : 25;
 
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   //fetch config settings
   configKeys.forEach((c, i) => {

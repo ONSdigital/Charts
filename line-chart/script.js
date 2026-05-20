@@ -9,7 +9,7 @@ let pymChild = null;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 
 	// Define the dimensions and margin, width and height of the chart.

@@ -42,7 +42,7 @@ function getLegendLabels(data) {
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   // Determine chart type - default to 'range' if not specified
   const chartType = config.chartType || "range";

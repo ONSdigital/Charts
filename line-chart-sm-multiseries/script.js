@@ -9,7 +9,7 @@ let graphicData, size, chartWidth;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
