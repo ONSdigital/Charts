@@ -12,7 +12,7 @@ function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
