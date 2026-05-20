@@ -1,52 +1,39 @@
-import { initialise, wrap, addSvg, addSource, calculateAutoBounds, adjustColorForContrast } from "../lib/helpers.js";
+import { initialise, addSvg, addSource, createDirectLabels, calculateAutoBounds } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
-//console.log(`Graphic selected: ${graphic}`);
+let graphicData, size;
 
 let pymChild = null;
-let graphicData, size;
 
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size);
+	const aspectRatio = config.aspectRatio[size]
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
-	// let width = parseInt(graphic.style('width')) - margin.left - margin.right;
-	let height = config.chartHeight[size];
-	let width = config.chartWidth[size];
-	// console.log(parseInt(graphic.style('width')) - width - margin.left - 75)
-	// console.log(`Margin, width, and height set: ${margin}, ${width}, ${height}`);
-
-	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
-	// console.log(`Categories retrieved: ${categories}`);
-
-	let xDataType;
-
-	if (Object.prototype.toString.call(graphicData[0].date) === '[object Date]') {
-		xDataType = 'date';
+	if (size == "sm") {
+		margin.left = 50
+		margin.right = parseInt(graphic.style('width')) - 230;
 	} else {
-		xDataType = 'numeric';
+		let slopeMargin = parseInt(graphic.style('width')) / 2 - 90;
+
+		margin.left = slopeMargin
+		margin.right = slopeMargin
 	}
 
-	// console.log(xDataType)
 
-	// Define the x and y scales
+	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
+	let height = (aspectRatio[1] / aspectRatio[0]) * chartWidth;
 
-	let x;
+	const columns = graphicData.columns.slice(1)
 
-	if (xDataType == 'date') {
-		x = d3.scaleTime()
-			.domain(d3.extent(graphicData, (d) => d.date))
-			.range([0, width]);
-	} else {
-		x = d3.scaleLinear()
-			.domain(d3.extent(graphicData, (d) => +d.date))
-			.range([0, width]);
-	}
-	//console.log(`x defined`);
+	let x = d3.scalePoint().domain(columns)
+		.range([0, chartWidth])
+
+	let xLabels = d3.scalePoint().domain(config.xAxisLabels)
+		.range([0, chartWidth])
 
 	const y = d3
 		.scaleLinear()
@@ -55,228 +42,187 @@ function drawGraphic() {
 	// Calculate Y-axis bounds based on data and config
 	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
-	y.domain([minY, maxY]);
-
+	if (config.showZeroAxis) {
+		y.domain([d3.min([0,minY]), maxY]);
+	} else {
+		y.domain([minY, maxY]);
+	}
 
 	// Create an SVG element
 	const svg = addSvg({
 		svgParent: graphic,
-		chartWidth: parseInt(graphic.style('width')) - margin.left - margin.right,
+		chartWidth: chartWidth,
 		height: height + margin.top + margin.bottom,
 		margin: margin
 	})
 
-	const lastDatum = graphicData[graphicData.length - 1];
-	const firstDatum = graphicData[0];
+	const categories = graphicData.map(d => d.name)
 
-	// Add the x-axis
-	svg
-		.append('g')
-		.attr('class', 'x axis')
-		.attr('transform', "translate(0," + (height + 5) + ")")
-		.call(
-			d3
-				.axisTop(x)
-				// .tickValues(tickValues)
-				.tickFormat((d) => xDataType == 'date' ? d3.timeFormat(config.xAxisTickFormat[size])(d)
-					: d3.format(config.xAxisNumberFormat)(d))
-				.tickValues([firstDatum.date, lastDatum.date])
-				.tickSize(height + 10)
-		);
+	const lineGenerator = d3
+		.line()
+		.x(d => x(d.x))
+		.y(d => y(d.y))
+		.defined(d => d.y !== null && !isNaN(d.y))
+		.curve(d3[config.lineCurveType]);
 
-	// Add text labels to the right of the circles
-	let xOffset = 8;
-	let textLength;
-	let rightWrapWidth = parseInt(graphic.style('width')) - margin.left - width - xOffset - 75;
+	function direction(data) {
+		if (+data[columns[0]] > +data[columns[columns.length - 1]]) {
+			return 0
+		} else if (+data[columns[columns.length - 1]] > +data[columns[0]]) {
+			return 2
+		} else if (+data[columns[0]] == +data[columns[columns.length - 1]]) {
+			return 1
+		}
+	}
 
-	//Calculating where to place the category label
-	function getTextLength(thing) {
-		// textLength = thing._groups[0][0].clientWidth + xOffset; <-- this has some issues once in Florence/live - better method below
-		textLength = thing.node().getComputedTextLength() + xOffset;
+	// const colourDirectionScale = d3.scaleOrdinal().domain(["decreasing", "same", "increasing"]).range(config.colourPalette)
+
+	// add grid lines to y axis
+	if (config.showZeroAxis) {
+		const zeroAxis = svg
+			.append('g')
+			.attr('transform', "translate(" + -20 + ",0)")
+			.attr('class', 'y axis')
+			.call(
+				d3
+					.axisLeft(y)
+					.tickValues([0])
+					.tickSize(-220)
+				// .tickFormat('')
+			)
+
+		svg.append('g').attr('transform', "translate(" + (chartWidth + 20) + ",0)")
+			.attr('class', 'y axis')
+			.call(d3.axisRight(y).tickValues([0]).tickSize(0))
+
+
+		zeroAxis.selectAll('g.tick line')
+			.attr('class', 'zero-line')
 
 	}
 
+
+	// Add the x-axis
+	const xAxis = svg
+		.append('g')
+		.attr('class', 'x axis')
+		.attr('transform', `translate(0, ${height})`)
+		.call(
+			d3
+				.axisTop(xLabels)
+				.tickSize(height)
+		)
+
+	xAxis.selectAll(".tick text")
+		.attr('dy', "-0.5em")
+		.style("font-weight", 700)
+		.style("fill", ONScolours.grey100);
+
+	xAxis.selectAll(".tick line")
+		.style("stroke", ONScolours.grey40)
+
+	const transposeData = columns.map(key => {
+		const newObj = { date: key };
+
+		graphicData.forEach(item => {
+			newObj[item.name] = +item[key];
+		});
+
+		return newObj;
+	})
+
+	const colourMap = new Map();
+	categories.forEach(category => {
+		colourMap.set(category, config.colourScheme === "categories"
+			? config.colourPalette[
+			categories.indexOf(category) % config.colourPalette.length
+			]
+			: config.colourPalette[
+			direction(graphicData.find(d => d.name === category))
+			]
+		);
+	})
+
+	createDirectLabels({
+		categories: categories,
+		data: transposeData,
+		svg: svg,
+		xScale: x,
+		yScale: y,
+		margin: margin,
+		chartHeight: height,
+		config: config,
+		options: {
+			labelStrategy: size == "sm" ? 'last' : 'firstLast',
+			minSpacing: 12,
+			useLeaderLines: true,
+			leaderLineStyle: 'dashed',
+			colourMap: colourMap,
+			includeDataValue: true
+		}
+	});
+
+
+
 	// create lines and circles for each category
-	categories.forEach(function (category) {
-		const lineGenerator = d3
-			.line()
-			.x((d) => x(d.date))
-			.y((d) => y(d[category]))
-			.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
-			.context(null);
+	categories.forEach(function (category, index) {
+
+		const itemData = columns.map(col => ({
+			x: col,
+			y: Number(graphicData.find(d => d.name === category)[col])
+		}));
 
 		svg
 			.append('path')
-			.datum(graphicData)
+			.datum(itemData)
 			.attr('fill', 'none')
 			.attr(
-				'stroke',
-				config.colourPalette[
-				categories.indexOf(category) % config.colourPalette.length
-				]
+				'stroke', config.colourScheme == "categories"
+				? config.colourPalette[categories.indexOf(category) % config.colourPalette.length]
+				: config.colourPalette[direction(graphicData.find(d => d.name === category))]
 			)
-			.attr('stroke-width', 3)
+			.attr('stroke-width', 2.5)
 			.attr('d', lineGenerator)
 			.style('stroke-linejoin', 'round')
 			.style('stroke-linecap', 'round');
-		//console.log(`Path appended for category: ${category}`);
 
-		// Add text labels to the right of the circles
-		svg
-			.append('text')
-			.attr(
-				'transform',
-				`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`
-			)
-			.attr('x', xOffset)
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr(
-				'fill',
-				adjustColorForContrast(
-					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
-					4.5
+		itemData.forEach(data => {
+			svg.append('circle')
+				.datum(data)
+				.attr('cx', d => x(d.x))
+				.attr('cy', d => y(d.y))
+				.style('fill', config.colourScheme == "categories"
+					? config.colourPalette[categories.indexOf(category) % config.colourPalette.length]
+					: config.colourPalette[direction(graphicData.find(d => d.name === category))]
 				)
-			)
-			.text(d3.format(config.yAxisNumberFormat)((lastDatum[category]))) /* (Math.round((lastDatum[category]) / 100) * 100) */
-			.attr('id', 'lastDateLabel')
-			.attr("class", "directLineLabelBold")
-			.call(getTextLength, this) //Work out the width of this bit of text for positioning the next bit
-			.append('tspan')
-			.attr('x', xOffset + textLength)
-			.attr('dy', '.35em')
-			.attr('text-anchor', 'start')
-			.attr(
-				'fill',
-				adjustColorForContrast(
-					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
-					4.5
-				)
-			)
-			.text(category)
-			.attr("class", "directLineLabelRegular")
-			.call(wrap, rightWrapWidth); //wrap function for the direct labelling.
-
-		//Add text labels to the left of the first circles
-		svg
-			.append('text')
-			.attr(
-				'transform',
-				`translate(${x(firstDatum.date)}, ${y(firstDatum[category])})`
-			)
-			.attr('x', -xOffset)
-			.attr('dy', '0.35em')
-			.attr('text-anchor', 'end')
-			.attr(
-				'fill',
-				adjustColorForContrast(
-					config.colourPalette[categories.indexOf(category) % config.colourPalette.length],
-					4.5
-				)
-			)
-			.text(d3.format(config.yAxisNumberFormat)(firstDatum[category]))
-			.attr("class", "directLineLabelBold")
-
-		//Add the circles
-		svg
-			.append('circle')
-			.attr('cx', x(firstDatum.date))
-			.attr('cy', y(firstDatum[category]))
-			.attr('r', 4)
-			.attr(
-				'fill',
-				config.colourPalette[
-				categories.indexOf(category) % config.colourPalette.length
-				]
-			);
-		svg
-			.append('circle')
-			.attr('cx', x(lastDatum.date))
-			.attr('cy', y(lastDatum[category]))
-			.attr('r', 4)
-			.attr(
-				'fill',
-				config.colourPalette[
-				categories.indexOf(category) % config.colourPalette.length
-				]
-			);
-		// console.log(`Circle appended for category: ${category}`);
-
+				.attr('r', 6)
+				.raise()
+		})
 	});
 
-	// add grid lines to y axis
-	svg
-		.append('g')
-		.attr('class', 'grid')
-		.call(
-			d3
-				.axisLeft(y)
-				.tickValues([0])
-				.tickSize(-width)
-				.tickFormat('')
-		)
-		.lower();
 
-	d3.selectAll('g.tick line')
-		.each(function (e) {
-			if (e == 0) {
-				d3.select(this).attr('class', 'zero-line');
-			}
-		})
-
-	// // Add the y-axis
-	// svg
-	// 	.append('g')
-	// 	.attr('class', 'y axis')
-	// 	.call(d3.axisRight(y).ticks(config.yAxisTicks[size])
-	// 		.tickValues([])
-	// 		.tickFormat(d3.format(config.yAxisNumberFormat)))
-	// 	.attr('transform', "translate(" + margin.left + ", 0)");
 
 	//create link to source
 	addSource('source', config.sourceText);
-	// console.log(`Link to source created`);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {
 		pymChild.sendHeight();
 	}
-	// console.log(`PymChild height sent`);
-}
 
+}
 
 // Load the data
 d3.csv(config.graphicDataURL).then((rawData) => {
-	graphicData = rawData.map((d) => {
-		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
-			return {
-				date: d3.utcParse(config.dateFormat)(d.date),
-				...Object.entries(d)
-					.filter(([key]) => key !== 'date')
-					.map(([key, value]) => [key, +value])
-					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-			}
-		} else {
-			return {
-				date: (+d.date),
-				...Object.entries(d)
-					.filter(([key]) => key !== 'date')
-					.map(([key, value]) => [key, +value])
-					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-			}
-		}
-	});
+	graphicData = rawData
 
-	// console.log(graphicData);
-
-	// console.log(`Data from CSV processed`);
-
-	// console.log('Final data structure:');
-	// console.log(graphicData);
+	rawData.columns.slice(1).forEach(column=>
+		graphicData.forEach(d=>d[column] = +d[column])
+	)
 
 	// Use pym to create an iframed chart dependent on specified variables
 	pymChild = new pym.Child({
 		renderCallback: drawGraphic
 	});
-	// console.log(`PymChild created with renderCallback to drawGraphic`);
+
 });

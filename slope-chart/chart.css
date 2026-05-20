@@ -3,14 +3,4 @@
   .axis path,
   .axis line {
     stroke: none; /* Changes the color of the axis lines */
-  }
-  
-  
-  .directLineLabelBold {
-    font-size: 14px;
-    font-weight: 700;
-  }
-  .directLineLabelRegular {
-    font-size: 14px;
-    font-weight: 500;
-  }
+  }  
