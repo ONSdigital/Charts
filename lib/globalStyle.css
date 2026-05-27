@@ -475,6 +475,10 @@ g.line-end path {
   padding-bottom: 3px;
 }
 
+.mobile-annotation-footnote-row svg{
+  flex-shrink: 0;
+}
+
 /* Adjusted colours for high-contrast mode */
 @media (forced-colors: active) {
   .annotation_arrow {
