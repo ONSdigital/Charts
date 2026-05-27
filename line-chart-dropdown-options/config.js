@@ -1,7 +1,7 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
-	"drawLegend": false,
+	"drawLegend": "auto", // true = always show, false = never show, "auto" = show only at sm size
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
@@ -74,14 +74,15 @@ config = {
 	"labelSpans": {
 		"enabled": true,
 		timeUnit:"year",//set to "day","month",'quarter' or 'year'
-		"secondaryTimeUnit": "auto"//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		"secondaryTimeUnit": "auto",//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		"forceFullLastPrimaryUnit": false,//extends the axis to the end of the last primary time unit
 	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
 		"lg": 8
 	},
-	"addEndMarkers": false,
+	"addEndMarkers": "auto", // true = always show, false = never show, "auto" = show only at sm size
 	"addPointMarkers": false,
 
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }

@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SYNC_LIB }}
       
       - uses: r-lib/actions/setup-pandoc@v2
 

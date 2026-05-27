@@ -15,7 +15,7 @@ let graphicData, size, xDomain, circleDist, radius;
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   let margin = config.margin[size];
   let groups = d3.groups(graphicData, (d) => d.group);

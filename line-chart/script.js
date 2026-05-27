@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -9,7 +9,7 @@ let pymChild = null;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 
 	// Define the dimensions and margin, width and height of the chart.
@@ -36,6 +36,13 @@ function drawGraphic() {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
+
+		if (config.labelSpans.enabled === true) {
+			expandCustomTemporalAxisDomain(x, {
+				timeUnit: config.labelSpans.timeUnit,
+				forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+			});
+		}
 	} else {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
@@ -142,7 +149,7 @@ function drawGraphic() {
 			}
 
 			const lastDatum = graphicData[graphicData.length - 1];
-			if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
+			if (lastDatum[category] === null || (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm'))) return;
 			const label = svg.append('text')
 				.attr('class', 'directLineLabel')
 				.attr('x', x(lastDatum.date) + 10)
@@ -164,7 +171,7 @@ function drawGraphic() {
 
 	});
 
-	if (config.addEndMarkers || size == "sm") {
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 		const markerData = categories.map((category, index) => {
 			// Find last valid datum for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
@@ -192,7 +199,7 @@ function drawGraphic() {
 
 
 	// size === 'sm'
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		legend.selectAll("*").remove()
 
 		// Set up the legend
@@ -205,10 +212,11 @@ function drawGraphic() {
 
 		legenditem.each(function(d, i) {
 			const item = d3.select(this);
+			const useLines = config.addEndMarkers === false;
 			const svg = item.append('svg')
-				.attr('width', 14)
+				.attr('width', useLines ? 20 : 14)
 				.attr('height', 14)
-				.attr('viewBox', '0 0 12 12')
+				.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
 				.attr('class', 'legend--icon')
 				.style('overflow', 'visible');
 
@@ -218,6 +226,7 @@ function drawGraphic() {
 				color: d[1],
 				size: 4,
 				diamondSize: 7,
+				useLines: useLines,
 			});
 		});
 
@@ -275,6 +284,8 @@ function drawGraphic() {
 		xAxisGenerator = customTemporalAxis(x)
 			.timeUnit(config.labelSpans.timeUnit)
 			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
+
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
