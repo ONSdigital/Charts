@@ -52,5 +52,8 @@ config = {
     sm: 3,
     md: 8,
     lg: 10,
-  }
+  },
+  // When arrow pixel width is below this threshold the comet-style #legend is used
+  // instead of inline arrowLegend labels. Defaults to 40 if not set.
+  // smallChangeLegendThreshold: 40,
 };
