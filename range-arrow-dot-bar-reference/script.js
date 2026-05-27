@@ -365,20 +365,36 @@ function drawGraphic() {
       });
   }
 
+  const legacyDataLabels = config.showDataLabels;
+  const dataLabelsShow =
+    config.dataLabels?.show ??
+    (typeof legacyDataLabels === "object"
+      ? legacyDataLabels.enabled
+      : legacyDataLabels);
+  const dataLabelsBackground =
+    config.dataLabels && typeof config.dataLabels.background !== "undefined"
+      ? config.dataLabels.background
+      : typeof legacyDataLabels === "object" &&
+          typeof legacyDataLabels.background !== "undefined"
+        ? legacyDataLabels.background
+        : true;
+  const dataLabelsNumberFormat =
+    config.dataLabels?.numberFormat || config.numberFormat;
+
   //dataLabels
   function shouldShowDataLabels() {
-    // If showDataLabels is explicitly false, never show
-    if (config.showDataLabels === false) {
+    // If data label show is explicitly false, never show
+    if (dataLabelsShow === false) {
       return false;
     }
 
-    // If showDataLabels is true, always show
-    if (config.showDataLabels === true) {
+    // If data label show is true, always show
+    if (dataLabelsShow === true) {
       return true;
     }
 
-    // If showDataLabels is 'desktop', only show on large screens
-    if (config.showDataLabels === "desktopOnly") {
+    // If data label show is 'desktopOnly', only show on large screens
+    if (dataLabelsShow === "desktopOnly") {
       return size === "lg";
     }
 
@@ -399,7 +415,7 @@ function drawGraphic() {
       addLabelWithBackground({
         selection: chartGroup,
         data: data,
-        valueAccessor: (d) => d3.format(config.numberFormat)(d[minColumn]),
+        valueAccessor: (d) => d3.format(dataLabelsNumberFormat)(d[minColumn]),
         xAccessor: (d) => x(d[minColumn]),
         yAccessor: (d) =>
           Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
@@ -422,14 +438,14 @@ function drawGraphic() {
         },
         fontWeightAccessor: (d) => "600",
         labelType:'min',
-        background: config.dataLabels.enabled && typeof config.dataLabels.background !== 'undefined' ? config.dataLabels.background : true
+        background: dataLabelsBackground
       });
 
       // Max labels
       addLabelWithBackground({
         selection: chartGroup,
         data: data,
-        valueAccessor: (d) => d3.format(config.numberFormat)(d[maxColumn]),
+        valueAccessor: (d) => d3.format(dataLabelsNumberFormat)(d[maxColumn]),
         xAccessor: (d) => x(d[maxColumn]),
         yAccessor: (d) =>
           Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
@@ -452,7 +468,7 @@ function drawGraphic() {
         },
         fontWeightAccessor: (d) => (chartType === "arrow" ? "700" : "600"),
         labelType:'max',
-        background: config.dataLabels.endabled && typeof config.dataLabels.background !== 'undefined' ? config.dataLabels.background : true
+        background: dataLabelsBackground
       });
     });
   }
