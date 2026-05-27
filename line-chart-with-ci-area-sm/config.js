@@ -97,7 +97,8 @@ config = {
 	"labelSpans": {
 		"enabled": true,
 		timeUnit: 'year',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"dropYAxis": true,
 	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size

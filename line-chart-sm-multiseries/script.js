@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -71,6 +71,13 @@ function drawGraphic() {
 			x = d3.scaleTime()
 				.domain(d3.extent(graphicData, (d) => d.date))
 				.range([0, chartWidth]);
+
+			if (config.labelSpans.enabled === true) {
+				expandCustomTemporalAxisDomain(x, {
+					timeUnit: config.labelSpans.timeUnit,
+					forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+				});
+			}
 		} else {
 			x = d3.scaleLinear()
 				.domain(d3.extent(graphicData, (d) => +d.date))
@@ -178,7 +185,8 @@ function drawGraphic() {
 				.tickSize(17)
 				.tickPadding(6)
 				.timeUnit(config.labelSpans.timeUnit)
-				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+				.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)

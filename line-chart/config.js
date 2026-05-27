@@ -86,6 +86,7 @@ config = {
 		"enabled":true,
 		timeUnit:"year",//set to "day","month",'quarter' or 'year'
 		secondaryTimeUnit:"auto",//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit:true,//extends the last primary span when the final date lands exactly on a unit boundary
 	},
 	"yAxisTicks": {
 		"sm": 7,

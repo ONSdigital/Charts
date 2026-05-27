@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -101,6 +101,13 @@ function drawGraphic() {
 			.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
+
+		if (config.labelSpans.enabled === true) {
+			expandCustomTemporalAxisDomain(x, {
+				timeUnit: config.labelSpans.timeUnit,
+				forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+			});
+		}
 
 
 		const y = d3
@@ -206,7 +213,8 @@ function drawGraphic() {
 			xAxisGenerator = customTemporalAxis(x)
 				.tickSize(17)
 				.tickPadding(6)
-				.tickFormat(d3.timeFormat("%y"));
+				.tickFormat(d3.timeFormat("%y"))
+				.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
