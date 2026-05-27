@@ -95,6 +95,6 @@ config = {
 		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"dropYAxis": true,
-	"addEndMarkers": true,
+	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

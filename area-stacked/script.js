@@ -8,7 +8,7 @@ let graphicData, size, svg;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];

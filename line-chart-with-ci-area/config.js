@@ -5,7 +5,7 @@ config = {
 		ONScolours.beetrootPurple,
 		ONScolours.emeraldGreen
 	],
-	"drawLegend": false,
+	"drawLegend": "auto", // true = always show, false = never show, "auto" = show only at sm size
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
@@ -98,6 +98,6 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
-	"addEndMarkers": true,
+	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

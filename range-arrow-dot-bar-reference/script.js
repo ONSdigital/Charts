@@ -24,28 +24,44 @@ if (chartType === "arrow") {
   extraMarginTop = 0;
 }
 
-function setupArrowhead(svgContainer) {
-  const svgDefs = svgContainer.append("svg:defs");
-  const arrowheadMarker = svgDefs
-    .append("svg:marker")
-    .attr("id", "annotation_arrowhead")
-    .attr("class", "arrowheadMarker")
-    .attr("refX", 3.27)
-    .attr("refY", 3.86)
-    // .attr('opacity',0.3)
-    .attr("markerWidth", 20)
-    .attr("markerHeight", 20)
-    .attr("orient", "auto");
-  arrowheadMarker
-    .append("path")
-    .attr("stroke", "context-stroke")
-    .attr("fill", "none")
-    .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+function setupArrowhead(svgContainer, markerIdBase, colours) {
+  let svgDefs = svgContainer.select("defs");
+  if (svgDefs.empty()) {
+    svgDefs = svgContainer.append("defs");
+  }
+
+  [
+    { suffix: "up", stroke: colours[0] },
+    { suffix: "down", stroke: colours[1] },
+  ].forEach(({ suffix, stroke }) => {
+    const markerId = `${markerIdBase}_${suffix}`;
+
+    svgDefs.select(`#${markerId}`).remove();
+
+    const arrowheadMarker = svgDefs
+      .append("marker")
+      .attr("id", markerId)
+      .attr("class", "arrowheadMarker")
+      .attr("viewBox", "0 0 4.2 7.8")
+      .attr("refX", 3.27)
+      .attr("refY", 3.86)
+      .attr("markerWidth", 20)
+      .attr("markerHeight", 20)
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("orient", "auto");
+
+    arrowheadMarker
+      .append("path")
+      .attr("stroke", stroke)
+      .attr("stroke-linejoin", "round")
+      .attr("fill", "none")
+      .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+  });
 }
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   let margin = config.margin[size];
 
@@ -53,6 +69,7 @@ function drawGraphic() {
     parseInt(graphic.style("width")) - margin.left - margin.right;
 
   groups = d3.groups(graphic_data, (d) => d.group);
+  const groupIndexByName = new Map(groups.map((group, index) => [group[0], index]));
 
   // Get column names for min and max (assuming they are columns 3 and 4, indices 2 and 3)
   let minColumn = graphic_data.columns[2];
@@ -160,7 +177,16 @@ function drawGraphic() {
           });
       });
   });
-  setupArrowhead(d3.select(".chart"));
+  if (chartType === "arrow") {
+    charts.each(function (groupData) {
+      const markerIdBase = `annotation_arrowhead_${groupData.groupIndex}`;
+      setupArrowhead(
+        d3.select(this.parentNode),
+        markerIdBase,
+        config.colourPaletteArrows
+      );
+    });
+  }
 
   if (
     chartType === "dot" ||
@@ -292,7 +318,11 @@ function drawGraphic() {
         return +d[minColumn] === +d[maxColumn] ? "4px" : "3px";
       })
       .attr("marker-end", (d) =>
-        +d[minColumn] === +d[maxColumn] ? null : "url(#annotation_arrowhead)"
+        +d[minColumn] === +d[maxColumn]
+          ? null
+          : +d[minColumn] < +d[maxColumn]
+          ? `url(#annotation_arrowhead_${groupIndexByName.get(d.group)}_up)`
+          : `url(#annotation_arrowhead_${groupIndexByName.get(d.group)}_down)`
       );
   }
 

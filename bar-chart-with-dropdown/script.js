@@ -12,7 +12,7 @@ function drawGraphic() {
 
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
 

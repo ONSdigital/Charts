@@ -88,6 +88,6 @@ config = {
 	},
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
-	"addEndMarkers": true,
+	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

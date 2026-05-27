@@ -9,7 +9,7 @@ let graphicData, size, chartWidth;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
@@ -132,7 +132,7 @@ function drawGraphic() {
 		});
 
 		// Add end markers
-		if (config.addEndMarkers) {
+		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			const markerData = categories.map((category, index) => {
 				// Find last valid datum for this category
 				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");

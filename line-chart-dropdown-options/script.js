@@ -12,7 +12,7 @@ function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
@@ -213,7 +213,7 @@ function drawGraphic() {
     svg.selectAll('g.line-end').remove();
     
 	// Add new end markers with varying shapes
-	if (config.addEndMarkers || size === 'sm') {
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 		circleData.forEach((d) => {
 			drawIndexedLineEndMarker({
 				svg,
@@ -242,7 +242,7 @@ function drawGraphic() {
         .remove();
 
 	// Handle legend vs direct labels
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		// Create legend (moved outside the loop)
 		let legenditem = d3
 			.select('#legend')
