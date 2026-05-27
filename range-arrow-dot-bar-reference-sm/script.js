@@ -62,28 +62,48 @@ function getLegendLabels(data) {
  * Shows Increase (→), Decrease (←) and No change (|) items with column name labels.
  * Used instead of the inline arrowLegend when the arrow change is too small to read clearly.
  */
-function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPaletteArrows }) {
+function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPaletteArrows, hasNoChange }) {
   legendContainer.selectAll("*").remove();
 
   const lineLength = 40;
   const lineY = 26;
   const svgHeight = 36;
 
+  const noChangeColour = ONScolours.grey50;
+
   const items = [
     { label: "Increase", color: colourPaletteArrows[0], leftCol: minColumn, rightCol: maxColumn, goRight: true,  boldLeft: false },
     { label: "Decrease", color: colourPaletteArrows[1], leftCol: maxColumn, rightCol: minColumn, goRight: false, boldLeft: true  },
-    { label: "No change", color: colourPaletteArrows[2], isNoChange: true },
+    ...(hasNoChange ? [{ label: "No change", color: noChangeColour, isNoChange: true }] : []),
   ];
 
-  items.forEach(({ label, color, leftCol, rightCol, goRight, boldLeft, isNoChange }) => {
+  items.forEach(({ label, color, leftCol, rightCol, goRight, boldLeft, isNoChange }, index) => {
     const item = legendContainer.append("div").attr("class", "legend--item");
     const svgEl = item.append("svg").attr("height", svgHeight).attr("width", 200);
+
+    const markerId = `legend_arrowhead_${index}`;
+    const defs = svgEl.append("defs");
+    defs
+      .append("marker")
+      .attr("id", markerId)
+      .attr("viewBox", "0 0 4.2 7.8")
+      .attr("refX", 3.27)
+      .attr("refY", 3.86)
+      .attr("markerWidth", 20)
+      .attr("markerHeight", 20)
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("orient", "auto")
+      .append("path")
+      .attr("stroke", color)
+      .attr("stroke-linejoin", "round")
+      .attr("fill", "none")
+      .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
 
     if (isNoChange) {
       svgEl.append("line")
         .attr("x1", 6).attr("x2", 6)
-        .attr("y1", lineY - 7).attr("y2", lineY + 7)
-        .attr("stroke", color).attr("stroke-width", "3px");
+        .attr("y1", lineY - 9).attr("y2", lineY + 9)
+        .attr("stroke", color).attr("stroke-width", "4px");
 
       svgEl.append("text")
         .attr("x", 14).attr("y", lineY + 4)
@@ -117,7 +137,7 @@ function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPal
         .attr("x2", goRight ? lineX2 : lineX1)
         .attr("y1", lineY).attr("y2", lineY)
         .attr("stroke", color).attr("stroke-width", "2px")
-        .attr("marker-end", "url(#annotation_arrowhead)");
+        .attr("marker-end", `url(#${markerId})`);
 
       const rightText = svgEl.append("text")
         .attr("x", lineX2 + 8).attr("y", lineY + 4)
@@ -173,7 +193,13 @@ function drawGraphic() {
       ? Math.abs(preX(+firstRow[maxColumn]) - preX(+firstRow[minColumn]))
       : Infinity;
   const smallChangeThreshold = config.smallChangeLegendThreshold ?? 40;
-  const useInlineLegend = chartType !== "arrow" || arrowPixelWidth >= smallChangeThreshold;
+  const forceCometLegendOnMobile = chartType === "arrow" && size === "sm";
+  const useInlineLegend =
+    !forceCometLegendOnMobile &&
+    (chartType !== "arrow" || arrowPixelWidth >= smallChangeThreshold);
+  const hasNoChange = graphic_data.some(
+    (d) => +d[minColumn] === +d[maxColumn]
+  );
 
   // Set up the legend based on chart type
   if (chartType === "bar") {
@@ -667,7 +693,12 @@ function drawGraphic() {
             return adjustColorForContrast(config.colourPaletteDots[1], 4.5);
           }
         })
-        .style("font-weight", chartType === "arrow" ? "700" : "600")
+        .style("font-weight", (d) => {
+          if (chartType === "arrow" && +d[minColumn] === +d[maxColumn]) {
+            return "600";
+          }
+          return chartType === "arrow" ? "700" : "600";
+        })
         .attr("dy", 6)
         .attr("dx", (d) => {
           if (chartType === "arrow") {
@@ -720,6 +751,7 @@ function drawGraphic() {
       minColumn,
       maxColumn,
       colourPaletteArrows: config.colourPaletteArrows,
+      hasNoChange,
     });
   }
 
