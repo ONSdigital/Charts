@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -32,15 +32,52 @@ function drawGraphic() {
 		.join('div')
 		.attr('class', 'chart-container');
 
+	const chartEvery = config.chartEvery[size];
+	const chartGap = config.optional?.chartGap || 10;
+	const baseMargin = { ...config.margin[size] };
+	const sharedChartWidth = calculateChartWidth({
+		screenWidth: parseInt(graphic.style('width')),
+		chartEvery,
+		chartMargin: baseMargin,
+		chartGap
+	});
+	const sharedHeight =
+		(config.aspectRatio[size][1] / config.aspectRatio[size][0]) * sharedChartWidth;
+	const sharedX = d3
+		.scaleTime()
+		.domain(d3.extent(graphicData, (d) => d.date))
+		.range([0, sharedChartWidth]);
+	const sharedY = d3
+		.scaleLinear()
+		.range([sharedHeight, 0]);
+	const { minY, maxY } = calculateAutoBounds(graphicData, config);
+	sharedY.domain([minY, maxY]);
+
+	const overlapProbeSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+	graphic.node().appendChild(overlapProbeSvg);
+
+	const anyChartHasOverlap = Array.from(nestedData.values()).some((seriesData) =>
+		Object.values(
+			getCiAreaOverlapFlags({
+				svgNode: overlapProbeSvg,
+				data: seriesData,
+				categories,
+				xScale: sharedX,
+				yScale: sharedY,
+				curveType: config.lineCurveType
+			})
+		).some(Boolean)
+	);
+
+	overlapProbeSvg.remove();
+	const ciAreaOpacity = anyChartHasOverlap ? 0.3 : 0.65;
+
 	function drawChart(container, seriesName, data, chartIndex) {
 
-		const chartEvery = config.chartEvery[size];
-		const chartsPerRow = config.chartEvery[size];
+		const chartsPerRow = chartEvery;
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
-
-		let chartGap = config.optional?.chartGap || 10;
 
 		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
@@ -70,9 +107,6 @@ function drawGraphic() {
 			.scaleLinear()
 			.range([height, 0]);
 
-		// Calculate Y-axis bounds based on data and config
-		const { minY, maxY } = calculateAutoBounds(graphicData, config);
-
 		y.domain([minY, maxY]);
 
 
@@ -84,8 +118,6 @@ function drawGraphic() {
 			margin: margin
 		})
 
-
-		// create lines and circles for each category
 		categories.forEach(function (category) {
 			const lineGenerator = d3
 				.line()
@@ -116,6 +148,7 @@ function drawGraphic() {
 				.y0(d => y(d[`${category}_lowerCI`]))
 				.y1(d => y(d[`${category}_upperCI`]))
 				.defined(d => d[`${category}_lowerCI`] !== null && d[`${category}_upperCI`] !== null) // Only plot areas where we have values
+				.curve(d3[config.lineCurveType] || d3.curveLinear)
 
 			svg.append('path')
 				.attr('class', 'shaded')
@@ -123,7 +156,7 @@ function drawGraphic() {
 				.attr('fill', config.colourPalette[
 					categories.indexOf(category) % config.colourPalette.length
 				])
-				.attr('opacity', 0.3)
+				.attr('opacity', ciAreaOpacity)
 
 			if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 				// Add end marker for this category

@@ -1,5 +1,5 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -123,6 +123,15 @@ function drawGraphic() {
 		})
 
 	// create lines and areas for each category
+	const ciAreaOverlapFlags = getCiAreaOverlapFlags({
+		svgNode: svg.node(),
+		data: graphicData,
+		categories,
+		xScale: x,
+		yScale: y,
+		curveType: config.lineCurveType
+	});
+
 	categories.forEach(function (category) {
 		const lineGenerator = d3
 			.line()
@@ -154,6 +163,7 @@ function drawGraphic() {
 			.y0(d => y(d[`${category}_lowerCI`]))
 			.y1(d => y(d[`${category}_upperCI`]))
 			.defined(d => d[`${category}_lowerCI`] !== null && d[`${category}_upperCI`] !== null) // Only plot areas where we have values
+			.curve(d3[config.lineCurveType] || d3.curveLinear)
 
 		svg.append('path')
 			.attr('class', 'shaded')
@@ -161,7 +171,7 @@ function drawGraphic() {
 			.attr('fill', config.colourPalette[
 				categories.indexOf(category) % config.colourPalette.length
 			])
-			.attr('opacity', 0.3)
+			.attr('opacity', ciAreaOverlapFlags[category] ? 0.3 : 0.65)
 
 		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			// Add end marker for this category
