@@ -590,6 +590,11 @@ function drawGraphic() {
     });
   });
 
+  // Check if any data items actually fall below the noChangeThreshold across all groups
+  const hasNoChangeBars = groups.some((d) =>
+    d[1].some((datum) => Math.abs(datum.value) < d[8])
+  );
+
   drawLegend();
 
   function drawLegend() {
@@ -629,7 +634,9 @@ function drawGraphic() {
       },
     };
 
-    const types = Object.keys(legendMap);
+    const types = Object.keys(legendMap).filter(
+      (type) => type !== "No" || hasNoChangeBars
+    );
 
     // ---------------------------------------------------------
     // Create each legend item container using a D3 data join
