@@ -15,22 +15,39 @@ let legend = d3.select("#legend");
 let pymChild = null;
 let graphic_data, size, svg;
 
-function setupArrowhead(svgContainer) {
-  const svgDefs = svgContainer.append("svg:defs");
-  const arrowheadMarker = svgDefs
-    .append("svg:marker")
-    .attr("id", "annotation_arrowhead")
-    .attr("class", "arrowheadMarker")
-    .attr("refX", 3.27)
-    .attr("refY", 3.86)
-    .attr("markerWidth", 20)
-    .attr("markerHeight", 20)
-    .attr("orient", "auto");
-  arrowheadMarker
-    .append("path")
-    .attr("stroke", "context-stroke")
-    .attr("fill", "none")
-    .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+function setupArrowhead(svgContainer, markerIdBase, colours) {
+  let svgDefs = svgContainer.select("defs");
+  if (svgDefs.empty()) {
+    svgDefs = svgContainer.append("defs");
+  }
+
+  [
+    { suffix: "up", stroke: colours[0] },
+    { suffix: "down", stroke: colours[1] },
+  ].forEach(({ suffix, stroke }) => {
+    const markerId = `${markerIdBase}_${suffix}`;
+
+    svgDefs.select(`#${markerId}`).remove();
+
+    const arrowheadMarker = svgDefs
+      .append("marker")
+      .attr("id", markerId)
+      .attr("class", "arrowheadMarker")
+      .attr("viewBox", "0 0 4.2 7.8")
+      .attr("refX", 3.27)
+      .attr("refY", 3.86)
+      .attr("markerWidth", 20)
+      .attr("markerHeight", 20)
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("orient", "auto");
+
+    arrowheadMarker
+      .append("path")
+      .attr("stroke", stroke)
+      .attr("stroke-linejoin", "round")
+      .attr("fill", "none")
+      .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+  });
 }
 
 function getLegendLabels(data) {
@@ -117,7 +134,7 @@ function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPal
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   // Determine chart type - default to 'range' if not specified
   const chartType = config.chartType || "range";
@@ -382,8 +399,12 @@ function drawGraphic() {
     }
 
     // Setup arrowhead marker for arrow charts
-    if (chartType === "arrow" && chartIndex === 0) {
-      setupArrowhead(svg);
+    if (chartType === "arrow") {
+      setupArrowhead(
+        svg,
+        `annotation_arrowhead_${chartIndex}`,
+        config.colourPaletteArrows
+      );
     }
 
     // Add dynamic legend for arrow chart (only on first chart, only when inline)
@@ -507,7 +528,11 @@ function drawGraphic() {
           return +d[maxColumn] === +d[minColumn] ? "4px" : "3px";
         })
         .attr("marker-end", (d) =>
-          +d[maxColumn] === +d[minColumn] ? null : "url(#annotation_arrowhead)"
+          +d[maxColumn] === +d[minColumn]
+            ? null
+            : +d[maxColumn] < +d[minColumn]
+            ? `url(#annotation_arrowhead_${chartIndex}_up)`
+            : `url(#annotation_arrowhead_${chartIndex}_down)`
         );
     }
 

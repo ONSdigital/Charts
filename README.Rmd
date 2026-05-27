@@ -48,7 +48,7 @@ See the (work-in-progress) [accessibility report](https://onsdigital.github.io/C
 
 
 ```{r}
-to_exclude <- c("lib", "chart-menu", "ONS charts cheat sheet.svg", "Modularisation_notes.md", "README.md", "README.rmarkdown", "refresh.bat", "Reports", "schema.JSON", "sitemap.xml", "ONSCharts.Rproj", "README.Rmd")
+to_exclude <- c("lib", "chart-menu", "ONS charts cheat sheet.svg", "Modularisation_notes.md", "README.md", "README.rmarkdown", "refresh.bat", "reports", "schema.JSON", "sitemap.xml", "ONSCharts.Rproj", "README.Rmd")
 folders <- dir()
 folders <- folders[!(folders %in% to_exclude)]
 chart_names <- .simpleCap(gsub("-", " ", folders))

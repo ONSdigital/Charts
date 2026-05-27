@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawShapeMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawShapeMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -8,7 +8,7 @@ let graphicData, size, keys, counter;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	const aspectRatio = config.aspectRatio[size];
 	const chartsPerRow = config.chartEvery[size];
@@ -74,6 +74,13 @@ function drawGraphic() {
 			x = d3.scaleTime()
 				.domain(d3.extent(graphicData, (d) => d.date))
 				.range([0, chartWidth]);
+
+			if (config.labelSpans.enabled === true) {
+				expandCustomTemporalAxisDomain(x, {
+					timeUnit: config.labelSpans.timeUnit,
+					forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+				});
+			}
 		} else {
 			x = d3.scaleLinear()
 				.domain(d3.extent(graphicData, (d) => +d.date))
@@ -140,15 +147,15 @@ function drawGraphic() {
 				.datum(Object.entries(lines))
 				.attr('fill', 'none')
 				.attr(
-					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colourPalette[0] :
+					'stroke', () => (categories.indexOf(category) == chartIndex) ? config.colourPalette[0] :
 						category == reference ? config.colourPalette[1] : config.colourPalette[2]
 				)
-				.attr('stroke-width', () => (categoriesToPlot.indexOf(category) == chartIndex) || category == reference ? 2.5 : 2)
+				.attr('stroke-width', () => (categories.indexOf(category) == chartIndex) || category == reference ? 2.5 : 2)
 				.attr('d', (d, i) => lineGenerator(d[categoriesToPlot.indexOf(category)][1]))
 				.style('stroke-linejoin', 'round')
 				.style('stroke-linecap', 'round')
-				.attr('class', 'line' + categoriesToPlot.indexOf(category) +
-					((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
+				.attr('class', 'line' + categories.indexOf(category) +
+					((categories.indexOf(category) == chartIndex) ? " selected" :
 						category == reference ? " reference" : " other"));
 
 			svg.selectAll('.reference').raise()
@@ -157,11 +164,11 @@ function drawGraphic() {
 			const lastDatum = graphicData[graphicData.length - 1];
 
 			// Add end markers for selected and comparison lines
-			if (config.addEndMarkers) {
+			if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 				const lastValidDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 				if (lastValidDatum) {
 					// Selected group - circle
-					if (categoriesToPlot.indexOf(category) == chartIndex) {
+					if (categories.indexOf(category) == chartIndex) {
 							drawShapeMarker({
 								svg,
 								shape: 'circle',
@@ -256,7 +263,8 @@ function drawGraphic() {
 			xAxisGenerator = customTemporalAxis(x)
 			.tickPadding(6)
 			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
