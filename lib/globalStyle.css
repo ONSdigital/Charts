@@ -363,7 +363,9 @@ h5#source {
 }
 
 .line-end,
-g.line-end path {
+g.line-end path,
+.point-marker,
+g.point-marker path {
   stroke-width: 2.5;
   stroke-linejoin: miter;
   stroke-linecap: butt;

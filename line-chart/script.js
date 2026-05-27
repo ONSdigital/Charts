@@ -212,10 +212,11 @@ function drawGraphic() {
 
 		legenditem.each(function(d, i) {
 			const item = d3.select(this);
+			const useLines = config.addEndMarkers === false;
 			const svg = item.append('svg')
-				.attr('width', 14)
+				.attr('width', useLines ? 20 : 14)
 				.attr('height', 14)
-				.attr('viewBox', '0 0 12 12')
+				.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
 				.attr('class', 'legend--icon')
 				.style('overflow', 'visible');
 
@@ -225,6 +226,7 @@ function drawGraphic() {
 				color: d[1],
 				size: 4,
 				diamondSize: 7,
+				useLines: useLines,
 			});
 		});
 
