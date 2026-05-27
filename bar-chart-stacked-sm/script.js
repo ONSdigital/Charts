@@ -127,11 +127,11 @@ function drawGraphic() {
         if (!config.dropYAxis || chartsPerRow === 1 || chartIndex % chartsPerRow === 0) {
             svg.append('g')
                 .attr('class', 'y axis category')
-                .call(d3.axisLeft(y).tickValues(y.domain()))
+                .call(d3.axisLeft(y).tickSize(0).tickValues(y.domain()))
                 .selectAll('.tick text')
                 .call(wrap, margin.left - 10);
         } else {
-            svg.append('g').attr('class', 'y axis category').call(d3.axisLeft(y).tickValues([]));
+            svg.append('g').attr('class', 'y axis category').call(d3.axisLeft(y).tickSize(0).tickValues([]));
         }
 
         // Ensure tick lines and zero line use correct CSS classes for y axis
