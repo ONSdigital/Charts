@@ -7,8 +7,8 @@ let graphicData, size, svg;
 
 function drawGraphic() {
   // Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  // To override breakpoints, pass as: initialise(size, { mediumBreakpoint: 500 })
-  size = initialise(size);
+  // To override breakpoints, pass as: initialise(size, config, { mediumBreakpoint: 500 })
+  size = initialise(size, config);
 
   let margin = config.margin[size];
   let chartWidth =

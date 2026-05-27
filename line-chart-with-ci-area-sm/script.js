@@ -8,7 +8,7 @@ let graphicData, size;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	// Get categories from the keys used in the stack generator
 	// const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date');
@@ -125,7 +125,7 @@ function drawGraphic() {
 				])
 				.attr('opacity', 0.3)
 
-			if (config.addEndMarkers) {
+			if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 				// Add end marker for this category
 				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");
 				if (lastDatum) {

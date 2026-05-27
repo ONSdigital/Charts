@@ -9,7 +9,7 @@ let pymChild = null;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 
 	// Define the dimensions and margin, width and height of the chart.
@@ -142,7 +142,7 @@ function drawGraphic() {
 			}
 
 			const lastDatum = graphicData[graphicData.length - 1];
-			if (lastDatum[category] === null || (config.drawLegend || size === 'sm')) return;
+			if (lastDatum[category] === null || (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm'))) return;
 			const label = svg.append('text')
 				.attr('class', 'directLineLabel')
 				.attr('x', x(lastDatum.date) + 10)
@@ -164,7 +164,7 @@ function drawGraphic() {
 
 	});
 
-	if (config.addEndMarkers || size == "sm") {
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 		const markerData = categories.map((category, index) => {
 			// Find last valid datum for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
@@ -192,7 +192,7 @@ function drawGraphic() {
 
 
 	// size === 'sm'
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		legend.selectAll("*").remove()
 
 		// Set up the legend

@@ -9,7 +9,7 @@ let graphicData, size, chartWidth;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	const chartsPerRow = config.chartEvery[size];
 
@@ -151,7 +151,7 @@ function drawGraphic() {
 		}
 
 		// Add end markers
-		if (config.addEndMarkers) {
+		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			const markerData = categories.map((category, index) => {
 				// Find last valid datum for this category
 				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");
