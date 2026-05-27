@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0   # Needed so git diff works correctly
-          token: ${{ secrets.BYPASS_RULESET_DEPLOY_KEY }}
+          ssh-key: ${{ secrets.BYPASS_RULESET_DEPLOY_KEY }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
