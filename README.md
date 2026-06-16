@@ -6,23 +6,28 @@ The official repository for all publication ready ONS charts. See our
 [chart menu](https://onsdigital.github.io/Charts/chart-menu/) and
 [service manual](https://service-manual.ons.gov.uk/data-visualisation)
 for more guidance on the use of these charts, and of charts more
-generally.
+generally. NOTE: This repository is still a work in progress.
 
-We currently maintain a separate [map templates
-repository](https://github.com/ONSdigital/maptemplates).
+## Related repositories
 
-(NOTE: This repository is still a work in progress.)
-
-## If you want to make a change
-
-Make a branch and name it something descriptive
-e.g. feature/new-autocomplete. Once you are happy, do a pull request and
-someone else will review it before it gets merged into main.
-
-## If there’s a problem with a template
-
-Please raise an [issue](https://github.com/ONSdigital/Charts/issues) and
-the team will have a look.
+- Maps: [github.com/ONSdigital/Maps](https://github.com/ONSdigital/Maps)
+  provides templates for maps.
+- maptemplates:
+  [github.com/ONSdigital/maptemplates](https://github.com/ONSdigital/maptemplates)
+  contains our older map templates that have not yet been replaced in
+  `Maps`.
+- Tables:
+  [github.com/ONSdigital/Tables](https://github.com/ONSdigital/Tables)
+  provides templates for simple and grouped tables.
+- otherCharts:
+  [github.com/ONSdigital/otherCharts](https://github.com/ONSdigital/otherCharts)
+  contains some of our retired chart templates and work-in-progress
+  charts.
+- charts-lib:
+  [github.com/ONSdigital/charts-lib](https://github.com/ONSdigital/charts-lib)
+  provides a copy of the `lib` folder. The `Charts` repository is
+  currently the main source for `lib` files, and the contents are copied
+  to `Maps`, `otherCharts`, and `charts-lib`.
 
 ## Accessibility
 
@@ -30,7 +35,20 @@ See the (work-in-progress) [accessibility
 report](https://onsdigital.github.io/Charts/reports/a11y-report.html) on
 each chart template.
 
-## Guide to updating and placing an initial commit for a chart
+## Making changes to templates
+
+### If there’s a problem with a template
+
+Please raise an [issue](https://github.com/ONSdigital/Charts/issues) and
+the team will have a look.
+
+### If you want to make a change
+
+Make a branch and name it something descriptive
+e.g. feature/new-autocomplete. Once you are happy, do a pull request and
+someone else will review it before it gets merged into main.
+
+#### Guide to updating and placing an initial commit for a chart
 
 - All missing charts can be found in the issues section of the
   repository. They will have the following format, “\[descriptive chart
@@ -40,13 +58,13 @@ each chart template.
   update and upload the chart please create a branch and you will be
   responsible for updating and making a pull request for the chart.
 
-### Initial chart commit checklist
+#### Initial chart commit checklist
 
 - All initial commits of charts must must follow [JavaScript
   ES6](https://www.w3schools.com/js/js_es6.asp) standards and use [D3
   v6](https://observablehq.com/@d3/d3v6-migration-guide) or higher.
 
-### Charts uploaded so far
+## Links to templates
 
 | Chart.Name | Preview | Code | README |
 |:--------------------------------------------|:----------|:-------|:--------|
