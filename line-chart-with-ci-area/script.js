@@ -1,5 +1,5 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -10,7 +10,7 @@ let graphicData, size;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	// Define the dimensions and margin, width and height of the chart.
 	let margin = config.margin[size];
@@ -37,6 +37,13 @@ function drawGraphic() {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
+
+		if (config.labelSpans.enabled === true) {
+			expandCustomTemporalAxisDomain(x, {
+				timeUnit: config.labelSpans.timeUnit,
+				forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+			});
+		}
 	} else if (config.xDomain == "auto") {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
@@ -71,7 +78,8 @@ function drawGraphic() {
 		xAxisGenerator = customTemporalAxis(x)
 			.tickSize(17).tickPadding(6)
 			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
@@ -123,6 +131,15 @@ function drawGraphic() {
 		})
 
 	// create lines and areas for each category
+	const ciAreaOverlapFlags = getCiAreaOverlapFlags({
+		svgNode: svg.node(),
+		data: graphicData,
+		categories,
+		xScale: x,
+		yScale: y,
+		curveType: config.lineCurveType
+	});
+
 	categories.forEach(function (category) {
 		const lineGenerator = d3
 			.line()
@@ -154,6 +171,7 @@ function drawGraphic() {
 			.y0(d => y(d[`${category}_lowerCI`]))
 			.y1(d => y(d[`${category}_upperCI`]))
 			.defined(d => d[`${category}_lowerCI`] !== null && d[`${category}_upperCI`] !== null) // Only plot areas where we have values
+			.curve(d3[config.lineCurveType] || d3.curveLinear)
 
 		svg.append('path')
 			.attr('class', 'shaded')
@@ -161,9 +179,9 @@ function drawGraphic() {
 			.attr('fill', config.colourPalette[
 				categories.indexOf(category) % config.colourPalette.length
 			])
-			.attr('opacity', 0.3)
+			.attr('opacity', ciAreaOverlapFlags[category] ? 0.3 : 0.65)
 
-		if (config.addEndMarkers || size === "sm") {
+		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			// Add end marker for this category
 			const lastDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
 			if (lastDatum) {
@@ -182,7 +200,7 @@ function drawGraphic() {
 			}
 		}
 
-		if (config.drawLegend || size === 'sm') {
+		if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 			// Set up the legend
 			let legenditem = d3
 				.select('#legend')
@@ -194,10 +212,11 @@ function drawGraphic() {
 
 			legenditem.each(function(d, i) {
 				const item = d3.select(this);
+				const useLines = config.addEndMarkers === false;
 				const svg = item.append('svg')
-					.attr('width', 14)
+					.attr('width', useLines ? 20 : 14)
 					.attr('height', 14)
-					.attr('viewBox', '0 0 12 12')
+					.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
 					.attr('class', 'legend--icon')
 					.style('overflow', 'visible');
 
@@ -207,6 +226,7 @@ function drawGraphic() {
 					color: d[1],
 					size: 4,
 					diamondSize: 7,
+					useLines: useLines,
 				});
 			});
 
@@ -221,7 +241,7 @@ function drawGraphic() {
 		}
 	});
 
-	if (!config.drawLegend && size !== 'sm') {
+	if (!(config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm'))) {
 		createDirectLabels({
 			categories: categories,
 			data: graphicData,

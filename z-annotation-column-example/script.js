@@ -7,7 +7,7 @@ let graphic_data, size, svg;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	const aspectRatio = config.optional.aspectRatio[size];
 	let margin = config.optional.margin[size];

@@ -5,6 +5,7 @@ import {
   addAxisLabel,
   diamondShape,
   adjustColorForContrast,
+  addLabelWithBackground
 } from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
@@ -24,28 +25,139 @@ if (chartType === "arrow") {
   extraMarginTop = 0;
 }
 
-function setupArrowhead(svgContainer) {
-  const svgDefs = svgContainer.append("svg:defs");
-  const arrowheadMarker = svgDefs
-    .append("svg:marker")
-    .attr("id", "annotation_arrowhead")
-    .attr("class", "arrowheadMarker")
-    .attr("refX", 3.27)
-    .attr("refY", 3.86)
-    // .attr('opacity',0.3)
-    .attr("markerWidth", 20)
-    .attr("markerHeight", 20)
-    .attr("orient", "auto");
-  arrowheadMarker
-    .append("path")
-    .attr("stroke", "context-stroke")
-    .attr("fill", "none")
-    .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+/**
+ * Draws a comet-plot style legend in the #legend div for arrow charts.
+ * Shows Increase (→), Decrease (←) and No change (|) items with column name labels.
+ * Used instead of the inline arrowLegend when the arrow change is too small to read clearly.
+ */
+function drawArrowCometLegend({ legendContainer, minColumn, maxColumn, colourPaletteArrows, hasNoChange }) {
+  legendContainer.selectAll("*").remove();
+
+  const lineLength = 40;
+  const lineY = 26;
+  const svgHeight = 36;
+
+  const noChangeColour = ONScolours.grey50;
+
+  const items = [
+    { label: "Increase", color: colourPaletteArrows[0], leftCol: minColumn, rightCol: maxColumn, goRight: true,  boldLeft: false },
+    { label: "Decrease", color: colourPaletteArrows[1], leftCol: maxColumn, rightCol: minColumn, goRight: false, boldLeft: true  },
+    ...(hasNoChange ? [{ label: "No change", color: noChangeColour, isNoChange: true }] : []),
+  ];
+
+  items.forEach(({ label, color, leftCol, rightCol, goRight, boldLeft, isNoChange }, index) => {
+    const item = legendContainer.append("div").attr("class", "legend--item");
+    const svgEl = item.append("svg").attr("height", svgHeight).attr("width", 200);
+
+    const markerId = `legend_arrowhead_${index}`;
+    const defs = svgEl.append("defs");
+    defs
+      .append("marker")
+      .attr("id", markerId)
+      .attr("viewBox", "0 0 4.2 7.8")
+      .attr("refX", 3.27)
+      .attr("refY", 3.86)
+      .attr("markerWidth", 20)
+      .attr("markerHeight", 20)
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("orient", "auto")
+      .append("path")
+      .attr("stroke", color)
+      .attr("stroke-linejoin", "round")
+      .attr("fill", "none")
+      .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+
+    if (isNoChange) {
+      svgEl.append("line")
+        .attr("x1", 6).attr("x2", 6)
+        .attr("y1", lineY - 9).attr("y2", lineY + 9)
+        .attr("stroke", color).attr("stroke-width", "4px");
+
+      svgEl.append("text")
+        .attr("x", 14).attr("y", lineY + 4)
+        .attr("fill", color).attr("class", "legendLabel")
+        .text(label);
+
+      const bbox = svgEl.node().getBBox();
+      svgEl.attr("width", bbox.x + bbox.width + 4);
+    } else {
+      const leftText = svgEl.append("text")
+        .attr("x", 2).attr("y", lineY + 4)
+        .attr("text-anchor", "start")
+        .attr("fill", color).attr("class", "legendLabel")
+        .style("font-weight", boldLeft ? "bold" : null)
+        .text(leftCol);
+
+      const leftW = leftText.node().getBBox().width;
+      const lineX1 = leftW + 8;
+      const lineX2 = lineX1 + lineLength;
+
+      // Direction label centred above the arrow line
+      svgEl.append("text")
+        .attr("x", (lineX1 + lineX2) / 2).attr("y", 12)
+        .attr("text-anchor", "middle")
+        .attr("fill", color).attr("class", "legendLabel")
+        .text(label);
+
+      // For decrease, draw line right-to-left so marker-end arrowhead points left
+      svgEl.append("line")
+        .attr("x1", goRight ? lineX1 : lineX2)
+        .attr("x2", goRight ? lineX2 : lineX1)
+        .attr("y1", lineY).attr("y2", lineY)
+        .attr("stroke", color).attr("stroke-width", "2px")
+        .attr("marker-end", `url(#${markerId})`);
+
+      const rightText = svgEl.append("text")
+        .attr("x", lineX2 + 8).attr("y", lineY + 4)
+        .attr("text-anchor", "start")
+        .attr("fill", color).attr("class", "legendLabel")
+        .style("font-weight", boldLeft ? null : "bold")
+        .text(rightCol);
+
+      const rtBBox = rightText.node().getBBox();
+      svgEl.attr("width", rtBBox.x + rtBBox.width + 4);
+    }
+  });
+}
+
+function setupArrowhead(svgContainer, markerIdBase, colours) {
+  let svgDefs = svgContainer.select("defs");
+  if (svgDefs.empty()) {
+    svgDefs = svgContainer.append("defs");
+  }
+
+  [
+    { suffix: "up", stroke: colours[0] },
+    { suffix: "down", stroke: colours[1] },
+  ].forEach(({ suffix, stroke }) => {
+    const markerId = `${markerIdBase}_${suffix}`;
+
+    svgDefs.select(`#${markerId}`).remove();
+
+    const arrowheadMarker = svgDefs
+      .append("marker")
+      .attr("id", markerId)
+      .attr("class", "arrowheadMarker")
+      .attr("viewBox", "0 0 4.2 7.8")
+      .attr("refX", 3.27)
+      .attr("refY", 3.86)
+      .attr("markerWidth", 20)
+      .attr("markerHeight", 20)
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("orient", "auto");
+
+    arrowheadMarker
+      .append("path")
+      .attr("stroke", stroke)
+      .attr("stroke-linejoin", "round")
+      .attr("fill", "none")
+      .attr("d", "M0.881836 1.45544L3.27304 3.84665L0.846591 6.2731");
+  });
 }
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   let margin = config.margin[size];
 
@@ -53,6 +165,7 @@ function drawGraphic() {
     parseInt(graphic.style("width")) - margin.left - margin.right;
 
   groups = d3.groups(graphic_data, (d) => d.group);
+  const groupIndexByName = new Map(groups.map((group, index) => [group[0], index]));
 
   // Get column names for min and max (assuming they are columns 3 and 4, indices 2 and 3)
   let minColumn = graphic_data.columns[2];
@@ -90,6 +203,28 @@ function drawGraphic() {
     .scaleOrdinal()
     .range(config.colourPaletteDotsStroke)
     .domain([maxColumn, minColumn]);
+
+  // Determine whether the arrow change is too small for inline labels.
+  // When small, a comet-style legend in #legend is used instead.
+  const firstDataPoint = groups[0]?.[1]?.[0];
+  const arrowPixelWidth =
+    chartType === "arrow" && firstDataPoint
+      ? Math.abs(x(+firstDataPoint[maxColumn]) - x(+firstDataPoint[minColumn]))
+      : Infinity;
+  const smallChangeThreshold = config.smallChangeLegendThreshold ?? 40;
+  const forceCometLegendOnMobile = chartType === "arrow" && size === "sm";
+  const useInlineLegend =
+    !forceCometLegendOnMobile &&
+    (chartType !== "arrow" || arrowPixelWidth >= smallChangeThreshold);
+  const hasNoChange = graphic_data.some(
+    (d) => +d[minColumn] === +d[maxColumn]
+  );
+
+  // Inline arrow legend needs extra top margin in the first chart SVG;
+  // the comet legend lives in #legend so no extra margin is needed.
+  if (chartType === "arrow") {
+    extraMarginTop = useInlineLegend ? 12 : 0;
+  }
 
   // create the y scale in groups
   groups.map(function (d) {
@@ -160,7 +295,16 @@ function drawGraphic() {
           });
       });
   });
-  setupArrowhead(d3.select(".chart"));
+  if (chartType === "arrow") {
+    charts.each(function (groupData) {
+      const markerIdBase = `annotation_arrowhead_${groupData.groupIndex}`;
+      setupArrowhead(
+        d3.select(this.parentNode),
+        markerIdBase,
+        config.colourPaletteArrows
+      );
+    });
+  }
 
   if (
     chartType === "dot" ||
@@ -196,7 +340,7 @@ function drawGraphic() {
       .attr("fill", config.colourPaletteBar);
   }
 
-  if (chartType === "arrow") {
+  if (chartType === "arrow" && useInlineLegend) {
     charts.each(function (groupData, groupIndex) {
       if (groupData.groupIndex === 0 && groupData[1].length > 0) {
         // Get the first data point in the first group
@@ -292,7 +436,11 @@ function drawGraphic() {
         return +d[minColumn] === +d[maxColumn] ? "4px" : "3px";
       })
       .attr("marker-end", (d) =>
-        +d[minColumn] === +d[maxColumn] ? null : "url(#annotation_arrowhead)"
+        +d[minColumn] === +d[maxColumn]
+          ? null
+          : +d[minColumn] < +d[maxColumn]
+          ? `url(#annotation_arrowhead_${groupIndexByName.get(d.group)}_up)`
+          : `url(#annotation_arrowhead_${groupIndexByName.get(d.group)}_down)`
       );
   }
 
@@ -364,20 +512,36 @@ function drawGraphic() {
       });
   }
 
+  const legacyDataLabels = config.showDataLabels;
+  const dataLabelsShow =
+    config.dataLabels?.show ??
+    (typeof legacyDataLabels === "object"
+      ? legacyDataLabels.enabled
+      : legacyDataLabels);
+  const dataLabelsBackground =
+    config.dataLabels && typeof config.dataLabels.background !== "undefined"
+      ? config.dataLabels.background
+      : typeof legacyDataLabels === "object" &&
+          typeof legacyDataLabels.background !== "undefined"
+        ? legacyDataLabels.background
+        : true;
+  const dataLabelsNumberFormat =
+    config.dataLabels?.numberFormat || config.numberFormat;
+
   //dataLabels
   function shouldShowDataLabels() {
-    // If showDataLabels is explicitly false, never show
-    if (config.showDataLabels === false) {
+    // If data label show is explicitly false, never show
+    if (dataLabelsShow === false) {
       return false;
     }
 
-    // If showDataLabels is true, always show
-    if (config.showDataLabels === true) {
+    // If data label show is true, always show
+    if (dataLabelsShow === true) {
       return true;
     }
 
-    // If showDataLabels is 'desktop', only show on large screens
-    if (config.showDataLabels === "desktopOnly") {
+    // If data label show is 'desktopOnly', only show on large screens
+    if (dataLabelsShow === "desktopOnly") {
       return size === "lg";
     }
 
@@ -387,75 +551,73 @@ function drawGraphic() {
 
   //dataLabels
   if (shouldShowDataLabels() && ["range", "arrow", "dot"].includes(chartType)) {
-    charts
-      .selectAll("text.min")
-      .data((d) => d[1])
-      .join("text")
-      .attr("class", "dataLabels")
-      .attr("x", (d) => x(d[minColumn]))
-      .attr("y", (d) =>
-        Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
-          ? groups.filter((f) => f[0] == d.group)[0][3](d.name) -
-            adjustWhenClose
-          : groups.filter((f) => f[0] == d.group)[0][3](d.name)
-      )
-      .text((d) => d3.format(config.numberFormat)(d[minColumn]))
-      .attr("fill", (d) => {
-        if (chartType === "arrow") {
-          if (+d[minColumn] === +d[maxColumn]) {
-            return config.colourPaletteArrows[2];
-          } else if (+d[minColumn] < +d[maxColumn]) {
-            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+    // Render data labels per chart/group for correct positioning
+    charts.each(function (groupData) {
+      const group = groupData[0];
+      const data = groupData[1];
+      const yScale = groupData[3];
+      const chartGroup = d3.select(this);
+
+      // Min labels
+      addLabelWithBackground({
+        selection: chartGroup,
+        data: data,
+        valueAccessor: (d) => d3.format(dataLabelsNumberFormat)(d[minColumn]),
+        xAccessor: (d) => x(d[minColumn]),
+        yAccessor: (d) =>
+          Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
+            ? yScale(d.name) - adjustWhenClose
+            : yScale(d.name),
+        dxAccessor: (d) => (+d[minColumn] <= +d[maxColumn] ? -10 : 10),
+        anchorAccessor: (d) => (+d[minColumn] <= +d[maxColumn] ? "end" : "start"),
+        fillAccessor: (d) => {
+          if (chartType === "arrow") {
+            if (+d[minColumn] === +d[maxColumn]) {
+              return config.colourPaletteArrows[2];
+            } else if (+d[minColumn] < +d[maxColumn]) {
+              return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+            } else {
+              return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            }
           } else {
-            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            return adjustColorForContrast(colour("min"), 4.5);
           }
-        } else {
-          return adjustColorForContrast(colour("min"), 4.5);
-        }
-      })
-      .style("font-weight", "600")
-
-      .attr("dy", 6)
-      .attr("dx", (d) => (+d[minColumn] <= +d[maxColumn] ? -10 : 10))
-      .attr("text-anchor", (d) =>
-        +d[minColumn] <= +d[maxColumn] ? "end" : "start"
-      );
-
-    charts
-      .selectAll("text.max")
-      .data((d) => d[1])
-      .join("text")
-      .attr("class", "dataLabels")
-      .attr("x", (d) => x(d[maxColumn]))
-      .attr("y", (d) =>
-        Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
-          ? groups.filter((f) => f[0] == d.group)[0][3](d.name) +
-            adjustWhenClose
-          : groups.filter((f) => f[0] == d.group)[0][3](d.name)
-      )
-      .text((d) => d3.format(config.numberFormat)(d[maxColumn]))
-      .attr("fill", (d) => {
-        if (chartType === "arrow") {
-          if (+d[minColumn] === +d[maxColumn]) {
-            return config.colourPaletteArrows[2]; // neutral color for no change
-          } else if (+d[minColumn] < +d[maxColumn]) {
-            return adjustColorForContrast(config.colourPaletteArrows[0], 4.5); // up arrow color
-          } else {
-            return adjustColorForContrast(config.colourPaletteArrows[1], 4.5); // down arrow color
-          }
-        } else {
-          return adjustColorForContrast(colour("max"), 4.5);
-        }
-      })
-
-      .attr("dy", 6)
-      .attr("dx", (d) => (+d[minColumn] > +d[maxColumn] ? -10 : 10))
-      .attr("text-anchor", (d) =>
-        +d[minColumn] > +d[maxColumn] ? "end" : "start"
-      )
-      .style("font-weight", () => {
-        return chartType === "arrow" ? "700" : "600";
+        },
+        fontWeightAccessor: (d) => "600",
+        labelType:'min',
+        background: dataLabelsBackground
       });
+
+      // Max labels
+      addLabelWithBackground({
+        selection: chartGroup,
+        data: data,
+        valueAccessor: (d) => d3.format(dataLabelsNumberFormat)(d[maxColumn]),
+        xAccessor: (d) => x(d[maxColumn]),
+        yAccessor: (d) =>
+          Math.abs(x(d[maxColumn]) - x(d[minColumn])) < 3
+            ? yScale(d.name) + adjustWhenClose
+            : yScale(d.name),
+        dxAccessor: (d) => (+d[minColumn] > +d[maxColumn] ? -10 : 10),
+        anchorAccessor: (d) => (+d[minColumn] > +d[maxColumn] ? "end" : "start"),
+        fillAccessor: (d) => {
+          if (chartType === "arrow") {
+            if (+d[minColumn] === +d[maxColumn]) {
+              return config.colourPaletteArrows[2];
+            } else if (+d[minColumn] < +d[maxColumn]) {
+              return adjustColorForContrast(config.colourPaletteArrows[0], 4.5);
+            } else {
+              return adjustColorForContrast(config.colourPaletteArrows[1], 4.5);
+            }
+          } else {
+            return adjustColorForContrast(colour("max"), 4.5);
+          }
+        },
+        fontWeightAccessor: (d) => (chartType === "arrow" ? "700" : "600"),
+        labelType:'max',
+        background: dataLabelsBackground
+      });
+    });
   }
 
   // This does the x-axis label
@@ -538,6 +700,18 @@ function drawGraphic() {
       .html(function (d) {
         return d[0];
       });
+  }
+
+  // When the arrow change is small, draw a comet-style legend in #legend
+  // instead of the inline labels above the first data row.
+  if (chartType === "arrow" && !useInlineLegend) {
+    drawArrowCometLegend({
+      legendContainer: legend,
+      minColumn,
+      maxColumn,
+      colourPaletteArrows: config.colourPaletteArrows,
+      hasNoChange,
+    });
   }
 
   //create link to source
