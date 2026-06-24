@@ -6,11 +6,19 @@
   }
   
   
-  .directLineLabelBold {
-    font-size: 14px;
-    font-weight: 700;
-  }
-  .directLineLabelRegular {
-    font-size: 14px;
-    font-weight: 500;
-  }
+.directLineLabelBold {
+  font-size: 14px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: 0.95;
+}
+.directLineLabelRegular {
+  font-size: 14px;
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: 0.95;
+}

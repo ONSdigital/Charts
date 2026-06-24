@@ -21,8 +21,12 @@ config = {
   },
   xDomain: [-25, 104],
   // either auto or a custom domain as an array e.g [0,100]
-  showDataLabels: true,
-  // can be true, false, or "desktopOnly", quotes only if desktopOnly
+  dataLabels: {
+    show: true,
+    numberFormat: ".0f",
+    background: true,
+  },
+  // show can be true, false, or "desktopOnly" (quotes only if desktopOnly)
   margin: {
     sm: {
       top: 5,
