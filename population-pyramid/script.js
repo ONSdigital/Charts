@@ -26,7 +26,7 @@ function drawGraphic() {
     legend.selectAll('*').remove();
 
     // Set up basics
-    size = initialise(size);
+    size = initialise(size, config);
 
     let margin = config.margin[size];
     margin.centre = config.margin.centre;

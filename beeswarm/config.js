@@ -4,7 +4,8 @@ config = {
   "sourceText": "Office for National Statistics",
   "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "xAxisFormat": ".0f",
-  "layoutMethod": "binned",// 'binned' or 'force'
+  "topXAxis":true,
+  "layoutMethod": "forceAccurate",// 'binned', 'force', or 'forceAccurate'
   "forceOptions": {
     "strength": 0.5,        // Collision force strength (0-1)
     "iterations": 120,      // Number of simulation iterations
@@ -57,10 +58,10 @@ config = {
       "left": 0
     },
     "lg": {
-      "top": 0,
-      "right": 0,
-      "bottom": 25,
-      "left": 0
+      "top": 20,
+      "right": 8,
+      "bottom": 20,
+      "left": 5
     }
   },
   "seriesHeight": {

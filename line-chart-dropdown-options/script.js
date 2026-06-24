@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
@@ -12,7 +12,7 @@ function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
@@ -213,7 +213,7 @@ function drawGraphic() {
     svg.selectAll('g.line-end').remove();
     
 	// Add new end markers with varying shapes
-	if (config.addEndMarkers || size === 'sm') {
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 		circleData.forEach((d) => {
 			drawIndexedLineEndMarker({
 				svg,
@@ -242,7 +242,7 @@ function drawGraphic() {
         .remove();
 
 	// Handle legend vs direct labels
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		// Create legend (moved outside the loop)
 		let legenditem = d3
 			.select('#legend')
@@ -254,19 +254,21 @@ function drawGraphic() {
 
 		legenditem.each(function(d, i) {
 			const item = d3.select(this);
-			const svg = item.append('svg')
-				.attr('width', 14)
-				.attr('height', 14)
-				.attr('viewBox', '0 0 12 12')
-				.attr('class', 'legend--icon')
-				.style('overflow', 'visible');
+		const useLines = config.addEndMarkers === false;
+		const svg = item.append('svg')
+			.attr('width', useLines ? 20 : 14)
+			.attr('height', 14)
+			.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
+			.attr('class', 'legend--icon')
+			.style('overflow', 'visible');
 
-			drawIndexedLegendShape({
-				svg,
-				index: d[2],
-				color: d[1],
-				size: 4,
-				diamondSize: 7,
+		drawIndexedLegendShape({
+			svg,
+			index: d[2],
+			color: d[1],
+			size: 4,
+			diamondSize: 7,
+			useLines: useLines,
 			});
 		});
 
@@ -317,6 +319,13 @@ function drawGraphic() {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
+
+		if (config.labelSpans.enabled === true) {
+			expandCustomTemporalAxisDomain(x, {
+				timeUnit: config.labelSpans.timeUnit,
+				forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+			});
+		}
 	} else {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
@@ -341,7 +350,8 @@ function drawGraphic() {
 			.tickSize(17)
 			.tickPadding(6)
 			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)

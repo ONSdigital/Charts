@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds, drawIndexedLegendShape, drawIndexedLineEndMarker } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -9,7 +9,15 @@ let graphicData, size, chartWidth;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
+
+	const chartsPerRow = config.chartEvery[size];
+
+	// Determine whether to draw a legend or use direct (end-of-line) labels
+	const shouldDrawLegend = config.drawLegend === true ? true :
+		config.drawLegend === false ? false :
+		// 'auto': legend when >1 chart per row; direct labels when 1 per row at lg
+		chartsPerRow > 1 || size !== 'lg';
 
 	// Get categories from the keys used in the stack generator
 	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
@@ -34,7 +42,6 @@ function drawGraphic() {
 	function drawChart(container, seriesName, data, chartIndex) {
 
 		const chartEvery = config.chartEvery[size];
-		const chartsPerRow = config.chartEvery[size];
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
@@ -71,6 +78,13 @@ function drawGraphic() {
 			x = d3.scaleTime()
 				.domain(d3.extent(graphicData, (d) => d.date))
 				.range([0, chartWidth]);
+
+			if (config.labelSpans.enabled === true) {
+				expandCustomTemporalAxisDomain(x, {
+					timeUnit: config.labelSpans.timeUnit,
+					forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+				});
+			}
 		} else {
 			x = d3.scaleLinear()
 				.domain(d3.extent(graphicData, (d) => +d.date))
@@ -124,8 +138,27 @@ function drawGraphic() {
 
 		});
 
+		// Add point markers at every data point if enabled
+		if (config.addPointMarkers) {
+			categories.forEach(function (category, index) {
+				const color = config.colourPalette[index % config.colourPalette.length];
+				data.filter(d => d[category] != null && d[category] !== "").forEach(d => {
+					drawIndexedLineEndMarker({
+						svg,
+						index,
+						color,
+						x: x(d.date),
+						y: y(d[category]),
+						size: 3.5,
+						diamondSize: 6,
+						className: `point-marker point-marker-${index}`,
+					});
+				});
+			});
+		}
+
 		// Add end markers
-		if (config.addEndMarkers) {
+		if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
 			const markerData = categories.map((category, index) => {
 				// Find last valid datum for this category
 				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");
@@ -148,6 +181,27 @@ function drawGraphic() {
 					size: 3.5,
 					diamondSize: 6,
 				});
+			});
+		}
+
+		
+
+		// Add direct labels (end-of-line category names) when legend is not shown
+		if (!shouldDrawLegend) {
+			categories.forEach(function (category, index) {
+				const color = config.colourPalette[index % config.colourPalette.length];
+				const lastDatum = [...data].reverse().find(d => d[category] != null && d[category] !== "");
+				if (lastDatum) {
+					svg.append('text')
+						.attr('class', 'direct-label')
+						.attr('x', x(lastDatum.date) + 8)
+						.attr('y', y(lastDatum[category]))
+						.attr('dy', '0.35em')
+						.attr('fill', color)
+						.attr('text-anchor', 'start')
+						.text(category)
+						.call(wrap, margin.right - 4);
+				}
 			});
 		}
 
@@ -178,7 +232,8 @@ function drawGraphic() {
 				.tickSize(17)
 				.tickPadding(6)
 				.timeUnit(config.labelSpans.timeUnit)
-				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+				.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+				.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
@@ -239,6 +294,18 @@ function drawGraphic() {
 			textAnchor: "start",
 			wrapWidth: chartWidth
 		});
+
+		// This does the x-axis label — only on the last chart in each row (or the final chart overall)
+		if (chartIndex % chartsPerRow === chartsPerRow - 1 || chartIndex === nestedData.size - 1) {
+			addAxisLabel({
+				svgContainer: svg,
+				xPosition: chartWidth,
+				yPosition: height + margin.bottom - 5,
+				text: config.xAxisLabel,
+				textAnchor: "end",
+				wrapWidth: chartWidth
+			});
+		}
 	}
 
 
@@ -248,26 +315,27 @@ function drawGraphic() {
 	});
 
 
-	// Set up the legend
-
-	var legenditem = d3
-		.select('#legend')
-		.selectAll('div.legend--item')
-		.data(
-			categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i])
-		)
-		.enter()
-		.append('div')
-		.attr('class', 'legend--item');
+	// Set up the legend (only when shouldDrawLegend is true)
+	if (shouldDrawLegend) {
+		var legenditem = d3
+			.select('#legend')
+			.selectAll('div.legend--item')
+			.data(
+				categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i])
+			)
+			.enter()
+			.append('div')
+			.attr('class', 'legend--item');
 
 		legenditem.each(function(d, i) {
-		const item = d3.select(this);
-		const svg = item.append('svg')
-			.attr('width', 14)
-			.attr('height', 14)
-			.attr('viewBox', '0 0 12 12')
-			.attr('class', 'legend--icon')
-			.style('overflow', 'visible');
+			const item = d3.select(this);
+			const useLines = config.addEndMarkers === false;
+			const svg = item.append('svg')
+				.attr('width', useLines ? 20 : 14)
+				.attr('height', 14)
+				.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
 
 			drawIndexedLegendShape({
 				svg,
@@ -275,16 +343,18 @@ function drawGraphic() {
 				color: d[1],
 				size: 3.5,
 				diamondSize: 6,
+				useLines: useLines,
 			});
-	});
-
-	legenditem
-		.append('div')
-		.append('p')
-		.attr('class', 'legend--text')
-		.html(function (d) {
-			return d[0];
 		});
+
+		legenditem
+			.append('div')
+			.append('p')
+			.attr('class', 'legend--text')
+			.html(function (d) {
+				return d[0];
+			});
+	}
 
 	//create link to source
 	addSource('source', config.sourceText);

@@ -78,7 +78,8 @@ config = {
 	"labelSpans": {
 		"enabled": false,
 		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"yAxisTicks": {
 		"sm": 7,
@@ -88,5 +89,7 @@ config = {
 	"dropYAxis": true,
 	"freeYAxisScales": false, //If true dropYAxis will be ignored - each chart will always have a y-axis
 	"addEndMarkers": true,
+	"addPointMarkers": false, // If true, draws a marker at every data point on each line
+	"drawLegend": "auto", // true (always show), false (always hide, use direct labels), "auto" (legend if >1 chart per row, direct labels if 1 per row at lg)
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

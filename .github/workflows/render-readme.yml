@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.BYPASS_RULESET_DEPLOY_KEY }}
       
       - uses: r-lib/actions/setup-pandoc@v2
 
