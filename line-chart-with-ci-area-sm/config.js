@@ -17,9 +17,9 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"xDomain": [-13, 25],
+	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,2000] - DOES NOT WORK
-	"yDomainMax": "auto",  
+	"yDomainMax": "auto",
 	// Y-axis maximum options:
 	// "auto" - Smart mode: uses data max with 10% padding if positive, or 0 if all data is negative.
 	//          Automatically trims excessive whitespace below zero (>50% of range) while keeping 30% cushion above highest data point.
@@ -75,6 +75,14 @@ config = {
 	},
 	"chartGap": 20,
 	// New tick config
+	"addFirstDate": false,
+	"addFinalDate": false,
+	"labelSpans": {
+		"enabled": false,
+		timeUnit: 'year',//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
+	},
 	"xAxisTickMethod": "total", // "interval" or "total"
 	"xAxisTickCount": { // for "total" method
 		"sm": 2,
@@ -94,13 +102,6 @@ config = {
 		"md": 5,
 		"lg": 8
 	},
-	"labelSpans": {
-		"enabled": true,
-		timeUnit: 'year',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
-		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
-	},
 	"dropYAxis": true,
-	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
-	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
+	"addEndMarkers": true // true = always show, false = never show, "auto" = show only at sm size
 };
