@@ -33,7 +33,7 @@ function drawGraphic() {
 		.attr('class', 'chart-container');
 
 	const chartEvery = config.chartEvery[size];
-	const chartGap = config.optional?.chartGap || 10;
+	const chartGap = config?.chartGap || 10;
 	const baseMargin = { ...config.margin[size] };
 	const sharedChartWidth = calculateChartWidth({
 		screenWidth: parseInt(graphic.style('width')),
