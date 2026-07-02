@@ -1,8 +1,7 @@
 config = {
   "graphic_data_url": "data.csv",
   "colour_palette": "#206095",
-  "sourceText": "Office for National Statistics",
-  "accessibleSummary": "Here is the screenreader text describing the chart.",
+  "accessibleSummary": "This chart has been hidden from screen readers. The main message is summarised in the chart title and data is available to download below.",
   "dataLabels": {
     "show": true,
     "numberFormat": ".0%"
