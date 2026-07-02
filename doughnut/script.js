@@ -1,4 +1,4 @@
-import { initialise, wrap, addSource } from "../lib/helpers.js";
+import { initialise, wrap} from "../lib/helpers.js";
 
 var graphic = d3.select('#graphic');
 var legend = d3.select('#legend');
@@ -191,10 +191,6 @@ function drawGraphic() {
         .text(config.centreLabel)
         .attr('text-anchor', 'middle')
         .call(wrap, radius / 2);
-
-
-    //create link to source
-    addSource('source', config.sourceText);
 
     //use pym to calculate chart dimensions
     if (pymChild) {

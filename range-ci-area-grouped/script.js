@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow} from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -279,10 +279,6 @@ function drawGraphic() {
 			'bottom'//Text vertical align: top, middle or bottom (default is middle)
 		)
 	}
-
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

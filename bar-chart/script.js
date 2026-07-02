@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addDataLabels, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDataLabels} from "../lib/helpers.js";
 
 let graphic = d3.select("#graphic");
 let pymChild = null;
@@ -114,10 +114,6 @@ function drawGraphic() {
     textAnchor: "end",
     wrapWidth: chartWidth
   });
-
-
-  //create link to source
-  addSource('source', config.sourceText);
 
   //use pym to calculate chart dimensions
   if (pymChild) {

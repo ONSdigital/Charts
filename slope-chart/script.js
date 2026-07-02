@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addSource, calculateAutoBounds, adjustColorForContrast } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateAutoBounds, adjustColorForContrast } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 //console.log(`Graphic selected: ${graphic}`);
@@ -232,10 +232,6 @@ function drawGraphic() {
 	// 		.tickValues([])
 	// 		.tickFormat(d3.format(config.yAxisNumberFormat)))
 	// 	.attr('transform', "translate(" + margin.left + ", 0)");
-
-	//create link to source
-	addSource('source', config.sourceText);
-	// console.log(`Link to source created`);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

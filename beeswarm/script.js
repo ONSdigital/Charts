@@ -3,7 +3,6 @@ import {
   addSvg,
   addAxisLabel,
   createDelaunayOverlay,
-  addSource,
   removeSpaces,
   AccurateBeeswarm
 } from "../lib/helpers.js";
@@ -88,7 +87,7 @@ function drawGraphic() {
     mode: "default",
     idKey: "id",
     labelKey: "label",
-    hideLabel:true,
+    hideLabel: true,
     groupKey: config.multiHighlight ? "" : "group",
     onChange: (selectedValue) => {
       overlay.clearHighlight();
@@ -325,7 +324,7 @@ function drawGraphic() {
     highlightFillColour: ONScolours.highlightOrange
   });
 
-  
+
 
   addAxisLabel({
     svgContainer: chart,
@@ -335,9 +334,6 @@ function drawGraphic() {
     textAnchor: "end",
     wrapWidth: chartWidth,
   });
-
-  //create link to source
-  addSource("source", config.sourceText);
 
   //use pym to calculate chart dimensions
   if (pymChild) {

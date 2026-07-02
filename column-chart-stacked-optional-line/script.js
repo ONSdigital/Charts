@@ -317,9 +317,6 @@ function drawGraphic() {
     wrapWidth: chart_width,
   });
 
-  //create link to source
-  d3.select("#source").text("Source: " + config.sourceText);
-
   //use pym to calculate chart dimensions
   if (pymChild) {
     pymChild.sendHeight();

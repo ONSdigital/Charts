@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, customTemporalAxis, calculateAutoBounds, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, getXAxisTicks, customTemporalAxis, calculateAutoBounds, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 
 let graphic = d3.select('#graphic');
@@ -355,9 +355,6 @@ function drawGraphic() {
 				return d[0];
 			});
 	}
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

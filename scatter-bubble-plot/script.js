@@ -1,4 +1,4 @@
-import { initialise, wrap2, addSvg, addAxisLabel, diamondShape, createDelaunayOverlay, addSource } from "../lib/helpers.js";
+import { initialise, wrap2, addSvg, addAxisLabel, diamondShape, createDelaunayOverlay } from "../lib/helpers.js";
 import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
@@ -82,11 +82,11 @@ function drawGraphic() {
       .style('margin-bottom', '5px');
 
     sizeLegendItems.append('svg')
-      .attr('width', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)*2)+2)
-      .attr('height', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)*2)+2)
+      .attr('width', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI) * 2) + 2)
+      .attr('height', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI) * 2) + 2)
       .append('circle')
-      .attr('cx', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI))+0.5)
-      .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI))+0.5)
+      .attr('cx', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)) + 0.5)
+      .attr('cy', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)) + 0.5)
       .attr('r', d => Math.round(Math.sqrt(sizeScale(d) / Math.PI)))
       .attr('fill', config.colourPalette[0])
       .attr('fill-opacity', 0.75)
@@ -97,50 +97,50 @@ function drawGraphic() {
       .style('margin-left', '5px')
       .style('margin-right', '15px')
       .style('font-size', '12px')
-      .text(d => d3.format(config.sizeConfig.sizeLabelFormat)(d)+` ${config.sizeConfig.sizeLabel}`);
-  }else{
-    
+      .text(d => d3.format(config.sizeConfig.sizeLabelFormat)(d) + ` ${config.sizeConfig.sizeLabel}`);
+  } else {
 
-  let legenditem = legend.selectAll('div.legend-item')
-    .data(groups)
-    .enter()
-    .append('div')
-    .attr('class', 'legend--item')
-    .style('display', 'flex')
-    .style('align-items', 'center');
 
-  legenditem.append('svg')
-    .attr('width', 20)
-    .attr('height', 20)
-    .append('path')
-    .attr('stroke-width', '1px')
-    .attr('d', d => {
-      switch (shape(d)) {
-        case 'circle': return d3.symbol().type(d3.symbolCircle).size(circleSize)();
-        case 'square': return d3.symbol().type(d3.symbolSquare).size(squareSize)();
-        case 'triangle': return d3.symbol().type(d3.symbolTriangle).size(triangleSize)();
-        case 'diamond': return diamondShape(diamondSize / 10); // Use the custom diamond shape
-      }
-    })
-    .attr('transform', 'translate(10,10)')
-    .attr('fill', d => colour(d))
-    .attr('stroke', '#fff');
+    let legenditem = legend.selectAll('div.legend-item')
+      .data(groups)
+      .enter()
+      .append('div')
+      .attr('class', 'legend--item')
+      .style('display', 'flex')
+      .style('align-items', 'center');
 
-  legenditem.append('p')
-    .attr('class', 'legend--text')
-    .style('margin-left', '5px')
-    .text(d => d);
+    legenditem.append('svg')
+      .attr('width', 20)
+      .attr('height', 20)
+      .append('path')
+      .attr('stroke-width', '1px')
+      .attr('d', d => {
+        switch (shape(d)) {
+          case 'circle': return d3.symbol().type(d3.symbolCircle).size(circleSize)();
+          case 'square': return d3.symbol().type(d3.symbolSquare).size(squareSize)();
+          case 'triangle': return d3.symbol().type(d3.symbolTriangle).size(triangleSize)();
+          case 'diamond': return diamondShape(diamondSize / 10); // Use the custom diamond shape
+        }
+      })
+      .attr('transform', 'translate(10,10)')
+      .attr('fill', d => colour(d))
+      .attr('stroke', '#fff');
+
+    legenditem.append('p')
+      .attr('class', 'legend--text')
+      .style('margin-left', '5px')
+      .text(d => d);
   }
 
   // set up dropdown
   const dropdownData = graphicData
-  .slice() // Create copy to avoid mutating original
-  .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-  .map((point) => ({
-    id: point.originalId,  // Use stable ID
-    label: point.name || `Point ${point.originalId + 1}`,
-    group: point.group
-  }));
+    .slice() // Create copy to avoid mutating original
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    .map((point) => ({
+      id: point.originalId,  // Use stable ID
+      label: point.name || `Point ${point.originalId + 1}`,
+      group: point.group
+    }));
 
   const select = new EnhancedSelect({
     containerId: 'select',
@@ -225,9 +225,9 @@ function drawGraphic() {
   }
 
   svg.append('g').selectAll('path')
-    .data(graphicData.sort((a, b) => { 
-      if (sizeScale) { 
-        return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
+    .data(graphicData.sort((a, b) => {
+      if (sizeScale) {
+        return d3.descending(a[config.sizeConfig.sizeField], b[config.sizeConfig.sizeField])
       } else {
         return 0
       }
@@ -259,9 +259,9 @@ function drawGraphic() {
   // Create Delaunay overlay for tooltips (Basic version)
   overlayCleanup = createDelaunayOverlay({
     svgContainer: svg,
-    data: graphicData.sort((a, b) => { 
-      if (sizeScale) { 
-        return d3.descending(a[config.sizeConfig.sizeField],b[config.sizeConfig.sizeField])
+    data: graphicData.sort((a, b) => {
+      if (sizeScale) {
+        return d3.descending(a[config.sizeConfig.sizeField], b[config.sizeConfig.sizeField])
       } else {
         return 0
       }
@@ -299,11 +299,11 @@ function drawGraphic() {
     .attr('fill', '#404142')
     .text(d => d.name)
     .style('font-weight', '600')
-    .each(function(d){
-      if(sizeScale){
-        wrap2(d3.select(this),100,Math.round(Math.sqrt(sizeScale(d[config.sizeConfig.sizeField]) / Math.PI))/14+1,1,1.05,1,true,'middle')
+    .each(function (d) {
+      if (sizeScale) {
+        wrap2(d3.select(this), 100, Math.round(Math.sqrt(sizeScale(d[config.sizeConfig.sizeField]) / Math.PI)) / 14 + 1, 1, 1.05, 1, true, 'middle')
       } else {
-        wrap2(d3.select(this),100,1.5,1,1.05,1,true,'middle')
+        wrap2(d3.select(this), 100, 1.5, 1, 1.05, 1, true, 'middle')
       }
     });
 
@@ -328,12 +328,6 @@ function drawGraphic() {
   });
 
 
-  //create link to source
-
-  addSource('source', config.sourceText)
-
-
-
   //use pym to calculate chart dimensions
   if (pymChild) {
     pymChild.sendHeight();
@@ -341,7 +335,7 @@ function drawGraphic() {
 }
 
 
-d3.csv(config.graphicDataURL,d3.autoType)
+d3.csv(config.graphicDataURL, d3.autoType)
   .then(data => {
     // Add unique IDs based on original data order
     graphicData = data.map((d, index) => ({
