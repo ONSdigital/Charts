@@ -118,8 +118,29 @@ function drawGraphic() {
 				.y((d) => y(d[category]))
 				.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
 				.context(null)
-				.defined(d => d[category] !== null) // Only plot lines where we have values
+				.defined(d => d[category] !== null && d[category] !== undefined && d[category] !== "") // Only plot lines where we have values
 
+			const gapLineStyle = (config.gapLineStyle || 'dashed').toLowerCase();
+			const gapDasharray = gapLineStyle === 'dashed'
+				? '6,4'
+				: gapLineStyle === 'dotted'
+					? '1,4'
+					: null;
+			const gapSegments = [];
+			let prevValidIndex = null;
+			if (gapLineStyle !== 'none') {
+				for (let i = 0; i < data.length; i++) {
+					const value = data[i][category];
+					const isValid = value !== null && value !== undefined && value !== "";
+					if (isValid) {
+						if (prevValidIndex !== null && i - prevValidIndex > 1) {
+							gapSegments.push([data[prevValidIndex], data[i]]);
+						}
+						prevValidIndex = i;
+					}
+				}
+			}
+			
 			svg
 				.append('path')
 				.datum(data)

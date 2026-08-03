@@ -91,5 +91,6 @@ config = {
 	"addEndMarkers": true,
 	"addPointMarkers": false, // If true, draws a marker at every data point on each line
 	"drawLegend": "auto", // true (always show), false (always hide, use direct labels), "auto" (legend if >1 chart per row, direct labels if 1 per row at lg)
+	"gapLineStyle": "dashed", // Style for lines over gaps: "dashed", "dotted", "solid" or "none"
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };
