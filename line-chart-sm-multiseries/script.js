@@ -155,26 +155,32 @@ function drawGraphic() {
 				.attr('class', 'line' + categories.indexOf(category));
 
 			// Draw gap-spanning lines
-			gapSegments.forEach(segment => {
-				const gapLineGenerator = d3.line()
+			if (gapLineStyle !== 'none' && gapSegments.length) {
+				const gapLineGenerator = d3
+					.line()
 					.x(d => x(d.date))
 					.y(d => y(d[category]))
-					.curve(d3[config.lineCurveType]);
+					.curve(d3[config.lineCurveType])
+					.context(null);
 
-				const gapPath = svg.append('path')
-					.datum(segment)
+				const index = categories.indexOf(category);
+				const gapLines = svg
+					.selectAll(`path.gap-line-${index}`)
+					.data(gapSegments)
+					.enter()
+					.append('path')
+					.attr('class', `gap-line gap-line-${index}`)
 					.attr('fill', 'none')
 					.attr('stroke', color)
 					.attr('stroke-width', 3)
-					.attr('d', gapLineGenerator)
+					.attr('d', (d) => gapLineGenerator(d))
 					.attr('stroke-linejoin', 'round')
-					.attr('stroke-linecap', 'round')
-					.attr('class', 'line' + categories.indexOf(category) + ' gap-line');
+					.attr('stroke-linecap', 'round');
 
 				if (gapDasharray) {
-					gapPath.attr('stroke-dasharray', gapDasharray);
+					gapLines.attr('stroke-dasharray', gapDasharray);
 				}
-			});
+			}
 
 		});
 
