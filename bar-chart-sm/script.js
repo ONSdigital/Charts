@@ -40,7 +40,7 @@ function drawGraphic() {
 		let chartPosition = chartIndex % chartsPerRow;
 
 		let margin = { ...config.margin[size] };
-		let chartGap = config.optional?.chartGap || 10;
+		let chartGap = config?.chartGap || 10;
 
 		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
