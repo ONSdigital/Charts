@@ -118,23 +118,69 @@ function drawGraphic() {
 				.y((d) => y(d[category]))
 				.curve(d3[config.lineCurveType]) // I used bracket notation here to access the curve type as it's a string
 				.context(null)
-				.defined(d => d[category] !== null) // Only plot lines where we have values
+				.defined(d => d[category] !== null && d[category] !== undefined && d[category] !== "") // Only plot lines where we have values
+
+			const gapLineStyle = (config.gapLineStyle || 'dashed').toLowerCase();
+			const gapDasharray = gapLineStyle === 'dashed'
+				? '6,4'
+				: gapLineStyle === 'dotted'
+					? '1,4'
+					: null;
+			const gapSegments = [];
+			let prevValidIndex = null;
+			if (gapLineStyle !== 'none') {
+				for (let i = 0; i < data.length; i++) {
+					const value = data[i][category];
+					const isValid = value !== null && value !== undefined && value !== "";
+					if (isValid) {
+						if (prevValidIndex !== null && i - prevValidIndex > 1) {
+							gapSegments.push([data[prevValidIndex], data[i]]);
+						}
+						prevValidIndex = i;
+					}
+				}
+			}
+
+			const color = config.colourPalette[categories.indexOf(category) % config.colourPalette.length];
 
 			svg
 				.append('path')
 				.datum(data)
 				.attr('fill', 'none')
-				.attr(
-					'stroke', /*() => (categories.indexOf(category) == chartIndex) ? "#206095" : "#dadada"*/
-					config.colourPalette[
-					categories.indexOf(category) % config.colourPalette.length
-					]
-				)
+				.attr('stroke', color)
 				.attr('stroke-width', 3)
 				.attr('d', lineGenerator)
 				.attr('stroke-linejoin', 'round')
 				.attr('stroke-linecap', 'round')
 				.attr('class', 'line' + categories.indexOf(category));
+
+			// Draw gap-spanning lines
+			if (gapLineStyle !== 'none' && gapSegments.length) {
+				const gapLineGenerator = d3
+					.line()
+					.x(d => x(d.date))
+					.y(d => y(d[category]))
+					.curve(d3[config.lineCurveType])
+					.context(null);
+
+				const index = categories.indexOf(category);
+				const gapLines = svg
+					.selectAll(`path.gap-line-${index}`)
+					.data(gapSegments)
+					.enter()
+					.append('path')
+					.attr('class', `gap-line gap-line-${index}`)
+					.attr('fill', 'none')
+					.attr('stroke', color)
+					.attr('stroke-width', 3)
+					.attr('d', (d) => gapLineGenerator(d))
+					.attr('stroke-linejoin', 'round')
+					.attr('stroke-linecap', 'round');
+
+				if (gapDasharray) {
+					gapLines.attr('stroke-dasharray', gapDasharray);
+				}
+			}
 
 		});
 
