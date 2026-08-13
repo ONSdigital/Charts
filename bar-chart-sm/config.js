@@ -25,19 +25,19 @@ config = {
 			"top": 30,
 			"right": 20,
 			"bottom": 50,
-			"left": 200
+			"left": 150
 		},
 		"md": {
 			"top": 30,
 			"right": 20,
 			"bottom": 50,
-			"left": 200
+			"left": 220
 		},
 		"lg": {
 			"top": 30,
 			"right": 20,
 			"bottom": 50,
-			"left": 200
+			"left": 220
 		}
 	},
 	"chartGap": 30,

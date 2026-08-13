@@ -140,7 +140,7 @@ function drawGraphic() {
 				svgContainer: svg,
 				data: data,
 				chartWidth: chartWidth,
-				labelPositionFactor: 7,
+				labelPositionFactor: 4,
 				xScaleFunction: x,
 				yScaleFunction: y
 			})
