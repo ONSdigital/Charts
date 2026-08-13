@@ -40,7 +40,7 @@ config = {
 			"left": 200
 		}
 	},
-	"chartGap": 10,
+	"chartGap": 30,
 	"seriesHeight": {
 		"sm": 30,
 		"md": 30,
