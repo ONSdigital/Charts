@@ -240,6 +240,17 @@ const chartConfig = [
     dataFiles: [
       { name: "data.csv", path: "data.csv" }
     ]
+  },
+  {
+    name: "Slope chart",
+    url: "https://onsdigital.github.io/Charts/slope-chart/",
+    tags: {
+      comparision: true,
+      "change-over-time": true
+    },
+    dataFiles: [
+      { name: "data.csv", path: "data.csv" }
+    ]
   }
 ];
 
