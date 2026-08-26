@@ -60,6 +60,8 @@ jobs:
       run: |
         # Copy
         rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ charts-lib/
+        mkdir -p charts-lib/.github
+        rsync -av source-repo/.github/CODEOWNERS charts-lib/.github/CODEOWNERS
         rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ otherCharts/lib/
         rsync -av --exclude='.git' --exclude='.github' source-repo/lib/ Maps/lib/
     
