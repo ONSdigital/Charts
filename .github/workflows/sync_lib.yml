@@ -16,13 +16,13 @@ jobs:
     
     steps:
     - name: Checkout source repository for lib
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         path: source-repo
     
     - name: Checkout target repository for charts-lib
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ONSdigital/charts-lib
         token: ${{ secrets.SYNC_LIB }}
@@ -30,7 +30,7 @@ jobs:
         path: charts-lib
 
     - name: Checkout target repository for otherCharts
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ONSdigital/otherCharts
         token: ${{ secrets.SYNC_LIB }}
@@ -38,7 +38,7 @@ jobs:
         path: otherCharts
 
     - name: Checkout target repository for maps
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ONSdigital/Maps
         token: ${{ secrets.SYNC_MAPS_LIB }}
