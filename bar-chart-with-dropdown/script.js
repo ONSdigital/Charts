@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addDataLabels, addAxisLabel} from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -254,9 +254,6 @@ function drawGraphic() {
 		textAnchor: "end",
 		wrapWidth: chartWidth
 	});
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	$('#optionsSelect').val(config.defaultOption).trigger('chosen:updated');
 	changeData(config.defaultOption)

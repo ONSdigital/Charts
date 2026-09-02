@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, addAnnotationRangeHorizontal } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addAnnotationRangeHorizontal } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -221,9 +221,6 @@ function drawGraphic() {
         legend.style('display', 'grid')
               .style('grid-template-columns', `repeat(${config.legendColumns}, 1fr)`);
     }
-
-    //create source text
-    addSource('source', config.sourceText);
 
     //use pym to calculate chart dimensions
     if (pymChild) {

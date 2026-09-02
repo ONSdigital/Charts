@@ -2,7 +2,6 @@ config = {
     "graphicDataURL": "data.csv",
     "colourPalette": ONScolours.oceanBlue,
     "lineColour": ONScolours.nightBlue,
-    "sourceText": "Office for National Statistics",
     "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
     "xAxisTickFormat": {
         "sm": "%Y",

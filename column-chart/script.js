@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, customTemporalAxis, prefixYearFormatter } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, customTemporalAxis, prefixYearFormatter } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -141,9 +141,6 @@ function drawGraphic() {
 		textAnchor: "start",
 		wrapWidth: chartWidth
 	});
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

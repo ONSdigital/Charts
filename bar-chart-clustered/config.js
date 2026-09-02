@@ -2,7 +2,6 @@ config = {
 	"graphicDataURL": "data.csv",
 	"legendLabels": ["Category 1 goes here", "Category 2 goes here"],
 	"colourPalette": ONSpalette,
-	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"dataLabels": {
 		"show": true,

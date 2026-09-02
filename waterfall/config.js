@@ -5,7 +5,6 @@ config = {
     ONScolours.coralPink,
     ONScolours.grey50,
   ],
-  sourceText: "Office for National Statistics",
   accessibleSummary:
     "This chart has been hidden from screen readers. The main message is summarised in the chart title and data is available to download below.",
   // options are "ascending", "descending", "auto" (to order based on whether total is ascending or descending), or "none"

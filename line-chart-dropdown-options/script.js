@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
@@ -405,9 +405,6 @@ function drawGraphic() {
 		textAnchor: "end",
 		wrapWidth: chartWidth
 	});
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	//if there is a default option, set it
 	if (config.defaultOption) {

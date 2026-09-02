@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addDirectionArrow, addElbowArrow, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -293,7 +293,7 @@ function drawGraphic() {
 		.append('div')
 		.attr('class', 'legend--item');
 
-	legenditem.each(function(d, i) {
+	legenditem.each(function (d, i) {
 		const item = d3.select(this);
 		const useLines = config.addEndMarkers === false;
 		const svg = item.append('svg')
@@ -376,9 +376,6 @@ function drawGraphic() {
 
 	}
 
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

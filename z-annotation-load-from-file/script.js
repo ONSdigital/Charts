@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, setupArrowhead, addSource, loadAnnotationsFromJson, setupMobileAnnotations } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, setupArrowhead, loadAnnotationsFromJson, setupMobileAnnotations } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -111,9 +111,6 @@ function drawGraphic() {
   setupMobileAnnotations();
 
   loadAnnotationsFromJson("./annotations-1759314061962.json",svg, {xScale:x,yScale:y},isMobile)
-
-  //create link to source
-  addSource('source', config.sourceText)
 
   //use pym to calculate chart dimensions
   if (pymChild) {

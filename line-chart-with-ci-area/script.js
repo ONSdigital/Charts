@@ -1,5 +1,5 @@
 //Note: see data.csv for the required data format - the template is quite paticular on the columns ending with _lowerCI and _upperCI
-import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addDirectionArrow, addElbowArrow, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, getCiAreaOverlapFlags, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.selectAll('#legend')
@@ -324,9 +324,6 @@ function drawGraphic() {
 		textAnchor: "start",
 		wrapWidth: chartWidth
 	});
-
-	//create link to source
-	addSource('source', config.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

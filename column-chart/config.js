@@ -1,8 +1,6 @@
 config = {
-
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONScolours.oceanBlue,
-	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"xAxisTickFormat": {
 		"sm": "%Y",
@@ -53,12 +51,12 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
-	"labelSpans":{
-		"enabled":true,
-		timeUnit:"month",//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit:"auto",//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
-		yearStartMonth:3,//0 indexed so the year start in April
-		prefix:"FY ",//prefix for secondary label
+	"labelSpans": {
+		"enabled": true,
+		timeUnit: "month",//set to "day","month",'quarter' or 'year'
+		secondaryTimeUnit: "auto",//can be 'auto', false to disable or override with "day","month",'quarter' or 'year'
+		yearStartMonth: 3,//0 indexed so the year start in April
+		prefix: "FY ",//prefix for secondary label
 	},
 	"elements": { "select": 0, "nav": 0, "legend": 0, "titles": 0 }
 };

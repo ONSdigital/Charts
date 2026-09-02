@@ -3,7 +3,6 @@ config = {
 	"colourPalette": ONSpalette,
 	"drawLegend": true, // set to false to remove the legend (still working on this)
 	"someOtherVariable": "someOtherValue",
-	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]

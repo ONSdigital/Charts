@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawShapeMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawShapeMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -426,11 +426,6 @@ function drawGraphic() {
 		.html(function (d) {
 			return d[0];
 		});
-
-
-	//create link to source
-	addSource('source', config.sourceText);
-
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

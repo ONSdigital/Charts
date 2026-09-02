@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, customTemporalAxis } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -216,10 +216,6 @@ function drawGraphic() {
         .append('p')
         .attr('class', 'legend--text')
         .html(config.legendEstimateText);
-
-
-    //create link to source
-    addSource('source', config.sourceText);
 
     //use pym to calculate chart dimensions
     if (pymChild) {

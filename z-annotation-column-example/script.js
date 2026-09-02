@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, addAnnotation, setupMobileAnnotations } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addAnnotation, setupMobileAnnotations } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -161,9 +161,6 @@ function drawGraphic() {
 		mobile: { enabled: isMobile, letter: "B" }
 
 	})
-
-	//create link to source
-	addSource('source', config.essential.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {

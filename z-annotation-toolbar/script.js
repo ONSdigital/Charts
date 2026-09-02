@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, setupArrowhead, addSource, addAnnotation, createAnnotationToolbar } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, setupArrowhead, addAnnotation, createAnnotationToolbar } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let pymChild = null;
@@ -109,9 +109,6 @@ function drawGraphic() {
   setupArrowhead(d3.select("svg"));
 
   createAnnotationToolbar(d3.select('svg'),svg,{xScale:x,yScale:y},margin, chartWidth,height)
-
-  //create link to source
-  addSource('source', config.sourceText)
 
   //use pym to calculate chart dimensions
   if (pymChild) {
