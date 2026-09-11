@@ -81,6 +81,8 @@ config = {
 		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
+	"addFirstDate": false,
+	"addFinalDate": false,
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
