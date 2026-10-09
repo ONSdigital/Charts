@@ -4,6 +4,7 @@ let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
 let pymChild = null;
 let graphicData, size, groups, xDomain, divs, svgs, charts;
+const rectHeight = 16
 
 function drawGraphic() {
 
@@ -16,20 +17,18 @@ function drawGraphic() {
 
 	groups = d3.groups(graphicData, (d) => d.group);
 
-	if (config.xDomain == 'auto') {
-		let min = 1000000;
-		let max = 0;
-		for (let i = 2; i < graphicData.columns.length; i++) {
-			min = d3.min([
-				min,
-				d3.min(graphicData, (d) => +d[graphicData.columns[i]])
-			]);
-			max = d3.max([
-				max,
-				d3.max(graphicData, (d) => +d[graphicData.columns[i]])
-			]);
-		}
-		xDomain = [min, max];
+	function computeDomain(data, columns) {
+		return d3.extent(data.flatMap(d => columns.filter(d => d != 'name' && d != 'group').map(col => +d[col])))
+	}
+
+
+	if (config.xDomain === 'auto') {
+		xDomain = computeDomain(graphicData, graphicData.columns)
+	} else if (config.xDomain === 'auto-each') {
+		xDomain = Object.fromEntries(
+			groups.map(([name, groupData]) => [name, computeDomain(groupData, graphicData.columns)
+			])
+		)
 	} else {
 		xDomain = config.xDomain;
 	}
@@ -37,7 +36,52 @@ function drawGraphic() {
 	//set up scales
 	const x = d3.scaleLinear().range([0, chartWidth]).domain(xDomain);
 
+	const xScales = config.xDomain === "auto-each" ? Object.fromEntries(
+		groups.map(([name]) => [
+			name,
+			d3.scaleLinear().range([0, chartWidth]).domain(xDomain[name]).nice()
+		])
+	) : {
+		global: d3.scaleLinear().range([0, chartWidth]).domain(xDomain).nice()
+	}
+
+	function getX(groupName) {
+		return config.xDomain === "auto-each"
+			? xScales[groupName]
+			: xScales.global;
+	}
+
 	const series = [...new Set(graphicData.map(d => d.series))]
+
+	const seriesByGroupAndName = {};
+
+	groups.forEach(([groupName, groupData]) => {
+		seriesByGroupAndName[groupName] = {};
+
+		d3.group(groupData, d => d.name).forEach((rows, name) => {
+			seriesByGroupAndName[groupName][name] =
+				[...new Set(rows.map(d => d.series))];
+		})
+	})
+
+	const clusterOffset = {};
+
+	Object.entries(seriesByGroupAndName).forEach(([groupName, names]) => {
+		clusterOffset[groupName] = {};
+
+		Object.entries(names).forEach(([name, seriesList]) => {
+			const spread = (seriesList.length - 1) * rectHeight;
+
+			clusterOffset[groupName][name] = d3.scalePoint().domain(seriesList).range([-spread / 2, spread / 2])
+		});
+	});
+
+	const yWithCluster = (d) => {
+		const baseY = groups.find(g => g[0] === d.group)[3](d.name);
+
+		return config.clustered ? baseY + clusterOffset[d.group][d.name](d.series) : baseY;
+	}
+
 	const colour = d3
 		.scaleOrdinal()
 		.range(config.colourPalette)
@@ -58,11 +102,6 @@ function drawGraphic() {
 		d[4] = d3.axisLeft(d[3]).tickSize(0).tickPadding(10);
 	});
 
-	//set up xAxis generator
-	let xAxis = d3.axisBottom(x)
-		.ticks(config.xAxisTicks[size])
-		.tickFormat(d3.format(config.xAxisTickFormat));
-
 	divs = graphic.selectAll('div.categoryLabels').data(groups).join('div');
 
 	if (groups.length > 1) { divs.append('p').attr('class', 'groupLabels').html((d) => d[0]) }
@@ -75,6 +114,8 @@ function drawGraphic() {
 	})
 
 	charts.each(function (d) {
+		if (config.xDomain === "auto-each") { let xAxis = d[6] }
+
 		d3.select(this)
 			.append('g')
 			.attr('class', 'y axis')
@@ -108,6 +149,14 @@ function drawGraphic() {
 			.attr('transform', (d) => 'translate(0,' + d[2] + ')')
 			.attr('class', 'x axis')
 			.each(function () {
+				const x = getX(d[0]);
+
+				const xAxis = d3.axisBottom(x)
+					.ticks(config.xAxisTicks[size])
+					.tickFormat(d3.format(config.xAxisTickFormat));
+
+
+
 				d3.select(this)
 					.call(xAxis.tickSize(-d[2]))
 					.selectAll('line')
@@ -119,23 +168,15 @@ function drawGraphic() {
 			});
 	});
 
-	const rectHeight = 16
+
 
 	charts
 		.selectAll("rect")
 		.data((d) => d[1])
 		.join("rect")
-		.attr("x", d => x(Number(d.min)))
-		.attr("y", (d, i) => {
-			const baseY = groups.filter((e) => e[0] == d.group)[0][3](d.name) - rectHeight / 2;
-			// if clustered is true, move series 0 up 10, series 1 down 10 only 
-			if (config.clustered === true) {
-				if (d.series === series[0]) return baseY - 10;
-				if (d.series === series[1]) return baseY + 10;
-			}
-			return baseY;
-		})
-		.attr("width", d => Math.abs(x(Number(d.max)) - x(Number(d.min))))
+		.attr("x", d => getX(d.group)(+d.min))
+		.attr("y", d => yWithCluster(d) - rectHeight / 2)
+		.attr("width", d => Math.abs(getX(d.group)(Number(d.max)) - getX(d.group)(Number(d.min))))
 		.attr("height", rectHeight)
 		.attr("fill", d => colour(d.series))
 		.attr("opacity", 0.65)
@@ -145,29 +186,11 @@ function drawGraphic() {
 		.selectAll('rect.value')
 		.data((d) => d[1])
 		.join('rect')
-		.attr('x', (d) => x(d.value) - 5)
-		.attr('y', (d) => {
-			const baseY = groups.filter((f) => f[0] == d.group)[0][3](d.name) - 5;
-			// if clustered is true, move series 0 up 10, series 1 down 10 only 
-			if (config.clustered === true) {
-				const series = [...new Set(graphicData.map(d => d.series))];
-				if (d.series === series[0]) return baseY - 10;
-				if (d.series === series[1]) return baseY + 10;
-			}
-			return baseY;
-		})
+		.attr('x', (d) => getX(d.group)(d.value) - 5)
+		.attr('y', d => yWithCluster(d) - 5)
 		.attr('width', 10)
 		.attr('height', 10)
-		.attr('transform', (d) => {
-			const baseY = groups.filter((f) => f[0] == d.group)[0][3](d.name);
-			let y = baseY;
-			if (config.clustered === true) {
-				const series = [...new Set(graphicData.map(d => d.series))];
-				if (d.series === series[0]) y = baseY - 10;
-				if (d.series === series[1]) y = baseY + 10;
-			}
-			return `rotate(45 ${x(d.value)} ${y})`;
-		})
+		.attr('transform', d => `rotate(45 ${getX(d.group)(d.value)} ${yWithCluster(d)})`)
 		.attr("fill", "white")
 		.attr("stroke-width", "2px")
 		.attr('stroke', d => colour(d.series))
@@ -210,7 +233,8 @@ function drawGraphic() {
 		.attr('class', (d, i) => config.useDiamonds && i == 0 ? 'legend--icon--diamond' : 'legend--icon--circle')
 		.style('background-color', function (d) {
 			return d[1];
-		});
+		})
+		.style('opacity',0.65);
 
 	legenditem
 		.append('div')
