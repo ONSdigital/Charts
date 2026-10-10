@@ -36,9 +36,14 @@ function drawGraphic() {
 			label: series
 		}));
 
+	const defaultOption = config.defaultOption
+		? dropdownData.find((option) => option.id === config.defaultOption)
+		: dropdownData[0];
+
 	const selectControl = new EnhancedSelect({
 		containerId: 'select',
 		options: dropdownData,
+		value: defaultOption,
 		label: 'Choose a series',
 		placeholder: 'Select a series',
 		mode: 'default',
@@ -411,16 +416,15 @@ function drawGraphic() {
 
 	//if there is a default option, set it
 	if (config.defaultOption) {
-		const defaultOption = dropdownData.find((option) => option.id === config.defaultOption);
 		if (defaultOption) {
-			selectControl.select(defaultOption);
+			changeData(defaultOption.id);
 		} else {
 			clearChart();
 			selectControl.clear();
 			d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
 		}
 	} else if (dropdownData.length > 0) {
-		selectControl.select(dropdownData[0]);
+		changeData(dropdownData[0].id);
 	} else {
 		// If no default option, clear the chart
 		clearChart();
