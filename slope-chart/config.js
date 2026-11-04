@@ -1,7 +1,7 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourScheme":"direction", //"categories" or "direction"
-	"colourPalette":[ONScolours.coralPink,ONScolours.grey30,ONScolours.oceanBlue],
+	"colourPalette":["#dadada",ONScolours.grey30,ONScolours.oceanBlue],
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"yDomainMin": "auto",
