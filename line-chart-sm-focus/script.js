@@ -216,7 +216,7 @@ function drawGraphic() {
 							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						)
-						.text(d3.format(",.0f")(lastDatum[category]))
+						.text(d3.format(config.finalPointFormat)(lastDatum[category]))
 				}
 
 				if (categories.indexOf(category) == chartIndex) {

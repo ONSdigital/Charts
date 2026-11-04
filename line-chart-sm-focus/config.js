@@ -6,6 +6,7 @@ config = {
 		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
+	"finalPointFormat": ".1f",
 	"referenceCategory": "England",// Highlighted on each chart without its own chart; blank, "" or null disables it and its legend entry
 	"legendLabel": "selected group",
 	"allLabel": "all other groups",

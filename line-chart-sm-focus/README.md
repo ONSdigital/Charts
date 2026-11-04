@@ -28,6 +28,7 @@ This template displays a small multiple of line charts, where each chart shows t
 - **Lines and Labels:**
 	- `config.lineCurveType` sets the D3 curve type for lines (e.g., `curveLinear`, `curveStep`, etc.).
 	- `config.labelFinalPoint` adds a label and circle to the last data point of the highlighted line.
+	- `config.finalPointFormat` sets the D3 number format for the direct line label (e.g., `".0%"` for whole percentages).
 - **Legend and Source:**
 	- The legend is automatically generated using `config.legendLabel`, `config.referenceCategory`, and `config.allLabel`.
 	- The data source is shown using `config.sourceText`.
