@@ -6,7 +6,7 @@ config = {
 		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
-	"referenceCategory": "England",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off
+	"referenceCategory": "England",// Highlighted on each chart without its own chart; blank, "" or null disables it and its legend entry
 	"legendLabel": "selected group",
 	"allLabel": "all other groups",
 	"sourceText": "Office for National Statistics",
@@ -30,6 +30,7 @@ config = {
 		"lg": "%b %y"
 	},
 	"xAxisNumberFormat": ".0f",
+	"yAxisNumberFormat": ".0%", // D3 number format for y-axis tick labels
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
 	"xAxisLabel": "x axis label",

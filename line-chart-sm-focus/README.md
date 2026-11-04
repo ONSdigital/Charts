@@ -13,6 +13,7 @@ This template displays a small multiple of line charts, where each chart shows t
 	- `config.colourPalette` defines the colours for the selected group, reference group, and all other groups.
 - **Reference Category:**
 	- `config.referenceCategory` (e.g., "England") is always shown as a reference line on all charts.
+	- Leave it unset, blank (including whitespace), `""`, or `null` to disable the reference category and omit its legend entry.
 - **Chart Layout:**
 	- `config.chartEvery` sets how many charts per row for different screen sizes (`sm`, `md`, `lg`).
 	- `config.aspectRatio` and `config.margin` control chart sizing and spacing.
@@ -20,6 +21,7 @@ This template displays a small multiple of line charts, where each chart shows t
 - **Axes:**
 	- `config.yDomain` can be set to "auto" or a fixed range (e.g., `[0, 100]`).
 	- `config.xAxisTickFormat` and `config.xAxisNumberFormat` control x-axis label formatting.
+	- `config.yAxisNumberFormat` controls y-axis tick label formatting using a D3 number format (e.g., `",.0f"` for comma-separated integers or `".1f"` for one decimal place).
 	- `config.xAxisTicksEvery` and `config.yAxisTicks` set tick intervals.
 	- `config.yAxisLabel` and `config.xAxisLabel` set axis labels.
 	- `config.dropYAxis` drops y-axis labels except for the first chart in each row.
