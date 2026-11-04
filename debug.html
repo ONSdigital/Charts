@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Log</title>
+    <style>
+        body { font-family: monospace; white-space: pre-wrap; }
+        #log { border: 1px solid #ccc; padding: 10px; height: 600px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Debug Log from localStorage</h1>
+    <button onclick="refresh()">Refresh</button>
+    <button onclick="clear_log()">Clear</button>
+    <div id="log"></div>
+    <script>
+        function refresh() {
+            const log = localStorage.getItem('debug') || '(empty)';
+            document.getElementById('log').textContent = log;
+        }
+        function clear_log() {
+            localStorage.removeItem('debug');
+            refresh();
+        }
+        refresh();
+        setInterval(refresh, 1000);
+    </script>
+</body>
+</html>
