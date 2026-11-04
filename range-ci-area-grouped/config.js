@@ -6,7 +6,7 @@ config = {
 	"xAxisTickFormat": ".0f",
 	"xAxisLabel": "x axis label",
 	"xDomain": [0, 160],
-	// either auto or a custom domain as an array e.g [0,100]
+	// either auto, auto-each or a custom domain as an array e.g [0,100]
 	"ciLegend": true,
 	"legendIntervalText": "Likely range (95% confidence interval)",
 	"legendEstimateText": "Estimated value",
