@@ -216,7 +216,7 @@ function drawGraphic() {
 							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						)
-						.text(d3.format(",.0f")(lastDatum[category]))
+						.text(d3.format(config.finalPointFormat)(lastDatum[category]))
 				}
 
 				if (categories.indexOf(category) == chartIndex) {
@@ -304,7 +304,7 @@ function drawGraphic() {
 			svg
 				.append('g')
 				.attr('class', 'y axis numeric')
-				.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickSize(0))
+				.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickFormat(d3.format(config.yAxisNumberFormat)).tickSize(0))
 				.selectAll('.tick text')
 				.call(wrap, margin.left - 10);
 		} else {
@@ -356,7 +356,11 @@ function drawGraphic() {
 
 	let legenditem = legend
 		.selectAll('div.legend--item')
-		.data([[config.legendLabel, config.colourPalette[0], 0], [reference, config.colourPalette[1], 1], [config.allLabel, config.colourPalette[2], 2]])
+		.data([
+			[config.legendLabel, config.colourPalette[0], 0],
+			[reference, config.colourPalette[1], 1],
+			[config.allLabel, config.colourPalette[2], 2]
+		].filter(([label, , type]) => type !== 1 || (label != null && String(label).trim() !== '')))
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item');
