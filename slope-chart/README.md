@@ -1,1 +1,1 @@
-# Slope chart
+# Line chart
