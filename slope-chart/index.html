@@ -24,8 +24,6 @@
         <!-- <img src="fallback.png" alt="[Chart]" /> -->
     </div>
 
-    <div id="debug-output" style="position: fixed; top: 0; right: 0; width: 300px; max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.9); color: #0f0; font-family: monospace; font-size: 10px; padding: 10px; z-index: 10000; display: none;">Debug Log</div>
-
     <h5 id="source">
     </h5>
 
@@ -34,21 +32,6 @@
     <script src="../lib/colours.js"></script>
     <script src="./config.js"></script>
     <script src="./script.js" type="module"></script>
-    <script>
-        window.debugLog = [];
-        window.logDebug = function(msg) {
-            window.debugLog.push(msg);
-            const div = document.getElementById('debug-output');
-            if (div) {
-                div.innerHTML += msg + '<br>';
-                div.scrollTop = div.scrollHeight;
-            }
-        };
-        document.addEventListener('DOMContentLoaded', function() {
-            const div = document.getElementById('debug-output');
-            div.style.display = 'block';
-        });
-    </script>
 
 </body>
 

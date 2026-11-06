@@ -72,6 +72,10 @@ addAnnotationArrow(
 );
 ```
 
+## Colour contrast
+
+`adjustColorForContrast(colour, requiredContrast, backgroundColour)` preserves the original colour when it already meets the requested contrast ratio. Otherwise, it darkens the colour using the existing hue-preserving adjustment. The background defaults to white and the contrast ratio defaults to 3:1.
+
 ## Note on `config` and `d3`:
 Several helper functions (e.g., initialise, addDataLabels) expect a global config object to be available, and many rely on the d3 library. Ensure d3 is installed in your project and passed into your chart files as needed, and that a config object is structured according to your project's needs (e.g., config.essential.accessibleSummary, config.essential.dataLabels.numberFormat).
 
