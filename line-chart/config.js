@@ -18,7 +18,7 @@ config = {
 		// - 'marginLeader' (labels in margin, with long leader lines for early-ending series)
 		// - 'lastPoint' (labels at last data point of early ending series)
 		"labelLocation": "marginLeader",
-		// Leader lines appear only when a label is vertically displaced
+		// Leader lines connect grouped/displaced labels and early-ending series in 'marginLeader'
 		"useLeaderLines": true,
 		// 'dashed' or 'solid'
 		"leaderLineStyle": "dashed",
@@ -26,7 +26,7 @@ config = {
 		"leaderLineColourMode": "series",
 		// Used when leaderLineColourMode is 'mono'
 		"leaderLineMonoColour": "#707070",
-		// Geometry tuning (px)
+		// Base elbow offset (px); nearby labels get staggered elbows within the available gap
 		"leaderLineElbowOffset": 10,
 		"leaderLineEndGap": 2,
 		// Minimum pixels from chart edge for labels (currently used by some charts)
