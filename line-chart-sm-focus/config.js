@@ -6,7 +6,7 @@ config = {
 		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
-	"finalPointFormat": ".1f",
+	"finalPointFormat": ",.0f",// Defines the format of the direct number label 
 	"referenceCategory": "England",// Highlighted on each chart without its own chart; blank, "" or null disables it and its legend entry
 	"legendLabel": "selected group",
 	"allLabel": "all other groups",
@@ -31,7 +31,7 @@ config = {
 		"lg": "%b %y"
 	},
 	"xAxisNumberFormat": ".0f",
-	"yAxisNumberFormat": ".0%", // D3 number format for y-axis tick labels
+	"yAxisNumberFormat": ",.0f", // D3 number format for y-axis tick labels
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
 	"xAxisLabel": "x axis label",
