@@ -191,25 +191,8 @@ function drawGraphic() {
     .attr("y", (d) => y(d))
     .attr("width", () => x(x.domain()[1]) - x(x.domain()[0]))
     .attr("height", y.bandwidth);
-
-  // group labels
-  if (groups.length > 1) {
-    chart
-      .append("g")
-      .attr("fill", "#444")
-      .attr("stroke", "white")
-      .attr("stroke-width", 3)
-      .attr("stroke-opacity", 0.95)
-      .attr("paint-order", "stroke")
-      .selectAll("text")
-      .data(y.domain())
-      .join("text")
-      .attr("x", 5)
-      .attr("y", (d) => y(d) + 17)
-      .text((d) => d);
-  }
-
-  // Add average lines if they're defined in config
+  
+    // Add average lines if they're defined in config
   if (config.averages && config.averages.show) {
     // Create average lines
     chart
@@ -252,6 +235,23 @@ function drawGraphic() {
           return `${prefix}${format(d.value)}`;
         });
     }
+  }
+
+  // group labels
+  if (groups.length > 1) {
+    chart
+      .append("g")
+      .attr("fill", "#444")
+      .attr("stroke", "white")
+      .attr("stroke-width", 3)
+      .attr("stroke-opacity", 0.95)
+      .attr("paint-order", "stroke")
+      .selectAll("text")
+      .data(y.domain())
+      .join("text")
+      .attr("x", 5)
+      .attr("y", (d) => y(d) + 17)
+      .text((d) => d);
   }
 
   // Position circles based on selected method
