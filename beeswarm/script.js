@@ -192,7 +192,7 @@ function drawGraphic() {
     .attr("width", () => x(x.domain()[1]) - x(x.domain()[0]))
     .attr("height", y.bandwidth);
   
-    // Add average lines if they're defined in config
+  // Add average lines if they're defined in config
   if (config.averages && config.averages.show) {
     // Create average lines
     chart
