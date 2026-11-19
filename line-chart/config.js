@@ -1,7 +1,7 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
-	"drawLegend": false,
+	"drawLegend": "auto", // true = always show, false = never show, "auto" = show only at sm size
 	// Direct labels (used when drawLegend=false and size != 'sm')
 	// These options are passed into lib/helpers.js:createDirectLabels().
 	"directLabels": {
@@ -44,8 +44,18 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomainMax": "auto",  //"auto" for automatic y-axis max, or a number for fixed max
-	"yDomainMin": 0,
+	"yDomainMax": "auto",  
+	// Y-axis maximum options:
+	// "auto" - Smart mode: uses data max with 10% padding if positive, or 0 if all data is negative.
+	//          Automatically trims excessive whitespace below zero (>50% of range) while keeping 30% cushion above highest data point.
+	// "data" - Uses exact data maximum
+	// number - Custom value (e.g., 100)
+	"yDomainMin": "auto",
+	// Y-axis minimum options:
+	// "auto" - Smart mode: uses data min with 10% padding if negative, or 0 if all data is positive.
+	//          Automatically trims excessive whitespace above zero (>50% of range) while keeping 30% cushion below lowest data point.
+	// "data" - Uses exact data minimum
+	// number - Custom value (e.g., 0 to force zero baseline)
 	"xAxisTickFormat": {
 		"sm": "%Y",
 		"md": "%Y",
@@ -57,11 +67,13 @@ config = {
 	"yAxisLabel": "y axis label",
 	"xAxisLabel": "",
 	"zeroLine": "0",
-	"addEndMarkers":true,
+	"addEndMarkers":true, // true = always show, false = never show, "auto" = show only at sm size
+	"addPointMarkers": false, // Set to true to show markers on all available data points
+	"gapLineStyle": "dashed", // Style for lines over gaps: "dashed", "dotted", "solid" or "none"
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1.5, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -104,6 +116,7 @@ config = {
 		"enabled":true,
 		timeUnit:"year",//set to "day","month",'quarter' or 'year'
 		secondaryTimeUnit:"auto",//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit:true,//extends the last primary span when the final date lands exactly on a unit boundary
 	},
 	"yAxisTicks": {
 		"sm": 7,

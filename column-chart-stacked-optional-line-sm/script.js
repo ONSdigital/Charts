@@ -16,7 +16,7 @@ let graphic_data, size, svg;
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-  size = initialise(size);
+  size = initialise(size, config);
 
   // Nest the graphic_data by the 'series' column
   let nested_data = d3.group(graphic_data, (d) => d.series);

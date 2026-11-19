@@ -1,4 +1,5 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -7,31 +8,11 @@ let graphicData, size;
 
 let pymChild = null;
 
-// Set y domain for new config structure (min/max can be "auto", "autoAll", or a value)
-function getYDomainMinMax({ minType, maxType, allData, filteredData, categories }) {
-	let min, max;
-	if (minType === "autoAll") {
-		min = d3.min(allData, (d) => Math.min(...categories.map((c) => d[c])));
-	} else if (minType === "auto") {
-		min = d3.min(filteredData, (d) => Math.min(...categories.map((c) => d[c])));
-	} else {
-		min = +minType;
-	}
-	if (maxType === "autoAll") {
-		max = d3.max(allData, (d) => Math.max(...categories.map((c) => d[c])));
-	} else if (maxType === "auto") {
-		max = d3.max(filteredData, (d) => Math.max(...categories.map((c) => d[c])));
-	} else {
-		max = +maxType;
-	}
-	return [min, max];
-}
-
 function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
@@ -45,49 +26,36 @@ function drawGraphic() {
 		margin: margin
 	});
 
-	let uniqueOptions = [...new Set(graphicData.map((d) => d.option))];
+	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
 
-	const optns = select
-		.append('div')
-		.attr('id', 'sel')
-		.append('select')
-		.attr('id', 'optionsSelect')
-		.attr('style', 'width:calc(100% - 6px)')
-		.attr('class', 'chosen-select')
-		.attr('data-placeholder', 'Select an option');
+	const dropdownData = uniqueOptions
+		.slice()
+		.sort((a, b) => (a || '').localeCompare(b || ''))
+		.map((series) => ({
+			id: series,
+			label: series
+		}));
 
+	const defaultOption = config.defaultOption
+		? dropdownData.find((option) => option.id === config.defaultOption)
+		: dropdownData[0];
 
-	optns
-		.selectAll('option.option')
-		.data(uniqueOptions)
-		.enter()
-		.append('option')
-		.attr('value', (d) => d)
-		.text((d) => d);
-
-
-	//add some more accessibility stuff
-	d3.select('input.chosen-search-input').attr('id', 'chosensearchinput');
-	d3.select('div.chosen-search')
-		.insert('label', 'input.chosen-search-input')
-		.attr('class', 'visuallyhidden')
-		.attr('for', 'chosensearchinput')
-		.html('Type to select an area');
-
-
-	$('#optionsSelect').trigger('chosen:updated');  // Initialize Chosen
-
-	let labelPositions = new Map();  // Create a map to store label positions
-
-	$('#optionsSelect').chosen().change(function () {
-		const selectedOption = $(this).val();
-
-		if (selectedOption) {
-			changeData(selectedOption);
-
-		} else {
-			// Clear the chart if no option is selected
-			clearChart();
+	const selectControl = new EnhancedSelect({
+		containerId: 'select',
+		options: dropdownData,
+		value: defaultOption,
+		label: 'Choose a series',
+		placeholder: 'Select a series',
+		mode: 'default',
+		idKey: 'id',
+		labelKey: 'label',
+		showClear: false,
+		onChange: (selectedValue) => {
+			if (selectedValue) {
+				changeData(selectedValue.id);
+			} else {
+				clearChart();
+			}
 		}
 	});
 
@@ -102,6 +70,9 @@ function drawGraphic() {
 		svg.selectAll('circle.line-end')
 			// .transition().duration(2000)
 			// .attr('r', 0)
+			.remove();
+
+		svg.selectAll('circle.point-marker')
 			.remove();
 
 		svg
@@ -126,25 +97,20 @@ function drawGraphic() {
 		d3.select('#legend').selectAll('div.legend--item').remove();
 
 	// Filter data for the selected option
-	let filteredData = graphicData.filter((d) => d.option === selectedOption);
+	let filteredData = graphicData.filter((d) => d.series === selectedOption);
 	if (filteredData.length === 0) return;
 
-		// Get categories (series) for this option
-		const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'option');
+	// Get categories (series) for this option
+	const categories = Object.keys(filteredData[0]).filter((k) => k !== 'date' && k !== 'series');
 
-	// Set y domain for "auto" min/max using filtered data
-	let yDomainMin = config.yDomainMin;
-	let yDomainMax = config.yDomainMax;
-	if (yDomainMin === "auto" || yDomainMax === "auto") {
-		const [minY, maxY] = getYDomainMinMax({
-			minType: yDomainMin,
-			maxType: yDomainMax,
-			allData: graphicData,
-			filteredData: filteredData,
-			categories
-		});
+	// Set y domain using calculateAutoBounds
+	// Use filtered data if freeYAxisScales is true, otherwise use all data
+	if (config.yDomainMin === "auto" || config.yDomainMax === "auto" || config.yDomainMin === "data" || config.yDomainMax === "data") {
+		const dataForBounds = config.freeYAxisScales ? filteredData : graphicData;
+		const { minY, maxY } = calculateAutoBounds(dataForBounds, config);
+
 		y.domain([minY, maxY]);
-		
+
 		// Update y axis
 		svg.select('.y.axis.numeric')
 			.transition()
@@ -217,48 +183,54 @@ function drawGraphic() {
             return customLineGenerator(d.data);
         });
     
-    // CIRCLES: Handle end-of-line circles
-    const circleData = categories.map((category, index) => {
-        const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
-        return {
-            category: category,
-            index: index,
-            x: x(lastDatum.date),
-            y: y(lastDatum[category]),
-            color: config.colourPalette[index % config.colourPalette.length]
-        };
-    });
+	// POINT MARKERS: Add markers for all available data points
+	if (config.addPointMarkers) {
+		svg.selectAll('circle.point-marker').remove();
+		categories.forEach((category, index) => {
+			const points = filteredData.filter(d => d[category] !== null && d[category] !== undefined);
+			svg.selectAll(`circle.point-marker-${index}`)
+				.data(points)
+				.enter()
+				.append('circle')
+				.attr('cx', d => x(d.date))
+				.attr('cy', d => y(d[category]))
+				.attr('r', 4)
+				.attr('class', `point-marker point-marker-${index}`)
+				.style('fill', config.colourPalette[index % config.colourPalette.length]);
+		});
+	}
+
+	// END MARKERS: Handle end-of-line markers
+	const circleData = categories.map((category, index) => {
+		const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
+		return lastDatum ? {
+			category: category,
+			index: index,
+			x: x(lastDatum.date),
+			y: y(lastDatum[category]),
+			color: config.colourPalette[index % config.colourPalette.length]
+		} : null;
+	}).filter(d => d);
     
-    const circles = svg.selectAll('circle.line-end')
-        .data(circleData, d => d.category); // Use category as key
+    // Remove all existing end markers (circles, rects, and diamond groups)
+    svg.selectAll('circle.line-end').remove();
+    svg.selectAll('rect.line-end').remove();
+    svg.selectAll('g.line-end').remove();
     
-    // EXIT: Remove old circles
-    circles.exit()
-        .transition()
-        .duration(300)
-        .attr('r', 0)
-        .style('opacity', 0)
-        .remove();
-    
-    // ENTER: Add new circles
-    const circlesEnter = circles.enter()
-        .append('circle')
-        .attr('class', 'line-end')
-        .attr('r', 0)
-        .style('opacity', 0);
-    
-    // UPDATE + ENTER: Update all circles
-    const circlesUpdate = circlesEnter.merge(circles);
-    
-    circlesUpdate
-        .transition()
-        .duration(500)
-        // .delay(250) // Slight delay so circles animate after lines
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('r', 4)
-        .attr('fill', d => d.color)
-        .style('opacity', 1);
+	// Add new end markers with varying shapes
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
+		circleData.forEach((d) => {
+			drawIndexedLineEndMarker({
+				svg,
+				index: d.index,
+				color: d.color,
+				x: d.x,
+				y: d.y,
+				size: 4,
+				diamondSize: 7,
+			});
+		});
+	}
     
     // LABELS AND LEADER LINES: Handle similarly if needed
     // Remove existing labels and leader lines with transition
@@ -275,30 +247,43 @@ function drawGraphic() {
         .remove();
 
 	// Handle legend vs direct labels
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		// Create legend (moved outside the loop)
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
 
-			legenditem
-				.append('div')
-				.attr('class', 'legend--icon--circle')
-				.style('background-color', function (d) {
-					return d[1];
-				});
+		legenditem.each(function(d, i) {
+			const item = d3.select(this);
+		const useLines = config.addEndMarkers === false;
+		const svg = item.append('svg')
+			.attr('width', useLines ? 20 : 14)
+			.attr('height', 14)
+			.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
+			.attr('class', 'legend--icon')
+			.style('overflow', 'visible');
 
-			legenditem
-				.append('div')
-				.append('p')
-				.attr('class', 'legend--text')
-				.html(function (d) {
-					return d[0];
-				});
+		drawIndexedLegendShape({
+			svg,
+			index: d[2],
+			color: d[1],
+			size: 4,
+			diamondSize: 7,
+			useLines: useLines,
+			});
+		});
+
+		legenditem
+			.append('div')
+			.append('p')
+			.attr('class', 'legend--text')
+			.html(function (d) {
+				return d[0];
+			});
 		} else {
 			const directLabels = config.directLabels || {};
 			createDirectLabels({
@@ -330,7 +315,7 @@ function drawGraphic() {
 	
 
 	// Get categories from the keys used in the stack generator
-	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'option');
+	const categories = Object.keys(graphicData[0]).filter((k) => k !== 'date' && k !== 'series');
 
 	let xDataType;
 
@@ -346,6 +331,13 @@ function drawGraphic() {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
+
+		if (config.labelSpans.enabled === true) {
+			expandCustomTemporalAxisDomain(x, {
+				timeUnit: config.labelSpans.timeUnit,
+				forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+			});
+		}
 	} else {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
@@ -356,20 +348,10 @@ function drawGraphic() {
 		.scaleLinear()
 		.range([height, 0]);
 
-	// Set y domain for "autoAll" or manual values, but not for "auto"
-	let yDomainMin = config.yDomainMin;
-	let yDomainMax = config.yDomainMax;
-	if (yDomainMin === "auto" || yDomainMax === "auto") {
-		// Will be set in changeData for filtered data
-	} else {
-		// Use all data for "autoAll" or manual values
-		const [minY, maxY] = getYDomainMinMax({
-			minType: yDomainMin,
-			maxType: yDomainMax,
-			allData: graphicData,
-			filteredData: graphicData,
-			categories: categories
-		});
+	// Set initial y domain
+	// If freeYAxisScales is true and using auto, will be set in changeData for filtered data
+	if (!config.freeYAxisScales || (config.yDomainMin !== "auto" && config.yDomainMin !== "data" && config.yDomainMax !== "auto" && config.yDomainMax !== "data")) {
+		const { minY, maxY } = calculateAutoBounds(graphicData, config);
 		y.domain([minY, maxY]);
 	}
 
@@ -380,7 +362,8 @@ function drawGraphic() {
 			.tickSize(17)
 			.tickPadding(6)
 			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
@@ -440,12 +423,19 @@ function drawGraphic() {
 
 	//if there is a default option, set it
 	if (config.defaultOption) {
-		$('#optionsSelect').val(config.defaultOption).trigger('chosen:updated');
-		changeData(config.defaultOption);
+		if (defaultOption) {
+			changeData(defaultOption.id);
+		} else {
+			clearChart();
+			selectControl.clear();
+			d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
+		}
+	} else if (dropdownData.length > 0) {
+		changeData(dropdownData[0].id);
 	} else {
 		// If no default option, clear the chart
 		clearChart();
-		$('#optionsSelect').val('').trigger('chosen:updated');
+		selectControl.clear();
 		d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
 	}
 
@@ -474,18 +464,18 @@ d3.csv(config.graphicDataURL).then((rawData) => {
 		if (d3.utcParse(config.dateFormat)(d.date) !== null) {
 			return {
 				date: d3.utcParse(config.dateFormat)(d.date),
-				option: d.option,
+				series: d.series,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'option') // Exclude 'date' and 'option' keys from the data
+					.filter(([key]) => key !== 'date' && key !== 'series') // Exclude 'date' and 'option' keys from the data
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}
 		} else {
 			return {
 				date: (+d.date),
-				option: d.option,
+				series: d.series,
 				...Object.entries(d)
-					.filter(([key]) => key !== 'date' && key !== 'option')
+					.filter(([key]) => key !== 'date' && key !== 'series')
 					.map(([key, value]) => [key, value == "" ? null : +value]) // Checking for missing values so that they can be separated from zeroes
 					.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 			}

@@ -1,10 +1,11 @@
 config = {
-  "graphicDataURL": "dataethnicity.csv",
+  "graphicDataURL": "data.csv",
   "colourPalette": ONScolours.oceanBlue,
   "sourceText": "Office for National Statistics",
   "accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
   "xAxisFormat": ".0f",
-  "layoutMethod": "binned",// 'binned' or 'force'
+  "topXAxis":true,
+  "layoutMethod": "forceAccurate",// 'binned', 'force', or 'forceAccurate'
   "forceOptions": {
     "strength": 0.5,        // Collision force strength (0-1)
     "iterations": 120,      // Number of simulation iterations
@@ -23,7 +24,7 @@ config = {
   },
   "multiHighlight":true,
   "averages": {
-    "show": false,  // Whether to show average lines
+    "show": true,  // Whether to show average lines
     "showLabels": false,  // Whether to show labels for the average lines
     "colour": ONScolours.grey100,  // Color of the average lines
     "strokeWidth": 3,  // Width of the average lines
@@ -37,7 +38,7 @@ config = {
     },
     "values": [  // Array of average values for each group
       { group: "Wales", value: 14.3 },
-      { group: "Scotland", value: 14.7 },
+      { group: "Scotland", value: 3 },
       { group: "Northern Ireland", value: 14.3 },
       { group: "England", value: 13.0 }
       // ... add more groups as needed
@@ -57,10 +58,10 @@ config = {
       "left": 0
     },
     "lg": {
-      "top": 0,
-      "right": 0,
-      "bottom": 25,
-      "left": 0
+      "top": 20,
+      "right": 8,
+      "bottom": 20,
+      "left": 5
     }
   },
   "seriesHeight": {

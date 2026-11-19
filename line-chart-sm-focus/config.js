@@ -6,7 +6,8 @@ config = {
 		ONScolours.grey20
 	],
 	"labelFinalPoint": true,
-	"referenceCategory": "England",// Highlighted on each chart and doesn't get it's own chart - leave blank to turn off
+	"finalPointFormat": ",.0f",// Defines the format of the direct number label 
+	"referenceCategory": "England",// Highlighted on each chart without its own chart; blank, "" or null disables it and its legend entry
 	"legendLabel": "selected group",
 	"allLabel": "all other groups",
 	"sourceText": "Office for National Statistics",
@@ -21,14 +22,16 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomain": "auto",
-	// either "auto" or an array for the y domain e.g. [0,2000]
+	"yDomainMin": "auto",
+	"yDomainMax": "auto",
+	// Options: "auto" (smart trimming with zero baseline), "data" (exact data bounds), or numeric values
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",
 		"lg": "%b %y"
 	},
 	"xAxisNumberFormat": ".0f",
+	"yAxisNumberFormat": ",.0f", // D3 number format for y-axis tick labels
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
 	"xAxisLabel": "x axis label",
@@ -40,26 +43,26 @@ config = {
 		"lg": 3
 	},
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [5, 4],
+		"md": [5, 4],
+		"lg": [5, 4]
 	},
 	"margin": {
 		"sm": {
 			"top": 45,
-			"right": 50,
+			"right": 55,
 			"bottom": 50,
 			"left": 60
 		},
 		"md": {
 			"top": 45,
-			"right": 50,
+			"right": 55,
 			"bottom": 50,
 			"left": 60
 		},
 		"lg": {
 			"top": 45,
-			"right": 50,
+			"right": 55,
 			"bottom": 55,
 			"left": 60
 		}
@@ -90,8 +93,10 @@ config = {
 	"labelSpans": {
 		"enabled": true,
 		"timeUnit": 'quarter',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"dropYAxis": true,
+	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

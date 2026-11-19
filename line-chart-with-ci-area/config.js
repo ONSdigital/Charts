@@ -1,7 +1,11 @@
 config = {
 	"graphicDataURL": "datanumeric.csv",
-	"colourPalette": ONSlinePalette,
-	"drawLegend": false,
+	"colourPalette": [
+			ONScolours.oceanBlue,
+		ONScolours.beetrootPurple,
+		ONScolours.emeraldGreen
+	],
+	"drawLegend": "auto", // true = always show, false = never show, "auto" = show only at sm size
 	// Direct labels (used when drawLegend=false and size != 'sm')
 	// These options are passed into lib/helpers.js:createDirectLabels().
 	"directLabels": {
@@ -45,13 +49,25 @@ config = {
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
 	"xDomain": "auto",
-	"yDomain": [0, 7],
+	"yDomainMax": "auto",  
+	// Y-axis maximum options:
+	// "auto" - Smart mode: uses data max with 10% padding if positive, or 0 if all data is negative.
+	//          Automatically trims excessive whitespace below zero (>50% of range) while keeping 30% cushion above highest data point.
+	// "data" - Uses exact data maximum
+	// number - Custom value (e.g., 100)
+	"yDomainMin": "auto",
+	// Y-axis minimum options:
+	// "auto" - Smart mode: uses data min with 10% padding if negative, or 0 if all data is positive.
+	//          Automatically trims excessive whitespace above zero (>50% of range) while keeping 30% cushion below lowest data point.
+	// "data" - Uses exact data minimum
+	// number - Custom value (e.g., 0 to force zero baseline)
 	// either "auto" or an array for the x domain e.g. [0,2000]
 	"xAxisTickFormat": {
 		"sm": "%b %y",
 		"md": "%b %y",
 		"lg": "%b %y"
 	},
+	"yAxisTickFormat":".0f",
 	"xAxisNumberFormat": ".0f",
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
@@ -60,9 +76,9 @@ config = {
 	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [4, 3],
-		"lg": [16, 9]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -102,7 +118,8 @@ config = {
 	"labelSpans": {
 		"enabled": false,
 		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"yAxisTicks": {
 		"sm": 7,
@@ -111,5 +128,6 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
+	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

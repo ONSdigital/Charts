@@ -1,7 +1,7 @@
 config = {
 	"graphicDataURL": "data.csv",
 	"colourPalette": ONSlinePalette,
-	"drawLegend": false,
+	"drawLegend": "auto", // true = always show, false = never show, "auto" = show only at sm size
 	// Direct labels (used when drawLegend=false and size != 'sm')
 	// These options are passed into lib/helpers.js:createDirectLabels().
 	"directLabels": {
@@ -43,8 +43,9 @@ config = {
 	// "lineCurveType": "curveCardinal", // Cardinal spline curve
 	// "lineCurveType": "curveCatmullRom" // Catmull-Rom spline curve
 	// "lineCurveType": "curveMonotoneX" // Monotone spline curve
-	"yDomainMax": "auto", // either "auto", "autoAll" or a value
-	"yDomainMin": 0, // either "auto", "autoAll" or a value
+	"yDomainMin": 0, // "auto" (smart zero baseline), "data" (exact min), or numeric value
+	"yDomainMax": "auto", // "auto" (smart zero baseline), "data" (exact max), or numeric value
+	"freeYAxisScales": true, // If true, each dropdown option gets independent y-axis scaling
 	"xAxisTickFormat": {
 		"sm": "%y",
 		"md": "%y",
@@ -58,9 +59,9 @@ config = {
 	"defaultOption": "option1",
 	"zeroLine": "0",
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [1, 1],
-		"lg": [1, 1]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -102,13 +103,16 @@ config = {
 	"labelSpans": {
 		"enabled": true,
 		timeUnit:"year",//set to "day","month",'quarter' or 'year'
-		"secondaryTimeUnit": "auto"//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		"secondaryTimeUnit": "auto",//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		"forceFullLastPrimaryUnit": false,//extends the axis to the end of the last primary time unit
 	},
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
 		"lg": 8
 	},
+	"addEndMarkers": "auto", // true = always show, false = never show, "auto" = show only at sm size
+	"addPointMarkers": false,
 
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

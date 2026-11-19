@@ -8,7 +8,7 @@ let graphicData, size, svg, columnNames, numbers, dataPivoted, breaks, colour, k
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	let margin = config.margin[size];
 	let chartWidth =
@@ -74,7 +74,7 @@ function drawGraphic() {
 
 	colour = d3
 		.scaleThreshold()
-		.domain(breaks.slice(1, 6))
+		.domain(breaks.slice(1, -1))
 		.range(
 			Array.isArray(config.colourPalette)
 				? config.colourPalette
