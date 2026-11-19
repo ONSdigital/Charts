@@ -50,7 +50,7 @@
 #### `averages`
 - `show`: Show average lines. Default: `false`
 - `showLabels`: Show labels for averages. Default: `false`
-- `valuesFrom`: Source of average values: `"data"` or `"config"`. Defaults to `"config"` when omitted.
+- `valuesFrom`: Source of average values: `"data"` or `"config"`.
 - `colour`: Colour of average lines. Default: `ONScolours.grey100`
 - `strokeWidth`: Line width. Default: `3`
 - `strokeDash`: Dash pattern. Default: `""`
