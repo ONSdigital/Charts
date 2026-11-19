@@ -94,6 +94,9 @@ apply, including routing early-ending series through the chart edge in
 `marginLeader` mode. Set `useLeaderLines` to `false` to hide connectors without
 disabling label spacing.
 
+Isolated, undisplaced early-ending series in `marginLeader` mode use a straight
+horizontal connector, respecting `leaderLineEndGap` and the configured leader colour.
+
 Run the placement regression tests with `npm test --prefix lib` (Node.js 18+).
 
 ## Importing Global CSS
