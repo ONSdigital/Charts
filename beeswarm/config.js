@@ -26,6 +26,7 @@ config = {
   "averages": {
     "show": true,  // Whether to show average lines
     "showLabels": false,  // Whether to show labels for the average lines
+    "valuesFrom": "data", // Source of average values, e.g., "data" or "config"
     "colour": ONScolours.grey100,  // Color of the average lines
     "strokeWidth": 3,  // Width of the average lines
     "strokeDash": "",  // Dash pattern for the lines
