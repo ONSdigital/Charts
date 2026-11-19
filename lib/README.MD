@@ -75,6 +75,30 @@ addAnnotationArrow(
 ## Note on `config` and `d3`:
 Several helper functions (e.g., initialise, addDataLabels) expect a global config object to be available, and many rely on the d3 library. Ensure d3 is installed in your project and passed into your chart files as needed, and that a config object is structured according to your project's needs (e.g., config.essential.accessibleSummary, config.essential.dataLabels.numberFormat).
 
+## Direct labels and leader lines
+
+`createDirectLabels` uses the label-placement and staggered-elbow algorithm from
+[Explore local statistics](https://github.com/ONSdigital/explore-local-statistics-app/blob/94ffe03a90657536a432c47e29e966b84f8a9707/src/lib/components/charts/labelHelpers.ts).
+Isotonic regression spaces labels in endpoint order using their measured, wrapped
+heights and `minSpacing`. Labels are kept within the chart bounds; if their total
+height and spacing exceed the chart height, overlaps are unavoidable.
+
+Nearby labels are grouped after placement. Each group gets symmetric elbow
+offsets, with the middle elbows furthest from the series endpoints. Offsets are
+scaled to the available horizontal gap so leaders do not double back through
+labels. `leaderLineElbowOffset` sets the base offset before staggering.
+
+The line, dropdown-line and confidence-interval charts all use this shared helper.
+The existing `labelLocation`, leader-line colour/style and gap options still
+apply, including routing early-ending series through the chart edge in
+`marginLeader` mode. Set `useLeaderLines` to `false` to hide connectors without
+disabling label spacing.
+
+Isolated, undisplaced early-ending series in `marginLeader` mode use a straight
+horizontal connector, respecting `leaderLineEndGap` and the configured leader colour.
+
+Run the placement regression tests with `npm test --prefix lib` (Node.js 18+).
+
 ## Importing Global CSS
 
 The globalStyle.css file provides base styling for ONS visualisations, including resets, typography, and specific styles for chart elements (axes, legends, annotations, accessibility).
