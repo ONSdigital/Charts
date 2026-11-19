@@ -355,7 +355,7 @@ d3.csv(config.graphicDataURL).then((data) => {
 
   // Filter averages out so that they are not shown as dots
   graphicData = data.filter((d) => d.areanm !== d.group);
-  //U se the values that are selected in the config
+  //Use the values that are selected in the config
   if (config.averages && config.averages.show) {
     const valuesFrom = config.averages.valuesFrom ?? "config";
     if (valuesFrom === "data") {
