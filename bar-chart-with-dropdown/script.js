@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addDataLabels, addAxisLabel, addSource, getDataLabelX } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -97,7 +97,15 @@ function drawGraphic() {
 
 		// Store the current positions of the labels in the map
 		svg.selectAll('text.dataLabels').each(function (d) {
-			labelPositions.set(d.name, x(d.value));
+			labelPositions.set(
+				d.name,
+				getDataLabelX({
+					datum: d,
+					chartWidth: chartWidth,
+					labelPositionFactor: 7,
+					xScaleFunction: x,
+				})
+			);
 		});
 
 		// Enter and update
@@ -143,14 +151,20 @@ function drawGraphic() {
 				.duration(1200)
 				.ease(d3.easeCubic)
 				.tween('text', function (d) {
-					// Parse this.textContent as a float and multiply it by 0.001 to get the start value. This need to match the data.
+					// Parse this.textContent as a float and multiply it by 0.001 to get the start value. This needs to match the data.
 					let startValue = parseFloat(this.textContent) * 0.001;
 
 					// Create an interpolator
 					const i = d3.interpolate(startValue, d.value);
 
-					// Create a position interpolator
-					const xi = d3.interpolate(labelPositions.get(d.name) || x(0), x(d.value) - (x(d.value) - x(0) < chartWidth / 10 ? -3 : 3));
+					// Create a position interpolator based on the helper label positions
+					const targetX = getDataLabelX({
+						datum: d,
+						chartWidth: chartWidth,
+						labelPositionFactor: 7,
+						xScaleFunction: x,
+					});
+					const xi = d3.interpolate(labelPositions.get(d.name) || x(0), targetX);
 
 					return function (t) {
 						// Calculate the interpolated value
