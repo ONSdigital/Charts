@@ -234,7 +234,7 @@ const chartConfig = [
     name: "Waterfall",
     url: "https://onsdigital.github.io/Charts/waterfall/",
     tags: {
-      comparision: true,
+      comparison: true,
       "part-to-whole": true
     },
     dataFiles: [
@@ -245,7 +245,7 @@ const chartConfig = [
     name: "Slope chart",
     url: "https://onsdigital.github.io/Charts/slope-chart/",
     tags: {
-      comparision: true,
+      comparison: true,
       "change-over-time": true
     },
     dataFiles: [

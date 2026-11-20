@@ -7,7 +7,7 @@ config = {
 	"yDomainMin": "auto",
 	"yDomainMax": "auto",
 	// yDomainMin and yDomainMax can be "auto", "data", or a numeric value	
-	"showZeroAxis":true,
+	"showZeroAxis":true, // Include zero even when data or custom y-domain bounds exclude it.
 	"yAxisLabel": "y axis label",
 	"yAxisTicks":{
 		"sm": 5,

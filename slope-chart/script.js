@@ -43,7 +43,7 @@ function drawGraphic() {
 	const { minY, maxY } = calculateAutoBounds(graphicData, config);
 
 	if (config.showZeroAxis) {
-		y.domain([d3.min([0,minY]), maxY]);
+		y.domain([d3.min([0,minY]), d3.max([0,maxY])]);
 	} else {
 		y.domain([minY, maxY]);
 	}
