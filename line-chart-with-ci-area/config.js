@@ -1,7 +1,41 @@
 config = {
 	"graphicDataURL": "datanumeric.csv",
-	"colourPalette": ONSlinePalette,
-	"drawLegend": false,
+	"colourPalette": [
+			ONScolours.oceanBlue,
+		ONScolours.beetrootPurple,
+		ONScolours.emeraldGreen
+	],
+	"drawLegend": "auto", // true = always show, false = never show, "auto" = show only at sm size
+	// Direct labels (used when drawLegend=false and size != 'sm')
+	// These options are passed into lib/helpers.js:createDirectLabels().
+	"directLabels": {
+		// Horizontal gap (px) from the series endpoint to the label anchor
+		"gap": 10,
+		// Horizontal gap (px) for labels that need leader lines (i.e. labels that are in a collision cluster
+		// or get vertically displaced)
+		"gapWithLeaderLines": 16,
+		// Minimum vertical spacing (px) between adjacent labels before they are offset
+		// Note: this chart previously used 0 to allow tight packing.
+		"minSpacing": 0,
+		// Where labels should sit:
+		// - 'margin' (labels in margin, no leader lines for early-ending series)
+		// - 'marginLeader' (labels in margin, with long leader lines for early-ending series)
+		// - 'lastPoint' (labels at last data point of early ending series)
+		"labelLocation": "lastPoint",
+		// Leader lines connect grouped/displaced labels and early-ending series in 'marginLeader'
+		"useLeaderLines": true,
+		// 'dashed' or 'solid'
+		"leaderLineStyle": "dashed",
+		// 'series' (match series colour) or 'mono' (single colour)
+		"leaderLineColourMode": "series",
+		// Used when leaderLineColourMode is 'mono'
+		"leaderLineMonoColour": "#707070",
+		// Base elbow offset (px); nearby labels get staggered elbows within the available gap
+		"leaderLineElbowOffset": 10,
+		"leaderLineEndGap": 2,
+		// Minimum pixels from chart edge for labels
+		"minLabelOffset": 5
+	},
 	"sourceText": "Office for National Statistics",
 	"accessibleSummary": "The chart canvas is hidden from screen readers. The main message is summarised by the chart title and the data behind the chart is available to download below.",
 	"lineCurveType": "curveLinear", // Set the default line curve type
@@ -33,6 +67,7 @@ config = {
 		"md": "%b %y",
 		"lg": "%b %y"
 	},
+	"yAxisTickFormat":".0f",
 	"xAxisNumberFormat": ".0f",
 	"dateFormat": "%d/%m/%Y",
 	"yAxisLabel": "y axis label",
@@ -41,9 +76,9 @@ config = {
 	"legendEstimateText": "Estimated value",
 	"zeroLine": "0",
 	"aspectRatio": {
-		"sm": [1, 1],
-		"md": [4, 3],
-		"lg": [16, 9]
+		"sm": [3, 2],
+		"md": [3, 2],
+		"lg": [3, 2]
 	},
 	"margin": {
 		"sm": {
@@ -83,7 +118,8 @@ config = {
 	"labelSpans": {
 		"enabled": false,
 		timeUnit: 'quarter',//set to "day","month",'quarter' or 'year'
-		secondaryTimeUnit: 'auto'//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
+		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
 	"yAxisTicks": {
 		"sm": 7,
@@ -92,5 +128,6 @@ config = {
 	},
 	"addFirstDate": false,
 	"addFinalDate": false,
+	"addEndMarkers": true, // true = always show, false = never show, "auto" = show only at sm size
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

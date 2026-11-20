@@ -1,4 +1,4 @@
-import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, calculateChartWidth, addChartTitleLabel, addAxisLabel, addSource, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawShapeMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
 
 let graphic = d3.select('#graphic');
 let legend = d3.select('#legend');
@@ -8,7 +8,7 @@ let graphicData, size, keys, counter;
 function drawGraphic() {
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 
 	const aspectRatio = config.aspectRatio[size];
 	const chartsPerRow = config.chartEvery[size];
@@ -38,7 +38,7 @@ function drawGraphic() {
 		// Set dimensions
 		let margin = { ...config.margin[size] };
 
-		let chartGap = config.optional?.chartGap || 10;
+		let chartGap = config?.chartGap || 10;
 
 		let chartWidth = calculateChartWidth({
 			screenWidth: parseInt(graphic.style('width')),
@@ -74,6 +74,13 @@ function drawGraphic() {
 			x = d3.scaleTime()
 				.domain(d3.extent(graphicData, (d) => d.date))
 				.range([0, chartWidth]);
+
+			if (config.labelSpans.enabled === true) {
+				expandCustomTemporalAxisDomain(x, {
+					timeUnit: config.labelSpans.timeUnit,
+					forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+				});
+			}
 		} else {
 			x = d3.scaleLinear()
 				.domain(d3.extent(graphicData, (d) => +d.date))
@@ -140,21 +147,54 @@ function drawGraphic() {
 				.datum(Object.entries(lines))
 				.attr('fill', 'none')
 				.attr(
-					'stroke', () => (categoriesToPlot.indexOf(category) == chartIndex) ? config.colourPalette[0] :
+					'stroke', () => (categories.indexOf(category) == chartIndex) ? config.colourPalette[0] :
 						category == reference ? config.colourPalette[1] : config.colourPalette[2]
 				)
-				.attr('stroke-width', () => (categoriesToPlot.indexOf(category) == chartIndex) || category == reference ? 2.5 : 2)
+				.attr('stroke-width', () => (categories.indexOf(category) == chartIndex) || category == reference ? 2.5 : 2)
 				.attr('d', (d, i) => lineGenerator(d[categoriesToPlot.indexOf(category)][1]))
 				.style('stroke-linejoin', 'round')
 				.style('stroke-linecap', 'round')
-				.attr('class', 'line' + categoriesToPlot.indexOf(category) +
-					((categoriesToPlot.indexOf(category) == chartIndex) ? " selected" :
+				.attr('class', 'line' + categories.indexOf(category) +
+					((categories.indexOf(category) == chartIndex) ? " selected" :
 						category == reference ? " reference" : " other"));
 
 			svg.selectAll('.reference').raise()
 			svg.selectAll('.line' + chartIndex).raise()
 
 			const lastDatum = graphicData[graphicData.length - 1];
+
+			// Add end markers for selected and comparison lines
+			if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
+				const lastValidDatum = [...graphicData].reverse().find(d => d[category] != null && d[category] !== "");
+				if (lastValidDatum) {
+					// Selected group - circle
+					if (categories.indexOf(category) == chartIndex) {
+							drawShapeMarker({
+								svg,
+								shape: 'circle',
+								color: config.colourPalette[0],
+								x: x(lastValidDatum.date),
+								y: y(lastValidDatum[category]),
+								size: 3.5,
+								className: 'line-end selected',
+								isFilled: true,
+							});
+					} 
+					// Comparison group - square
+					else if (category == reference) {
+							drawShapeMarker({
+								svg,
+								shape: 'square',
+								color: config.colourPalette[1],
+								x: x(lastValidDatum.date),
+								y: y(lastValidDatum[category]),
+								size: 3.5,
+								className: 'line-end reference',
+								isFilled: true,
+							});
+					}
+				}
+			}
 
 			//Labelling the final data point on each chart if option selected in the config
 			if (config.labelFinalPoint == true) {
@@ -167,7 +207,7 @@ function drawGraphic() {
 							'transform',
 							`translate(${x(lastDatum.date)}, ${y(lastDatum[category])})`
 						)
-						.attr('x', 5)
+						.attr('x', 8)
 						.attr('y', 4)
 						.attr('text-anchor', 'start')
 						.attr(
@@ -176,7 +216,7 @@ function drawGraphic() {
 							// categories.indexOf(category) % config.colourPalette.length
 							// ]
 						)
-						.text(d3.format(",.0f")(lastDatum[category]))
+						.text(d3.format(config.finalPointFormat)(lastDatum[category]))
 				}
 
 				if (categories.indexOf(category) == chartIndex) {
@@ -223,13 +263,14 @@ function drawGraphic() {
 			xAxisGenerator = customTemporalAxis(x)
 			.tickPadding(6)
 			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 		} else {
 			xAxisGenerator = d3
 				.axisBottom(x)
 				.tickValues(
 					getXAxisTicks({
-						data: graphic_data,
+						data: graphicData,
 						xDataType,
 						size,
 						config
@@ -263,7 +304,7 @@ function drawGraphic() {
 			svg
 				.append('g')
 				.attr('class', 'y axis numeric')
-				.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickSize(0))
+				.call(d3.axisLeft(y).ticks(config.yAxisTicks[size]).tickFormat(d3.format(config.yAxisNumberFormat)).tickSize(0))
 				.selectAll('.tick text')
 				.call(wrap, margin.left - 10);
 		} else {
@@ -315,25 +356,72 @@ function drawGraphic() {
 
 	let legenditem = legend
 		.selectAll('div.legend--item')
-		.data([[config.legendLabel, config.colourPalette[0]], [reference, config.colourPalette[1]], [config.allLabel, config.colourPalette[2]]])
+		.data([
+			[config.legendLabel, config.colourPalette[0], 0],
+			[reference, config.colourPalette[1], 1],
+			[config.allLabel, config.colourPalette[2], 2]
+		].filter(([label, , type]) => type !== 1 || (label != null && String(label).trim() !== '')))
 		.enter()
 		.append('div')
 		.attr('class', 'legend--item');
 
-	// Add line icon using SVG
-	legenditem
-		.append('svg')
-		.attr('width', 24)
-		.attr('height', 12)
-		.append('line')
-		.attr('x1', 2)
-		.attr('y1', 6)
-		.attr('x2', 22)
-		.attr('y2', 6)
-		.attr('stroke', function (d) { return d[1]; })
-		.attr('stroke-width', 3)
-		.attr('stroke-linecap', "round")
-		.attr('class', 'legend--icon--line');
+	legenditem.each(function(d, i) {
+		const item = d3.select(this);
+		const legendType = d[2]; // 0=selected, 1=comparison, 2=all others
+		const color = d[1];
+		
+		if (legendType === 0) {
+			// Selected group - circle (filled)
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+
+			drawShapeMarker({
+				svg,
+				shape: 'circle',
+				color,
+				x: 6,
+				y: 6,
+				size: 3.5,
+				isFilled: true,
+			});
+		} else if (legendType === 1) {
+			// Comparison group - square (filled)
+			const svg = item.append('svg')
+				.attr('width', 14)
+				.attr('height', 14)
+				.attr('viewBox', '0 0 12 12')
+				.attr('class', 'legend--icon')
+				.style('overflow', 'visible');
+
+			drawShapeMarker({
+				svg,
+				shape: 'square',
+				color,
+				x: 6,
+				y: 6,
+				size: 3.5,
+				isFilled: true,
+			});
+		} else {
+			// All other groups - line (as before)
+			item.append('svg')
+				.attr('width', 24)
+				.attr('height', 12)
+				.append('line')
+				.attr('x1', 2)
+				.attr('y1', 6)
+				.attr('x2', 22)
+				.attr('y2', 6)
+				.attr('stroke', color)
+				.attr('stroke-width', 3)
+				.attr('stroke-linecap', 'round')
+				.attr('class', 'legend--icon--line');
+		}
+	});
 
 	legenditem
 		.append('div')

@@ -21,8 +21,12 @@ config = {
   },
   xDomain: [-25, 104],
   // either auto or a custom domain as an array e.g [0,100]
-  showDataLabels: true,
-  // can be true, false, or "desktopOnly", quotes only if desktopOnly
+  dataLabels: {
+    show: true,
+    numberFormat: ".0f",
+    background: true,
+  },
+  // show can be true, false, or "desktopOnly" (quotes only if desktopOnly)
   margin: {
     sm: {
       top: 5,
@@ -52,5 +56,8 @@ config = {
     sm: 3,
     md: 8,
     lg: 10,
-  }
+  },
+  // When arrow pixel width is below this threshold the comet-style #legend is used
+  // instead of inline arrowLegend labels. Defaults to 40 if not set.
+  // smallChangeLegendThreshold: 40,
 };

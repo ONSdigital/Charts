@@ -187,6 +187,18 @@ axis.tickFormat(d3.utcFormat("%b"));
 axis.secondaryTickFormat(d => `FY${d.getUTCFullYear()}`);
 ```
 
+### Force full last primary unit
+
+```
+axis.forceFullLastPrimaryUnit(true)
+```
+
+When enabled on a time scale, `customTemporalAxis` renders the full final primary-unit span by extending the last range to the end of the primary unit that contains the final domain value.
+
+For example, with monthly primary labels, a last data point at `2024-12-01` would render a full `Dec` range, and with yearly primary labels a last data point in March 2031 would extend the axis through the end of 2031.
+
+This should only apply for line charts.
+
 ### Year starting month
 
 ```
@@ -250,6 +262,14 @@ const axis = customTemporalAxis(x)
     const y = d.getUTCFullYear();
     return `FY${y}/${(y + 1).toString().slice(-2)}`;
   });
+```
+
+### Force the final month to display
+
+```js
+const axis = customTemporalAxis(x)
+  .timeUnit("month")
+  .forceFullLastPrimaryUnit(true);
 ```
 
 ### Disable Secondary Labels

@@ -1,0 +1,44 @@
+name: Documentation improvement
+description: Suggest a correction, clarification, or addition to the documentation.
+title: "[Docs]: "
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the documentation. Please share enough detail for us to understand the issue.
+
+  - type: input
+    id: page
+    attributes:
+      label: Page or section
+      description: Link to the page or name the section that needs improvement.
+      placeholder: "https://example.com/docs/... or Getting Started"
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: What needs improvement?
+      description: Describe what is incorrect, unclear, missing, or outdated.
+      placeholder: Be as specific as you can.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+      description: What would you change or add? A rough outline is fine.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Why is this improvement helpful?
+      description: Share any context about the readers or task this documentation should support.
+    validations:
+      required: false

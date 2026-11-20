@@ -1,4 +1,5 @@
-import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis } from "../lib/helpers.js";
+import { initialise, wrap, addSvg, addAxisLabel, addSource, createDirectLabels, getXAxisTicks, calculateAutoBounds, customTemporalAxis, drawIndexedLegendShape, drawIndexedLineEndMarker, expandCustomTemporalAxisDomain } from "../lib/helpers.js";
+import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select('#graphic');
 let select = d3.select('#select');
@@ -11,7 +12,7 @@ function drawGraphic() {
 	select.selectAll('*').remove(); // Remove the select element if it exists
 
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
-	size = initialise(size);
+	size = initialise(size, config);
 	const aspectRatio = config.aspectRatio[size]
 	let margin = config.margin[size];
 	let chartWidth = parseInt(graphic.style('width')) - margin.left - margin.right;
@@ -27,45 +28,34 @@ function drawGraphic() {
 
 	let uniqueOptions = [...new Set(graphicData.map((d) => d.series))];
 
-	const optns = select
-		.append('div')
-		.attr('id', 'sel')
-		.append('select')
-		.attr('id', 'optionsSelect')
-		.attr('style', 'width:calc(100% - 6px)')
-		.attr('class', 'chosen-select')
-		.attr('data-placeholder', 'Select an option');
+	const dropdownData = uniqueOptions
+		.slice()
+		.sort((a, b) => (a || '').localeCompare(b || ''))
+		.map((series) => ({
+			id: series,
+			label: series
+		}));
 
+	const defaultOption = config.defaultOption
+		? dropdownData.find((option) => option.id === config.defaultOption)
+		: dropdownData[0];
 
-	optns
-		.selectAll('option.option')
-		.data(uniqueOptions)
-		.enter()
-		.append('option')
-		.attr('value', (d) => d)
-		.text((d) => d);
-
-
-	//add some more accessibility stuff
-	d3.select('input.chosen-search-input').attr('id', 'chosensearchinput');
-	d3.select('div.chosen-search')
-		.insert('label', 'input.chosen-search-input')
-		.attr('class', 'visuallyhidden')
-		.attr('for', 'chosensearchinput')
-		.html('Type to select an area');
-
-
-	$('#optionsSelect').trigger('chosen:updated');  // Initialize Chosen
-
-	$('#optionsSelect').chosen().change(function () {
-		const selectedOption = $(this).val();
-
-		if (selectedOption) {
-			changeData(selectedOption);
-
-		} else {
-			// Clear the chart if no option is selected
-			clearChart();
+	const selectControl = new EnhancedSelect({
+		containerId: 'select',
+		options: dropdownData,
+		value: defaultOption,
+		label: 'Choose a series',
+		placeholder: 'Select a series',
+		mode: 'default',
+		idKey: 'id',
+		labelKey: 'label',
+		showClear: false,
+		onChange: (selectedValue) => {
+			if (selectedValue) {
+				changeData(selectedValue.id);
+			} else {
+				clearChart();
+			}
 		}
 	});
 
@@ -80,6 +70,9 @@ function drawGraphic() {
 		svg.selectAll('circle.line-end')
 			// .transition().duration(2000)
 			// .attr('r', 0)
+			.remove();
+
+		svg.selectAll('circle.point-marker')
 			.remove();
 
 		svg
@@ -190,48 +183,54 @@ function drawGraphic() {
             return customLineGenerator(d.data);
         });
     
-    // CIRCLES: Handle end-of-line circles
-    const circleData = categories.map((category, index) => {
-        const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
-        return {
-            category: category,
-            index: index,
-            x: x(lastDatum.date),
-            y: y(lastDatum[category]),
-            color: config.colourPalette[index % config.colourPalette.length]
-        };
-    });
+	// POINT MARKERS: Add markers for all available data points
+	if (config.addPointMarkers) {
+		svg.selectAll('circle.point-marker').remove();
+		categories.forEach((category, index) => {
+			const points = filteredData.filter(d => d[category] !== null && d[category] !== undefined);
+			svg.selectAll(`circle.point-marker-${index}`)
+				.data(points)
+				.enter()
+				.append('circle')
+				.attr('cx', d => x(d.date))
+				.attr('cy', d => y(d[category]))
+				.attr('r', 4)
+				.attr('class', `point-marker point-marker-${index}`)
+				.style('fill', config.colourPalette[index % config.colourPalette.length]);
+		});
+	}
+
+	// END MARKERS: Handle end-of-line markers
+	const circleData = categories.map((category, index) => {
+		const lastDatum = [...filteredData].reverse().find(d => d[category] != null && d[category] !== "");
+		return lastDatum ? {
+			category: category,
+			index: index,
+			x: x(lastDatum.date),
+			y: y(lastDatum[category]),
+			color: config.colourPalette[index % config.colourPalette.length]
+		} : null;
+	}).filter(d => d);
     
-    const circles = svg.selectAll('circle.line-end')
-        .data(circleData, d => d.category); // Use category as key
+    // Remove all existing end markers (circles, rects, and diamond groups)
+    svg.selectAll('circle.line-end').remove();
+    svg.selectAll('rect.line-end').remove();
+    svg.selectAll('g.line-end').remove();
     
-    // EXIT: Remove old circles
-    circles.exit()
-        .transition()
-        .duration(300)
-        .attr('r', 0)
-        .style('opacity', 0)
-        .remove();
-    
-    // ENTER: Add new circles
-    const circlesEnter = circles.enter()
-        .append('circle')
-        .attr('class', 'line-end')
-        .attr('r', 0)
-        .style('opacity', 0);
-    
-    // UPDATE + ENTER: Update all circles
-    const circlesUpdate = circlesEnter.merge(circles);
-    
-    circlesUpdate
-        .transition()
-        .duration(500)
-        // .delay(250) // Slight delay so circles animate after lines
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('r', 4)
-        .attr('fill', d => d.color)
-        .style('opacity', 1);
+	// Add new end markers with varying shapes
+	if (config.addEndMarkers === true || (config.addEndMarkers === 'auto' && size === 'sm')) {
+		circleData.forEach((d) => {
+			drawIndexedLineEndMarker({
+				svg,
+				index: d.index,
+				color: d.color,
+				x: d.x,
+				y: d.y,
+				size: 4,
+				diamondSize: 7,
+			});
+		});
+	}
     
     // LABELS AND LEADER LINES: Handle similarly if needed
     // Remove existing labels and leader lines with transition
@@ -241,38 +240,52 @@ function drawGraphic() {
         .style('opacity', 0)
         .remove();
     
-    svg.selectAll('line.label-leader-line')
+	svg.selectAll('.label-leader-line')
         .transition()
         .duration(300)
         .style('opacity', 0)
         .remove();
 
 	// Handle legend vs direct labels
-	if (config.drawLegend || size === 'sm') {
+	if (config.drawLegend === true || (config.drawLegend === 'auto' && size === 'sm')) {
 		// Create legend (moved outside the loop)
 		let legenditem = d3
 			.select('#legend')
 			.selectAll('div.legend--item')
-			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length]]))
+			.data(categories.map((c, i) => [c, config.colourPalette[i % config.colourPalette.length], i]))
 			.enter()
 			.append('div')
 			.attr('class', 'legend--item');
 
-			legenditem
-				.append('div')
-				.attr('class', 'legend--icon--circle')
-				.style('background-color', function (d) {
-					return d[1];
-				});
+		legenditem.each(function(d, i) {
+			const item = d3.select(this);
+		const useLines = config.addEndMarkers === false;
+		const svg = item.append('svg')
+			.attr('width', useLines ? 20 : 14)
+			.attr('height', 14)
+			.attr('viewBox', useLines ? '0 0 20 12' : '0 0 12 12')
+			.attr('class', 'legend--icon')
+			.style('overflow', 'visible');
 
-			legenditem
-				.append('div')
-				.append('p')
-				.attr('class', 'legend--text')
-				.html(function (d) {
-					return d[0];
-				});
+		drawIndexedLegendShape({
+			svg,
+			index: d[2],
+			color: d[1],
+			size: 4,
+			diamondSize: 7,
+			useLines: useLines,
+			});
+		});
+
+		legenditem
+			.append('div')
+			.append('p')
+			.attr('class', 'legend--text')
+			.html(function (d) {
+				return d[0];
+			});
 		} else {
+			const directLabels = config.directLabels || {};
 			createDirectLabels({
 				categories: categories,
 				data: filteredData,
@@ -283,11 +296,17 @@ function drawGraphic() {
 				chartHeight: height,
 				config: config,
 				options: {
-					labelStrategy: 'lastValid',
-					minSpacing: 15,
-					useLeaderLines: true,
-					leaderLineStyle: 'dashed',
-					minLabelOffset: 5
+					labelLocation: directLabels.labelLocation ?? 'lastPoint',
+					minSpacing: directLabels.minSpacing ?? 15,
+					minLabelOffset: directLabels.minLabelOffset ?? 5,
+					labelGap: directLabels.gap ?? 10,
+					labelGapWithLeaderLines: directLabels.gapWithLeaderLines ?? (directLabels.gap ?? 10),
+					useLeaderLines: directLabels.useLeaderLines ?? true,
+					leaderLineStyle: directLabels.leaderLineStyle ?? 'dashed',
+					leaderLineColourMode: directLabels.leaderLineColourMode ?? 'series',
+					leaderLineMonoColour: directLabels.leaderLineMonoColour ?? '#707070',
+					leaderLineElbowOffset: directLabels.leaderLineElbowOffset ?? 10,
+					leaderLineEndGap: directLabels.leaderLineEndGap ?? 2
 				}
 			});
 		}
@@ -312,6 +331,13 @@ function drawGraphic() {
 		x = d3.scaleTime()
 			.domain(d3.extent(graphicData, (d) => d.date))
 			.range([0, chartWidth]);
+
+		if (config.labelSpans.enabled === true) {
+			expandCustomTemporalAxisDomain(x, {
+				timeUnit: config.labelSpans.timeUnit,
+				forceFullLastPrimaryUnit: config.labelSpans.forceFullLastPrimaryUnit === true
+			});
+		}
 	} else {
 		x = d3.scaleLinear()
 			.domain(d3.extent(graphicData, (d) => +d.date))
@@ -336,7 +362,8 @@ function drawGraphic() {
 			.tickSize(17)
 			.tickPadding(6)
 			.timeUnit(config.labelSpans.timeUnit)
-			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit);
+			.secondaryTimeUnit(config.labelSpans.secondaryTimeUnit)
+			.forceFullLastPrimaryUnit(config.labelSpans.forceFullLastPrimaryUnit === true);
 	} else {
 		xAxisGenerator = d3
 			.axisBottom(x)
@@ -396,12 +423,19 @@ function drawGraphic() {
 
 	//if there is a default option, set it
 	if (config.defaultOption) {
-		$('#optionsSelect').val(config.defaultOption).trigger('chosen:updated');
-		changeData(config.defaultOption);
+		if (defaultOption) {
+			changeData(defaultOption.id);
+		} else {
+			clearChart();
+			selectControl.clear();
+			d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
+		}
+	} else if (dropdownData.length > 0) {
+		changeData(dropdownData[0].id);
 	} else {
 		// If no default option, clear the chart
 		clearChart();
-		$('#optionsSelect').val('').trigger('chosen:updated');
+		selectControl.clear();
 		d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
 	}
 

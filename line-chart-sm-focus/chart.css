@@ -6,6 +6,7 @@
   /* Changes the color of the axis lines */
 }
 
+
 @media (forced-colors: active) {
   .other {
     stroke: grey
