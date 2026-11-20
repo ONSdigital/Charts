@@ -11,7 +11,7 @@ import { EnhancedSelect } from "../lib/enhancedSelect.js";
 
 let graphic = d3.select("#graphic");
 let pymChild = null;
-let graphicData, size, xDomain, circleDist, radius;
+let graphicData, averageData, size, xDomain, circleDist, radius;
 
 function drawGraphic() {
   //Set up some of the basics and return the size value ('sm', 'md' or 'lg')
@@ -191,70 +191,8 @@ function drawGraphic() {
     .attr("y", (d) => y(d))
     .attr("width", () => x(x.domain()[1]) - x(x.domain()[0]))
     .attr("height", y.bandwidth);
-  
-  // Add average lines if they're defined in config
-  if (config.averages && config.averages.show) {
-    // Create average lines
-    chart
-      .append("g")
-      .attr("class", "average-lines")
-      .selectAll("line")
-      .data(config.averages.values)
-      .join("line")
-      .attr("x1", (d) => x(d.value))
-      .attr("x2", (d) => x(d.value))
-      .attr("y1", (d) => y(d.group))
-      .attr("y2", (d) => y(d.group) + y.bandwidth())
-      .attr("stroke", config.averages.colour || "#444")
-      .attr("stroke-width", config.averages.strokeWidth || 2)
-      .attr("stroke-dasharray", config.averages.strokeDash || "");
 
-    // Add average labels if enabled
-    if (config.averages.showLabels) {
-      chart
-        .append("g")
-        .attr("class", "average-labels")
-        .selectAll("text")
-        .data(config.averages.values)
-        .join("text")
-        .attr("x", (d) => x(d.value) + (config.averages.labelOffset?.x || 5))
-        .attr(
-          "y",
-          (d) =>
-            y(d.group) +
-            y.bandwidth() / 2 +
-            (config.averages.labelOffset?.y || 0)
-        )
-        .attr("dy", "0.35em")
-        .attr("fill", config.averages.labelColour || "#444")
-        .text((d) => {
-          const format = d3.format(
-            config.averages.labelFormat || config.xAxisFormat
-          );
-          const prefix = config.averages.labelPrefix || "Mean: ";
-          return `${prefix}${format(d.value)}`;
-        });
-    }
-  }
-
-  // group labels
-  if (groups.length > 1) {
-    chart
-      .append("g")
-      .attr("fill", "#444")
-      .attr("stroke", "white")
-      .attr("stroke-width", 3)
-      .attr("stroke-opacity", 0.95)
-      .attr("paint-order", "stroke")
-      .selectAll("text")
-      .data(y.domain())
-      .join("text")
-      .attr("x", 5)
-      .attr("y", (d) => y(d) + 17)
-      .text((d) => d);
-  }
-
-  // Position circles based on selected method
+     // Position circles based on selected method
   const positionedData = positionCircles(
     [...graphicData],
     x,
@@ -295,6 +233,68 @@ function drawGraphic() {
   const overlayIndexByOriginalId = new Map(
     positionedOverlayData.map((d, i) => [d.originalId, i])
   );
+  
+  // Add average lines from the selected source
+  if (config.averages && config.averages.show) {
+    // Create average lines
+    chart
+      .append("g")
+      .attr("class", "average-lines")
+      .selectAll("line")
+      .data(averageData)
+      .join("line")
+      .attr("x1", (d) => x(d.value))
+      .attr("x2", (d) => x(d.value))
+      .attr("y1", (d) => y(d.group))
+      .attr("y2", (d) => y(d.group) + y.bandwidth())
+      .attr("stroke", config.averages.colour || "#444")
+      .attr("stroke-width", config.averages.strokeWidth || 2)
+      .attr("stroke-dasharray", config.averages.strokeDash || "");
+
+    // Add average labels if enabled
+    if (config.averages.showLabels) {
+      chart
+        .append("g")
+        .attr("class", "average-labels")
+        .selectAll("text")
+        .data(averageData)
+        .join("text")
+        .attr("x", (d) => x(d.value) + (config.averages.labelOffset?.x || 5))
+        .attr(
+          "y",
+          (d) =>
+            y(d.group) +
+            y.bandwidth() / 2 +
+            (config.averages.labelOffset?.y || 0)
+        )
+        .attr("dy", "0.35em")
+        .attr("fill", config.averages.labelColour || "#444")
+        .text((d) => {
+          const format = d3.format(
+            config.averages.labelFormat || config.xAxisFormat
+          );
+          const prefix = config.averages.labelPrefix || "Mean: ";
+          return `${prefix}${format(d.value)}`;
+        });
+    }
+  }
+
+  // group labels
+  if (groups.length > 1) {
+    chart
+      .append("g")
+      .attr("fill", "#444")
+      .attr("stroke", "white")
+      .attr("stroke-width", 3)
+      .attr("stroke-opacity", 0.95)
+      .attr("paint-order", "stroke")
+      .selectAll("text")
+      .data(y.domain())
+      .join("text")
+      .attr("x", 5)
+      .attr("y", (d) => y(d) + 17)
+      .text((d) => d);
+  }
 
   // Add Delaunay overlay
   const overlay = createDelaunayOverlay({
@@ -353,9 +353,19 @@ d3.csv(config.graphicDataURL).then((data) => {
     d.cleanId = removeSpaces(d.areanm)
   });
 
-
-
-  graphicData = data;
+  // Filter averages out so that they are not shown as dots
+  graphicData = data.filter((d) => d.areanm !== d.group);
+  //Use the values that are selected in the config
+  if (config.averages && config.averages.show) {
+    const valuesFrom = config.averages.valuesFrom ?? "config";
+    if (valuesFrom === "data") {
+      averageData = data.filter((d) => d.areanm === d.group);
+    } else if (valuesFrom === "config") {
+      averageData = config.averages.values;
+    } else {
+      throw new Error(`Unknown averages.valuesFrom: "${valuesFrom}". Use "data" or "config".`);
+    }
+  }
 
   // Create visualization using pym
   pymChild = new pym.Child({
