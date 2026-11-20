@@ -10,6 +10,7 @@ config = {
 		"numberFormat": ".1%"
 	},
 	"dataLabelsBubbleFormat": ".0%",
+	"bubbleScale": 1,
 	"xDomain": "auto",
 	// either "auto" or an array for the x domain e.g. [0,100]
 	"xAxisLabel": "x axis label",

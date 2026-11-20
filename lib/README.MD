@@ -73,6 +73,12 @@ addAnnotationArrow(
 ```
 
 ## Note on `config` and `d3`:
+`addDataLabels` accepts an optional `requiredContrast` ratio (default `3`) for
+in-bar text when `colourScale` is supplied. Use `requiredContrast: 4.5` for small
+text. `colourScale` can be a background hex colour or a function receiving the
+datum's category, or its name when no category is present. Outside labels retain
+their existing dark colour.
+
 Several helper functions (e.g., initialise, addDataLabels) expect a global config object to be available, and many rely on the d3 library. Ensure d3 is installed in your project and passed into your chart files as needed, and that a config object is structured according to your project's needs (e.g., config.essential.accessibleSummary, config.essential.dataLabels.numberFormat).
 
 ## Importing Global CSS

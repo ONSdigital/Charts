@@ -52,11 +52,8 @@ function drawGraphic() {
   })
 
   if (config.xDomain == "auto") {
-    if (d3.min(graphicData.map(({ value }) => Number(value))) >= 0) {
-      x.domain([0, d3.max(graphicData.map(({ value }) => Number(value)))]); //modified so it converts string to number
-    } else {
-      x.domain(d3.extent(graphicData.map(({ value }) => Number(value))));
-    }
+    const [minValue, maxValue] = d3.extent(graphicData, ({ value }) => Number(value));
+    x.domain([Math.min(0, minValue), Math.max(0, maxValue)]);
   } else {
     x.domain(config.xDomain);
   }
@@ -91,7 +88,7 @@ function drawGraphic() {
     .attr("fill", (d) => d.value >= 0 ? config.colourPalettePositive : config.colourPaletteNegative);
 
   // Add context bubbles
-  const maxRadius = margin.bubble / 1.85;
+  const maxRadius = (margin.bubble / 1.85) * config.bubbleScale;
   const maxValueBubble = d3.max(graphicData, d => Math.abs(d.value1));
 
   function calculateRadius(value) {
@@ -130,13 +127,19 @@ function drawGraphic() {
 
 
   if (config.dataLabels.show == true) {
+    const labelColours = d3.scaleOrdinal()
+      .domain(graphicData.map(d => d.name))
+      .range(graphicData.map(d => d.value >= 0 ? config.colourPalettePositive : config.colourPaletteNegative));
+
     addDataLabels({
       svgContainer: svg,
       data: graphicData,
       chartWidth: chartWidth,
       labelPositionFactor: 7,
       xScaleFunction: x,
-      yScaleFunction: y
+      yScaleFunction: y,
+      colourScale: labelColours,
+      requiredContrast: 4.5
     })
   } //end if for datalabels
 
@@ -154,7 +157,7 @@ function drawGraphic() {
     svgContainer: svg,
     xPosition: chartWidth,
     yPosition: height + 35,
-    text: config.xAxisTitle,
+    text: config.xAxisLabel,
     textAnchor: 'end'
   })
 
