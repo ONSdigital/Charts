@@ -55,6 +55,17 @@ const chartConfig = [
     ]
   },
   {
+    name: "Bar chart with context bubbles",
+    url: "https://onsdigital.github.io/Charts/bar-chart-with-context-bubbles/",
+    tags: {
+      comparison: true,
+      "change-over-time": true
+    },
+    dataFiles: [
+      { name: "data.csv", path: "data.csv" }
+    ]
+  },
+  {
     name: "Beeswarm",
     url: "https://onsdigital.github.io/Charts/beeswarm/",
     tags: {
