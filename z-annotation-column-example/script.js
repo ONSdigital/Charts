@@ -9,8 +9,8 @@ function drawGraphic() {
 	//Set up some of the basics and return the size value ('sm', 'md' or 'lg')
 	size = initialise(size, config);
 
-	const aspectRatio = config.optional.aspectRatio[size];
-	let margin = config.optional.margin[size];
+	const aspectRatio = config.aspectRatio[size];
+	let margin = config.margin[size];
 	let chartWidth =
 		parseInt(graphic.style('width')) - margin.left - margin.right;
 	//height is set by the aspect ratio
@@ -32,16 +32,16 @@ function drawGraphic() {
 	x.domain([...new Set(graphic_data.map((d) => d.date))]);
 
 	let tickValues = x.domain().filter(function (d, i) {
-		return !(i % config.optional.xAxisTicksEvery[size])
+		return !(i % config.xAxisTicksEvery[size])
 	});
 
 	//Labelling the first and/or last bar if needed
-	if (config.optional.addFirstDate == true) {
+	if (config.addFirstDate == true) {
 		tickValues.push(graphic_data[0].date)
 		console.log("First date added")
 	}
 
-	if (config.optional.addFinalDate == true) {
+	if (config.addFinalDate == true) {
 		tickValues.push(graphic_data[graphic_data.length - 1].date)
 		console.log("Last date added")
 	}
@@ -50,8 +50,8 @@ function drawGraphic() {
 	let yAxis = d3.axisLeft(y)
 		.tickSize(-chartWidth)
 		.tickPadding(10)
-		.ticks(config.optional.yAxisTicks[size])
-		.tickFormat(d3.format(config.essential.yAxisTickFormat));
+		.ticks(config.yAxisTicks[size])
+		.tickFormat(d3.format(config.yAxisTickFormat));
 
 	let xDataType;
 
@@ -63,7 +63,7 @@ function drawGraphic() {
 
 	// console.log(xDataType)
 
-	let xTime = d3.timeFormat(config.essential.xAxisTickFormat[size])
+	let xTime = d3.timeFormat(config.xAxisTickFormat[size])
 
 	//set up xAxis generator
 	let xAxis = d3
@@ -72,7 +72,7 @@ function drawGraphic() {
 		.tickPadding(10)
 		.tickValues(tickValues) //Labelling the first and/or last bar if needed
 		.tickFormat((d) => xDataType == 'date' ? xTime(d)
-			: d3.format(config.essential.xAxisNumberFormat)(d));
+			: d3.format(config.xAxisNumberFormat)(d));
 
 	//create svg for chart
 	svg = addSvg({
@@ -82,7 +82,7 @@ function drawGraphic() {
 		margin: margin
 	})
 
-	if (config.essential.yDomain == 'auto') {
+	if (config.yDomain == 'auto') {
 		if (d3.min(graphic_data.map(({ value }) => Number(value))) >= 0) {
 			y.domain([
 				0,
@@ -91,7 +91,7 @@ function drawGraphic() {
 			y.domain(d3.extent(graphic_data.map(({ value }) => Number(value))))
 		}
 	} else {
-		y.domain(config.essential.yDomain);
+		y.domain(config.yDomain);
 	}
 
 	svg
@@ -121,7 +121,7 @@ function drawGraphic() {
 		.attr('x', (d) => x(d.date))
 		.attr('height', (d) => Math.abs(y(d.value) - y(0)))
 		.attr('width', x.bandwidth())
-		.attr('fill', config.essential.colour_palette);
+		.attr('fill', config.colour_palette);
 
 
 	// This does the y-axis label
@@ -129,7 +129,7 @@ function drawGraphic() {
 		svgContainer: svg,
 		xPosition: 5 - margin.left,
 		yPosition: -10,
-		text: config.essential.yAxisLabel,
+		text: config.yAxisLabel,
 		textAnchor: "start",
 		wrapWidth: chartWidth
 	});
@@ -163,7 +163,7 @@ function drawGraphic() {
 	})
 
 	//create link to source
-	addSource('source', config.essential.sourceText);
+	addSource('source', config.sourceText);
 
 	//use pym to calculate chart dimensions
 	if (pymChild) {
@@ -171,11 +171,11 @@ function drawGraphic() {
 	}
 }
 
-d3.csv(config.essential.graphic_data_url).then((data) => {
+d3.csv(config.graphic_data_url).then((data) => {
 	//load chart data
 	graphic_data = data;
 
-	let parseTime = d3.timeParse(config.essential.dateFormat);
+	let parseTime = d3.timeParse(config.dateFormat);
 
 	data.forEach((d, i) => {
 

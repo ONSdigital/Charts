@@ -36,9 +36,14 @@ function drawGraphic() {
 			label: series
 		}));
 
+	const defaultOption = config.defaultOption
+		? dropdownData.find((option) => option.id === config.defaultOption)
+		: dropdownData[0];
+
 	const selectControl = new EnhancedSelect({
 		containerId: 'select',
 		options: dropdownData,
+		value: defaultOption,
 		label: 'Choose a series',
 		placeholder: 'Select a series',
 		mode: 'default',
@@ -235,7 +240,7 @@ function drawGraphic() {
         .style('opacity', 0)
         .remove();
     
-    svg.selectAll('line.label-leader-line')
+	svg.selectAll('.label-leader-line')
         .transition()
         .duration(300)
         .style('opacity', 0)
@@ -280,6 +285,7 @@ function drawGraphic() {
 				return d[0];
 			});
 		} else {
+			const directLabels = config.directLabels || {};
 			createDirectLabels({
 				categories: categories,
 				data: filteredData,
@@ -290,11 +296,17 @@ function drawGraphic() {
 				chartHeight: height,
 				config: config,
 				options: {
-					labelStrategy: 'lastValid',
-					minSpacing: 15,
-					useLeaderLines: true,
-					leaderLineStyle: 'dashed',
-					minLabelOffset: 5
+					labelLocation: directLabels.labelLocation ?? 'lastPoint',
+					minSpacing: directLabels.minSpacing ?? 15,
+					minLabelOffset: directLabels.minLabelOffset ?? 5,
+					labelGap: directLabels.gap ?? 10,
+					labelGapWithLeaderLines: directLabels.gapWithLeaderLines ?? (directLabels.gap ?? 10),
+					useLeaderLines: directLabels.useLeaderLines ?? true,
+					leaderLineStyle: directLabels.leaderLineStyle ?? 'dashed',
+					leaderLineColourMode: directLabels.leaderLineColourMode ?? 'series',
+					leaderLineMonoColour: directLabels.leaderLineMonoColour ?? '#707070',
+					leaderLineElbowOffset: directLabels.leaderLineElbowOffset ?? 10,
+					leaderLineEndGap: directLabels.leaderLineEndGap ?? 2
 				}
 			});
 		}
@@ -411,16 +423,15 @@ function drawGraphic() {
 
 	//if there is a default option, set it
 	if (config.defaultOption) {
-		const defaultOption = dropdownData.find((option) => option.id === config.defaultOption);
 		if (defaultOption) {
-			selectControl.select(defaultOption);
+			changeData(defaultOption.id);
 		} else {
 			clearChart();
 			selectControl.clear();
 			d3.selectAll('.y.axis .tick').attr('opacity', 0); // Hide y-axis ticks
 		}
 	} else if (dropdownData.length > 0) {
-		selectControl.select(dropdownData[0]);
+		changeData(dropdownData[0].id);
 	} else {
 		// If no default option, clear the chart
 		clearChart();

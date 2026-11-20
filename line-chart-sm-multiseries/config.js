@@ -81,6 +81,8 @@ config = {
 		secondaryTimeUnit: 'auto',//can be 'auto' or false to disable. set to "day","month",'quarter' or 'year' to override
 		forceFullLastPrimaryUnit: false,//extends the axis to the end of the last primary time unit
 	},
+	"addFirstDate": false,
+	"addFinalDate": false,
 	"yAxisTicks": {
 		"sm": 7,
 		"md": 5,
@@ -91,5 +93,6 @@ config = {
 	"addEndMarkers": true,
 	"addPointMarkers": false, // If true, draws a marker at every data point on each line
 	"drawLegend": "auto", // true (always show), false (always hide, use direct labels), "auto" (legend if >1 chart per row, direct labels if 1 per row at lg)
+	"gapLineStyle": "dashed", // Style for lines over gaps: "dashed", "dotted", "solid" or "none"
 	"elements": { "select": 0, "nav": 0, "legend": 1, "titles": 0 }
 };

@@ -74,7 +74,7 @@ function drawGraphic() {
 
 	colour = d3
 		.scaleThreshold()
-		.domain(breaks.slice(1, 6))
+		.domain(breaks.slice(1, -1))
 		.range(
 			Array.isArray(config.colourPalette)
 				? config.colourPalette
