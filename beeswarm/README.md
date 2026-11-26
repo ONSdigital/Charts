@@ -50,6 +50,7 @@
 #### `averages`
 - `show`: Show average lines. Default: `false`
 - `showLabels`: Show labels for averages. Default: `false`
+- `valuesFrom`: Source of average values: `"data"` or `"config"`.
 - `colour`: Colour of average lines. Default: `ONScolours.grey100`
 - `strokeWidth`: Line width. Default: `3`
 - `strokeDash`: Dash pattern. Default: `""`
@@ -57,7 +58,7 @@
 - `labelFormat`: Format for label numbers. Default: `".1f"`
 - `labelPrefix`: Prefix for label text. Default: `"Mean: "`
 - `labelOffset`: Position offset for labels. Default: `{ x: 5, y: 0 }`
-- `values`: Array of averages per group. Example: `{ group: "Wales", value: 14.3 }`
+- `values`: Array of averages per group, used when `valuesFrom` is `"config"`. Example: `{ group: "Wales", value: 14.3 }`
 
 #### `margin`
 - `sm`, `md`, `lg`: Objects with `top`, `right`, `bottom`, `left` values for chart margins.
